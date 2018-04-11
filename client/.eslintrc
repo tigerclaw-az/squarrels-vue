@@ -1,7 +1,13 @@
 {
-  "root": true,
-  "extends": [
-    "plugin:vue/essential",
-    "@vue/airbnb"
-  ]
+    "root": true,
+    "extends": [
+        "plugin:vue/essential",
+        "@vue/airbnb"
+    ],
+    "rules": {
+        "eol-last": ["error", "always"],
+        "indent": ["error", "tab", { "SwitchCase": 1 }],
+        "quotes": ["error", "single"],
+        "no-tabs": 0,
+    }
 }
