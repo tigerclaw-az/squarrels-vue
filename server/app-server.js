@@ -4,8 +4,7 @@ var express = require('express'),
     path = require('path'),
     config = require('./config/config'),
     logger = config.logger(),
-    MongodbSession = require('connect-mongodb-session')(sessionParser),
-    favicon = require('serve-favicon');
+    MongodbSession = require('connect-mongodb-session')(sessionParser);
 
 let app = express(),
     secret = '$eCuRiTy',
@@ -57,7 +56,6 @@ require('./config/mongoose')()
         process.exit(1);
     });
 
-app.use(favicon(path.join(__dirname, '../client/public', 'favicon.ico')));
 app.use(express.static(path.join(__dirname, '../client/public')));
 app.use(express.static(path.join(__dirname, '../client')));
 
