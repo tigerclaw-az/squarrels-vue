@@ -1,6 +1,6 @@
 export default Object.freeze({
 	debug: true,
-	host: 'c3po',
+	host: 'squarrels',
 	isAdmin: false,
 	logOptions: {
 		logLevel: 'debug',

@@ -32,7 +32,7 @@ let config = {
 	},
 	loglevel: 'trace',
 
-	server: 'localhost',
+	server: 'squarrels',
 
 	playerImage: 'assets/images/squirrel-placeholder.jpg'
 }
