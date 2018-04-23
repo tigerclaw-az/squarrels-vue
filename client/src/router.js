@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Start from './views/Start.vue';
-import Game from './views/Game.vue';
+
+import Game from '@/views/Game.vue';
+import Start from '@/views/Start.vue';
 
 Vue.use(Router);
 
