@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import router from '@/router';
 
 const state = {
 	socket: {
@@ -25,6 +26,7 @@ const mutations = {
 	},
 	SOCKET_ONCLOSE(state, event) {
 		Vue.$log.debug(state, event);
+		router.push('/');
 		state.socket.isConnected = false;
 	},
 	SOCKET_ONERROR(state, event) {
