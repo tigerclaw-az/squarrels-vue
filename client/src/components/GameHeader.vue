@@ -32,18 +32,18 @@ export default {
 		'b-dropdown': bDropdown,
 	},
 	created() {
-		this.$log.debug(this);
+		// this.$log.debug(this);
 	},
 	computed: {
-		...mapGetters([
-			'created',
-			'isSoundEnabled',
-			'round'
-		])
+		...mapGetters({
+			created: 'game/created',
+			isSoundEnabled: 'game/isSoundEnabled',
+			round: 'game/round'
+		})
 	},
 	methods: {
 		onSettingClick: function(event) {
-			console.log(event);
+			this.$log.debug(event);
 		},
 	},
 };

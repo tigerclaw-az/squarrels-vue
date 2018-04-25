@@ -1,34 +1,24 @@
 import Vue from 'vue';
 
 const state = {
-	createdDate: {
-		type: Date,
-		required: false,
-	},
-	isSoundEnabled: {
-		type: Boolean,
-		required: false,
-		default: false,
-	},
-	roundNumber: {
-		type: Number,
-		required: false,
-		default: 0,
-	},
+	id: null,
+	createdDate: null,
+	isSoundEnabled: true,
+	roundNumber: 0,
 };
 
 const getters = {
-	created: () => {
+	created: (state) => {
 		Vue.$log.info(Vue.$storage);
-		return this.createdDate;
+		return state.createdDate;
 	},
 
-	isSoundEnabled: () => {
-		return this.isSoundEnabled;
+	isSoundEnabled: (state) => {
+		return state.isSoundEnabled;
 	},
 
-	round: () => {
-		return this.roundNumber;
+	round: (state) => {
+		return state.roundNumber;
 	}
 };
 
@@ -41,6 +31,7 @@ const mutations = {
 };
 
 export default {
+	namespaced: true,
 	state,
 	getters,
 	actions,
