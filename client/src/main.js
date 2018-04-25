@@ -1,8 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-vue/dist/bootstrap-vue.css';
+require('vue-toastr/src/vue-toastr.scss');
 
 import BootstrapVue from 'bootstrap-vue';
 import { Layout } from 'bootstrap-vue/es/components';
+import Toastr from 'vue-toastr';
 
 import Vue from 'vue';
 import VueLogger from 'vuejs-logger';
@@ -17,6 +19,7 @@ import { config, websocket as wsConfig, localStorage as storageConfig, logger as
 
 Vue.use(BootstrapVue);
 Vue.use(Layout);
+Vue.use(Toastr);
 
 Vue.use(VueLocalStorage, storageConfig);
 Vue.use(VueLogger, loggerConfig);
