@@ -1,0 +1,91 @@
+@keyframes gradient {
+	0% {
+		background-position: 0% 14%;
+	}
+
+	50% {
+		background-position: 100% 87%;
+	}
+
+	100% {
+		background-position: 0% 14%;
+	}
+}
+
+@keyframes spin {
+	to {
+		transform: rotateY(120deg);
+	}
+}
+
+@keyframes spin-reverse {
+	to {
+		transform: rotateY(0deg);
+	}
+}
+
+@keyframes action-fadeout {
+	100% {
+		opacity: 0;
+		transform: rotateY(0deg) translateX(0%);
+	}
+}
+
+@keyframes action-whirlwind {
+	25% {
+		transform: translateX(-75%);
+	}
+
+	45% {
+		transform: translateX(-125%);
+	}
+
+	75% {
+		transform: translateX(-50%);
+	}
+
+	100% {
+		transform: rotateY(0deg) translateX(0%);
+	}
+}
+
+@keyframes disappear {
+	from {
+		transform: scale(1);
+	}
+
+	to {
+		opacity: 0;
+		transform: scale(0);
+	}
+}
+
+@keyframes grow {
+	from {
+		transform: scale(0);
+	}
+
+	to {
+		transform: scale(1);
+	}
+}
+
+@keyframes shrink {
+	from {
+		transform: scale(2.5);
+	}
+
+	to {
+		transform: scale(1);
+	}
+}
+
+@keyframes fade-out {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}

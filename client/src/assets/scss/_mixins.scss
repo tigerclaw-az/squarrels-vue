@@ -1,0 +1,59 @@
+@mixin center-horizontal {
+	left: 50%;
+	position: absolute;
+	transform: translateX(-50%);
+}
+
+@mixin center-vertical {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+@mixin center {
+	left: 50%;
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%) translateX(-50%);
+}
+
+// Mixin that will include the fall back px declaration as well as the calculated rem value.
+@mixin fallback-font-size($size) {
+	font-size: $size;
+	font-size: rem-calc($size);
+}
+
+@mixin flip-card($type: 'action') {
+	.card {
+		animation-fill-mode: forwards;
+		backface-visibility: hidden;
+
+		&.blank-- {
+			animation-duration: 3s;
+			animation-name: spin;
+			animation-timing-function: linear;
+		}
+	}
+
+	[card-type=#{$type}] {
+		.card {
+			animation-delay: 2.5s;
+			animation-duration: .5s;
+			animation-name: spin-reverse;
+			animation-timing-function: ease-out;
+			transform: rotateY(-90deg);
+
+			@content;
+		}
+	}
+
+	&.instant {
+		.card {
+			animation-delay: .2s;
+
+			&.blank-- {
+				animation-duration: .25s;
+			}
+		}
+	}
+}
