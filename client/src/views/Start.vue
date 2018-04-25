@@ -14,9 +14,6 @@
 <script>
 import { mapGetters } from 'vuex';
 
-// let initialState = {
-// 	isConnected: false
-// }
 export default {
 	name: 'Start',
 	computed: {
@@ -26,7 +23,7 @@ export default {
 	},
 	methods: {
 		joinGame() {
-			this.$log.debug('join game');
+			this.$router.push('/game');
 		}
 	}
 };
