@@ -1,13 +1,15 @@
 <template>
-	<div class="winter">
-		<button class="btn btn-primary button-join-game"
-			v-show="isConnected"
-			@click="joinGame"
-			v-cloak>JOIN GAME</button>
+	<div id="start">
+		<div class="winter">
+			<button class="btn btn-primary button-join-game"
+				v-show="isConnected"
+				@click="joinGame"
+				v-cloak>JOIN GAME</button>
 
-		<div class="alert alert-danger error" role="alert"
-			v-show="!isConnected"
-			v-cloak>Taking a nap. Be back later.</div>
+			<div class="alert alert-danger error" role="alert"
+				v-show="!isConnected"
+				v-cloak>Taking a nap. Be back later.</div>
+		</div>
 	</div>
 </template>
 

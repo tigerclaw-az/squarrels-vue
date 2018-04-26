@@ -21,11 +21,11 @@ const actions = {
 
 const mutations = {
 	SOCKET_ONOPEN(state, event) {
-		Vue.$log.debug(state, event);
+		Vue.$log.info(state, event);
 		state.socket.isConnected = true;
 	},
 	SOCKET_ONCLOSE(state, event) {
-		Vue.$log.debug(state, event);
+		Vue.$log.info(state, event);
 		router.push('/');
 		state.socket.isConnected = false;
 	},
@@ -39,7 +39,7 @@ const mutations = {
 	// mutations for reconnect methods
 	SOCKET_RECONNECT(state, count) {
 		state.socket.isConnected = true;
-		Vue.$log.debug(state, count);
+		Vue.$log.info(state, count);
 	},
 };
 

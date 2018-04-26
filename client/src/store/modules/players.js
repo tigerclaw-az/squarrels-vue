@@ -1,12 +1,5 @@
-import { config } from '@/config';
-// import Vue from 'vue';
-
-const modules = {
-
-};
-
 const state = {
-	url: `//${config.host}:3000/api/`,
+	players: {}
 };
 
 const getters = {
@@ -22,8 +15,6 @@ const mutations = {
 };
 
 export default {
-	namespaced: true,
-	modules,
 	state,
 	getters,
 	actions,

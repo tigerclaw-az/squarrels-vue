@@ -7012,10 +7012,6 @@ vue-loader@^14.1.1:
     vue-style-loader "^4.0.1"
     vue-template-es2015-compiler "^1.6.0"
 
-vue-localstorage@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/vue-localstorage/-/vue-localstorage-0.6.2.tgz#7f84c99f4ce0b6be23b16c1fab194d4d67182456"
-
 vue-native-websocket@^2.0.7:
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/vue-native-websocket/-/vue-native-websocket-2.0.7.tgz#a305a5578e1a74321239107fa80fe5ebc967b8b4"
@@ -7051,6 +7047,10 @@ vue-template-es2015-compiler@^1.6.0:
 vue-toastr@^2.0.14:
   version "2.0.14"
   resolved "https://registry.yarnpkg.com/vue-toastr/-/vue-toastr-2.0.14.tgz#c9e9a105eea1a8d14a4dfcbeb6c6e92510646a88"
+
+vue-web-storage@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/vue-web-storage/-/vue-web-storage-2.0.1.tgz#59a2dbfdb29479f5aed4d58211b50cc9d89a5eaf"
 
 vue@^2.5.13:
   version "2.5.16"

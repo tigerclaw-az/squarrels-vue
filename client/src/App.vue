@@ -5,6 +5,7 @@
       <router-link to="/game">Game</router-link>
     </div> -->
     <router-view/>
+    <!-- <vue-toastr ref="toastr"></vue-toastr> -->
   </div>
 </template>
 
@@ -16,11 +17,21 @@
 		// @include user-select(none);
 	}
 
+	/* Space out content a bit */
+	body {
+		padding-bottom: .25rem;
+		padding-top: .25rem;
+	}
+
 	a {
 		&.disabled {
 			cursor: default;
 			pointer-events: none;
 		}
+	}
+
+	textarea {
+		resize: none;
 	}
 
 	[v-cloak] {
@@ -36,12 +47,6 @@
 		// background-size: 600% 600%;
 		height: 99vh;
 		transform: translateZ(0);
-	}
-
-	/* Space out content a bit */
-	body {
-		padding-bottom: .25rem;
-		padding-top: .25rem;
 	}
 
 	.content {
@@ -97,10 +102,6 @@
 	.carousel,
 	.panel-title a { // sass-lint:disable-line force-element-nesting
 		cursor: pointer;
-	}
-
-	textarea {
-		resize: none;
 	}
 
 	/* Responsive: Portrait tablets and up */

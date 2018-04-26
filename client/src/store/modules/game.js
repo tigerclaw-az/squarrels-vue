@@ -1,29 +1,31 @@
 import Vue from 'vue';
 
+import GamesApi from '@/api/GamesApi';
+const api = new GamesApi();
+
 const state = {
 	id: null,
+	actionCard: null,
 	createdDate: null,
-	isSoundEnabled: true,
+	instantAction: false,
+	isStarted: false,
 	roundNumber: 0,
 };
 
 const getters = {
-	created: (state) => {
-		Vue.$log.info(Vue.$storage);
-		return state.createdDate;
-	},
 
-	isSoundEnabled: (state) => {
-		return state.isSoundEnabled;
-	},
-
-	round: (state) => {
-		return state.roundNumber;
-	}
 };
 
 const actions = {
-
+	load({ commit }) {
+		api.get()
+			.then(res => {
+				Vue.$log.debug(res);
+			})
+			.catch(err => {
+				Vue.$error(err);
+			});
+	}
 };
 
 const mutations = {

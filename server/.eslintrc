@@ -1,0 +1,31 @@
+{
+    "root": true,
+    "extends": [
+    	"eslint:recommended",
+        "plugin:vue/essential"
+    ],
+    "rules": {
+        "class-methods-use-this": ["error"],
+        "curly": ["error", "all"],
+        "dot-notation": ["error"],
+        "eol-last": ["error", "always"],
+        "eqeqeq": ["error", "always"],
+        "indent": ["error", "tab", { "SwitchCase": 1 }],
+        "quotes": ["error", "single"],
+        "no-alert": ["error"],
+        "no-await-in-loop": ["error"],
+        "no-caller": ["error"],
+        "no-else-return": ["error"],
+        "no-empty-function": ["error"],
+        "no-eval": ["error"],
+        "no-extra-bind": ["error"],
+        "no-multi-spaces": ["error"],
+        "no-tabs": 0,
+        "no-template-curly-in-string": ["error"],
+        "no-throw-literal": ["error"],
+        "no-useless-concat": ["error"],
+        "valid-jsdoc": ["warn"],
+        "vars-on-top": ["error"],
+        "wrap-iife": ["error", "inside"]
+    }
+}

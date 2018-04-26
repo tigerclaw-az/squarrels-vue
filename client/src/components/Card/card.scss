@@ -1,0 +1,81 @@
+@import '~@/assets/scss/variables';
+
+$card-height: (
+	small: 160,
+	medium: 270
+);
+$card-width: (
+	small: 120,
+	medium: 200
+);
+$card-width-stack: 60;
+$num-cards: 20;
+
+$card-images: (
+	'blank--',
+	'number--1',
+	'number--2',
+	'number--3',
+	'number--4',
+	'number--5',
+	'action--ambush',
+	'action--communism',
+	'action--hoard',
+	'action--quarrel',
+	'action--whirlwind',
+	'action--winter',
+	'special--golden',
+	'special--rotten'
+);
+
+@mixin generate-cards {
+	@each $name in $card-images {
+		&.#{$name} {
+			$box-shadow-color: transparent;
+			background-image: url('~@/assets/images/#{$name}.png');
+
+			@if $name == 'special--rotten' {
+				$box-shadow-color: get-color('darkolivegreen');
+			} @elseif $name == 'special--golden' {
+				$box-shadow-color: get-color('saffron');
+			}
+
+			box-shadow: 0 0 15px 4px $box-shadow-color;
+		}
+	}
+}
+
+%playing-cards {
+	position: relative;
+
+	card,
+	.card {
+		height: rem-calc(map-get($card-height, 'small'));
+		position: absolute;
+		width: rem-calc(map-get($card-width, 'small'));
+	}
+
+	[card-type="action"] {
+		height: 0;
+		width: 0;
+	}
+
+	.card {
+		@include generate-cards;
+	}
+
+	[role='button'] {
+		display: block;
+		height: 100%;
+	}
+}
+
+@media (min-width: $screen-md-min) {
+	%playing-cards {
+		card,
+		.card {
+			height: rem-calc(map-get($card-height, 'medium'));
+			width: rem-calc(map-get($card-width, 'medium'));
+		}
+	}
+}

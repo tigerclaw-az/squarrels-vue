@@ -8,26 +8,35 @@ import Toastr from 'vue-toastr';
 
 import Vue from 'vue';
 import VueLogger from 'vuejs-logger';
-import VueLocalStorage from 'vue-localstorage';
+import Storage from 'vue-web-storage';
 import VueWS from 'vue-native-websocket';
 import App from './App.vue';
 
 import router from './router';
 import store from './store/index';
 
-import { config, websocket as wsConfig, localStorage as storageConfig, logger as loggerConfig } from './config';
+import { config, websocket as wsConfig, webStorage as storageConfig, logger as loggerConfig } from './config';
 
 Vue.use(BootstrapVue);
 Vue.use(Layout);
 Vue.use(Toastr);
 
-Vue.use(VueLocalStorage, storageConfig);
+Vue.use(Storage, storageConfig);
 Vue.use(VueLogger, loggerConfig);
 Vue.use(VueWS, `ws://${config.host}:3000`, Object.assign({}, wsConfig, { store }));
 
 Vue.config.productionTip = false;
 
+Vue.filter('limit', function (value, amount) {
+	return value.filter(function(val, index){
+		return index < amount;
+	});
+});
+
 new Vue({
+	mounted: function() {
+		store.dispatch('init');
+	},
 	...App,
 	router,
 	store,
