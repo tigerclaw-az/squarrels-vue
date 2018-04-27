@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import router from '@/router';
 
+import wsPlayers from '@/store/modules/websocket/ws-players';
+
 const state = {
 	socket: {
 		isConnected: false,
@@ -16,7 +18,9 @@ const getters = {
 };
 
 const actions = {
-
+	['players:create']({ commit }, data) {
+		Vue.$log.debug(data);
+	},
 };
 
 const mutations = {
@@ -46,6 +50,9 @@ const mutations = {
 export default {
 	// Can't use namespace until Issue is fixed: https://github.com/nathantsoi/vue-native-websocket/issues/40
 	// namespaced: true,
+	modules: {
+		wsPlayers
+	},
 	state,
 	getters,
 	actions,

@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 // import Card from '@/components/Card/Card.vue';
 
@@ -67,7 +67,10 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters(['isAdmin', 'game/isStarted']),
+		...mapState({
+			isGameStarted: 'game/isStarted'
+		}),
+		...mapGetters(['isAdmin']),
 		canDraw: function() {
 			return true;
 		},

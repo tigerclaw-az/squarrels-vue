@@ -19,13 +19,14 @@ import { config, websocket as wsConfig, webStorage as storageConfig, logger as l
 
 Vue.use(BootstrapVue);
 Vue.use(Layout);
-Vue.use(Toastr);
+// Vue.use(Toastr);
 
 Vue.use(Storage, storageConfig);
 Vue.use(VueLogger, loggerConfig);
 Vue.use(VueWS, `ws://${config.host}:3000`, Object.assign({}, wsConfig, { store }));
 
 Vue.config.productionTip = false;
+Vue.prototype.$toastr = Toastr;
 
 Vue.filter('limit', function (value, amount) {
 	return value.filter(function(val, index){
@@ -35,7 +36,11 @@ Vue.filter('limit', function (value, amount) {
 
 new Vue({
 	mounted: function() {
+		this.$log.debug(this);
 		store.dispatch('init');
+	},
+	components: {
+		'vue-toastr': Toastr,
 	},
 	...App,
 	router,

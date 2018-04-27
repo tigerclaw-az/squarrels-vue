@@ -68,6 +68,11 @@ export default {
 		};
 	},
 	mounted: function() {
+		// this.$toastr.s('MOUNTED');
+		// TODO: Remove player from game
+		window.addEventListener('beforeunload', () => {
+			this.$log.debug('unloaded!', this.players);
+		});
 		this.$store.dispatch('game/load').then((data) => {
 			this.$store.dispatch('decks/load', data);
 		});

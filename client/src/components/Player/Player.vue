@@ -1,8 +1,8 @@
 <template>
 	<div class="sq-player"
 	:class="{
-		active: isActive,
-		current: isCurrentPlayer
+		active: player.isActive,
+		current: player.isCurrent
 	}">
 	</div>
 </template>

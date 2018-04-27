@@ -25,6 +25,14 @@ const actions = {
 			.catch(err => {
 				Vue.$error(err);
 			});
+	},
+
+	insert({ commit }, data) {
+
+	},
+
+	update({ commit }, data) {
+
 	}
 };
 

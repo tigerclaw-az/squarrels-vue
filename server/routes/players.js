@@ -91,7 +91,7 @@ players.post('/:id?', function(req, res) {
 
 					/* eslint-disable no-undef */
 					wss.broadcast(
-						{ type: 'players', action: 'create', nuts: pl },
+						{ namespace: 'wsPlayers', action: 'create', nuts: pl },
 						req.session.id,
 						false
 					);
