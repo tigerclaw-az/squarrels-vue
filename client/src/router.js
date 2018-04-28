@@ -20,9 +20,10 @@ let router = new VueRouter({
 		component: Login,
 	},
 	{
-		path: '/game',
+		path: '/game/:id',
 		name: 'game',
 		component: Game,
+		props: true,
 	}],
 });
 
