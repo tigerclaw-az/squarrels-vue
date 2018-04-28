@@ -61,6 +61,7 @@ export default {
 		BoardPlayers,
 		Deck,
 	},
+	props: ['id'],
 	data: function() {
 		return {
 			decks: [],
