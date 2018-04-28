@@ -36,7 +36,7 @@ export default {
 			this.$log.debug(this.pName);
 
 			this.$store
-				.dispatch('players/insert', { name: this.pName, isCurrent: true })
+				.dispatch('players/create', { name: this.pName, isCurrent: true })
 				.then(() => {
 					this.$router.push('/');
 				});
