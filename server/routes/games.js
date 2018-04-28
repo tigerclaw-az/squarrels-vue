@@ -105,8 +105,55 @@ games.get('/:id?', function(req, res) {
 games.post('/', function(req, res) {
 	let sessionId = req.session.id;
 
+	let game = new GameModel();
+
+	logger.debug('create -> ', req.body);
+
+	GameModel
+		.create(game)
+		.then(() => {
+			/* eslint-disable no-undef */
+			wss.broadcast(
+				{ type: 'games', action: 'create', nuts: game },
+				sessionId,
+				false
+			);
+			/* eslint-enable no-undef */
+
+			res.status(201).json(game);
+		})
+		.catch(err => {
+			logger.error(err);
+			res.status(500).json(config.apiError(err));
+		});
+});
+
+games.post('/:id', function(req, res) {
+	let gameId = req.params.id,
+		sessionId = req.session.id;
+
+	logger.debug('update -> ', req.body);
+
+	gameMod
+		.update(gameId, req.body, sessionId)
+		.then(doc => {
+			let statusCode = doc ? 200 : 204;
+
+			res.status(statusCode).json(doc);
+		})
+		.catch(err => {
+			res.status(500).json(config.apiError(err));
+		});
+});
+
+games.post('/:id/start', function(req, res) {
+	const gameId = req.params.id,
+		sessionId = req.session.id;
+
 	const CardModel = require('../models/CardModel').model;
 	const DeckModel = require('../models/DeckModel').model;
+
+	logger.debug('start -> ', req.body);
 
 	CardModel
 		.find({})
@@ -136,37 +183,22 @@ games.post('/', function(req, res) {
 				.then(decksCreated => {
 					logger.debug('decksCreated -> ', decksCreated);
 
-					let game = new GameModel({
+					const gameData = {
 						isGameStarted: true,
 						players: req.body,
 						decks: _.map(decksCreated, (deck => {
 							return deck.id
 						}))
-					});
+					};
 
-					GameModel
-						.create(game)
-						.then(() => {
-							/* eslint-disable no-undef */
-							wss.broadcast(
-								{ type: 'games', action: 'create', nuts: game },
-								sessionId,
-								false
-							);
+					gameMod
+						.update(gameId, gameData, sessionId)
+						.then(doc => {
+							let statusCode = doc ? 200 : 204;
 
-							decks.forEach(deck => {
-								wss.broadcast(
-									{ type: 'decks', action: 'create', nuts: deck },
-									sessionId,
-									false
-								);
-							})
-							/* eslint-enable no-undef */
-
-							res.status(201).json(game);
+							res.status(statusCode).json(doc);
 						})
 						.catch(err => {
-							logger.error(err);
 							res.status(500).json(config.apiError(err));
 						});
 				})
@@ -179,13 +211,6 @@ games.post('/', function(req, res) {
 			logger.error(err);
 			res.status(500).json(config.apiError(err));
 		});
-});
-
-games.post('/:id', function(req, res) {
-	let gameId = req.params.id,
-		sessionId = req.session.id;
-
-	logger.debug('post -> ', req.body);
 
 	gameMod
 		.update(gameId, req.body, sessionId)
