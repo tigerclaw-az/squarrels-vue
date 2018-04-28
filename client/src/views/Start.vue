@@ -1,26 +1,48 @@
 <template>
 	<div id="start">
 		<b-row class="winter">
-			<!-- <button class="btn btn-primary button-join-game"
-				v-if="isConnected"
-				@click="joinGame"
-				v-cloak>JOIN GAME</button> -->
-
-			<div class="alert alert-danger error" role="alert"
-				v-if="!isConnected"
-				v-cloak>Taking a nap. Be back later.</div>
+			<div v-if="!isConnected"
+				class="alert alert-danger error" role="alert"
+				v-cloak>
+				Taking a nap. Be back later.
+			</div>
+			<div v-else
+				class="games-list">
+				<ul>
+					<li v-for="game in games" :key="game.id">
+						<router-link :to="{ name: 'game', params: { id: game.id }}"
+							class="btn btn-primary btn-join-game"
+							v-cloak>
+							JOIN {{game.id}}
+						</router-link>
+					</li>
+				</ul>
+				<button class="btn btn-primary btn-new-game" @click="createGame">NEW GAME</button>
+			</div>
 		</b-row>
 	</div>
 </template>
 
 <script>
+import Vue from 'vue';
 import { mapGetters } from 'vuex';
+import api from '@/api/index';
 
 export default {
 	name: 'Start',
 	data: function() {
 		return {
+			games: [],
 		}
+	},
+	mounted: function() {
+		api.games.get()
+			.then(res => {
+				this.games = res.data;
+			})
+			.catch(err => {
+				this.$log.error(err);
+			});
 	},
 	computed: {
 		...mapGetters([
@@ -28,8 +50,16 @@ export default {
 		]),
 	},
 	methods: {
-		joinGame() {
-			this.$router.push('/game');
+		createGame() {
+			api.games.create()
+				.then(res => {
+					let game = res.data;
+
+					this.games.push(game);
+				})
+				.catch(err => {
+					this.$log.error(err);
+				});
 		}
 	}
 };
@@ -46,12 +76,16 @@ export default {
 		width: 100vw;
 	}
 
-	.button-join-game,
 	.error {
 		@include center;
+		width: 30%;
 	}
 
-	.error {
-		width: 30%;
+	.games-list {
+		@include center;
+
+		.btn-join-game {
+			position: relative;
+		}
 	}
 </style>
