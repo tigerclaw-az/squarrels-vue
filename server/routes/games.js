@@ -79,7 +79,8 @@ games.delete('/:id', function(req, res) {
 });
 
 games.get('/:id?', function(req, res) {
-	var query = {};
+	let id = req.params.id || '',
+		query = id ? { _id: id } : {};
 
 	GameModel
 		.find(query)
@@ -114,9 +115,9 @@ games.post('/', function(req, res) {
 		.then(() => {
 			/* eslint-disable no-undef */
 			wss.broadcast(
-				{ type: 'games', action: 'create', nuts: game },
+				{ action: 'games:create', nuts: game },
 				sessionId,
-				false
+				true
 			);
 			/* eslint-enable no-undef */
 
@@ -184,7 +185,7 @@ games.post('/:id/start', function(req, res) {
 					logger.debug('decksCreated -> ', decksCreated);
 
 					const gameData = {
-						isGameStarted: true,
+						isStarted: true,
 						players: req.body,
 						decks: _.map(decksCreated, (deck => {
 							return deck.id

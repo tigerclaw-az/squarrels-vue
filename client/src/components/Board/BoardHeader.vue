@@ -1,7 +1,7 @@
 <template>
 	<b-container fluid class="header" v-if="isGameStarted">
 		<b-row>
-			<b-col class="header-item game-start">Started @ {{createdDate}}</b-col>
+			<b-col class="header-item game-start">Started @ {{createdAt}}</b-col>
 			<b-col class="header-item game-round">ROUND: {{roundNumber}}</b-col>
 			<b-col class="header-item settings">
 				<b-dropdown id="dropdown-settings" variant="info" no-caret>
@@ -40,7 +40,7 @@ export default {
 	},
 	computed: {
 		...mapState('game', [
-			'createdDate',
+			'createdAt',
 			'roundNumber'
 		]),
 		...mapState({

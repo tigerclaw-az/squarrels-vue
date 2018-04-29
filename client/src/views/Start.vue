@@ -24,10 +24,10 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import { mapGetters } from 'vuex';
 import api from '@/api/index';
 
+// TODO: Fix loading of games after websocket reconnects
 export default {
 	name: 'Start',
 	data: function() {
@@ -36,6 +36,11 @@ export default {
 		}
 	},
 	mounted: function() {
+		// this.$on('websocket:games:create', (game) => {
+		// 	this.$log.debug('websocket:games:create', game);
+		// 	this.games.push(game);
+		// });
+
 		api.games.get()
 			.then(res => {
 				this.games = res.data;

@@ -1,15 +1,16 @@
 import Vue from 'vue';
 
-import GamesApi from '@/api/GamesApi';
-const api = new GamesApi();
+import api from '@/api/index';
 
 const state = {
-	id: null,
 	actionCard: null,
-	createdDate: null,
+	createdAt: null,
+	decks: [],
 	instantAction: false,
 	isStarted: false,
-	roundNumber: 0,
+	players: [],
+	roundNumber: 1,
+	updatedAt: null,
 };
 
 const getters = {
@@ -17,27 +18,41 @@ const getters = {
 };
 
 const actions = {
-	load({ commit }) {
-		api.get()
+	load({ commit, dispatch }, { id }) {
+		return api.games.get(id)
 			.then(res => {
 				Vue.$log.debug(res);
+				if (res.status === 200) {
+					let gameData = res.data[0];
+					commit('insert', gameData);
+
+					// Add all players to the current state of game
+					if (gameData.players.length) {
+						dispatch('players/add', gameData.players, { root: true });
+					}
+				} else {
+					// TODO: Handle game not found logic
+				}
 			})
 			.catch(err => {
-				Vue.$error(err);
+				Vue.$log.error(err);
 			});
-	},
-
-	insert({ commit }, data) {
-
 	},
 
 	update({ commit }, data) {
 
-	}
+	},
 };
 
 const mutations = {
-
+	insert(state, data) {
+		Vue.$log.debug(state, data);
+		for (let prop of Object.keys(state)) {
+			if (data.hasOwnProperty(prop)) {
+				state[prop] = data[prop];
+			}
+		}
+	},
 };
 
 export default {

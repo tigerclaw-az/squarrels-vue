@@ -18,8 +18,9 @@ const getters = {
 };
 
 const actions = {
-	['players:create']({ commit }, data) {
+	['games:create']({ commit }, data) {
 		Vue.$log.debug(data);
+		// (new Vue()).$emit('websocket:games:create', data.nuts);
 	},
 };
 
@@ -51,7 +52,7 @@ export default {
 	// Can't use namespace until Issue is fixed: https://github.com/nathantsoi/vue-native-websocket/issues/40
 	// namespaced: true,
 	modules: {
-		wsPlayers
+		wsPlayers,
 	},
 	state,
 	getters,

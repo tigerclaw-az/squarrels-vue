@@ -8,7 +8,7 @@ var mongoose = require('mongoose'),
 			ref: 'Card',
 			default: null
 		},
-		round: {
+		roundNumber: {
 			type: Number,
 			default: 1
 		},
@@ -20,7 +20,7 @@ var mongoose = require('mongoose'),
 			type: [Schema.Types.ObjectId],
 			ref: Deck.model
 		},
-		isGameStarted: {
+		isStarted: {
 			type: Boolean,
 			default: false
 		}

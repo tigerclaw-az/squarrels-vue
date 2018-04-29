@@ -17,18 +17,6 @@
 		</b-row>
 		<b-row>
 			<b-col>
-				<div class="game-buttons">
-					<button
-						class="btn btn-primary new-game"
-						@click="createGame"
-						v-if="isStarted && totalPlayers >= 2">
-						New Game
-					</button>
-				</div>
-			</b-col>
-		</b-row>
-		<b-row>
-			<b-col>
 				<div class="admin-options" v-if="isAdmin && isStarted">
 					<b-dropdown id="dropdown-options" variant="info" text="Option">
 						<b-dropdown-item @click="onAdminOption('reset-game')">Reset Game</b-dropdown-item>
@@ -52,6 +40,7 @@ import Deck from '@/components/Deck/Deck.vue';
 import BoardHeader from '@/components/Board/BoardHeader.vue';
 import BoardPlayers from '@/components/Board/BoardPlayers.vue';
 
+// TODO: Validate player can join if there are less than 6 players
 export default {
 	name: 'Game',
 	components: {
@@ -64,24 +53,25 @@ export default {
 	props: ['id'],
 	data: function() {
 		return {
-			decks: [],
-			players: [],
 		};
 	},
 	mounted: function() {
-		// this.$toastr.s('MOUNTED');
 		// TODO: Remove player from game
 		window.addEventListener('beforeunload', () => {
 			this.$log.debug('unloaded!', this.players);
 		});
-		this.$store.dispatch('game/load').then((data) => {
-			this.$store.dispatch('decks/load', data);
-		});
+		this.$store.dispatch({ type: 'game/load', id: this.id });
+		// See watch: https://vuejs.org/v2/guide/computed.html
+
+		// TODO: If current player doesn't exist in game.players, then
+		// 		this.$store.dispatch({ type: 'game/addPlayer', id: this.id });
 	},
 	computed: {
 		...mapState('game', [
 			'actionCard',
+			'decks',
 			'isStarted',
+			'instantAction',
 		]),
 		...mapState([ 'isAdmin' ]),
 	},
