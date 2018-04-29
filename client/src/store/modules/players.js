@@ -7,6 +7,7 @@ import api from '@/api/index';
 const plDefault = {
 	name: utils.getRandomStr(12)
 };
+
 const state = {
 	players: {}
 };
@@ -16,11 +17,25 @@ const getters = {
 };
 
 const actions = {
-	insert({ commit }, data) {
-		commit('insert', data);
+	add({ commit }, plArr) {
+		Vue.$log.debug('plArr->', plArr);
+		return api.players.get(plArr.split(','))
+			.then(res => {
+				if (res.status === 200) {
+					commit('insert', res.data[0]);
+				}
+			})
+			.catch(err => {
+				Vue.$log.error(err);
+			});
 	},
-	create({ commit }, data) {
-		let plData = Object.assign({}, plDefault, data);
+
+	insert({ commit }, plObj) {
+		commit('insert', plObj);
+	},
+
+	create({ commit }, plObj) {
+		let plData = Object.assign({}, plDefault, plObj);
 
 		return api.players.create(plData)
 			.then(res => {
