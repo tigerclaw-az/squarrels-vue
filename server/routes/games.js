@@ -104,7 +104,9 @@ games.get('/:id?', function(req, res) {
 });
 
 games.post('/', function(req, res) {
-	let sessionId = req.session.id;
+	const sessionId = req.session.id;
+	const CardModel = require('../models/CardModel').model;
+	const DeckModel = require('../models/DeckModel').model;
 
 	let game = new GameModel();
 
@@ -112,7 +114,7 @@ games.post('/', function(req, res) {
 
 	GameModel
 		.create(game)
-		.then(() => {
+		.then(newGame => {
 			/* eslint-disable no-undef */
 			wss.broadcast(
 				{ namespace: 'wsGame', action: 'create', nuts: game },
@@ -120,6 +122,69 @@ games.post('/', function(req, res) {
 				true
 			);
 			/* eslint-enable no-undef */
+
+			CardModel
+				.find({})
+				.exec()
+				.then(cards => {
+					let mainDeck = new DeckModel({
+							deckType: 'main',
+							cards: _.shuffle(_.shuffle(cards))
+						}),
+						hoardDeck = new DeckModel({
+							deckType: 'discard'
+						}),
+						actionDeck = new DeckModel({
+							deckType: 'action'
+						}),
+						decks = [mainDeck, hoardDeck, actionDeck],
+						deckPromises = [];
+
+					decks.forEach(deck => {
+						// Create all decks, and store promises to be used later
+						deckPromises.push(DeckModel.create(deck));
+						return true;
+					});
+
+					Promise
+						.all(deckPromises)
+						.then(decksCreated => {
+							logger.debug('decksCreated -> ', decksCreated);
+
+							const gameData = {
+								decks: _.map(decksCreated, (deck => {
+									return deck.id
+								}))
+							};
+
+							gameMod
+								.update(newGame.id, gameData, sessionId)
+								.then(doc => {
+									let statusCode = doc ? 200 : 204;
+
+									/* eslint-disable no-undef */
+									wss.broadcast(
+										{ namespace: 'wsGame', action: 'update', nuts: doc },
+										sessionId,
+										true
+									);
+									/* eslint-enable no-undef */
+
+									res.status(statusCode).json(doc);
+								})
+								.catch(err => {
+									res.status(500).json(config.apiError(err));
+								});
+						})
+						.catch(err => {
+							logger.error(err);
+							res.status(500).json(config.apiError(err));
+						});
+				})
+				.catch(err => {
+					logger.error(err);
+					res.status(500).json(config.apiError(err));
+				});
 
 			res.status(201).json(game);
 		})
@@ -148,77 +213,25 @@ games.post('/:id', function(req, res) {
 });
 
 games.post('/:id/start', function(req, res) {
-	const gameId = req.params.id,
-		sessionId = req.session.id;
-
-	const CardModel = require('../models/CardModel').model;
-	const DeckModel = require('../models/DeckModel').model;
+	const gameId = req.params.id;
+	const sessionId = req.session.id;
 
 	logger.debug('start -> ', req.body);
 
-	CardModel
-		.find({})
-		.exec()
-		.then(cards => {
-			let mainDeck = new DeckModel({
-					deckType: 'main',
-					cards: _.shuffle(_.shuffle(cards))
-				}),
-				hoardDeck = new DeckModel({
-					deckType: 'discard'
-				}),
-				actionDeck = new DeckModel({
-					deckType: 'action'
-				}),
-				decks = [mainDeck, hoardDeck, actionDeck],
-				deckPromises = [];
-
-			decks.forEach(deck => {
-				// Create all decks, and store promises to be used later
-				deckPromises.push(DeckModel.create(deck));
-				return true;
-			});
-
-			Promise
-				.all(deckPromises)
-				.then(decksCreated => {
-					logger.debug('decksCreated -> ', decksCreated);
-
-					const gameData = {
-						isStarted: true,
-						players: req.body,
-						decks: _.map(decksCreated, (deck => {
-							return deck.id
-						}))
-					};
-
-					gameMod
-						.update(gameId, gameData, sessionId)
-						.then(doc => {
-							let statusCode = doc ? 200 : 204;
-
-							res.status(statusCode).json(doc);
-						})
-						.catch(err => {
-							res.status(500).json(config.apiError(err));
-						});
-				})
-				.catch(err => {
-					logger.error(err);
-					res.status(500).json(config.apiError(err));
-				});
-		})
-		.catch(err => {
-			logger.error(err);
-			res.status(500).json(config.apiError(err));
-		});
-
 	gameMod
-		.update(gameId, req.body, sessionId)
-		.then(doc => {
-			let statusCode = doc ? 200 : 204;
+		.update(gameId, { isStarted: true }, sessionId)
+		.then(game => {
+			let statusCode = game ? 200 : 204;
 
-			res.status(statusCode).json(doc);
+			/* eslint-disable no-undef */
+			wss.broadcast(
+				{ namespace: 'wsGame', action: 'update', nuts: game },
+				sessionId,
+				true
+			);
+			/* eslint-enable no-undef */
+
+			res.status(statusCode).json(game);
 		})
 		.catch(err => {
 			res.status(500).json(config.apiError(err));
