@@ -1,4 +1,4 @@
-import vm from 'vue';
+import Vue from 'vue';
 
 const state = {
 

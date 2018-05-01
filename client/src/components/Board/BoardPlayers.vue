@@ -15,9 +15,10 @@
 </template>
 
 <script>
-// import _ from 'lodash';
+import _ from 'lodash';
 import { mapGetters, mapState } from 'vuex';
 import { config } from '@/config';
+
 import Player from '@/components/Player/Player.vue';
 
 export default {
@@ -66,7 +67,7 @@ export default {
 			currentPlayer: state => state.localPlayer,
 			isGameLoaded: state => state.game.isLoaded,
 			playerIdsInGame: state => state.game.players,
-			playersInGame: state => state.players.players,
+			playersInGame: state => state.players,
 		}),
 		playersOrder: function() {
 			// TODO: Sort by this.currentPlayer.id and then by nextPlayer order

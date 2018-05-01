@@ -9,7 +9,6 @@ const plDefault = {
 };
 
 const state = {
-	players: {}
 };
 
 const getters = {
@@ -95,11 +94,11 @@ const mutations = {
 	update(state, payload) {
 		let playerId = payload.id;
 
-		if (!state.players[playerId]) {
-			Vue.set(state.players, playerId, {});
+		if (!state[playerId]) {
+			Vue.set(state, playerId, {});
 		}
 
-		Vue.set(state.players, playerId, payload);
+		Vue.set(state, playerId, payload);
 	},
 };
 
