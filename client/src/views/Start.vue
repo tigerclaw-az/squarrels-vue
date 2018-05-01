@@ -43,23 +43,14 @@ export default {
 		 * @param  {Boolean}  oldConn Old value of isConnected
 		 */
 		isConnected(newConn, oldConn) {
-			this.$log.debug('watch:isConnected', oldConn, newConn);
+			this.$log.debug('watch.isConnected', oldConn, newConn);
 			if (newConn) {
-				api.games.get()
-					.then(res => {
-						this.games = res.data;
-					})
-					.catch(err => {
-						this.$log.error(err);
-					});
+				this.getGames();
 			}
 		}
 	},
 	mounted: function() {
-		// this.$on('websocket:games:create', (game) => {
-		// 	this.$log.debug('websocket:games:create', game);
-		// 	this.games.push(game);
-		// });
+		this.getGames();
 	},
 	computed: {
 		...mapGetters([
@@ -77,7 +68,17 @@ export default {
 				.catch(err => {
 					this.$log.error(err);
 				});
-		}
+		},
+
+		getGames() {
+			api.games.get()
+				.then(res => {
+					this.games = res.data;
+				})
+				.catch(err => {
+					this.$log.error(err);
+				});
+		},
 	}
 };
 </script>
