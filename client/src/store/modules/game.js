@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import _ from 'lodash';
 
 import api from '@/api/index';
 
@@ -7,6 +8,7 @@ const state = {
 	createdAt: null,
 	decks: [],
 	instantAction: false,
+	isLoaded: false,
 	isStarted: false,
 	players: [],
 	roundNumber: 1,
@@ -18,13 +20,32 @@ const getters = {
 };
 
 const actions = {
+	addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
+		let newPlayers = [playerId, ...state.players];
+
+		if (newPlayers.length) {
+			api.games.updatePlayers(gameId, newPlayers)
+				.then(res => {
+					Vue.$log.debug('addPlayer()', res);
+					let gameData = res.data;
+
+					commit('update', gameData);
+				})
+				.catch(err => {
+					Vue.$log.error(err);
+				});
+		}
+	},
+
 	load({ commit, dispatch }, { id }) {
 		return api.games.get(id)
 			.then(res => {
-				Vue.$log.debug(res);
+				Vue.$log.debug('load()', res);
 				if (res.status === 200) {
 					let gameData = res.data[0];
-					commit('insert', gameData);
+
+					commit('update', gameData);
+					commit('loadFinished');
 
 					// Add all players to the current state of game
 					if (gameData.players.length) {
@@ -45,11 +66,18 @@ const actions = {
 };
 
 const mutations = {
-	insert(state, data) {
-		Vue.$log.debug(state, data);
-		for (let prop of Object.keys(state)) {
-			if (data.hasOwnProperty(prop)) {
-				state[prop] = data[prop];
+	loadFinished(state) {
+		state.isLoaded = true;
+	},
+
+	update(state, payload) {
+		Vue.$log.debug(state, payload);
+
+		if (payload) {
+			for (let prop of Object.keys(state)) {
+				if (payload.hasOwnProperty(prop)) {
+					Vue.set(state, prop, payload[prop]);
+				}
 			}
 		}
 	},
