@@ -35,19 +35,31 @@ export default {
 			games: [],
 		}
 	},
+	watch: {
+		/**
+		 * Watch for the websocket connection and perform necessary functions
+		 * whenever the websocket reconnects
+		 * @param  {Boolean}  newConn Updated value of isConnected
+		 * @param  {Boolean}  oldConn Old value of isConnected
+		 */
+		isConnected(newConn, oldConn) {
+			this.$log.debug('watch:isConnected', oldConn, newConn);
+			if (newConn) {
+				api.games.get()
+					.then(res => {
+						this.games = res.data;
+					})
+					.catch(err => {
+						this.$log.error(err);
+					});
+			}
+		}
+	},
 	mounted: function() {
 		// this.$on('websocket:games:create', (game) => {
 		// 	this.$log.debug('websocket:games:create', game);
 		// 	this.games.push(game);
 		// });
-
-		api.games.get()
-			.then(res => {
-				this.games = res.data;
-			})
-			.catch(err => {
-				this.$log.error(err);
-			});
 	},
 	computed: {
 		...mapGetters([
