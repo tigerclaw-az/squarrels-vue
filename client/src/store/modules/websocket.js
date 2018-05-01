@@ -44,6 +44,10 @@ const mutations = {
 		state.socket.isConnected = true;
 		Vue.$log.info(state, count);
 	},
+	// mutations for reconnect methods
+	SOCKET_RECONNECT_ERROR(state, count) {
+		Vue.$log.error(state, count);
+	},
 };
 
 export default {
