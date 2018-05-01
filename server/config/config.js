@@ -30,9 +30,6 @@ let config = {
 
 		return mylog;
 	},
-	loglevel: 'trace',
-
-	server: 'squarrels',
 
 	playerImage: 'assets/images/squirrel-placeholder.jpg'
 }
@@ -42,7 +39,7 @@ log.configure({
 		console: { type: 'console' }
 	},
 	categories: {
-		default: { appenders: ['console'], level: config.loglevel }
+		default: { appenders: ['console'], level: process.env.LOGLEVEL }
 	}
 });
 

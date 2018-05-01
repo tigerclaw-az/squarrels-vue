@@ -1,27 +1,26 @@
-module.exports = function(server) {
-	var	_ = require('lodash'),
-		cookie = require('cookie'),
-		cookieParser = require('cookie-parser'),
-		config = require('./config/config'),
-		logger = config.logger('websocket'),
-		gameMod = require('./routes/modules/game'),
-		playerMod = require('./routes/modules/player'),
-		Q = require('q'),
-		WebSocket = require('ws');
-
+module.exports = function(server, sessionParser) {
+	const _ = require('lodash');
+	const config = require('./config/config');
+	const logger = config.logger('websocket');
+	const gameMod = require('./routes/modules/game');
+	const playerMod = require('./routes/modules/player');
+	const Q = require('q');
+	const WebSocket = require('ws');
 	const Player = require('./models/PlayerModel').model;
 
-	let wss = new WebSocket.Server({
-			verifyClient: function(info, done) {
-				// logger.log('verifyClient() -> ', info.req.session, info.req.headers);
+	// Create new WebSocket server instance
+	const wss = new WebSocket.Server({
+		verifyClient: function(info, done) {
+			logger.debug('Parsing session from reequest...');
+			sessionParser(info.req, {}, () => {
+				logger.debug(info.req);
+				done(info.req.sessionID);
+			});
+		},
+		server
+	});
 
-				if (info.req.headers.cookie || info.req.session) {
-					done(info.req);
-				}
-			},
-			server
-		}),
-		hoardPlayer = null,
+	let hoardPlayer = null,
 		CLIENTS = {};
 
 	wss.broadcast = (data, sid, all = true) => {
@@ -37,9 +36,9 @@ module.exports = function(server) {
 	};
 
 	wss.on('connection', function connection(ws, req) {
-		let parseCookie = cookie.parse(req.headers.cookie)['connect.sid'],
-			sid = cookieParser.signedCookie(parseCookie, '$eCuRiTy'),
-			playerIt = (pl) => {
+		const sid = req.sessionID;
+
+		let playerIt = (pl) => {
 				let index = 0;
 
 				return {

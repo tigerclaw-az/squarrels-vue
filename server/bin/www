@@ -28,7 +28,7 @@ require('../websocket')(server, sessionParser, sessionStore);
 /**
  * Listen on provided port, on all network interfaces.
  */
-server.listen(port, config.server);
+server.listen(port, process.env.SERVER);
 server.on('error', onError);
 server.on('listening', onListening);
 

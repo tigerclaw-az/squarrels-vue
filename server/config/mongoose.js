@@ -1,10 +1,9 @@
 var mongoose = require('mongoose'),
-	mongooseSeed = require('mongoose-seed-db'),
-	config = require('./config');
+	mongooseSeed = require('mongoose-seed-db');
 
 mongoose.Promise = require('q').Promise;
-mongoose.set('debug', config.loglevel === 'debug');
+mongoose.set('debug', process.env.LOGLEVEL === 'debug' || process.env.LOGLEVEL === 'trace');
 
 module.exports = function() {
-	return mongooseSeed.connect(`mongodb://${config.server}/squarrels`);
+	return mongooseSeed.connect(`mongodb://${process.env.SERVER}/squarrels`);
 };
