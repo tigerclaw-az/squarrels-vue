@@ -5,15 +5,17 @@ var config = require('../config/config'),
 const DeckModel = require('../models/DeckModel').model;
 
 decks.get('/:id?', function(req, res) {
-	var query = {},
-		deckId = req.params.id;
+	let ids = req.params.id.split(','),
+		deckQuery = DeckModel.find();
 
-	if (deckId) {
-		query = { _id: deckId };
+	if (ids.length) {
+		deckQuery = deckQuery
+						.where('_id')
+						.in(ids);
 	}
 
 	DeckModel
-		.find(query)
+		// .find(query)
 		.populate('cards')
 		.exec()
 		.then(function(list) {
@@ -45,7 +47,7 @@ decks.post('/:id', function(req, res) {
 
 				/* eslint-disable no-undef */
 				wss.broadcast(
-					{ type: 'decks', action: 'update', nuts: doc },
+					{ namespace: 'decks', action: 'update', nuts: doc },
 					req.session.id
 				);
 				/* eslint-enable no-undef */

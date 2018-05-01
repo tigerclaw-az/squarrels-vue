@@ -5,7 +5,7 @@
 		<b-row>
 			<b-col>
 				<div class="decks-container">
-					<Deck v-for="deck in decks" :key="deck.id"></Deck>
+					<Deck v-for="deck in decks" :key="deck.id" :deckId="deck.id"></Deck>
 				</div>
 			</b-col>
 		</b-row>
@@ -55,21 +55,26 @@ export default {
 		return {
 		};
 	},
+	watch: {
+		isLoaded() {
+			this.$store.dispatch({ type: 'decks/load', id: this.id });
+		}
+	},
 	mounted: function() {
 		this.$store.dispatch({ type: 'game/load', id: this.id });
-		// See watch: https://vuejs.org/v2/guide/computed.html
 	},
 	computed: {
 		...mapState('game', [
 			'actionCard',
 			'decks',
+			'isLoaded',
 			'isStarted',
 			'instantAction',
 		]),
 		...mapState([ 'isAdmin' ]),
 	},
 	methods: {
-		onAdminOption(name) {
+		onAdminOption: function(name) {
 			this.$log.debug(name);
 		},
 	},
