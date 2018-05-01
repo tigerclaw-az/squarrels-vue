@@ -17,6 +17,14 @@
 	transform: translateY(-50%) translateX(-50%);
 }
 
+@mixin clearfix() {
+	&::after {
+		display: block;
+		content: '';
+		clear: both;
+	}
+}
+
 // Mixin that will include the fall back px declaration as well as the calculated rem value.
 @mixin fallback-font-size($size) {
 	font-size: $size;
