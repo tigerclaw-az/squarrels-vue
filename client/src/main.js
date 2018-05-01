@@ -34,7 +34,7 @@ Vue.filter('limit', function (value, amount) {
 	});
 });
 
-new Vue({
+const vm = new Vue({
 	mounted: function() {
 		this.$log.debug(this);
 		store.dispatch('init');
@@ -46,3 +46,7 @@ new Vue({
 	router,
 	store,
 }).$mount('#app');
+
+window.onbeforeunload = function() {
+	vm.$disconnect();
+};
