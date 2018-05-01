@@ -16,12 +16,14 @@ const state = {
 };
 
 const getters = {
-
+	isPlayerInGame: (state) => (id) => {
+		return state.players.filter(pl => pl.id === id).length;
+	},
 };
 
 const actions = {
 	addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
-		let newPlayers = [playerId, ...state.players];
+		let newPlayers = _.union(playerId, state.players);
 
 		if (newPlayers.length) {
 			api.games.updatePlayers(gameId, newPlayers)
@@ -40,7 +42,7 @@ const actions = {
 	load({ commit, dispatch }, { id }) {
 		return api.games.get(id)
 			.then(res => {
-				Vue.$log.debug('load()', res);
+				Vue.$log.debug('game/load', res);
 				if (res.status === 200) {
 					let gameData = res.data[0];
 
