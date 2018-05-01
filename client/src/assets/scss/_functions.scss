@@ -1,7 +1,7 @@
 $font-size-base: 1rem !default;
 
 @function convert-to-rem($value, $base-value: $font-size-base) {
-	$value: strip-unit($value) / strip-unit($base-value) * 1rem;
+	$value: strip-unit($value) / strip-unit(16px) * 1rem;
 
 	@if ($value == '0rem') { // Turn 0rem into 0
 		$value: 0;
