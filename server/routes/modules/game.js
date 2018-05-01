@@ -13,7 +13,7 @@ let gameMod = {
 			.then(doc => {
 				/* eslint-disable no-undef */
 				wss.broadcast(
-					{ type: 'games', action: 'update', nuts: doc },
+					{ namespace: 'wsGame', action: 'update', nuts: doc },
 					sid
 				);
 				/* eslint-disable no-undef */

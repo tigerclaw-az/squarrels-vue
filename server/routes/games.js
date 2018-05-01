@@ -115,7 +115,7 @@ games.post('/', function(req, res) {
 		.then(() => {
 			/* eslint-disable no-undef */
 			wss.broadcast(
-				{ action: 'games:create', nuts: game },
+				{ namespace: 'wsGame', action: 'create', nuts: game },
 				sessionId,
 				true
 			);
