@@ -33,20 +33,16 @@ players.delete('/:id?', function(req, res) {
 
 players.get('/:id?', function(req, res) {
 	let ids = req.params.id.split(','),
-		playerQuery;
+		playerQuery = Player.find();
 
 	if (ids.length) {
-		playerQuery = Player
+		playerQuery = playerQuery
 						.where('_id')
-						.in(ids)
-						.exec();
-	} else {
-		playerQuery = Player
-						.find(query)
-						.exec();
+						.in(ids);
 	}
 
 	playerQuery
+		.exec()
 		.then(function(list) {
 			if (list.length === 0) {
 				res.status(204);
