@@ -23,7 +23,7 @@ Vue.use(Layout);
 
 Vue.use(Storage, storageConfig);
 Vue.use(VueLogger, loggerConfig);
-Vue.use(VueWS, `ws://${config.host}:3000`, Object.assign({}, wsConfig, { store }));
+Vue.use(VueWS, `ws://${process.env.VUE_APP_SERVER}`, Object.assign({}, wsConfig, { store }));
 
 Vue.config.productionTip = false;
 Vue.prototype.$toastr = Toastr;

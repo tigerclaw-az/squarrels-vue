@@ -13,6 +13,7 @@
     "axios": "^0.18.0",
     "bootstrap": "^4.0.0-beta.2",
     "bootstrap-vue": "^2.0.0-rc.8",
+    "dotenv": "^5.0.1",
     "lodash": "^4.17.10",
     "moment": "^2.22.0",
     "popper.js": "^1.12.9",

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export default class BaseApi {
 	constructor(path) {
-		this.host = `${config.host}:3000`;
+		this.host = `${process.env.VUE_APP_SERVER}`;
 		this.path = path;
 		this.url = `//${this.host}/api/${path}/`;
 

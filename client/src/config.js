@@ -1,6 +1,5 @@
 export const config = Object.freeze({
-	debug: true,
-	host: 'squarrels',
+	MAX_PLAYERS: 6
 });
 
 export const websocket = Object.freeze({
@@ -16,7 +15,7 @@ export const webStorage = Object.freeze({
 });
 
 export const logger = Object.freeze({
-	logLevel: 'debug',
+	logLevel: process.env.VUE_APP_LOG_LEVEL,
 	stringifyArguments: false,
 	showLogLevel: true,
 	showMethodName: true,

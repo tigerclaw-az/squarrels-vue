@@ -11,6 +11,7 @@ import sound from '@/store/modules/sound';
 import websocket from '@/store/modules/websocket';
 
 export default new Vuex.Store({
+	strict: process.env.VUE_APP_STRICT || false,
 	modules: {
 		// api,
 		decks,
