@@ -1,13 +1,12 @@
 <template>
-	<div class="sq-players-wrapper">
+	<div class="sq-board-players">
 		<!-- <webcam channel="webcam"></webcam> -->
 		<div class="sq-players" v-if="playerIdsInGame.length >= 2">
 			<Player
 				v-for="p in playersOrder"
 				:key="p.id"
-				:class="{ current: p.isCurrent }"
-				:playerId="p"
-			></Player>
+				:player="p">
+			</Player>
 		</div>
 		<div v-else>
 			Waiting for other players to join...
@@ -71,7 +70,7 @@ export default {
 		}),
 		playersOrder: function() {
 			// TODO: Sort by this.currentPlayer.id and then by nextPlayer order
-			return _.sortBy(this.playersInGame, (pl) => pl.id === this.currentPlayer.id);
+			return _.sortBy(this.playersInGame, (pl) => pl.id !== this.currentPlayer.id);
 		},
 	},
 	methods: {
@@ -85,9 +84,10 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.sq-players {
 		display: flex;
 		flex-wrap: wrap;
+		flex: 1 0 100%;
 	}
 </style>
