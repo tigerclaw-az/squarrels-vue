@@ -1,8 +1,9 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap-vue/dist/bootstrap-vue.css';
-require('vue-toastr/src/vue-toastr.scss');
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap-vue/dist/bootstrap-vue.css';
+// require('vue-toastr/src/vue-toastr.scss');
 
 import BootstrapVue from 'bootstrap-vue';
+import 'vue-awesome/icons';
 import { Layout } from 'bootstrap-vue/es/components';
 import Toastr from 'vue-toastr';
 
