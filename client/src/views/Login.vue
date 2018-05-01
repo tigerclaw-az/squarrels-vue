@@ -32,7 +32,7 @@ export default {
 		}
 	},
 	methods: {
-		createPlayer() {
+		createPlayer: function() {
 			this.$log.debug(this.pName);
 
 			this.$store

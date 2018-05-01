@@ -27,7 +27,7 @@
 import { mapGetters } from 'vuex';
 import api from '@/api/index';
 
-// TODO: Fix loading of games after websocket reconnects
+// FIXME: Make sure games are being added when another player creates the game
 export default {
 	name: 'Start',
 	data: function() {
@@ -58,25 +58,29 @@ export default {
 		]),
 	},
 	methods: {
-		createGame() {
+		createGame: function() {
+			let vm = this;
+
 			api.games.create()
 				.then(res => {
 					let game = res.data;
 
-					this.games.push(game);
+					vm.games.push(game);
 				})
 				.catch(err => {
-					this.$log.error(err);
+					vm.$log.error(err);
 				});
 		},
 
-		getGames() {
+		getGames: function() {
+			let vm = this;
+
 			api.games.get()
 				.then(res => {
-					this.games = res.data;
+					vm.games = res.data;
 				})
 				.catch(err => {
-					this.$log.error(err);
+					vm.$log.error(err);
 				});
 		},
 	}
