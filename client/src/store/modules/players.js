@@ -42,7 +42,7 @@ const actions = {
 			return api.players.get(plArr.join(','))
 				.then(res => {
 					if (res.status === 200) {
-						commit('insert', res.data[0]);
+						commit('update', res.data[0]);
 					}
 				})
 				.catch(err => {
@@ -51,20 +51,39 @@ const actions = {
 		}
 	},
 
-	insert({ commit }, plObj) {
-		commit('insert', plObj);
-	},
-
 	create({ commit }, plObj) {
 		let plData = Object.assign({}, plDefault, plObj);
 
 		return api.players.create(plData)
 			.then(res => {
 				Vue.$storage.set('player', res.data);
-				commit('insert', res.data);
+				commit('update', res.data);
 			})
 			.catch(err => {
 			})
+	},
+
+	/**
+	 * Load player data for each player in game
+	 * @param  {Array} ids            Array of player IDs
+	 * @return {Promise}
+	 */
+	load({ commit }, { ids }) {
+		Vue.$log.debug('players/load', ids);
+		if (ids.length) {
+			return api.players.get(ids.join(','))
+				.then(res => {
+					Vue.$log.debug('api/players/get', res);
+					if (res.status === 200) {
+						res.data.forEach(plData => {
+							commit('update', plData);
+						})
+					}
+				})
+				.catch(err => {
+					Vue.$log.error(err);
+				});
+		}
 	},
 
 	update({ commit }, id, data) {
@@ -73,9 +92,14 @@ const actions = {
 };
 
 const mutations = {
-	insert(state, payload) {
-		Vue.set(state.players, payload.id, {});
-		Vue.set(state.players, payload.id, payload);
+	update(state, payload) {
+		let playerId = payload.id;
+
+		if (!state.players[playerId]) {
+			Vue.set(state.players, playerId, {});
+		}
+
+		Vue.set(state.players, playerId, payload);
 	},
 };
 

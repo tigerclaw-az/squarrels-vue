@@ -33,7 +33,7 @@ router.beforeEach((to, from, next) => {
 	store.dispatch('checkLogin')
 		.then(pl => {
 			pl.isCurrent = true;
-			store.dispatch('players/insert', pl);
+			store.dispatch('players/update', pl);
 			if (to.path === '/login') {
 				next('/');
 			} else {
