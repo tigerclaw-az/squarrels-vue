@@ -11,7 +11,7 @@
 		</b-row>
 		<b-row>
 			<b-col>
-				<BoardPlayers :isGameStarted="isStarted"></BoardPlayers>
+				<BoardPlayers :isGameStarted="isStarted" :gameId="id"></BoardPlayers>
 				<ActionCard></ActionCard>
 			</b-col>
 		</b-row>
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown'
 
@@ -56,15 +56,8 @@ export default {
 		};
 	},
 	mounted: function() {
-		// TODO: Remove player from game
-		window.addEventListener('beforeunload', () => {
-			this.$log.debug('unloaded!', this.players);
-		});
 		this.$store.dispatch({ type: 'game/load', id: this.id });
 		// See watch: https://vuejs.org/v2/guide/computed.html
-
-		// TODO: If current player doesn't exist in game.players, then
-		// 		this.$store.dispatch({ type: 'game/addPlayer', id: this.id });
 	},
 	computed: {
 		...mapState('game', [
