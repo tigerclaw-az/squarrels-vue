@@ -1,12 +1,12 @@
 <template>
 	<div class="sq-players-wrapper">
 		<!-- <webcam channel="webcam"></webcam> -->
-		<div class="sq-players" v-if="playersInGame.length >= 2">
+		<div class="sq-players" v-if="playerIdsInGame.length >= 2">
 			<Player
 				v-for="p in playersOrder"
 				:key="p.id"
 				:class="{ current: p.isCurrent }"
-				:player="p"
+				:playerId="p"
 			></Player>
 		</div>
 		<div v-else>
@@ -41,6 +41,11 @@ export default {
 					playerId: this.currentPlayer.id,
 				});
 			}
+
+			this.$store.dispatch({
+				type: 'players/load',
+				ids: this.playerIdsInGame
+			});
 		}
 	},
 	created: function() {
@@ -51,7 +56,7 @@ export default {
 
 		// TODO: Remove player from game
 		window.addEventListener('beforeunload', () => {
-			this.$log.debug('unloaded!', this.players);
+			this.$log.debug('unloaded!', this.playerIdsInGame);
 		});
 	},
 	computed: {
@@ -61,19 +66,20 @@ export default {
 		...mapState({
 			currentPlayer: state => state.localPlayer,
 			isGameLoaded: state => state.game.isLoaded,
-			playersInGame: state => state.game.players,
+			playerIdsInGame: state => state.game.players,
+			playersInGame: state => state.players.players,
 		}),
 		playersOrder: function() {
 			// TODO: Sort by this.currentPlayer.id and then by nextPlayer order
-			return this.playersInGame;
+			return _.sortBy(this.playersInGame, (pl) => pl.id === this.currentPlayer.id);
 		},
 	},
 	methods: {
 		needMorePlayers: function() {
-			return this.playersInGame.length < config.MAX_PLAYERS;
+			return this.playerIdsInGame.length < config.MAX_PLAYERS;
 		},
 		playerExists: function() {
-			return this.playersInGame.filter(pl => pl === this.currentPlayer.id ).length;
+			return this.playerIdsInGame.filter(pl => pl === this.currentPlayer.id ).length;
 		},
 	}
 }
