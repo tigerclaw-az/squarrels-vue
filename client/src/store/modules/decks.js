@@ -3,6 +3,7 @@ import Vue from 'vue';
 import api from '@/api/index';
 
 const state = {
+	isLoaded: false,
 };
 
 const getters = {
@@ -13,7 +14,7 @@ const actions = {
 	load({ commit, dispatch }, { ids }) {
 		Vue.$log.debug('decks/load', ids);
 		if (ids.length) {
-			api.decks.get(ids.split(','))
+			api.decks.get(ids.join(','))
 				.then(res => {
 					Vue.$log.debug('decks/load', res);
 					if (res.status === 200) {
@@ -33,11 +34,31 @@ const actions = {
 				});
 		}
 	},
+
+	unload({ commit }) {
+		commit('unload');
+	},
 };
 
 const mutations = {
-	update({ state }, payload) {
+	loadFinished(state) {
+		state.isLoaded = true;
+	},
+
+	unload(state) {
+		Vue.set(state, 'isLoaded', false);
+
+		for (let prop in state) {
+			if (typeof state[prop] === 'object') {
+				Vue.delete(state, prop);
+			}
+		}
+	},
+
+	update(state, payload) {
 		let deckId = payload.id;
+
+		Vue.$log.debug('mutation::decks/update', state, payload);
 
 		if (!state[deckId]) {
 			Vue.set(state, deckId, {});
@@ -48,6 +69,7 @@ const mutations = {
 };
 
 export default {
+	namespaced: true,
 	state,
 	getters,
 	actions,

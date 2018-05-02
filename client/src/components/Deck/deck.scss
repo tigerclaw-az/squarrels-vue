@@ -1,1 +1,90 @@
 $deck-height: 16;
+
+@import '~@/components/Card/card.scss';
+
+#deck {
+	flex: 1;
+	$height: map-get($card-height, 'small') + $deck-height;
+	height: rem-calc($height);
+	margin-right: 1rem;
+	position: relative;
+	width: rem-calc(map-get($card-width, 'small'));
+
+	.count {
+		@include center-horizontal;
+
+		font-size: 2rem;
+		top: -30%;
+		z-index: 1;
+	}
+
+	&[type='main'] {
+		.deck {
+			// box-shadow: 4px 6px 1px get-color('pickled-bean');
+			border: 2px outset get-color('zest');
+		}
+	}
+
+	&[type='discard'] {
+		border: 1px dashed get-color('black');
+		height: rem-calc($height + 32);
+		padding: 1rem;
+
+		.deck {
+			border: 2px dashed transparent;
+
+			&.drag-enter {
+				border-color: get-color('zest');
+			}
+
+			.card {
+				$rotate: 0;
+
+				@for $i from 1 through 20 {
+					&:nth-child(#{$i}) {
+						transform: rotate(#{$rotate}deg);
+					}
+
+					$rotate: $rotate + 5;
+				}
+			}
+		}
+	}
+
+	&[type='action'] {
+		.card {
+			animation: .5s linear shrink;
+		}
+	}
+
+	.deck {
+		@extend %playing-cards;
+
+		display: block;
+		height: 100%;
+		margin: 0 auto;
+		width: 100%;
+
+		.cards-group {
+			margin: 0 auto;
+			width: rem-calc(map-get($card-width, 'small'));
+		}
+	}
+
+	@media (min-width: $screen-md-min) {
+		$height: map-get($card-height, 'medium') + $deck-height;
+		height: rem-calc($height);
+		width: rem-calc(map-get($card-width, 'medium'));
+
+		&[type='discard'] {
+			height: rem-calc($height + $deck-height * 2);
+			padding: 1rem;
+		}
+
+		.deck {
+			.cards-group {
+				width: rem-calc(map-get($card-width, 'medium'));
+			}
+		}
+	}
+}

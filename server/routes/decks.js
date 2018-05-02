@@ -14,7 +14,7 @@ decks.get('/:id?', function(req, res) {
 						.in(ids);
 	}
 
-	DeckModel
+	deckQuery
 		// .find(query)
 		.populate('cards')
 		.exec()

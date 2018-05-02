@@ -1,33 +1,33 @@
 <template>
-	<div id="deck">
-		<div class="count" v-if="isType('action')">{{totalCards}}</div>
+	<div id="deck" :type="deck.deckType" v-if="isCurrentDeckLoaded">
+		<div class="count" v-if="isType('main')">{{totalCards}}</div>
 		<div
 			class="deck"
 			:class="{
-				'draw-card': deckType === 'main' && canDraw
+				'draw-card': isType('main') && canDraw
 			}"
-			v-bind:drop="isType('discard')"
-			v-bind:drop-success="onDropComplete($data, $event)"
+			:drop="isType('discard')"
+			:drop-success="onDropCompleted"
 		>
 			<a
-				class="cards-group"
 				href=""
+				class="cards-group"
+				:class="{ disabled: isDisabled }"
 				role="button"
-				v-class="{ disabled: isDisabled }"
 				v-show="totalCards"
 				@mousedown.prevent="onMousedown"
 			>
 				<span
 					class="card"
+					:class="isType('action') ? 'action--{{card.name}}' : 'blank--'"
 					v-for="card in cardsLimited"
 					:key="card.id"
-					v-class="isType('action') ? 'action--{{card.name}}' : 'blank--'"
 				>
 				</span>
 			</a>
 		</div>
-		<div ng-if="isType('main') && isAdmin" uib-dropdown>
-			<b-dropdown id="dropdown-settings" variant="danger" text="Choose Card" @click="onDropdownClick">
+		<div v-if="isType('main') && isAdmin" uib-dropdown>
+			<b-dropdown id="dropdown-settings" variant="danger" text="Choose Card" @click="onClickDropdown">
 				<b-dropdown-item data-type="action" data-name="ambush">Ambush</b-dropdown-item>
 				<b-dropdown-item data-type="action" data-name="communism">Communism</b-dropdown-item>
 				<b-dropdown-item data-type="action" data-name="hoard">Hoard</b-dropdown-item>
@@ -46,55 +46,68 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
-
-// import Card from '@/components/Card/Card.vue';
+import { mapState } from 'vuex';
 
 export default {
 	name: 'Deck',
 	components: {
-		// Card,
 	},
 	props: {
-		deckType: {
+		deckId: {
 			type: String,
 			required: true
 		},
 	},
 	data: function() {
 		return {
-			cards: [],
+			deck: {},
+			isCurrentDeckLoaded: false,
 		};
 	},
+	watch: {
+		isDecksLoaded() {
+			this.$log.debug('decks -> ', this.$store.state.decks);
+			this.deck = this.$store.state.decks[this.deckId];
+
+			if (this.deck) {
+				this.isCurrentDeckLoaded = true;
+			}
+		},
+	},
 	computed: {
+		...mapState([ 'isAdmin' ]),
 		...mapState({
-			isGameStarted: 'game/isStarted'
+			isGameStarted: state => state.game.isStarted,
+			isDecksLoaded: state => state.decks.isLoaded,
 		}),
-		...mapGetters(['isAdmin']),
 		canDraw: function() {
 			return true;
 		},
+		cards: function() {
+			return this.deck.cards;
+		},
 		cardsLimited: function() {
 			return this.isType('main') ? this.cards[0] : this.cards;
-		},
-		isDisabled: function() {
-			return this.isType('main') && !this.canDraw() ||
-				this.isType('discard') && this.tooManyClicks ||
-				this.isType('action') ||
-				!this.game.isStarted;
 		},
 		totalCards: function() {
 			return this.cards.length;
 		},
 	},
 	methods: {
+		isDisabled: function() {
+			return this.isType('main') && !this.canDraw() ||
+				this.isType('discard') && this.tooManyClicks ||
+				this.isType('action') ||
+				!this.isGameStarted;
+		},
+		// Must be method as you can't pass parameters to 'computed' functions
 		isType: function(name) {
-			return this.deckType === name;
+			return this.deck.deckType === name;
 		},
 		onDropCompleted: function(event) {
 			this.$log.debug(event);
 		},
-		onDropdownClick: function(event) {
+		onClickDropdown: function(event) {
 			this.$log.debug(event);
 		},
 		onMousedown: function(event) {
@@ -105,100 +118,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
-	@import '~@/components/Card/card.scss';
-	@import './deck';
-
-	#deck {
-		flex: 1;
-		$height: map-get($card-height, 'small') + $deck-height;
-		height: rem-calc($height);
-		margin-right: 1rem;
-		position: relative;
-		width: rem-calc(map-get($card-width, 'small'));
-
-		.count {
-			@include center-horizontal;
-
-			font-size: 2rem;
-			top: -30%;
-			z-index: 1;
-		}
-
-		&[type='main'] {
-			.deck {
-				// box-shadow: 4px 6px 1px get-color('pickled-bean');
-				border: 2px outset get-color('zest');
-			}
-		}
-
-		&[type='discard'] {
-			border: 1px dashed get-color('black');
-			height: rem-calc($height + 32);
-			padding: 1rem;
-
-			.deck {
-				border: 2px dashed transparent;
-
-				&.drag-enter {
-					border-color: get-color('zest');
-				}
-
-				.card {
-					$rotate: 0;
-
-					@for $i from 1 through 20 {
-						&:nth-child(#{$i}) {
-							transform: rotate(#{$rotate}deg);
-						}
-
-						$rotate: $rotate + 5;
-					}
-				}
-			}
-		}
-
-		&[type='action'] {
-			.card {
-				animation: .5s linear shrink;
-			}
-		}
-
-		.deck {
-			@extend %playing-cards;
-
-			display: block;
-			height: 100%;
-			margin: 0 auto;
-			width: 100%;
-
-			.cards-group {
-				margin: 0 auto;
-				width: rem-calc(map-get($card-width, 'small'));
-			}
-		}
-
-		@media (min-width: $screen-md-min) {
-			$height: map-get($card-height, 'medium') + $deck-height;
-			height: rem-calc($height);
-			width: rem-calc(map-get($card-width, 'medium'));
-
-			.count {
-				font-size: 4rem;
-				top: -25%;
-			}
-
-			&[type='discard'] {
-				height: rem-calc($height + $deck-height * 2);
-				padding: 1rem;
-			}
-
-			.deck {
-				.cards-group {
-					width: rem-calc(map-get($card-width, 'medium'));
-				}
-			}
-		}
-	}
-
-</style>
+<style scoped lang="scss" src='./deck.scss'></style>

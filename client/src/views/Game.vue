@@ -5,7 +5,7 @@
 		<b-row>
 			<b-col>
 				<div class="decks-container">
-					<Deck v-for="deck in decks" :key="deck.id" :deckId="deck.id"></Deck>
+					<Deck v-for="deckId in decks" :key="deckId" :deckId="deckId"></Deck>
 				</div>
 			</b-col>
 		</b-row>
@@ -50,15 +50,24 @@ export default {
 		BoardPlayers,
 		Deck,
 	},
-	props: ['id'],
+	props: {
+		id: {
+			type: String,
+			required: true,
+		}
+	},
 	data: function() {
 		return {
 		};
 	},
 	watch: {
-		isLoaded() {
-			this.$store.dispatch({ type: 'decks/load', id: this.id });
+		isLoaded: function() {
+			this.$store.dispatch({ type: 'decks/load', ids: this.decks });
 		}
+	},
+	beforeDestroy: function() {
+		this.$store.dispatch({ type: 'game/unload', id: this.id });
+		this.$store.dispatch({ type: 'decks/unload', id: this.id });
 	},
 	mounted: function() {
 		this.$store.dispatch({ type: 'game/load', id: this.id });
