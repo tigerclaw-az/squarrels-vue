@@ -17,6 +17,10 @@ export default class BaseApi {
 		return this.http.post('/', data);
 	}
 
+	delete(id) {
+		return this.http.delete(`/${id}`);
+	}
+
 	get(query = '') {
 		return this.http.get(`/${query}`);
 	}
