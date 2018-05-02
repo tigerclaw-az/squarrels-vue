@@ -28,7 +28,7 @@ let router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-	Vue.$log.debug(Vue, store, to, from);
+	Vue.$log.debug('router.beforeEach', store, to, from);
 
 	store.dispatch('checkLogin')
 		.then(pl => {
