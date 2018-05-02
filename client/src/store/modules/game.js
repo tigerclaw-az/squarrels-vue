@@ -1,4 +1,6 @@
 import Vue from 'vue';
+import router from '@/router';
+
 import _ from 'lodash';
 
 import api from '@/api/index';
@@ -23,7 +25,9 @@ const getters = {
 
 const actions = {
 	addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
-		let newPlayers = _.union(playerId, state.players);
+		let newPlayers = _.union(playerId, [...state.players, playerId]);
+
+		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
 
 		if (newPlayers.length) {
 			api.games.updatePlayers(gameId, newPlayers)
@@ -54,7 +58,7 @@ const actions = {
 						dispatch('players/add', gameData.players, { root: true });
 					}
 				} else {
-					// TODO: Handle game not found logic
+					router.push('/');
 				}
 			})
 			.catch(err => {
@@ -73,7 +77,7 @@ const mutations = {
 	},
 
 	update(state, payload) {
-		Vue.$log.debug(state, payload);
+		Vue.$log.debug('mutation::game/update', state, payload);
 
 		if (payload) {
 			for (let prop of Object.keys(state)) {
@@ -82,6 +86,8 @@ const mutations = {
 				}
 			}
 		}
+
+		Vue.$log.debug('mutation::UPDATED', state);
 	},
 };
 
