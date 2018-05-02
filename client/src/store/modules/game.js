@@ -5,7 +5,7 @@ import _ from 'lodash';
 
 import api from '@/api/index';
 
-const state = {
+const initialState = {
 	actionCard: null,
 	createdAt: null,
 	decks: [],
@@ -16,6 +16,8 @@ const state = {
 	roundNumber: 1,
 	updatedAt: null,
 };
+
+const state = Object.assign({}, initialState);
 
 const getters = {
 	isPlayerInGame: (state) => (id) => {
@@ -66,6 +68,10 @@ const actions = {
 			});
 	},
 
+	unload({ commit }) {
+		commit('unload');
+	},
+
 	update({ commit }, data) {
 
 	},
@@ -73,14 +79,22 @@ const actions = {
 
 const mutations = {
 	loadFinished(state) {
-		state.isLoaded = true;
+		Vue.set(state, 'isLoaded', true);
+	},
+
+	unload(state) {
+		for (let prop in initialState) {
+			Vue.set(state, prop, initialState[prop]);
+		}
+
+		Vue.set(state, 'isLoaded', false);
 	},
 
 	update(state, payload) {
 		Vue.$log.debug('mutation::game/update', state, payload);
 
 		if (payload) {
-			for (let prop of Object.keys(state)) {
+			for (let prop in state) {
 				if (payload.hasOwnProperty(prop)) {
 					Vue.set(state, prop, payload[prop]);
 				}
