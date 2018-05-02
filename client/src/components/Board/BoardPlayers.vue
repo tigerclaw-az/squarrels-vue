@@ -26,27 +26,37 @@ export default {
 	components: {
 		Player,
 	},
-	props: ['isGameStarted', 'gameId'],
+	props: {
+		isGameStarted: {
+			type: Boolean,
+			required: true,
+		},
+		gameId: {
+			type: String,
+			required: true,
+		}
+	},
 	data: function() {
 		return {
 		}
 	},
 	watch: {
-		isGameLoaded() {
-			// TODO: If current player doesn't exist in game.players, then
-			if (this.needMorePlayers() && !this.playerExists()) {
+		isGameLoaded: function() {
+			if (this.needMorePlayers && !this.playerExists) {
 				this.$store.dispatch({
 					type: 'game/addPlayer',
 					gameId: this.gameId,
 					playerId: this.currentPlayer.id,
 				});
 			}
+		},
 
+		playerIdsInGame: function() {
 			this.$store.dispatch({
 				type: 'players/load',
 				ids: this.playerIdsInGame
 			});
-		}
+		},
 	},
 	created: function() {
 
@@ -69,18 +79,19 @@ export default {
 			playerIdsInGame: state => state.game.players,
 			playersInGame: state => state.players,
 		}),
-		playersOrder: function() {
-			// TODO: Sort by this.currentPlayer.id and then by nextPlayer order
-			return _.sortBy(this.playersInGame, (pl) => pl.id !== this.currentPlayer.id);
-		},
-	},
-	methods: {
 		needMorePlayers: function() {
 			return this.playerIdsInGame.length < config.MAX_PLAYERS;
 		},
 		playerExists: function() {
 			return this.playerIdsInGame.filter(pl => pl === this.currentPlayer.id ).length;
 		},
+		playersOrder: function() {
+			// TODO: Sort by this.currentPlayer.id and then by nextPlayer order
+			return _.sortBy(this.playersInGame, (pl) => pl.id !== this.currentPlayer.id);
+		},
+	},
+	methods: {
+
 	}
 }
 </script>
