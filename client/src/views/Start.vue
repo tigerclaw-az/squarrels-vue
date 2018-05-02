@@ -9,12 +9,15 @@
 			<div v-else
 				class="games-list">
 				<ul>
-					<li v-for="game in games" :key="game.id">
-						<router-link :to="{ name: 'game', params: { id: game.id }}"
+					<li v-for="(value, gameId) in games" :key="gameId">
+						<router-link :to="{ name: 'game', params: { id: gameId }}"
 							class="btn btn-primary btn-join-game"
 							v-cloak>
-							JOIN {{game.id}}
+							JOIN {{gameId}}
 						</router-link>
+						<button class="btn btn-danger" @click="deleteGame(gameId)">
+							<icon name="trash" class="icon icon-delete"></icon>
+						</button>
 					</li>
 				</ul>
 				<button class="btn btn-primary btn-new-game" @click="createGame">NEW GAME</button>
@@ -24,7 +27,9 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import { mapGetters } from 'vuex';
+import Icon from 'vue-awesome/components/Icon';
 
 import api from '@/api/index';
 import EventBus from '@/EventBus';
@@ -32,9 +37,12 @@ import EventBus from '@/EventBus';
 // FIXME: Make sure games are being added when another player creates the game
 export default {
 	name: 'Start',
+	components: {
+		Icon,
+	},
 	data: function() {
 		return {
-			games: [],
+			games: {},
 		}
 	},
 	watch: {
@@ -59,7 +67,8 @@ export default {
 		this.getGames();
 
 		EventBus.$on('game:create', nuts => {
-			vm.games.push(nuts);
+			// vm.games.push(nuts.id);
+			Vue.set(vm.games, nuts.id, {});
 		});
 	},
 	computed: {
@@ -75,7 +84,7 @@ export default {
 				.then(res => {
 					let game = res.data;
 
-					this.$log.debug('Start:games.create', vm, game);
+					vm.$log.debug('Start:games.create', vm, game);
 
 					// The game will be added once we get the
 					// response back from websocket
@@ -92,11 +101,26 @@ export default {
 			api.games.get()
 				.then(res => {
 					if (res.status === 200) {
-						vm.games = res.data;
+						let gameData = res.data;
+
+						for (let game of gameData) {
+							// vm.games.push(game.id);
+							Vue.set(vm.games, game.id, {});
+						}
 					}
 				})
 				.catch(err => {
 					vm.$log.error(err);
+				});
+		},
+
+		deleteGame: function(id) {
+			api.games.delete(id)
+				.then(() => {
+					Vue.delete(this.games, id);
+				})
+				.catch(err => {
+					this.$log.error(err);
 				});
 		},
 	}
