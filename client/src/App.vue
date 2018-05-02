@@ -8,6 +8,7 @@
 <style lang="scss">
 	@import '~@/assets/scss/variables';
 	@import '../node_modules/bootstrap/scss/bootstrap.scss';
+	@import '../node_modules/vue-toastr/src/vue-toastr.scss';
 
 	* {
 		// @include user-select(none);
