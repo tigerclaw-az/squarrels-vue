@@ -65,6 +65,8 @@ export default {
 				.then(res => {
 					let game = res.data;
 
+					this.$log.debug('Start:games.create', vm, game);
+
 					vm.games.push(game);
 				})
 				.catch(err => {
@@ -77,7 +79,9 @@ export default {
 
 			api.games.get()
 				.then(res => {
-					vm.games = res.data;
+					if (res.status === 200) {
+						vm.games = res.data;
+					}
 				})
 				.catch(err => {
 					vm.$log.error(err);
