@@ -1,6 +1,6 @@
 <template>
 	<div id="app" v-cloak>
-		<vue-toastr ref="toastr"></vue-toastr>
+		<vue-toast ref="toastr"></vue-toast>
 		<router-view/>
 	</div>
 </template>
@@ -8,7 +8,6 @@
 <style lang="scss">
 	@import '~@/assets/scss/variables';
 	@import '../node_modules/bootstrap/scss/bootstrap.scss';
-	@import '../node_modules/vue-toastr/src/vue-toastr.scss';
 
 	* {
 		// @include user-select(none);

@@ -3,9 +3,11 @@
 // require('vue-toastr/src/vue-toastr.scss');
 
 import BootstrapVue from 'bootstrap-vue';
-import 'vue-awesome/icons';
 import { Layout } from 'bootstrap-vue/es/components';
-import Toastr from 'vue-toastr';
+import 'vue-awesome/icons';
+
+import 'vue-toast/dist/vue-toast.min.css';
+import VueToast from 'vue-toast';
 
 import Vue from 'vue';
 import VueLogger from 'vuejs-logger';
@@ -20,14 +22,12 @@ import { config, websocket as wsConfig, webStorage as storageConfig, logger as l
 
 Vue.use(BootstrapVue);
 Vue.use(Layout);
-// Vue.use(Toastr);
 
 Vue.use(Storage, storageConfig);
 Vue.use(VueLogger, loggerConfig);
 Vue.use(VueWS, `ws://${process.env.VUE_APP_SERVER}`, Object.assign({}, wsConfig, { store }));
 
 Vue.config.productionTip = false;
-Vue.prototype.$toastr = Toastr;
 
 Vue.filter('limit', function (value, amount) {
 	return value.filter(function(val, index){
@@ -41,7 +41,7 @@ const vm = new Vue({
 		store.dispatch('init');
 	},
 	components: {
-		'vue-toastr': Toastr,
+		VueToast,
 	},
 	...App,
 	router,
