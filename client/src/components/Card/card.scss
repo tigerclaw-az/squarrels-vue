@@ -1,12 +1,12 @@
 @import '~@/assets/scss/variables';
 
 $card-height: (
-	small: 160,
-	medium: 270
+	small: 158,
+	medium: 158
 );
 $card-width: (
 	small: 120,
-	medium: 200
+	medium: 120
 );
 $card-width-stack: 60;
 $num-cards: 20;
@@ -55,7 +55,7 @@ $card-images: (
 		width: rem-calc(map-get($card-width, 'small'));
 	}
 
-	[card-type="action"] {
+	[card-type='action'] {
 		height: 0;
 		width: 0;
 	}
