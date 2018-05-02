@@ -25,7 +25,9 @@
 
 <script>
 import { mapGetters } from 'vuex';
+
 import api from '@/api/index';
+import EventBus from '@/EventBus';
 
 // FIXME: Make sure games are being added when another player creates the game
 export default {
@@ -41,6 +43,8 @@ export default {
 		 * whenever the websocket reconnects
 		 * @param  {Boolean}  newConn Updated value of isConnected
 		 * @param  {Boolean}  oldConn Old value of isConnected
+		 *
+		 * @returns {void}
 		 */
 		isConnected(newConn, oldConn) {
 			this.$log.debug('watch.isConnected', oldConn, newConn);
@@ -50,7 +54,13 @@ export default {
 		}
 	},
 	mounted: function() {
+		let vm = this;
+
 		this.getGames();
+
+		EventBus.$on('game:create', nuts => {
+			vm.games.push(nuts);
+		});
 	},
 	computed: {
 		...mapGetters([
@@ -67,7 +77,9 @@ export default {
 
 					this.$log.debug('Start:games.create', vm, game);
 
-					vm.games.push(game);
+					// The game will be added once we get the
+					// response back from websocket
+					// vm.games.push(game);
 				})
 				.catch(err => {
 					vm.$log.error(err);
