@@ -69,7 +69,12 @@ import Icon from 'vue-awesome/components/Icon';
 
 export default {
 	name: 'Player',
-	props: ['player'],
+	props: {
+		player: {
+			type: Object,
+			required: true,
+		}
+	},
 	components: {
 		Icon
 	},
