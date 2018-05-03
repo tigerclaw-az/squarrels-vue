@@ -10,7 +10,7 @@ const PlayerModel = require('../models/PlayerModel').model;
 
 games.delete('/:id', function(req, res) {
 	let id = req.params.id,
-		sessionId = req.session.id;
+		sessionId = req.sessionID;
 
 	logger.debug('games:delete -> ', id);
 
@@ -105,7 +105,7 @@ games.get('/:id?', function(req, res) {
 });
 
 games.post('/', function(req, res) {
-	const sessionId = req.session.id;
+	const sessionId = req.sessionID;
 	const CardModel = require('../models/CardModel').model;
 	const DeckModel = require('../models/DeckModel').model;
 
@@ -197,7 +197,7 @@ games.post('/', function(req, res) {
 
 games.post('/:id', function(req, res) {
 	let gameId = req.params.id,
-		sessionId = req.session.id;
+		sessionId = req.sessionID;
 
 	logger.debug('update -> ', req.body);
 
@@ -215,7 +215,7 @@ games.post('/:id', function(req, res) {
 
 games.post('/:id/start', function(req, res) {
 	const gameId = req.params.id;
-	const sessionId = req.session.id;
+	const sessionId = req.sessionID;
 
 	logger.debug('start -> ', req.body);
 

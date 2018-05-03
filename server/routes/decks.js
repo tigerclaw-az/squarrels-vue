@@ -34,9 +34,11 @@ decks.get('/:id?', function(req, res) {
 });
 
 decks.post('/:id', function(req, res) {
-	var deckId = req.params.id,
-		deck = { _id: deckId },
-		options = { new: true };
+	const sessionId = req.sessionID;
+
+	const deckId = req.params.id;
+	const deck = { _id: deckId };
+	const options = { new: true };
 
 	DeckModel
 		.findOneAndUpdate(deck, req.body, options)
@@ -48,7 +50,7 @@ decks.post('/:id', function(req, res) {
 				/* eslint-disable no-undef */
 				wss.broadcast(
 					{ namespace: 'decks', action: 'update', nuts: doc },
-					req.session.id
+					sessionId
 				);
 				/* eslint-enable no-undef */
 			} else {

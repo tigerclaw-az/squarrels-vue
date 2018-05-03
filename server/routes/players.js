@@ -32,8 +32,11 @@ players.delete('/:id?', function(req, res) {
 });
 
 players.get('/:id?', function(req, res) {
-	let ids = req.params.id.split(','),
-		playerQuery = Player.find();
+	const sessionId = req.sessionID;
+	const ids = req.params.id.split(',');
+	let playerQuery = Player.find();
+
+	logger.debug('sessionId -> ', sessionId);
 
 	if (ids.length) {
 		playerQuery = playerQuery
@@ -61,6 +64,8 @@ players.get('/:id?', function(req, res) {
 });
 
 players.post('/:id?', function(req, res) {
+	const sessionId = req.sessionID;
+
 	var playerId = req.params.id,
 		validatePlayer = (pl) => {
 			if (pl.name) {
@@ -77,7 +82,7 @@ players.post('/:id?', function(req, res) {
 		},
 		addPlayer = () => {
 			let playerDefaults = {
-					sessionId: req.session.id,
+					sessionId,
 					name: config.getRandomStr(8),
 					img: config.playerImage
 				},
@@ -111,7 +116,7 @@ players.post('/:id?', function(req, res) {
 				});
 		};
 
-	if (!req.session.id) {
+	if (!sessionId) {
 		logger.error('!!Possible Attack!!', req);
 		res.status(500).json(config.apiError('ALERT: Missing required sessionId!!'));
 
@@ -128,7 +133,7 @@ players.post('/:id?', function(req, res) {
 		}
 
 		playerMod
-			.update(playerId, plData, req.session.id)
+			.update(playerId, plData, sessionId)
 			.then(doc => {
 				let statusCode = doc ? 200 : 204,
 					data = doc ? doc : [];
