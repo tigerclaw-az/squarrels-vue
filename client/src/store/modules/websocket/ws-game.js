@@ -17,6 +17,11 @@ const actions = {
 		EventBus.$emit('game:create', data.nuts);
 	},
 
+	delete({ commit }, data) {
+		Vue.$log.debug(this, this._vm, data);
+		EventBus.$emit('game:delete', data.id);
+	},
+
 	update({ commit }, data) {
 		let curRoute = router.currentRoute;
 		let nuts = data.nuts;
