@@ -10,6 +10,7 @@ export default class BaseApi {
 		this.http = axios.create({
 			baseURL: this.url,
 			timeout: 2000,
+			withCredentials: true,
 		});
 	}
 
