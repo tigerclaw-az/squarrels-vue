@@ -33,12 +33,16 @@ Vue.use(Toasted, {
 });
 Vue.use(Storage, storageConfig);
 Vue.use(VueLogger, loggerConfig);
-Vue.use(VueWS, `ws://${process.env.VUE_APP_SERVER}`, Object.assign({}, wsConfig, { store }));
+Vue.use(
+	VueWS,
+	`ws://${process.env.VUE_APP_SERVER}`,
+	Object.assign({}, wsConfig, { store })
+);
 
 Vue.config.productionTip = false;
 
-Vue.filter('limit', function (value, amount) {
-	return value.filter(function(val, index){
+Vue.filter('limit', function(value, amount) {
+	return value.filter(function(val, index) {
 		return index < amount;
 	});
 });
@@ -48,11 +52,10 @@ const vm = new Vue({
 		this.$log.debug(this);
 		store.dispatch('init');
 	},
-	components: {
-	},
+	components: {},
 	...App,
 	router,
-	store,
+	store
 }).$mount('#app');
 
 window.onbeforeunload = function() {
