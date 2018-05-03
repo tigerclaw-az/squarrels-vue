@@ -6,8 +6,7 @@ import BootstrapVue from 'bootstrap-vue';
 import { Layout } from 'bootstrap-vue/es/components';
 import 'vue-awesome/icons';
 
-import 'vue-toast/dist/vue-toast.min.css';
-import VueToast from 'vue-toast';
+import Toasted from 'vue-toasted';
 
 import Vue from 'vue';
 import VueLogger from 'vuejs-logger';
@@ -18,11 +17,20 @@ import App from './App.vue';
 import router from './router';
 import store from './store/index';
 
-import { config, websocket as wsConfig, webStorage as storageConfig, logger as loggerConfig } from './config';
+import {
+	toast as toastConfig,
+	websocket as wsConfig,
+	webStorage as storageConfig,
+	logger as loggerConfig
+} from './config';
 
 Vue.use(BootstrapVue);
 Vue.use(Layout);
 
+Vue.use(Toasted, {
+	router,
+	...toastConfig
+});
 Vue.use(Storage, storageConfig);
 Vue.use(VueLogger, loggerConfig);
 Vue.use(VueWS, `ws://${process.env.VUE_APP_SERVER}`, Object.assign({}, wsConfig, { store }));
@@ -41,7 +49,6 @@ const vm = new Vue({
 		store.dispatch('init');
 	},
 	components: {
-		VueToast,
 	},
 	...App,
 	router,

@@ -1,6 +1,5 @@
 <template>
 	<div id="app" v-cloak>
-		<vue-toast ref="toastr"></vue-toast>
 		<router-view/>
 	</div>
 </template>
