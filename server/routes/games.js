@@ -1,8 +1,8 @@
-var _ = require('lodash'),
-	config = require('../config/config'),
-	logger = config.logger('routes:games'),
-	games = require('express').Router(),
-	gameMod = require('./modules/game');
+const _ = require('lodash');
+const config = require('../config/config');
+const logger = config.logger('routes:games');
+const games = require('express').Router();
+const gameMod = require('./modules/game');
 
 const DeckModel = require('../models/DeckModel').model;
 const GameModel = require('../models/GameModel').model;
@@ -31,21 +31,15 @@ games.delete('/:id', function(req, res) {
 
 			logger.debug('decks -> ', decks);
 
-			/* eslint-disable no-undef */
-			wss.broadcast(
-				{ action: 'remove', type: 'games' },
-				sessionId
-			);
-			/* eslint-enable no-undef */
-
 			DeckModel
 				.deleteMany({ '_id': { $in: decks } })
 				.then(() => {
 					/* eslint-disable no-undef */
-					wss.broadcast(
-						{ action: 'remove', type: 'decks' },
-						sessionId
-					);
+					// NOTE: No need to know when decks are removed
+					// wss.broadcast(
+					// 	{ namespace: 'wsDecks', action: 'remove' },
+					// 	sessionId
+					// );
 					/* eslint-enable no-undef */
 
 					logger.debug('players -> ', players);
@@ -55,7 +49,7 @@ games.delete('/:id', function(req, res) {
 						.then(() => {
 							/* eslint-disable no-undef */
 							wss.broadcast(
-								{ action: 'update', type: 'players', nuts: playerUpdate },
+								{ namespace: 'wsPlayers', action: 'update', nuts: playerUpdate },
 								sessionId
 							);
 							/* eslint-enable no-undef */
@@ -63,6 +57,13 @@ games.delete('/:id', function(req, res) {
 							GameModel
 								.remove({ _id: game.id })
 								.then(function() {
+									/* eslint-disable no-undef */
+									wss.broadcast(
+										{ namespace: 'wsGame', action: 'delete', id: game.id },
+										sessionId
+									);
+									/* eslint-enable no-undef */
+
 									res.sendStatus(200);
 								})
 								.catch(function(err) {
