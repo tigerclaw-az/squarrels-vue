@@ -43,6 +43,9 @@ export default {
 	data: function() {
 		return {
 			games: {},
+			waitCreateGame: false,
+			waitDeleteGame: false,
+			waitLoadGames: false,
 		}
 	},
 	watch: {
@@ -57,19 +60,23 @@ export default {
 		isConnected(newConn, oldConn) {
 			this.$log.debug('watch.isConnected', oldConn, newConn);
 			if (newConn) {
-				this.getGames();
+				this.loadGames();
 			}
 		}
 	},
 	mounted: function() {
-		let vm = this;
-
-		this.getGames();
+		this.loadGames();
 
 		EventBus.$on('game:create', nuts => {
-			// vm.games.push(nuts.id);
-			Vue.set(vm.games, nuts.id, {});
+			Vue.set(this.games, nuts.id, {});
+			this.waitCreateGame = false;
 		});
+
+		EventBus.$on('game:delete', id => {
+			this.$log.debug('event-game:delete -> ', id);
+			Vue.delete(this.games, id);
+			this.waitDeleteGame = false;
+		})
 	},
 	computed: {
 		...mapGetters([
@@ -79,6 +86,8 @@ export default {
 	methods: {
 		createGame: function() {
 			let vm = this;
+
+			this.waitCreateGame = true;
 
 			api.games.create()
 				.then(res => {
@@ -91,35 +100,43 @@ export default {
 					// vm.games.push(game);
 				})
 				.catch(err => {
+					this.waitCreateGame = false;
 					vm.$log.error(err);
 				});
 		},
 
-		getGames: function() {
+		loadGames: function() {
 			let vm = this;
+
+			this.waitLoadGames = true;
 
 			api.games.get()
 				.then(res => {
 					if (res.status === 200) {
 						let gameData = res.data;
 
+						this.waitLoadGames = false;
+
 						for (let game of gameData) {
-							// vm.games.push(game.id);
 							Vue.set(vm.games, game.id, {});
 						}
 					}
 				})
 				.catch(err => {
+					this.waitLoadGames = false;
 					vm.$log.error(err);
 				});
 		},
 
 		deleteGame: function(id) {
+			this.waitDeleteGame = true;
+
 			api.games.delete(id)
 				.then(() => {
-					Vue.delete(this.games, id);
+					// Actual removal will be done when websocket request comes back
 				})
 				.catch(err => {
+					this.waitDeleteGame = false;
 					this.$log.error(err);
 				});
 		},
