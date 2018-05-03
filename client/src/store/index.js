@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-// import api from '@/store/modules/api/api';
+import api from '@/api/index';
 import decks from '@/store/modules/decks';
 import game from '@/store/modules/game';
 import players from '@/store/modules/players';
@@ -34,12 +34,37 @@ const actions = {
 		});
 	},
 
-	checkLogin({ commit }) {
+	checkLogin({ commit, state }) {
 		return new Promise((resolve, reject) => {
-			let player = Vue.$storage.get('player');
+			let player = Vue.$storage.get('player'),
+				localPlayer = state.localPlayer;
+
+			this._vm.$log.debug('checkLogin', player, localPlayer);
+
 			if (player) {
-				resolve(player);
-				commit('LOGIN', player);
+				if (localPlayer.id) {
+					resolve(localPlayer);
+					commit('LOGIN', player);
+				} else {
+					api.players
+						.get(player.id)
+						.then(res => {
+							if (res.status !== 200) {
+								this._vm.$toasted.error('USER NOT FOUND');
+								Vue.$storage.remove('player');
+								reject('USER NOT FOUND');
+								return false;
+							}
+
+							let pl = res.data[0];
+							resolve(pl);
+							commit('LOGIN', pl);
+						})
+						.catch(err => {
+							this._vm.$toasted.error(err);
+							reject('Unable to find player', err);
+						});
+				}
 			} else {
 				reject('User not logged in');
 			}
@@ -54,7 +79,7 @@ const mutations = {
 	},
 	SET_CONFIG(state, config) {
 		state.isAdmin = config.isAdmin;
-	},
+	}
 };
 
 export default new Vuex.Store({
@@ -62,5 +87,5 @@ export default new Vuex.Store({
 	modules,
 	state: state,
 	actions,
-	mutations,
+	mutations
 });

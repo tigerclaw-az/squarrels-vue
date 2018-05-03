@@ -63,7 +63,7 @@ const sessionParser = session({
 	name: 'squarrels',
 	secret: SECRET,
 	store: sessionStore,
-	resave: false,
+	resave: true,
 	saveUninitialized: true
 });
 

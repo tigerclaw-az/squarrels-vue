@@ -12,7 +12,11 @@ const state = {
 };
 
 const getters = {
-	get: (state) => (prop, value, index = false, all = false) => {
+	getById: (state) => (id) => {
+
+	},
+
+	getByProp: (state) => (prop, value, index = false, all = false) => {
 		Vue.$log.debug('get()', prop, value, index);
 
 		let method = index ? 'findIndex' : all ? 'filter' : 'find';
@@ -42,7 +46,7 @@ const actions = {
 				.then(res => {
 					if (res.status === 200) {
 						this._vm.$toasted.show('Player added!');
-						commit('update', res.data[0]);
+						commit('UPDATE', res.data[0]);
 					}
 				})
 				.catch(err => {
@@ -54,13 +58,20 @@ const actions = {
 	create({ commit }, plObj) {
 		let plData = Object.assign({}, plDefault, plObj);
 
-		return api.players.create(plData)
-			.then(res => {
-				Vue.$storage.set('player', res.data);
-				commit('update', res.data);
-			})
-			.catch(err => {
-			})
+		return new Promise((resolve, reject) => {
+			return api.players
+				.create(plData)
+				.then(res => {
+					Vue.$storage.set('player', res.data);
+					commit('LOGIN', res.data, { root: true });
+					commit('UPDATE', res.data);
+					resolve();
+				})
+				.catch(err => {
+					this._vm.$log.error(err);
+					reject(err);
+				});
+		});
 	},
 
 	/**
@@ -78,7 +89,7 @@ const actions = {
 					Vue.$log.debug('api/players/get', res);
 					if (res.status === 200) {
 						res.data.forEach(plData => {
-							commit('update', plData);
+							commit('UPDATE', plData);
 						})
 					}
 				})
@@ -94,10 +105,10 @@ const actions = {
 };
 
 const mutations = {
-	update(state, payload) {
+	UPDATE(state, payload) {
 		let playerId = payload.id;
 
-		Vue.$log.debug('mutation::players/update', state, payload);
+		Vue.$log.debug('mutation::players/UPDATE', state, payload);
 
 		if (!state[playerId]) {
 			Vue.set(state, playerId, {});

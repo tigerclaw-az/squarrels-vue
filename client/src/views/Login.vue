@@ -39,6 +39,10 @@ export default {
 				.dispatch('players/create', { name: this.pName, isCurrent: true })
 				.then(() => {
 					this.$router.push('/');
+				})
+				.catch(err => {
+					this.$toasted.error('Unable to create player');
+					this.$log.error(err);
 				});
 		}
 	}

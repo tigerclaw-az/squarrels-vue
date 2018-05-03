@@ -39,9 +39,7 @@ players.get('/:id?', function(req, res) {
 	logger.debug('sessionId -> ', sessionId);
 
 	if (ids.length) {
-		playerQuery = playerQuery
-						.where('_id')
-						.in(ids);
+		playerQuery = playerQuery.where('_id').in(ids);
 	}
 
 	playerQuery
@@ -67,12 +65,14 @@ players.post('/:id?', function(req, res) {
 	const sessionId = req.sessionID;
 
 	var playerId = req.params.id,
-		validatePlayer = (pl) => {
+		validatePlayer = pl => {
 			if (pl.name) {
 				pl.name = validator.stripLow(validator.escape(pl.name));
 
 				if (pl.name.length > 24) {
-					let err = `The name you provided (${pl.name}) is longer than 24 chars!`;
+					let err = `The name you provided (${
+						pl.name
+					}) is longer than 24 chars!`;
 
 					return err;
 				}
@@ -96,7 +96,8 @@ players.post('/:id?', function(req, res) {
 
 			let pl = new Player(pData);
 
-			pl.save()
+			pl
+				.save()
 				.then(() => {
 					logger.debug('Player.save()', pl);
 
@@ -118,7 +119,9 @@ players.post('/:id?', function(req, res) {
 
 	if (!sessionId) {
 		logger.error('!!Possible Attack!!', req);
-		res.status(500).json(config.apiError('ALERT: Missing required sessionId!!'));
+		res
+			.status(500)
+			.json(config.apiError('ALERT: Missing required sessionId!!'));
 
 		return false;
 	}
@@ -145,16 +148,14 @@ players.post('/:id?', function(req, res) {
 				res.status(500).json(config.apiError(err));
 			});
 	} else {
-		// Add new player, if the maximum players hasn't been reached
-		Player
-			.find({}).exec()
+		// Add new player, if the player with current session doesn't already exist
+		Player.find({ sessionId })
+			.exec()
 			.then(list => {
-				let totalPlayers = list.length;
-
-				if (totalPlayers === 6) {
-					logger.error('TOO MANY PLAYERS!');
-					res.status(500).json(config.apiError());
-
+				if (list.length) {
+					let err = `Player found with same sessionId: ${sessionId}`;
+					logger.error();
+					res.status(500).json(config.apiError(err));
 					return false;
 				}
 
