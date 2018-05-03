@@ -1,17 +1,13 @@
-var express = require('express'),
-	bodyParser = require('body-parser'),
-	session = require('express-session'),
-	path = require('path'),
-	config = require('./config/config'),
-	logger = config.logger(),
-	MongodbSession = require('connect-mongodb-session')(session);
+const bodyParser = require('body-parser');
+const config = require('./config/config');
+const cors = require('cors');
+const express = require('express');
+const logger = config.logger();
+const path = require('path');
+const session = require('express-session');
+const MongodbSession = require('connect-mongodb-session')(session);
 
-let app = express(),
-	secret = '$eCuRiTy',
-	sessionStore = new MongodbSession({
-		uri: `mongodb://${process.env.SERVER}/squarrels_sessions`,
-		collection: 'sessions'
-	});
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,18 +20,51 @@ app.set('trust proxy', 1);
 app.use(bodyParser.json({ limit: '75mb' }));
 app.use(bodyParser.urlencoded({ limit: '75mb', extended: true }));
 
+app.use(express.static(path.join(__dirname, '../client/public')));
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// -----------
+// CORS
+// -----------
+app.use(
+	cors({
+		origin: true,
+		methods: ['GET', 'POST', 'DELETE'],
+		credentials: true,
+	})
+);
+
 // ----------
 // SESSION
 // ----------
+const SECRET = '$eCuRiTy';
+const sessionStore = new MongodbSession({
+	autoReconnect: true,
+	clearInterval: 3600000,
+	collection: 'sessions',
+	databaseName: 'squarrels_sessions',
+	secret: SECRET,
+	uri: `mongodb://${process.env.SERVER}/squarrels_sessions`
+});
+
+sessionStore.on('error', err => {
+	logger.error('sessionStore ERROR -> ', err);
+	assert.ifError(err);
+	assert.ok(false);
+});
+
 const sessionParser = session({
-	secret,
 	cookie: {
-		httpOnly: false,
-		sameSite: true,
+		httpOnly: true,
+		maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
+		sameSite: 'lax',
+		secure: false
 	},
+	name: 'squarrels',
+	secret: SECRET,
 	store: sessionStore,
 	resave: false,
-	saveUninitialized: false
+	saveUninitialized: true
 });
 
 app.use(sessionParser);
@@ -50,7 +79,7 @@ require('./config/mongoose')()
 		mongooseSeed.loadModels(path.join(__dirname, '/models/seeds'));
 		mongooseSeed
 			.populate(path.join(__dirname, '/config/seeds'), populateOpts)
-			.catch((err) => {
+			.catch(err => {
 				logger.error(err);
 			});
 	})
@@ -59,29 +88,16 @@ require('./config/mongoose')()
 		process.exit(1);
 	});
 
-app.use(express.static(path.join(__dirname, '../client/public')));
-app.use(express.static(path.join(__dirname, '../client')));
-
 // ----------
 // ROUTING
 // ----------
-let routes = {
+const routes = {
 	cards: require('./routes/cards'),
 	decks: require('./routes/decks'),
 	games: require('./routes/games'),
 	players: require('./routes/players')
 };
 
-app.use(function(req, res, next) {
-	res.header('Access-Control-Allow-Credentials', true);
-	res.header('Access-Control-Allow-Origin', `http://${process.env.SERVER}:${process.env.CLIENT_PORT}`);
-	res.header(
-		'Access-Control-Allow-Headers',
-		'Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With'
-	);
-	res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
-	return next();
-});
 // app.use('/api/', routes);
 app.use('/api/cards', routes.cards);
 app.use('/api/decks', routes.decks);
