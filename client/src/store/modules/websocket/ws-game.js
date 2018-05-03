@@ -3,18 +3,16 @@ import router from '@/router';
 
 // import EventBus from '@/EventBus';
 
-const state = {
+const state = {};
 
-};
-
-const getters = {
-
-};
+const getters = {};
 
 const actions = {
 	create({ commit }, data) {
 		Vue.$log.debug(this, this._vm, data);
 		// EventBus.$emit('game:create', data.nuts);
+		this._vm.$toasted.success('New game created!');
+
 		commit('start/ADD_GAME', data.nuts, { root: true });
 	},
 
@@ -32,17 +30,15 @@ const actions = {
 		if (curRoute.name === 'game' && curRoute.params.id === nuts.id) {
 			commit('game/update', data.nuts, { root: true });
 		}
-	},
+	}
 };
 
-const mutations = {
-
-};
+const mutations = {};
 
 export default {
 	namespaced: true,
 	state,
 	getters,
 	actions,
-	mutations,
+	mutations
 };

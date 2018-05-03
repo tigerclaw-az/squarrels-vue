@@ -41,6 +41,7 @@ const actions = {
 			return api.players.get(plArr.join(','))
 				.then(res => {
 					if (res.status === 200) {
+						this._vm.$toasted.show('Player added!');
 						commit('update', res.data[0]);
 					}
 				})
@@ -65,10 +66,12 @@ const actions = {
 	/**
 	 * Load player data for each player in game
 	 * @param  {Array} ids            Array of player IDs
+	 *
 	 * @return {Promise}
 	 */
 	load({ commit }, { ids }) {
 		Vue.$log.debug('players/load', ids);
+
 		if (ids.length) {
 			return api.players.get(ids.join(','))
 				.then(res => {
@@ -93,6 +96,8 @@ const actions = {
 const mutations = {
 	update(state, payload) {
 		let playerId = payload.id;
+
+		Vue.$log.debug('mutation::players/update', state, payload);
 
 		if (!state[playerId]) {
 			Vue.set(state, playerId, {});
