@@ -1,6 +1,15 @@
 <template>
 	<div id="board">
-		<BoardHeader :isGameStarted="isStarted"></BoardHeader>
+		<button v-if="!isStarted"
+			class="btn btn-info btn-start-game"
+			@click="onClickStartGame">
+			START GAME
+		</button>
+		<div v-if="players.length < 2">
+			Waiting for other players to join...
+		</div>
+		<div v-if="!isStarted" class="start-game-overlay"></div>
+		<BoardHeader v-if="isLoaded"></BoardHeader>
 		<canvas v-if="actionCard && actionCard.name === 'winter'" class="winter-snow"></canvas>
 		<b-row>
 			<b-col>
@@ -19,10 +28,10 @@
 			<b-col>
 				<div class="admin-options" v-if="isAdmin && isStarted">
 					<b-dropdown id="dropdown-options" variant="info" text="Option">
-						<b-dropdown-item @click="onAdminOption('reset-game')">Reset Game</b-dropdown-item>
-						<b-dropdown-item @click="onAdminOption('reset-hoard')">Reset Hoard</b-dropdown-item>
-						<b-dropdown-item @click="onAdminOption('reset-player-cards')">Reset Player Cards</b-dropdown-item>
-						<b-dropdown-item @click="onAdminOption('skip-player')">Skip Player</b-dropdown-item>
+						<b-dropdown-item @click="onClickAdminOption('reset-game')">Reset Game</b-dropdown-item>
+						<b-dropdown-item @click="onClickAdminOption('reset-hoard')">Reset Hoard</b-dropdown-item>
+						<b-dropdown-item @click="onClickAdminOption('reset-player-cards')">Reset Player Cards</b-dropdown-item>
+						<b-dropdown-item @click="onClickAdminOption('skip-player')">Skip Player</b-dropdown-item>
 					</b-dropdown>
 				</div>
 			</b-col>
@@ -79,13 +88,17 @@ export default {
 			'isLoaded',
 			'isStarted',
 			'instantAction',
+			'players',
 		]),
 		...mapState([ 'isAdmin' ]),
 	},
 	methods: {
-		onAdminOption: function(name) {
+		onClickAdminOption: function(name) {
 			this.$log.debug(name);
 		},
+		onClickStartGame: function() {
+			this.$store.dispatch({ type: 'game/start' });
+		}
 	},
 };
 </script>
@@ -98,6 +111,23 @@ export default {
 		left: 0;
 		position: absolute;
 		top: 0;
+	}
+
+	.start-game-overlay {
+		background-color: get-color('mine-shaft');
+		height: auto !important;
+		height: 100%;
+		margin: 0 auto -20px;
+		min-height: 100%;
+		opacity: .7;
+		position: fixed;
+		width: 100%;
+		z-index: 60;
+	}
+
+	.btn-start-game {
+		position: absolute;
+		z-index: 80;
 	}
 
 	.decks-container {

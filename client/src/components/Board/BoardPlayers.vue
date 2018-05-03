@@ -1,15 +1,12 @@
 <template>
 	<div class="sq-board-players">
 		<!-- <webcam channel="webcam"></webcam> -->
-		<div class="sq-players" v-if="playerIdsInGame.length >= 2">
+		<div class="sq-players">
 			<Player
 				v-for="p in playersOrder"
 				:key="p.id"
 				:player="p">
 			</Player>
-		</div>
-		<div v-else>
-			Waiting for other players to join...
 		</div>
 	</div>
 </template>
