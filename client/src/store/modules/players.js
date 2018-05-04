@@ -8,15 +8,12 @@ const plDefault = {
 	name: utils.getRandomStr(12)
 };
 
-const state = {
-};
+const state = {};
 
 const getters = {
-	getById: (state) => (id) => {
+	getById: state => id => {},
 
-	},
-
-	getByProp: (state) => (prop, value, index = false, all = false) => {
+	getByProp: state => (prop, value, index = false, all = false) => {
 		Vue.$log.debug('get()', prop, value, index);
 
 		let method = index ? 'findIndex' : all ? 'filter' : 'find';
@@ -42,10 +39,10 @@ const actions = {
 		Vue.$log.debug('add()', plArr);
 
 		if (plArr.length) {
-			return api.players.get(plArr.join(','))
+			return api.players
+				.get(plArr.join(','))
 				.then(res => {
 					if (res.status === 200) {
-						this._vm.$toasted.show('Player added!');
 						commit('UPDATE', res.data[0]);
 					}
 				})
@@ -84,13 +81,14 @@ const actions = {
 		Vue.$log.debug('players/load', ids);
 
 		if (ids.length) {
-			return api.players.get(ids.join(','))
+			return api.players
+				.get(ids.join(','))
 				.then(res => {
 					Vue.$log.debug('api/players/get', res);
 					if (res.status === 200) {
 						res.data.forEach(plData => {
 							commit('UPDATE', plData);
-						})
+						});
 					}
 				})
 				.catch(err => {
@@ -99,9 +97,7 @@ const actions = {
 		}
 	},
 
-	update({ commit }, id, data) {
-
-	},
+	update({ commit }, id, data) {}
 };
 
 const mutations = {
@@ -110,12 +106,16 @@ const mutations = {
 
 		Vue.$log.debug('mutation::players/UPDATE', state, payload);
 
-		if (!state[playerId]) {
-			Vue.set(state, playerId, {});
-		}
+		if (playerId) {
+			if (!state[playerId]) {
+				Vue.set(state, playerId, {});
+			}
 
-		Vue.set(state, playerId, payload);
-	},
+			for (let prop in payload) {
+				Vue.set(state[playerId], prop, payload[prop]);
+			}
+		}
+	}
 };
 
 export default {
@@ -123,5 +123,5 @@ export default {
 	state,
 	getters,
 	actions,
-	mutations,
+	mutations
 };

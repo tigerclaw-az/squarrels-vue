@@ -74,12 +74,12 @@ export default {
 			this.$store.dispatch({ type: 'decks/load', ids: this.decks });
 		}
 	},
-	beforeDestroy: function() {
-		this.$store.dispatch({ type: 'game/unload', id: this.id });
-		this.$store.dispatch({ type: 'decks/unload', id: this.id });
-	},
 	mounted: function() {
 		this.$store.dispatch({ type: 'game/load', id: this.id });
+	},
+	beforeDestroy: function() {
+		this.$store.dispatch({ type: 'game/unload' });
+		this.$store.dispatch({ type: 'decks/unload', gameId: this.id });
 	},
 	computed: {
 		...mapState('game', [

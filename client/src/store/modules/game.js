@@ -9,6 +9,7 @@ const initialState = {
 	actionCard: null,
 	createdAt: null,
 	decks: [],
+	id: null,
 	instantAction: false,
 	isLoaded: false,
 	isStarted: false,
@@ -37,7 +38,9 @@ const actions = {
 					Vue.$log.debug('addPlayer()', res);
 					let gameData = res.data;
 
-					commit('update', gameData);
+					this._vm.$toasted.show('Player joined!');
+
+					commit('UPDATE', gameData);
 				})
 				.catch(err => {
 					Vue.$log.error(err);
@@ -52,8 +55,8 @@ const actions = {
 				if (res.status === 200) {
 					let gameData = res.data[0];
 
-					commit('update', gameData);
-					commit('loadFinished');
+					commit('UPDATE', gameData);
+					commit('LOADED');
 
 					// Add all players to the current state of game
 					if (gameData.players.length) {
@@ -68,8 +71,29 @@ const actions = {
 			});
 	},
 
-	unload({ commit }) {
-		commit('unload');
+	start({ commit, state }) {
+		api.games
+			.start(state.id, state.players)
+			.then(data => {
+
+			})
+			.catch(err => {
+				this._vm.$log.error(err);
+			});
+	},
+
+	unload({ commit, rootState }) {
+		let players = state.players;
+		let updatedPlayers = _.without(players, rootState.localPlayer.id);
+
+		api.games
+			.updatePlayers(state.id, updatedPlayers)
+			.then(() => {
+				commit('INIT');
+			})
+			.catch(err => {
+				this._vm.$log.error(err);
+			});
 	},
 
 	update({ commit }, data) {
@@ -78,11 +102,11 @@ const actions = {
 };
 
 const mutations = {
-	loadFinished(state) {
+	LOADED(state) {
 		Vue.set(state, 'isLoaded', true);
 	},
 
-	unload(state) {
+	INIT(state) {
 		for (let prop in initialState) {
 			Vue.set(state, prop, initialState[prop]);
 		}
@@ -90,7 +114,7 @@ const mutations = {
 		Vue.set(state, 'isLoaded', false);
 	},
 
-	update(state, payload) {
+	UPDATE(state, payload) {
 		Vue.$log.debug('mutation::game/update', state, payload);
 
 		if (payload) {
@@ -100,8 +124,6 @@ const mutations = {
 				}
 			}
 		}
-
-		Vue.$log.debug('mutation::UPDATED', state);
 	},
 };
 

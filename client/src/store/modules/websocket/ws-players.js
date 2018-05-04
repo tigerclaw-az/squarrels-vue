@@ -1,5 +1,3 @@
-import vm from 'vue';
-
 const state = {
 
 };
@@ -10,7 +8,11 @@ const getters = {
 
 const actions = {
 	create({ commit }, data) {
-		vm.$log.debug(data);
+		this._vm.$log.debug(data);
+	},
+
+	update({ commit }, data) {
+		commit('players/UPDATE', data, { root: true });
 	}
 };
 

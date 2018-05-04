@@ -28,7 +28,7 @@ const actions = {
 
 		// Only perform an update action if the player is on the proper route
 		if (curRoute.name === 'game' && curRoute.params.id === nuts.id) {
-			commit('game/update', data.nuts, { root: true });
+			commit('game/UPDATE', data.nuts, { root: true });
 		}
 	}
 };

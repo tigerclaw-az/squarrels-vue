@@ -68,19 +68,27 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			getPlayerByProp: 'players/get',
+			getPlayerByProp: 'players/getByProp',
 		}),
 		...mapState({
 			currentPlayer: state => state.localPlayer,
 			isGameLoaded: state => state.game.isLoaded,
 			playerIdsInGame: state => state.game.players,
-			playersInGame: state => state.players,
+			allPlayers: state => state.players,
 		}),
 		needMorePlayers: function() {
 			return this.playerIdsInGame.length < config.MAX_PLAYERS;
 		},
 		playerExists: function() {
-			return this.playerIdsInGame.filter(pl => pl === this.currentPlayer.id ).length;
+			return this.playerIdsInGame
+						.filter(pl => pl === this.currentPlayer.id)
+						.length;
+		},
+		playersInGame: function() {
+			return _.filter(
+				this.allPlayers,
+				pl => _.includes(this.playerIdsInGame, pl.id)
+			);
 		},
 		playersOrder: function() {
 			// TODO: Sort by this.currentPlayer.id and then by nextPlayer order
