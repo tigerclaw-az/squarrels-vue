@@ -38,8 +38,6 @@ const actions = {
 					Vue.$log.debug('addPlayer()', res);
 					let gameData = res.data;
 
-					this._vm.$toasted.show('Player joined!');
-
 					commit('UPDATE', gameData);
 				})
 				.catch(err => {
@@ -124,12 +122,23 @@ const mutations = {
 	},
 
 	UPDATE(state, payload) {
+		const prevPlayerCount = state.playerIds.length;
 		Vue.$log.debug('mutation::game/update', state, payload);
 
 		if (payload) {
 			for (let prop in state) {
 				if (payload.hasOwnProperty(prop)) {
 					Vue.set(state, prop, payload[prop]);
+					if (prop === 'playerIds' && prevPlayerCount > 0) {
+						const newPlayerCount = payload[prop].length;
+						const countDiff = newPlayerCount - prevPlayerCount;
+
+						if (countDiff !== 0) {
+							let msg = 'Player ' + (countDiff > 0 ? 'joined' : 'left') + '!';
+
+							this._vm.$toasted.info(msg);
+						}
+					}
 				}
 			}
 		}
