@@ -92,8 +92,8 @@ const actions = {
 	 * @returns {Object} 	Promise
 	 */
 	unload({ commit, rootState }) {
-		let playerIds = state.playerIds;
-		let updatedPlayerIds = _.without(playerIds, rootState.localPlayer.id);
+		const playerIds = state.playerIds;
+		const updatedPlayerIds = _.without(playerIds, rootState.localPlayer.id);
 
 		api.games
 			.updatePlayers(state.id, updatedPlayerIds)

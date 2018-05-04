@@ -13,7 +13,6 @@ module.exports = function(server, sessionParser) {
 		verifyClient: function(info, done) {
 			logger.debug('Parsing session from reequest...');
 			sessionParser(info.req, {}, () => {
-				logger.debug(info.req);
 				done(info.req.sessionID);
 			});
 		},
@@ -261,16 +260,16 @@ module.exports = function(server, sessionParser) {
 
 					break;
 
-				case 'whoami':
+				case 'getMyCards':
 					Player
 						.find(query)
 						.select('+sessionId +cardsInHand')
 						.exec()
 						.then(list => {
 							wsData = {
-								action: 'whoami',
-								nuts: list,
-								type: 'players'
+								namespace: 'wsPlayers',
+								action: 'getMyCards',
+								nuts: list[0],
 							};
 
 							ws.send(JSON.stringify(wsData));

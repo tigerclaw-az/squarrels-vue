@@ -1,9 +1,9 @@
-var express = require('express'),
-	config = require('../config/config'),
-	logger = config.logger(),
-	validator = require('validator'),
-	players = express.Router(),
-	playerMod = require('./modules/player');
+const express = require('express');
+const config = require('../config/config');
+const logger = config.logger();
+const validator = require('validator');
+const players = express.Router();
+const playerMod = require('./modules/player');
 
 const Player = require('../models/PlayerModel').model;
 
@@ -50,6 +50,24 @@ players.get('/:id?', function(req, res) {
 			}
 
 			res.json(list);
+
+			/* ****IN CASE WE DO THIS LATER****
+			const playerId = list[0].id;
+			const localPlayer = Player
+									.find({ _id: playerId, sessionId })
+									.select('+sessionId +cardsInHand');
+
+			localPlayer
+				.exec()
+				.then(player => {
+					logger.debug('localPlayer -> ', player);
+					res.json(player);
+				})
+				.catch(err => {
+					logger.error('localPlayer -> ', err);
+					res.status(500).json(config.apiError(err));
+				})
+			*********/
 		})
 		.catch(function(err) {
 			if (err) {

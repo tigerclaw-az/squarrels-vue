@@ -50,9 +50,9 @@ let playerMod = {
 				.findOneAndUpdate(playerId, data, options)
 				.then(doc => {
 					let wsData = {
+						namespace: 'wsPlayers',
 						action: 'update',
 						nuts: doc,
-						type: 'players'
 					};
 
 					/* eslint-disable no-undef */
