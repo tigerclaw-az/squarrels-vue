@@ -5,7 +5,7 @@
 			@click="onClickStartGame">
 			START GAME
 		</button>
-		<div v-if="players.length < 2">
+		<div v-if="playerIds.length < 2">
 			Waiting for other players to join...
 		</div>
 		<div v-if="!isStarted" class="start-game-overlay"></div>
@@ -14,7 +14,7 @@
 		<b-row>
 			<b-col>
 				<div class="decks-container">
-					<Deck v-for="deckId in decks" :key="deckId" :deckId="deckId"></Deck>
+					<Deck v-for="deckId in deckIds" :key="deckId" :deckId="deckId"></Deck>
 				</div>
 			</b-col>
 		</b-row>
@@ -71,24 +71,27 @@ export default {
 	},
 	watch: {
 		isLoaded: function() {
-			this.$store.dispatch({ type: 'decks/load', ids: this.decks });
+			this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
 		}
 	},
 	mounted: function() {
 		this.$store.dispatch({ type: 'game/load', id: this.id });
 	},
 	beforeDestroy: function() {
-		this.$store.dispatch({ type: 'game/unload' });
-		this.$store.dispatch({ type: 'decks/unload', gameId: this.id });
+		// Only unload if the current game was valid
+		if (this.id) {
+			this.$store.dispatch({ type: 'game/unload' });
+			this.$store.dispatch({ type: 'decks/unload', gameId: this.id });
+		}
 	},
 	computed: {
 		...mapState('game', [
 			'actionCard',
-			'decks',
+			'deckIds',
 			'isLoaded',
 			'isStarted',
 			'instantAction',
-			'players',
+			'playerIds',
 		]),
 		...mapState([ 'isAdmin' ]),
 	},

@@ -73,7 +73,7 @@ export default {
 		...mapState({
 			currentPlayer: state => state.localPlayer,
 			isGameLoaded: state => state.game.isLoaded,
-			playerIdsInGame: state => state.game.players,
+			playerIdsInGame: state => state.game.playerIds,
 			allPlayers: state => state.players,
 		}),
 		needMorePlayers: function() {

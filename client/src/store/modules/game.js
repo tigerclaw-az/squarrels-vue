@@ -8,12 +8,12 @@ import api from '@/api/index';
 const initialState = {
 	actionCard: null,
 	createdAt: null,
-	decks: [],
+	deckIds: [],
 	id: null,
 	instantAction: false,
 	isLoaded: false,
 	isStarted: false,
-	players: [],
+	playerIds: [],
 	roundNumber: 1,
 	updatedAt: null,
 };
@@ -22,13 +22,13 @@ const state = Object.assign({}, initialState);
 
 const getters = {
 	isPlayerInGame: (state) => (id) => {
-		return state.players.filter(pl => pl.id === id).length;
+		return state.playerIds.filter(pl => pl.id === id).length;
 	},
 };
 
 const actions = {
 	addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
-		let newPlayers = _.union(playerId, [...state.players, playerId]);
+		let newPlayers = _.union(playerId, [...state.playerIds, playerId]);
 
 		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
 
@@ -53,14 +53,15 @@ const actions = {
 			.then(res => {
 				Vue.$log.debug('game/load', res);
 				if (res.status === 200) {
-					let gameData = res.data[0];
+					let gameData = res.data[0],
+						playersInGame = gameData.playerIds;
 
 					commit('UPDATE', gameData);
 					commit('LOADED');
 
 					// Add all players to the current state of game
-					if (gameData.players.length) {
-						dispatch('players/add', gameData.players, { root: true });
+					if (playersInGame.length) {
+						dispatch('players/add', playersInGame, { root: true });
 					}
 				} else {
 					router.push('/');
@@ -73,7 +74,7 @@ const actions = {
 
 	start({ commit, state }) {
 		api.games
-			.start(state.id, state.players)
+			.start(state.id, state.playerIds)
 			.then(data => {
 
 			})
@@ -82,12 +83,20 @@ const actions = {
 			});
 	},
 
+	/**
+	 * Unload the current local game state, this will
+	 * only affect current player. Since the player is
+	 * being removed, we need to add their cards back into
+	 * the main deck.
+	 *
+	 * @returns {Object} 	Promise
+	 */
 	unload({ commit, rootState }) {
-		let players = state.players;
-		let updatedPlayers = _.without(players, rootState.localPlayer.id);
+		let playerIds = state.playerIds;
+		let updatedPlayerIds = _.without(playerIds, rootState.localPlayer.id);
 
 		api.games
-			.updatePlayers(state.id, updatedPlayers)
+			.updatePlayers(state.id, updatedPlayerIds)
 			.then(() => {
 				commit('INIT');
 			})

@@ -9,11 +9,11 @@ export default class GamesApi extends BaseApi {
 		return this.update(id, { actionCard: value });
 	}
 
-	start(id, players) {
-		return this.http.post(`/${id}/start`, players);
+	start(id, playerIds) {
+		return this.http.post(`/${id}/start`, playerIds);
 	}
 
-	updatePlayers(id, players) {
-		return this.update(id, { players: players });
+	updatePlayers(id, playerIds) {
+		return this.update(id, { playerIds: playerIds });
 	}
 }

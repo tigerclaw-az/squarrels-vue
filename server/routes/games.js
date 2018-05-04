@@ -18,8 +18,8 @@ games.delete('/:id', function(req, res) {
 		.findById(id)
 		.exec()
 		.then(game => {
-			let decks = game.decks,
-				players = game.players,
+			let deckIds = game.deckIds,
+				playerIds = game.playerIds,
 				playerUpdate = {
 					cardsInHand: [],
 					cardsInStorage: [],
@@ -29,10 +29,10 @@ games.delete('/:id', function(req, res) {
 					totalCards: 0
 				};
 
-			logger.debug('decks -> ', decks);
+			logger.debug('decks -> ', deckIds);
 
 			DeckModel
-				.deleteMany({ '_id': { $in: decks } })
+				.deleteMany({ '_id': { $in: deckIds } })
 				.then(() => {
 					/* eslint-disable no-undef */
 					// NOTE: No need to know when decks are removed
@@ -42,10 +42,10 @@ games.delete('/:id', function(req, res) {
 					// );
 					/* eslint-enable no-undef */
 
-					logger.debug('players -> ', players);
+					logger.debug('players -> ', playerIds);
 
 					PlayerModel
-						.updateMany({ '_id': { $in: players } }, playerUpdate)
+						.updateMany({ '_id': { $in: playerIds } }, playerUpdate)
 						.then(() => {
 							/* eslint-disable no-undef */
 							wss.broadcast(
@@ -153,7 +153,7 @@ games.post('/', function(req, res) {
 							logger.debug('decksCreated -> ', decksCreated);
 
 							const gameData = {
-								decks: _.map(decksCreated, (deck => {
+								deckIds: _.map(decksCreated, (deck => {
 									return deck.id
 								}))
 							};

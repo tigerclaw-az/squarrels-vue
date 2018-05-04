@@ -12,11 +12,11 @@ var mongoose = require('mongoose'),
 			type: Number,
 			default: 1
 		},
-		players: {
+		playerIds: {
 			type: [Schema.Types.ObjectId],
 			ref: Player.model
 		},
-		decks: {
+		deckIds: {
 			type: [Schema.Types.ObjectId],
 			ref: Deck.model
 		},
