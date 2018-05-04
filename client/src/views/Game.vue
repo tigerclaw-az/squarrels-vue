@@ -1,12 +1,14 @@
 <template>
 	<div id="board">
-		<button v-if="!isStarted"
-			class="btn btn-info btn-start-game"
-			@click="onClickStartGame">
-			START GAME
-		</button>
-		<div v-if="playerIds.length < 2">
-			Waiting for other players to join...
+		<div v-if="!isStarted" class="overlay-text" v-cloak>
+			<div v-if="needPlayers" class="waiting-message">
+				Waiting for other players to join...
+			</div>
+			<button v-else
+				class="btn btn-info btn-start-game"
+				@click="onClickStartGame">
+				START GAME
+			</button>
 		</div>
 		<div v-if="!isStarted" class="start-game-overlay"></div>
 		<BoardHeader v-if="isLoaded"></BoardHeader>
@@ -94,6 +96,9 @@ export default {
 			'playerIds',
 		]),
 		...mapState([ 'isAdmin' ]),
+		needPlayers: function() {
+			return this.playerIds.length < 2;
+		},
 	},
 	methods: {
 		onClickAdminOption: function(name) {
@@ -116,21 +121,47 @@ export default {
 		top: 0;
 	}
 
+	.overlay-text {
+		@extend %center;
+
+		color: get-color(white);
+		font-size: 2em;
+		z-index: 100;
+
+		.waiting-message {
+			animation-name: blink;
+			animation-duration: 1.4s;
+			animation-iteration-count: infinite;
+			/**
+			* This makes sure that the starting style (opacity: .2)
+			* of the animation is applied before the animation starts.
+			* Otherwise we would see a short flash or would have
+			* to set the default styling of the dots to the same
+			* as the animation. Same applies for the ending styles.
+			*/
+			animation-fill-mode: both;
+			transform: translateZ(0);
+		}
+
+		.btn-start-game {
+			// @extend %center;
+			@include animation-pulse;
+
+			font-size: inherit;
+			z-index: 80;
+		}
+	}
+
 	.start-game-overlay {
 		background-color: get-color('mine-shaft');
 		height: auto !important;
 		height: 100%;
 		margin: 0 auto -20px;
 		min-height: 100%;
-		opacity: .7;
+		opacity: .9;
 		position: fixed;
 		width: 100%;
 		z-index: 60;
-	}
-
-	.btn-start-game {
-		position: absolute;
-		z-index: 80;
 	}
 
 	.decks-container {

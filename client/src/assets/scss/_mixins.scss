@@ -1,22 +1,28 @@
-@mixin center-horizontal {
+%center-horizontal {
 	left: 50%;
 	position: absolute;
-	transform: translateX(-50%);
+	transform: translate3d(-50%, 0, 0);
 }
 
-@mixin center-vertical {
+%center-vertical {
 	position: absolute;
 	top: 50%;
-	transform: translateY(-50%);
+	transform: translate3d(0, -50%, 0);
 }
 
-@mixin center {
+%center {
 	left: 50%;
 	position: absolute;
 	top: 50%;
-	transform: translateY(-50%) translateX(-50%);
+	transform: translate3d(-50%, -50%, 0);
 }
 
+@mixin animation-pulse() {
+	animation-name: pulse;
+	animation-duration: 1.4s;
+	animation-iteration-count: infinite;
+	animation-fill-mode: both;
+}
 @mixin clearfix() {
 	&::after {
 		display: block;

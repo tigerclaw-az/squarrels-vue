@@ -102,12 +102,12 @@ export default {
 	}
 
 	.error {
-		@include center;
+		@extend %center;
 		width: 30%;
 	}
 
 	.games-list {
-		@include center;
+		@extend %center;
 
 		.btn-join-game {
 			position: relative;

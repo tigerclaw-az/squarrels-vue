@@ -23,6 +23,30 @@
 	}
 }
 
+@keyframes blink {
+	/**
+     * At the start of the animation the dot
+     * has an opacity of .2
+     */
+	0% {
+		opacity: .2;
+	}
+	/**
+     * At 20% the dot is fully visible and
+     * then fades out slowly
+     */
+	20% {
+		opacity: 1;
+	}
+	/**
+     * Until it reaches an opacity of .2 and
+     * the animation can start again
+     */
+	100% {
+		opacity: .2;
+	}
+}
+
 @keyframes disappear {
 	from {
 		transform: scale(1);
@@ -78,6 +102,40 @@
 
 	100% {
 		opacity: 1;
+	}
+}
+
+@keyframes pulse {
+	0% {
+		transform: scale(1);
+	}
+
+	20% {
+		transform: scale(1.05);
+	}
+
+	30% {
+		transform: scale(1.1);
+	}
+
+	40% {
+		transform: scale(1.15);
+	}
+
+	50% {
+		transform: scale(1.2);
+	}
+
+	60% {
+		transform: scale(1.15);
+	}
+
+	70% {
+		transform: scale(1.1);
+	}
+
+	80% {
+		transform: scale(1.05);
 	}
 }
 

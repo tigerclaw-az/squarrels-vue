@@ -44,7 +44,7 @@
 		}
 
 		.sq-player-card-count {
-			@include center-horizontal;
+			@extend %center-horizontal;
 			color: get-color('alabaster');
 			font-size: 5rem;
 			line-height: 1;
@@ -76,7 +76,7 @@
 			font-size: 4rem;
 
 			.sq-player-score {
-				@include center-horizontal;
+				@extend %center-horizontal;
 				color: get-color('carnaby-tan');
 				font-size: 2rem;
 				line-height: 2.25;

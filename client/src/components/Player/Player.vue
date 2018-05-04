@@ -56,7 +56,7 @@
 					:card-type="hand"
 				></card>
 			</div>
-			<div ng-else class="empty"></div>
+			<div v-else-if="isGameStarted" class="empty"></div>
 		</div>
 	</div>
 </template>
@@ -91,6 +91,7 @@ export default {
 		},
 		...mapState({
 			currentPlayer: state => state.localPlayer,
+			isGameStarted: state => state.game.isStarted,
 		})
 	},
 	methods: {
