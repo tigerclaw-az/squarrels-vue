@@ -169,15 +169,13 @@ games.post('/:id', function(req, res) {
 		});
 });
 
-games.post('/:id/start', function(req, res) {
+games.get('/:id/deal', function(req, res) {
 	const gameId = req.params.id;
 	const sessionId = req.sessionID;
 	const CardModel = require('../models/CardModel').model;
 	const DeckModel = require('../models/DeckModel').model;
 
-	logger.debug('start -> ', req.body);
-
-	const gameData = { isStarted: true };
+	logger.debug('deal -> ', req.body);
 
 	// prettier-ignore
 	CardModel
@@ -210,7 +208,9 @@ games.post('/:id/start', function(req, res) {
 				.then(decksCreated => {
 					logger.debug('decksCreated -> ', decksCreated);
 
-					gameData.deckIds = _.map(decksCreated, deck => deck.id);
+					let gameData = {
+						deckIds: _.map(decksCreated, deck => deck.id)
+					};
 
 					gameMod
 						.update(gameId, gameData, sessionId)
@@ -242,6 +242,35 @@ games.post('/:id/start', function(req, res) {
 		})
 		.catch(err => {
 			logger.error(err);
+			res.status(500).json(config.apiError(err));
+		});
+});
+
+games.get('/:id/start', function(req, res) {
+	const gameId = req.params.id;
+	const sessionId = req.sessionID;
+	const gameData = { isStarted: true };
+
+	gameMod
+		.update(gameId, gameData, sessionId)
+		.then(doc => {
+			let statusCode = doc ? 200 : 204;
+
+			/* eslint-disable no-undef */
+			wss.broadcast(
+				{
+					namespace: 'wsGame',
+					action: 'update',
+					nuts: doc,
+				},
+				sessionId,
+				true
+			);
+			/* eslint-enable no-undef */
+
+			res.status(statusCode).json(doc);
+		})
+		.catch(err => {
 			res.status(500).json(config.apiError(err));
 		});
 });
