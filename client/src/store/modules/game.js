@@ -70,17 +70,17 @@ const actions = {
 				}
 			})
 			.catch(err => {
-				Vue.$log.error(err);
+				this._vm.$log.error(err);
 			});
 	},
 
-	start({ dispatch, state }) {
+	start({ dispatch, rootGetters, state }) {
 		let dealPromises = [];
 
 		this._vm.$log.debug('game/start', state);
 
 		return api.games
-			.start(state.id, state.playerIds)
+			.dealCards(state.id, state.playerIds)
 			.then(() => {
 				// Load all deck data into the store
 				return dispatch(
@@ -104,15 +104,27 @@ const actions = {
 					);
 				}
 
-				Promise.all(dealPromises)
+				// prettier-ignore
+				Promise
+					.all(dealPromises)
 					.then(() => {
+						const mainDeck = rootGetters['decks/getByType']('main');
+
+						this._vm.$log.debug('dealPromises -> ', mainDeck);
+
 						// After all cards have been dealt, set the starting player
-						// this.playersStore.nextPlayer(-1);
-						// dispatch('players/nextPlayer', -1);
+						api.decks
+							.update(mainDeck.id, { cards: rootGetters['decks/getCardIds'](mainDeck.id) })
+							.then(() => {
+								// All players and decks have been updated, game can start
+								// dispatch('players/nextPlayer', -1, { root: true });
+							});
 					})
 					.catch(err => {
-						this.$log.error(err);
-						this.toastr.error(`Problem dealing cards: ${err}`);
+						this._vm.$log.error(err);
+						this._vm.$toasted.error(
+							`Problem dealing cards: ${err}`
+						);
 					});
 			})
 			.catch(err => {

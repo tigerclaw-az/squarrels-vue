@@ -6,8 +6,6 @@ import store from '@/store/index';
 import { config } from '@/config';
 
 const state = {
-	cardsDrawnCount: 0,
-	cardsDrawnIds: [],
 	isLoaded: false,
 };
 
@@ -15,11 +13,18 @@ const getters = {
 	getByType: state => name => {
 		return _.find(state, { deckType: name });
 	},
+
+	getCardIds: state => deckId => {
+		return state[deckId].cards.map(card => {
+			return card.id;
+		});
+	},
 };
 
 const actions = {
-	dealCards({ commit, dispatch }, playerId) {
-		const drawCardOptions = { numOnly: true };
+	dealCards({ commit, dispatch, getters }, playerId) {
+		const drawCardOptions = { numOnly: true, playerId };
+		const mainDeck = getters.getByType('main');
 
 		this._vm.$log.debug('decks/dealCards', playerId);
 
@@ -31,39 +36,52 @@ const actions = {
 		// });
 
 		return new Promise((resolve, reject) => {
+			// Watch for each time a card was drawn and updated for
+			// a given player, then continue to draw until they have MAX_CARDS
 			let unsubscribe = store.subscribe((mutation, state) => {
-				this._vm.$log.debug('decks/dealCards.subscribe', mutation, state.decks.cardsDrawnCount, state);
+				this._vm.$log.debug(
+					'decks/dealCards.subscribe',
+					mutation,
+					state.players[playerId].cardsDrawnCount,
+					state
+				);
 
-				if (mutation.type === 'decks/UPDATE_CARDS') {
-					if (state.decks.cardsDrawnCount > config.MAX_CARDS) {
+				if (mutation.type === 'players/DRAW_CARD') {
+					if (
+						state.players[playerId].cardsDrawnCount ===
+						config.MAX_CARDS
+					) {
 						unsubscribe();
 
-						this._vm.$log.debug('api.decks.update:then()', state.decks.cardsDrawnIds);
-
 						// Ensure no card is 'null'
-						if (!state.decks.cardsDrawnIds.some(el => el !== null)) {
-							throw new Error('Invalid cardId: null');
+						if (
+							!state.players[playerId].cardsDrawnIds.some(
+								el => el !== null
+							)
+						) {
+							reject('Invalid cardId: null');
 						}
 
 						api.players
 							.update(playerId, {
-								cardsInHand: state.decks.cardsDrawnIds,
+								cardsInHand:
+									state.players[playerId].cardsDrawnIds,
 							})
 							.then(() => {
-								resolve();
+								resolve({
+									deckId: mainDeck.id,
+								});
 							})
 							.catch(err => {
 								reject(err);
 							});
 					} else {
 						dispatch('drawCard', drawCardOptions);
-						// .then(cardId => {
-						// 	state.decks.cardsDrawnIds.push(cardId);
-						// });
 					}
 				}
 			});
 
+			// Start drawing cards
 			dispatch('drawCard', drawCardOptions)
 				.then(cardId => {
 					this._vm.$log.debug('card drawn -> ', cardId);
@@ -72,25 +90,6 @@ const actions = {
 					reject(err);
 				});
 		});
-
-		// return new Promise((resolve, reject) => {
-
-		// });
-		// prettier-ignore
-		// Promise
-		// 	.all(drawPromises)
-		// 	.then(cards => {
-
-		// 	})
-		// 	// .then(res => {
-		// 	// 	this.$log.debug('playersApi:update()', res, this);
-		// 	// 	return Promise.resolve(cards);
-		// 	// })
-		// 	.catch(err => {
-		// 		this._vm.$log.debug(err);
-		// 		this._vm.$toasted.error(`Unable to deal cards - ${err}`);
-		// 		return Promise.reject(err);
-		// 	});
 	},
 
 	/**
@@ -101,10 +100,10 @@ const actions = {
 	 */
 	drawCard({ commit, getters }, options) {
 		const mainDeck = getters.getByType('main');
+		this._vm.$log.debug('decks/drawCard -> ', options, mainDeck);
+
 		let cardsFromDeck = {
-			ids: mainDeck.cards.map(obj => {
-				return obj.id;
-			}),
+			ids: getters.getCardIds(mainDeck.id),
 			toDraw: options.numOnly
 				? _.filter(mainDeck.cards, { cardType: 'number' })
 				: mainDeck.cards,
@@ -117,29 +116,39 @@ const actions = {
 			cardDrawn = _.sampleSize(cardsFromDeck.toDraw)[0];
 		}
 
-		this._vm.$log.debug('decks/drawCard -> ', options, mainDeck);
 		this._vm.$log.debug('cardsFromDeck -> ', cardsFromDeck);
 		this._vm.$log.debug('cardDrawn -> ', cardDrawn);
 
 		// Removes cardDrawn.id from cardsFromDeck.ids
 		_.pull(cardsFromDeck.ids, cardDrawn.id);
-		// mainDeck.cards = _.reject(mainDeck.cardIds, o => {
-		// 	return cardDrawn.id === o.id;
-		// });
 
+		// Need to update the cards in main deck so that the next
+		// player doesn't draw the same card (async)
 		commit('UPDATE_CARDS', {
 			id: mainDeck.id,
-			cards: cardsFromDeck.ids,
-			cardDrawnId: cardDrawn.id,
+			cards: _.reject(mainDeck.cards, c => cardDrawn.id === c.id),
 		});
 
-		return new Promise((resolve, reject) => {
-			api.decks
-				.update(mainDeck.id, { cards: cardsFromDeck.ids })
-				.then(() => {
-					resolve(cardDrawn.id);
-				});
-		});
+		// Need to update the cards drawn by the player so that
+		// the subscribe knows when to stop
+		commit(
+			'players/DRAW_CARD',
+			{
+				id: options.playerId,
+				cardDrawnId: cardDrawn.id,
+			},
+			{ root: true }
+		);
+
+		return Promise.resolve(cardDrawn.id);
+
+		// return new Promise((resolve, reject) => {
+		// 	api.decks
+		// 		.update(mainDeck.id, { cards: cardsFromDeck.ids })
+		// 		.then(() => {
+		// 			resolve(cardDrawn.id);
+		// 		});
+		// });
 	},
 
 	load({ commit, dispatch }, { ids }) {
@@ -206,12 +215,10 @@ const mutations = {
 
 	UPDATE_CARDS(state, payload) {
 		this._vm.$log.debug('decks/UPDATE_CARDS', payload);
-		state.cardsDrawnCount += 1;
-		// Vue.set(state, 'cardsDrawnIds', payload.cardDrawnId);
-		state.cardsDrawnIds.push(payload.cardDrawnId);
-	},
 
-	UPDATE_CARDS_COUNT(state) {},
+		Vue.set(state[payload.id], 'cards', payload.cards);
+		// Vue.set(state, 'cardsDrawnIds', payload.cardDrawnId);
+	},
 };
 
 export default {
