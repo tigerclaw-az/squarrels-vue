@@ -5,7 +5,7 @@ import _ from 'lodash';
 import api from '@/api/index';
 
 const plDefault = {
-	name: utils.getRandomStr(12)
+	name: utils.getRandomStr(12),
 };
 
 const state = {};
@@ -35,7 +35,7 @@ const getters = {
 
 	getMyPlayer: (state, rootState) => {
 		return _.filter(pl => pl.id === rootState.localPlayer.id);
-	}
+	},
 };
 
 const actions = {
@@ -102,7 +102,7 @@ const actions = {
 
 	update({ commit }, data) {
 		this._vm.$log.debug('players/update', data);
-	}
+	},
 };
 
 const mutations = {
@@ -135,7 +135,24 @@ const mutations = {
 		const cards = payload.cardsInHand;
 
 		Vue.set(state[id], 'cardsInHand', cards);
-	}
+	},
+
+	DRAW_CARD(state, payload) {
+		this._vm.$log.debug('players/DRAW_CARD', payload, state);
+
+		if (!state[payload.id].cardsDrawnCount) {
+			Vue.set(state[payload.id], 'cardsDrawnCount', 0);
+		}
+
+		if (!state[payload.id].cardsDrawnIds) {
+			Vue.set(state[payload.id], 'cardsDrawnIds', []);
+		}
+
+		this._vm.$log.debug('players/DRAW_CARD2', payload, state);
+
+		state[payload.id].cardsDrawnIds.push(payload.cardDrawnId);
+		state[payload.id].cardsDrawnCount += 1;
+	},
 };
 
 export default {
@@ -143,5 +160,5 @@ export default {
 	state,
 	getters,
 	actions,
-	mutations
+	mutations,
 };
