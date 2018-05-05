@@ -16,11 +16,12 @@
 				role="button"
 				v-show="totalCards"
 				@mousedown.prevent="onMousedown"
+				@click.prevent="onClickCard"
 			>
 				<span
 					class="card"
 					:class="isType('action') ? 'action--{{card.name}}' : 'blank--'"
-					v-for="card in cardsLimited"
+					v-for="card in cardsToDisplay"
 					:key="card.id"
 				>
 				</span>
@@ -46,7 +47,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 export default {
 	name: 'Deck',
@@ -70,6 +71,9 @@ export default {
 		// this.$store.dispatch('decks/load', this.id);
 	},
 	computed: {
+		...mapGetters({
+			myPlayer: 'players/getMyPlayer',
+		}),
 		...mapState([ 'isAdmin' ]),
 		...mapState({
 			isGameStarted: state => state.game.isStarted,
@@ -77,12 +81,12 @@ export default {
 			decks: state => state.decks
 		}),
 		canDraw: function() {
-			return true;
+			return this.myPlayer.isActive && this.myPlayer.isFirstTurn;
 		},
 		cards: function() {
 			return this.deck.cards;
 		},
-		cardsLimited: function() {
+		cardsToDisplay: function() {
 			return this.isType('main') ? this.cards[0] : this.cards;
 		},
 		deck: function() {
@@ -102,14 +106,17 @@ export default {
 		isType: function(name) {
 			return this.deck.deckType === name;
 		},
-		onDropCompleted: function(event) {
-			this.$log.debug(event);
+		onClickCard: function(evt) {
+			this.$log.debug(evt);
 		},
-		onClickDropdown: function(event) {
-			this.$log.debug(event);
+		onClickDropdown: function(evt) {
+			this.$log.debug(evt);
 		},
-		onMousedown: function(event) {
-			this.$log.debug(event);
+		onDropCompleted: function(evt) {
+			this.$log.debug(evt);
+		},
+		onMousedown: function(evt) {
+			this.$log.debug(evt);
 		},
 	},
 };
