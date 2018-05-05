@@ -31,6 +31,10 @@ const getters = {
 		}
 
 		return state;
+	},
+
+	getMyPlayer: (state, rootState) => {
+		return _.filter(pl => pl.id === rootState.localPlayer.id);
 	}
 };
 

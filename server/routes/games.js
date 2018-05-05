@@ -32,7 +32,7 @@ games.delete('/:id', function(req, res) {
 			logger.debug('decks -> ', deckIds);
 
 			DeckModel
-				.deleteMany({ '_id': { $in: deckIds } })
+				.deleteMany({ _id: { $in: deckIds } })
 				.then(() => {
 					/* eslint-disable no-undef */
 					// NOTE: No need to know when decks are removed
@@ -45,11 +45,18 @@ games.delete('/:id', function(req, res) {
 					logger.debug('players -> ', playerIds);
 
 					PlayerModel
-						.updateMany({ '_id': { $in: playerIds } }, playerUpdate)
+						.updateMany(
+							{ _id: { $in: playerIds } },
+							playerUpdate
+						)
 						.then(() => {
 							/* eslint-disable no-undef */
 							wss.broadcast(
-								{ namespace: 'wsPlayers', action: 'update', nuts: playerUpdate },
+								{
+									namespace: 'wsPlayers',
+									action: 'update',
+									nuts: playerUpdate
+								},
 								sessionId
 							);
 							/* eslint-enable no-undef */
@@ -59,7 +66,11 @@ games.delete('/:id', function(req, res) {
 								.then(function() {
 									/* eslint-disable no-undef */
 									wss.broadcast(
-										{ namespace: 'wsGame', action: 'delete', id: game.id },
+										{
+											namespace: 'wsGame',
+											action: 'delete',
+											id: game.id
+										},
 										sessionId
 									);
 									/* eslint-enable no-undef */
@@ -69,7 +80,11 @@ games.delete('/:id', function(req, res) {
 								.catch(function(err) {
 									logger.error(err);
 									res.status(500).json(config.apiError(err));
-								})
+								});
+						})
+						.catch(err => {
+							logger.error(err);
+							res.status(500).json(config.apiError(err));
 						});
 				})
 				.catch(err => {
@@ -196,7 +211,11 @@ games.post('/:id/start', function(req, res) {
 
 							/* eslint-disable no-undef */
 							wss.broadcast(
-								{ namespace: 'wsGame', action: 'update', nuts: doc },
+								{
+									namespace: 'wsGame',
+									action: 'update',
+									nuts: doc
+								},
 								sessionId,
 								true
 							);

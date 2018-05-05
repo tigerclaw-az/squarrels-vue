@@ -37,7 +37,7 @@ module.exports = function(server, sessionParser) {
 	wss.on('connection', function connection(ws, req) {
 		const sid = req.sessionID;
 
-		let playerIt = (pl) => {
+		let playerIt = pl => {
 				let index = 0;
 
 				return {
@@ -50,7 +50,7 @@ module.exports = function(server, sessionParser) {
 					}
 				};
 			},
-			resetActionCard = (id) => {
+			resetActionCard = id => {
 				// Remove the 'actionCard' from the game, which will trigger a
 				// message back to each client that the actionCard was removed
 				gameMod
@@ -69,7 +69,7 @@ module.exports = function(server, sessionParser) {
 
 		// This is the most important callback for us, we'll handle
 		// all messages from users here.
-		ws.on('message', (message) => {
+		ws.on('message', message => {
 			var data = JSON.parse(message),
 				query = {
 					sessionId: sid
@@ -112,7 +112,10 @@ module.exports = function(server, sessionParser) {
 								} else {
 									cards = _.union(cards, pl.cardsInHand);
 									playerToUpdate = pl;
-									logger.debug('playerToUpdate -> ', playerToUpdate);
+									logger.debug(
+										'playerToUpdate -> ',
+										playerToUpdate
+									);
 								}
 							});
 
@@ -190,61 +193,25 @@ module.exports = function(server, sessionParser) {
 					playerMod
 						.get()
 						.then(players => {
-							let cards = [],
+							let cardIds = [],
 								startPlayer = 0,
-								playersOrder,
-								updatePromises = [],
-								dealCards = () => {
-									playersOrder = _.union(
-										players.slice(startPlayer),
-										players.slice(0, startPlayer)
-									);
-
-									cards = _(cards).flatten().shuffle().value();
-
-									logger.debug('cards -> ', cards);
-									logger.debug('playersOrder1 -> ', playersOrder);
-
-									let pIt = playerIt(playersOrder);
-
-									_.forEach(cards, card => {
-										let player = pIt.next();
-
-										logger.debug('card -> ', card);
-
-										player.cardsInHand.push(card);
-									});
-
-									logger.debug('playersOrder2 -> ', playersOrder);
-
-									_.forEach(playersOrder, player => {
-										let playerData = {
-											cardsInHand: player.cardsInHand
-										};
-
-										logger.debug('playerData -> ', playerData);
-
-										playerMod.update(
-											player.id,
-											playerData,
-											sid
-										);
-									});
-
-									resetActionCard(data.gameId);
-								};
+								updatePromises = [];
 
 							_.forEach(players, (pl, index) => {
 								let plCards = pl.cardsInHand.slice(); // Copy array
 
 								logger.debug('plCards -> ', plCards);
 
-								cards = _.union(cards, plCards);
+								cardIds = _.union(cardIds, plCards);
 
 								// Remove cards from player's hand
 								pl.cardsInHand = [];
 								updatePromises.push(
-									playerMod.update(pl.id, { cardsInHand: [] }, sid)
+									playerMod.update(
+										pl.id,
+										{ cardsInHand: [] },
+										sid
+									)
 								);
 
 								if (pl.isActive) {
@@ -254,6 +221,49 @@ module.exports = function(server, sessionParser) {
 
 							Q.all(updatePromises)
 								.then(() => {
+									let dealCards = () => {
+										let playersOrder = _.union(
+											players.slice(startPlayer),
+											players.slice(0, startPlayer)
+										);
+
+										cardIds = _(cardIds)
+											.flatten()
+											.shuffle()
+											.value();
+
+										logger.debug('cards -> ', cardIds);
+										logger.debug('playersOrder1 -> ', playersOrder);
+
+										let pIt = playerIt(playersOrder);
+
+										_.forEach(cardIds, cardId => {
+											let player = pIt.next();
+
+											logger.debug('card -> ', cardId);
+
+											player.cardsInHand.push(cardId);
+										});
+
+										logger.debug('playersOrder2 -> ', playersOrder);
+
+										_.forEach(playersOrder, player => {
+											let playerData = {
+												cardsInHand: player.cardsInHand
+											};
+
+											logger.debug('playerData -> ', playerData);
+
+											playerMod.update(
+												player.id,
+												playerData,
+												sid
+											);
+										});
+
+										resetActionCard(data.gameId);
+									};
+
 									setTimeout(dealCards, 3000);
 								});
 						});
@@ -261,15 +271,14 @@ module.exports = function(server, sessionParser) {
 					break;
 
 				case 'getMyCards':
-					Player
-						.find(query)
+					Player.find(query)
 						.select('+sessionId +cardsInHand')
 						.exec()
 						.then(list => {
 							wsData = {
 								namespace: 'wsPlayers',
 								action: 'getMyCards',
-								nuts: list[0],
+								nuts: list[0]
 							};
 
 							ws.send(JSON.stringify(wsData));
@@ -286,11 +295,11 @@ module.exports = function(server, sessionParser) {
 			}
 		});
 
-		ws.on('error', (err) => {
+		ws.on('error', err => {
 			logger.error(err);
 		});
 
-		ws.on('close', (connection) => {
+		ws.on('close', connection => {
 			// close user connection
 			logger.warn('Connection Closed:', connection);
 			hoardPlayer = null;

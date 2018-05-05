@@ -21,9 +21,9 @@ const initialState = {
 const state = Object.assign({}, initialState);
 
 const getters = {
-	isPlayerInGame: (state) => (id) => {
+	isPlayerInGame: state => id => {
 		return state.playerIds.filter(pl => pl.id === id).length;
-	},
+	}
 };
 
 const actions = {
@@ -33,7 +33,8 @@ const actions = {
 		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
 
 		if (newPlayers.length) {
-			api.games.updatePlayers(gameId, newPlayers)
+			api.games
+				.updatePlayers(gameId, newPlayers)
 				.then(res => {
 					Vue.$log.debug('addPlayer()', res);
 					let gameData = res.data;
@@ -52,7 +53,8 @@ const actions = {
 	},
 
 	load({ commit, dispatch }, { id }) {
-		return api.games.get(id)
+		return api.games
+			.get(id)
 			.then(res => {
 				Vue.$log.debug('game/load', res);
 				if (res.status === 200) {
@@ -76,19 +78,29 @@ const actions = {
 	},
 
 	start({ dispatch, state }) {
+		let dealPromises = [];
+
 		this._vm.$log.debug('game/start', state);
 
 		api.games
 			.start(state.id, state.playerIds)
-			.then(data => {
+			.then(() => {
 				// Load all deck data into the store
 				dispatch('decks/load', { ids: state.deckIds }, { root: true })
 					.then(() => {
-						// ???
+						for (let playerId of this.playerIds) {
+							dealPromises.push(
+								dispatch(
+									'decks/dealCards',
+									playerId,
+									{ root: true }
+								)
+							);
+						}
 					})
 					.catch(err => {
 						this._vm.$log.error(err);
-					})
+					});
 			})
 			.catch(err => {
 				this._vm.$log.error(err);
@@ -117,9 +129,7 @@ const actions = {
 			});
 	},
 
-	update({ commit }, data) {
-
-	},
+	update({ commit }, data) {}
 };
 
 const mutations = {
@@ -148,7 +158,10 @@ const mutations = {
 						const countDiff = newPlayerCount - prevPlayerCount;
 
 						if (countDiff !== 0) {
-							let msg = 'Player ' + (countDiff > 0 ? 'joined' : 'left') + '!';
+							let msg =
+								'Player ' +
+								(countDiff > 0 ? 'joined' : 'left') +
+								'!';
 
 							this._vm.$toasted.info(msg);
 						}
@@ -156,7 +169,7 @@ const mutations = {
 				}
 			}
 		}
-	},
+	}
 };
 
 export default {

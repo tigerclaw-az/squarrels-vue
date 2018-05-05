@@ -1,48 +1,50 @@
 import Vue from 'vue';
 
 import api from '@/api/index';
+import config from '@/config';
 
 const state = {
-	isLoaded: false,
+	isLoaded: false
 };
 
-const getters = {
-
-};
+const getters = {};
 
 const actions = {
-	dealCards({ commit, state }) {
-
-	},
+	dealCards({ commit, state }) {},
 
 	load({ commit, dispatch }, { ids }) {
 		this._vm.$log.debug('decks/load', ids);
-		if (ids.length) {
-			api.decks.get(ids.join(','))
+
+		return new Promise((resolve, reject) => {
+			api.decks
+				.get(ids.join(','))
 				.then(res => {
 					this._vm.$log.debug('decks/load', res);
 					if (res.status === 200) {
-						let deckData = res.data;
+						let decks = res.data;
 
-						deckData.forEach(deck => {
+						decks.forEach(deck => {
 							commit('UPDATE', deck);
 						});
 
 						commit('LOADED');
+						resolve();
 					} else {
 						// TODO: Handle deck load error
 						this._vm.$log.error(res);
+						reject();
 					}
 				})
 				.catch(err => {
 					this._vm.$log.error(err);
+					reject(err);
 				});
-		}
+		});
 	},
 
 	unload({ commit }) {
 		commit('INIT');
-	},
+	}
 };
 
 const mutations = {

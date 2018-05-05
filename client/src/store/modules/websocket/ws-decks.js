@@ -7,6 +7,9 @@ const actions = {
 	actioncard_quarrel({ commit }) {},
 	actioncard_winter({ commit }) {
 		dispatch('game/end');
+	},
+	update({ commit }, data) {
+		commit('decks/UPDATE', data.nuts, { root: true });
 	}
 };
 
