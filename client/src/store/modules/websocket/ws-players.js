@@ -25,9 +25,7 @@ const actions = {
 	},
 };
 
-const mutations = {
-
-};
+const mutations = {};
 
 export default {
 	namespaced: true,

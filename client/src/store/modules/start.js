@@ -6,7 +6,7 @@ const state = {
 	gamesList: {},
 	waitCreateGame: false,
 	waitDeleteGame: false,
-	waitLoadGames: false,
+	waitLoadGames: false
 };
 
 const getters = {};
@@ -53,13 +53,13 @@ const actions = {
 			.get()
 			.then(res => {
 				if (res.status === 200) {
-					let gameData = res.data;
+					let gamesData = res.data;
 
-					this._vm.$log.debug('start/loadGames', gameData);
+					this._vm.$log.debug('start/loadGames', gamesData);
 
 					commit('GAMES_LOAD', { wait: false });
 
-					for (let game of gameData) {
+					for (let game of gamesData) {
 						commit('ADD_GAME', game);
 					}
 				}
