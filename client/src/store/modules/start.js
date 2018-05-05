@@ -6,7 +6,7 @@ const state = {
 	gamesList: {},
 	waitCreateGame: false,
 	waitDeleteGame: false,
-	waitLoadGames: false
+	waitLoadGames: false,
 };
 
 const getters = {};
@@ -85,7 +85,7 @@ const mutations = {
 	GAME_DELETE(state, payload) {
 		state.waitDeleteGame = payload;
 	},
-	GAMES_LOAD(state, payload) {
+	GAMES_LOAD(state) {
 		state.waitLoadGames = false;
 	},
 };

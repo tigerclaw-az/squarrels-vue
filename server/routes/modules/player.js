@@ -1,11 +1,12 @@
-var _ = require('lodash'),
-	config = require('../../config/config'),
-	logger = config.logger('routes:modules:player'),
-	Q = require('q'),
-	Player = require('../../models/PlayerModel.js').model;
+const _ = require('lodash');
+const config = require('../../config/config');
+const logger = config.logger('routes:modules:player');
+const Q = require('q');
+const Player = require('../../models/PlayerModel.js').model;
 
 let playerMod = {
 	get: (data = {}) => {
+		// prettier-ignore
 		return Player
 			.find(data)
 			.select('+cardsInHand')
@@ -20,11 +21,14 @@ let playerMod = {
 		if (data.cardsInHand) {
 			if (data.addCards) {
 				// Get existing cards from player and merge them with the given cards
+				// prettier-ignore
 				playerMod
 					.get(playerId)
 					.then(pl => {
 						logger.debug('pl -> ', pl);
-						cardsDefer.resolve(_.union(data.cardsInHand, pl[0].cardsInHand));
+						cardsDefer.resolve(
+							_.union(data.cardsInHand, pl[0].cardsInHand)
+						);
 					});
 			} else {
 				cardsDefer.resolve(data.cardsInHand);
@@ -46,6 +50,7 @@ let playerMod = {
 				}
 			}
 
+			// prettier-ignore
 			Player
 				.findOneAndUpdate(playerId, data, options)
 				.then(doc => {
@@ -67,7 +72,7 @@ let playerMod = {
 		});
 
 		return defer.promise;
-	}
+	},
 };
 
 module.exports = playerMod;

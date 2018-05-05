@@ -31,11 +31,10 @@ export default {
 		gameId: {
 			type: String,
 			required: true,
-		}
+		},
 	},
 	data: function() {
-		return {
-		}
+		return {};
 	},
 	watch: {
 		isGameLoaded: function() {
@@ -51,13 +50,11 @@ export default {
 		playerIdsInGame: function() {
 			this.$store.dispatch({
 				type: 'players/load',
-				ids: this.playerIdsInGame
+				ids: this.playerIdsInGame,
 			});
 		},
 	},
-	created: function() {
-
-	},
+	created: function() {},
 	mounted: function() {
 		this.$log.debug(this);
 
@@ -80,31 +77,31 @@ export default {
 			return this.playerIdsInGame.length < config.MAX_PLAYERS;
 		},
 		playerExists: function() {
-			return this.playerIdsInGame
-						.filter(pl => pl === this.currentPlayer.id)
-						.length;
+			return this.playerIdsInGame.filter(
+				pl => pl === this.currentPlayer.id
+			).length;
 		},
 		playersInGame: function() {
-			return _.filter(
-				this.allPlayers,
-				pl => _.includes(this.playerIdsInGame, pl.id)
+			return _.filter(this.allPlayers, pl =>
+				_.includes(this.playerIdsInGame, pl.id)
 			);
 		},
 		playersOrder: function() {
 			// TODO: Sort by this.currentPlayer.id and then by nextPlayer order
-			return _.sortBy(this.playersInGame, (pl) => pl.id !== this.currentPlayer.id);
+			return _.sortBy(
+				this.playersInGame,
+				pl => pl.id !== this.currentPlayer.id
+			);
 		},
 	},
-	methods: {
-
-	}
-}
+	methods: {},
+};
 </script>
 
 <style lang="scss" scoped>
-	.sq-players {
-		display: flex;
-		flex-wrap: wrap;
-		flex: 1 0 100%;
-	}
+.sq-players {
+	display: flex;
+	flex-wrap: wrap;
+	flex: 1 0 100%;
+}
 </style>

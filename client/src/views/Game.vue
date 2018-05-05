@@ -11,7 +11,7 @@
 			</button>
 		</div>
 		<div v-if="!isStarted" class="start-game-overlay"></div>
-		<BoardHeader v-if="isLoaded"></BoardHeader>
+		<BoardHeader v-if="isStarted"></BoardHeader>
 		<canvas v-if="actionCard && actionCard.name === 'winter'" class="winter-snow"></canvas>
 		<b-row>
 			<b-col>
@@ -44,7 +44,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
 
-import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown'
+import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
 
 import ActionCard from '@/components/Card/ActionCard.vue';
 import Deck from '@/components/Deck/Deck.vue';
@@ -65,16 +65,15 @@ export default {
 		id: {
 			type: String,
 			required: true,
-		}
+		},
 	},
 	data: function() {
-		return {
-		};
+		return {};
 	},
 	watch: {
 		isStarted: function() {
 			this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
-		}
+		},
 	},
 	mounted: function() {
 		this.$store.dispatch({ type: 'game/load', id: this.id });
@@ -95,7 +94,7 @@ export default {
 			'instantAction',
 			'playerIds',
 		]),
-		...mapState([ 'isAdmin' ]),
+		...mapState(['isAdmin']),
 		needPlayers: function() {
 			return this.playerIds.length < 2;
 		},
@@ -107,76 +106,80 @@ export default {
 		onClickStartGame: function(e) {
 			this.$log.debug('onClickStartGame', e);
 			this.$store.dispatch({ type: 'game/start' });
-		}
+		},
 	},
 };
 </script>
 
 <style lang="scss">
-	@import '~@/assets/scss/variables';
+@import '~@/assets/scss/variables';
 
-	.winter-snow {
-		background-image: linear-gradient(bottom, get-color('danube') 0%, get-color('matisse') 84%);
-		left: 0;
-		position: absolute;
-		top: 0;
-	}
+.winter-snow {
+	background-image: linear-gradient(
+		bottom,
+		get-color('danube') 0%,
+		get-color('matisse') 84%
+	);
+	left: 0;
+	position: absolute;
+	top: 0;
+}
 
-	.overlay-text {
-		@extend %center;
+.overlay-text {
+	@extend %center;
 
-		color: get-color(white);
-		font-size: 2em;
-		z-index: 100;
+	color: get-color(white);
+	font-size: 2em;
+	z-index: 100;
 
-		.waiting-message {
-			animation-name: blink;
-			animation-duration: 1.4s;
-			animation-iteration-count: infinite;
-			/**
+	.waiting-message {
+		animation-name: blink;
+		animation-duration: 1.4s;
+		animation-iteration-count: infinite;
+		/**
 			* This makes sure that the starting style (opacity: .2)
 			* of the animation is applied before the animation starts.
 			* Otherwise we would see a short flash or would have
 			* to set the default styling of the dots to the same
 			* as the animation. Same applies for the ending styles.
 			*/
-			animation-fill-mode: both;
-			transform: translateZ(0);
-		}
-
-		.btn-start-game {
-			// @extend %center;
-			@include animation-pulse;
-
-			font-size: inherit;
-			z-index: 80;
-		}
+		animation-fill-mode: both;
+		transform: translateZ(0);
 	}
 
-	.start-game-overlay {
-		background-color: get-color('mine-shaft');
-		height: auto !important;
-		height: 100%;
-		margin: 0 auto -20px;
-		min-height: 100%;
-		opacity: .9;
-		position: fixed;
-		width: 100%;
-		z-index: 60;
-	}
+	.btn-start-game {
+		// @extend %center;
+		@include animation-pulse;
 
-	.decks-container {
-		// @include clearfix;
-
-		display: flex;
-		flex-direction: columns;
-		margin-bottom: 1.5rem;
-		margin-top: 2.5rem;
-		padding: 1rem;
+		font-size: inherit;
+		z-index: 80;
 	}
+}
 
-	.game-buttons {
-		position: absolute;
-		z-index: 5;
-	}
+.start-game-overlay {
+	background-color: get-color('mine-shaft');
+	height: auto !important;
+	height: 100%;
+	margin: 0 auto -20px;
+	min-height: 100%;
+	opacity: 0.9;
+	position: fixed;
+	width: 100%;
+	z-index: 60;
+}
+
+.decks-container {
+	// @include clearfix;
+
+	display: flex;
+	flex-direction: columns;
+	margin-bottom: 1.5rem;
+	margin-top: 2.5rem;
+	padding: 1rem;
+}
+
+.game-buttons {
+	position: absolute;
+	z-index: 5;
+}
 </style>

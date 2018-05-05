@@ -40,9 +40,7 @@ export default {
 		Icon,
 	},
 	data: function() {
-		return {
-
-		}
+		return {};
 	},
 	watch: {
 		/**
@@ -58,15 +56,13 @@ export default {
 			if (newConn) {
 				this.loadGames();
 			}
-		}
+		},
 	},
 	mounted: function() {
 		this.loadGames();
 	},
 	computed: {
-		...mapGetters([
-			'isConnected'
-		]),
+		...mapGetters(['isConnected']),
 		...mapState('start', [
 			'gamesList',
 			'waitCreateGame',
@@ -86,31 +82,31 @@ export default {
 		deleteGame: function(id) {
 			this.$store.dispatch('start/deleteGame', id);
 		},
-	}
+	},
 };
 </script>
 
 <style lang="scss" scoped>
-	@import '~@/assets/scss/mixins';
+@import '~@/assets/scss/mixins';
 
-	.winter {
-		background-image: url('~@/assets/images/winter-background.jpg');
-		background-size: cover;
-		height: 100vh;
-		margin: -.25rem -1.25rem;
-		width: 100vw;
+.winter {
+	background-image: url('~@/assets/images/winter-background.jpg');
+	background-size: cover;
+	height: 100vh;
+	margin: -0.25rem -1.25rem;
+	width: 100vw;
+}
+
+.error {
+	@extend %center;
+	width: 30%;
+}
+
+.games-list {
+	@extend %center;
+
+	.btn-join-game {
+		position: relative;
 	}
-
-	.error {
-		@extend %center;
-		width: 30%;
-	}
-
-	.games-list {
-		@extend %center;
-
-		.btn-join-game {
-			position: relative;
-		}
-	}
+}
 </style>

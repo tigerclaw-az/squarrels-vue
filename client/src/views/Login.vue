@@ -28,15 +28,18 @@ export default {
 	name: 'Login',
 	data: function() {
 		return {
-			pName: ''
-		}
+			pName: '',
+		};
 	},
 	methods: {
 		createPlayer: function() {
 			this.$log.debug(this.pName);
 
 			this.$store
-				.dispatch('players/create', { name: this.pName, isCurrent: true })
+				.dispatch('players/create', {
+					name: this.pName,
+					isCurrent: true,
+				})
 				.then(() => {
 					this.$router.push('/');
 				})
@@ -44,11 +47,11 @@ export default {
 					this.$toasted.error('Unable to create player');
 					this.$log.error(err);
 				});
-		}
-	}
-}
+		},
+	},
+};
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 </style>

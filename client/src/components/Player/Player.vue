@@ -73,18 +73,15 @@ export default {
 		player: {
 			type: Object,
 			required: true,
-		}
+		},
 	},
 	components: {
-		Icon
+		Icon,
 	},
 	data: function() {
-		return {
-		}
+		return {};
 	},
-	mounted: function() {
-
-	},
+	mounted: function() {},
 	computed: {
 		isCurrentPlayer: function(id) {
 			return this.currentPlayer.id === this.player.id;
@@ -92,7 +89,7 @@ export default {
 		...mapState({
 			currentPlayer: state => state.localPlayer,
 			isGameStarted: state => state.game.isStarted,
-		})
+		}),
 	},
 	methods: {
 		myCards: function() {
@@ -107,8 +104,8 @@ export default {
 		onClickStorageAuto: function(e) {
 			this.$log.debug(e);
 		},
-	}
-}
+	},
+};
 </script>
 
 <style lang="scss" scoped src="./player.scss"></style>
