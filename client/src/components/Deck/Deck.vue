@@ -51,12 +51,11 @@ import { mapGetters, mapState } from 'vuex';
 
 export default {
 	name: 'Deck',
-	components: {
-	},
+	components: {},
 	props: {
 		id: {
 			type: String,
-			required: true
+			required: true,
 		},
 	},
 	data: function() {
@@ -64,9 +63,7 @@ export default {
 			isCurrentDeckLoaded: false,
 		};
 	},
-	watch: {
-
-	},
+	watch: {},
 	mounted: function() {
 		// this.$store.dispatch('decks/load', this.id);
 	},
@@ -74,11 +71,11 @@ export default {
 		...mapGetters({
 			myPlayer: 'players/getMyPlayer',
 		}),
-		...mapState([ 'isAdmin' ]),
+		...mapState(['isAdmin']),
 		...mapState({
 			isGameStarted: state => state.game.isStarted,
 			isLoaded: state => state.decks.isLoaded,
-			decks: state => state.decks
+			decks: state => state.decks,
 		}),
 		canDraw: function() {
 			return this.myPlayer.isActive && this.myPlayer.isFirstTurn;
@@ -93,9 +90,11 @@ export default {
 			return this.decks[this.id];
 		},
 		isDisabled: function() {
-			return this.isType('main') && !this.canDraw ||
-				this.isType('discard') && this.tooManyClicks ||
-				this.isType('action');
+			return (
+				(this.isType('main') && !this.canDraw) ||
+				(this.isType('discard') && this.tooManyClicks) ||
+				this.isType('action')
+			);
 		},
 		totalCards: function() {
 			return this.cards.length;

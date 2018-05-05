@@ -23,7 +23,7 @@ const state = Object.assign({}, initialState);
 const getters = {
 	isPlayerInGame: state => id => {
 		return state.playerIds.filter(pl => pl.id === id).length;
-	}
+	},
 };
 
 const actions = {
@@ -33,7 +33,7 @@ const actions = {
 		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
 
 		if (newPlayers.length) {
-			api.games
+			return api.games
 				.updatePlayers(gameId, newPlayers)
 				.then(res => {
 					Vue.$log.debug('addPlayer()', res);
@@ -45,11 +45,8 @@ const actions = {
 					Vue.$log.error(err);
 				});
 		}
-	},
 
-	dealCards({ commit, state }) {
-		let dealPromises = [];
-		// const players =
+		return Promise.reject('NO PLAYERS TO ADD');
 	},
 
 	load({ commit, dispatch }, { id }) {
@@ -82,24 +79,40 @@ const actions = {
 
 		this._vm.$log.debug('game/start', state);
 
-		api.games
+		return api.games
 			.start(state.id, state.playerIds)
 			.then(() => {
 				// Load all deck data into the store
-				dispatch('decks/load', { ids: state.deckIds }, { root: true })
+				return dispatch(
+					'decks/load',
+					{ ids: state.deckIds },
+					{ root: true }
+				);
+			})
+			.then(() => {
+				// Loop through each player and deal cards
+				// Each deal will be saved as a Promise so we can wait
+				// for all players to be dealt cards before starting game
+				for (let playerId of state.playerIds) {
+					dealPromises.push(
+						// prettier-ignore
+						dispatch(
+							'decks/dealCards',
+							playerId,
+							{ root: true }
+						)
+					);
+				}
+
+				Promise.all(dealPromises)
 					.then(() => {
-						for (let playerId of this.playerIds) {
-							dealPromises.push(
-								dispatch(
-									'decks/dealCards',
-									playerId,
-									{ root: true }
-								)
-							);
-						}
+						// After all cards have been dealt, set the starting player
+						// this.playersStore.nextPlayer(-1);
+						// dispatch('players/nextPlayer', -1);
 					})
 					.catch(err => {
-						this._vm.$log.error(err);
+						this.$log.error(err);
+						this.toastr.error(`Problem dealing cards: ${err}`);
 					});
 			})
 			.catch(err => {
@@ -119,7 +132,7 @@ const actions = {
 		const playerIds = state.playerIds;
 		const updatedPlayerIds = _.without(playerIds, rootState.localPlayer.id);
 
-		api.games
+		return api.games
 			.updatePlayers(state.id, updatedPlayerIds)
 			.then(() => {
 				commit('INIT');
@@ -129,7 +142,7 @@ const actions = {
 			});
 	},
 
-	update({ commit }, data) {}
+	update({ commit }, data) {},
 };
 
 const mutations = {
@@ -169,7 +182,7 @@ const mutations = {
 				}
 			}
 		}
-	}
+	},
 };
 
 export default {
