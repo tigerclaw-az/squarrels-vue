@@ -14,6 +14,7 @@ games.delete('/:id', function(req, res) {
 
 	logger.debug('games:delete -> ', id);
 
+	// prettier-ignore
 	GameModel
 		.findById(id)
 		.exec()
@@ -26,11 +27,12 @@ games.delete('/:id', function(req, res) {
 					isFirstTurn: true,
 					isActive: false,
 					score: 0,
-					totalCards: 0
+					totalCards: 0,
 				};
 
 			logger.debug('decks -> ', deckIds);
 
+			// prettier-ignore
 			DeckModel
 				.deleteMany({ _id: { $in: deckIds } })
 				.then(() => {
@@ -44,6 +46,7 @@ games.delete('/:id', function(req, res) {
 
 					logger.debug('players -> ', playerIds);
 
+					// prettier-ignore
 					PlayerModel
 						.updateMany(
 							{ _id: { $in: playerIds } },
@@ -55,12 +58,13 @@ games.delete('/:id', function(req, res) {
 								{
 									namespace: 'wsPlayers',
 									action: 'update',
-									nuts: playerUpdate
+									nuts: playerUpdate,
 								},
 								sessionId
 							);
 							/* eslint-enable no-undef */
 
+							// prettier-ignore
 							GameModel
 								.remove({ _id: game.id })
 								.then(function() {
@@ -69,7 +73,7 @@ games.delete('/:id', function(req, res) {
 										{
 											namespace: 'wsGame',
 											action: 'delete',
-											id: game.id
+											id: game.id,
 										},
 										sessionId
 									);
@@ -98,6 +102,7 @@ games.get('/:id?', function(req, res) {
 	let id = req.params.id || '',
 		query = id ? { _id: id } : {};
 
+	// prettier-ignore
 	GameModel
 		.find(query)
 		.populate('actionCard')
@@ -126,6 +131,7 @@ games.post('/', function(req, res) {
 
 	logger.debug('create -> ', req.body);
 
+	// prettier-ignore
 	GameModel
 		.create(game)
 		.then(gameDoc => {
@@ -173,6 +179,7 @@ games.post('/:id/start', function(req, res) {
 
 	const gameData = { isStarted: true };
 
+	// prettier-ignore
 	CardModel
 		.find({})
 		.exec()
@@ -182,14 +189,14 @@ games.post('/:id/start', function(req, res) {
 			const decks = [
 				new DeckModel({
 					deckType: 'main',
-					cards: _.shuffle(_.shuffle(cards))
+					cards: _.shuffle(_.shuffle(cards)),
 				}),
 				new DeckModel({
-					deckType: 'discard'
+					deckType: 'discard',
 				}),
 				new DeckModel({
-					deckType: 'action'
-				})
+					deckType: 'action',
+				}),
 			];
 
 			decks.forEach(deck => {
@@ -197,6 +204,7 @@ games.post('/:id/start', function(req, res) {
 				deckPromises.push(DeckModel.create(deck));
 			});
 
+			// prettier-ignore
 			Promise
 				.all(deckPromises)
 				.then(decksCreated => {
@@ -214,7 +222,7 @@ games.post('/:id/start', function(req, res) {
 								{
 									namespace: 'wsGame',
 									action: 'update',
-									nuts: doc
+									nuts: doc,
 								},
 								sessionId,
 								true
