@@ -11,41 +11,46 @@ const getters = {
 };
 
 const actions = {
+	dealCards({ commit, state }) {
+
+	},
+
 	load({ commit, dispatch }, { ids }) {
-		Vue.$log.debug('decks/load', ids);
+		this._vm.$log.debug('decks/load', ids);
 		if (ids.length) {
 			api.decks.get(ids.join(','))
 				.then(res => {
-					Vue.$log.debug('decks/load', res);
+					this._vm.$log.debug('decks/load', res);
 					if (res.status === 200) {
 						let deckData = res.data;
 
 						deckData.forEach(deck => {
-							commit('update', deck);
+							commit('UPDATE', deck);
 						});
 
-						commit('loadFinished');
+						commit('LOADED');
 					} else {
 						// TODO: Handle deck load error
+						this._vm.$log.error(res);
 					}
 				})
 				.catch(err => {
-					Vue.$log.error(err);
+					this._vm.$log.error(err);
 				});
 		}
 	},
 
 	unload({ commit }) {
-		commit('unload');
+		commit('INIT');
 	},
 };
 
 const mutations = {
-	loadFinished(state) {
+	LOADED(state) {
 		state.isLoaded = true;
 	},
 
-	unload(state) {
+	INIT(state) {
 		Vue.set(state, 'isLoaded', false);
 
 		for (let prop in state) {
@@ -55,10 +60,10 @@ const mutations = {
 		}
 	},
 
-	update(state, payload) {
+	UPDATE(state, payload) {
 		let deckId = payload.id;
 
-		Vue.$log.debug('mutation::decks/update', state, payload);
+		this._vm.$log.debug('mutation::decks/update', state, payload);
 
 		if (!state[deckId]) {
 			Vue.set(state, deckId, {});

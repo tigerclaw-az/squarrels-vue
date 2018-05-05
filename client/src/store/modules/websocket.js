@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import router from '@/router';
 
+import wsDecks from '@/store/modules/websocket/ws-decks';
 import wsGame from '@/store/modules/websocket/ws-game';
 import wsPlayers from '@/store/modules/websocket/ws-players';
 
@@ -54,6 +55,7 @@ export default {
 	// Can't use namespace until Issue is fixed: https://github.com/nathantsoi/vue-native-websocket/issues/40
 	// namespaced: true,
 	modules: {
+		wsDecks,
 		wsGame,
 		wsPlayers,
 	},

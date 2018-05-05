@@ -16,7 +16,7 @@
 		<b-row>
 			<b-col>
 				<div class="decks-container">
-					<Deck v-for="deckId in deckIds" :key="deckId" :deckId="deckId"></Deck>
+					<Deck v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
 				</div>
 			</b-col>
 		</b-row>
@@ -104,7 +104,8 @@ export default {
 		onClickAdminOption: function(name) {
 			this.$log.debug(name);
 		},
-		onClickStartGame: function() {
+		onClickStartGame: function(e) {
+			this.$log.debug('onClickStartGame', e);
 			this.$store.dispatch({ type: 'game/start' });
 		}
 	},

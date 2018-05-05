@@ -49,7 +49,7 @@ decks.post('/:id', function(req, res) {
 
 				/* eslint-disable no-undef */
 				wss.broadcast(
-					{ namespace: 'decks', action: 'update', nuts: doc },
+					{ namespace: 'wsDecks', action: 'update', nuts: doc },
 					sessionId
 				);
 				/* eslint-enable no-undef */

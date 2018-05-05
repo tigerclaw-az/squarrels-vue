@@ -1,5 +1,5 @@
 <template>
-	<div id="deck" :type="deck.deckType" v-if="isCurrentDeckLoaded">
+	<div id="deck" :type="deck.deckType" v-if="deck">
 		<div class="count" v-if="isType('main')">{{totalCards}}</div>
 		<div
 			class="deck"
@@ -53,32 +53,28 @@ export default {
 	components: {
 	},
 	props: {
-		deckId: {
+		id: {
 			type: String,
 			required: true
 		},
 	},
 	data: function() {
 		return {
-			deck: {},
 			isCurrentDeckLoaded: false,
 		};
 	},
 	watch: {
-		isDecksLoaded() {
-			this.$log.debug('decks -> ', this.$store.state.decks);
-			this.deck = this.$store.state.decks[this.deckId];
 
-			if (this.deck) {
-				this.isCurrentDeckLoaded = true;
-			}
-		},
+	},
+	mounted: function() {
+		// this.$store.dispatch('decks/load', this.id);
 	},
 	computed: {
 		...mapState([ 'isAdmin' ]),
 		...mapState({
 			isGameStarted: state => state.game.isStarted,
-			isDecksLoaded: state => state.decks.isLoaded,
+			isLoaded: state => state.decks.isLoaded,
+			decks: state => state.decks
 		}),
 		canDraw: function() {
 			return true;
@@ -89,17 +85,19 @@ export default {
 		cardsLimited: function() {
 			return this.isType('main') ? this.cards[0] : this.cards;
 		},
+		deck: function() {
+			return this.decks[this.id];
+		},
+		isDisabled: function() {
+			return this.isType('main') && !this.canDraw ||
+				this.isType('discard') && this.tooManyClicks ||
+				this.isType('action');
+		},
 		totalCards: function() {
 			return this.cards.length;
 		},
 	},
 	methods: {
-		isDisabled: function() {
-			return this.isType('main') && !this.canDraw() ||
-				this.isType('discard') && this.tooManyClicks ||
-				this.isType('action') ||
-				!this.isGameStarted;
-		},
 		// Must be method as you can't pass parameters to 'computed' functions
 		isType: function(name) {
 			return this.deck.deckType === name;

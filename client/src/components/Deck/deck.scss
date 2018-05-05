@@ -11,7 +11,7 @@ $deck-height: 16;
 	width: rem-calc(map-get($card-width, 'small'));
 
 	.count {
-		@include center-horizontal;
+		@extend %center-horizontal;
 
 		font-size: 2rem;
 		top: -30%;

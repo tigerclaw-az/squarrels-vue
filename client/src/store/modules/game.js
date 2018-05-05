@@ -46,6 +46,11 @@ const actions = {
 		}
 	},
 
+	dealCards({ commit, state }) {
+		let dealPromises = [];
+		// const players =
+	},
+
 	load({ commit, dispatch }, { id }) {
 		return api.games.get(id)
 			.then(res => {
@@ -70,11 +75,20 @@ const actions = {
 			});
 	},
 
-	start({ commit, state }) {
+	start({ dispatch, state }) {
+		this._vm.$log.debug('game/start', state);
+
 		api.games
 			.start(state.id, state.playerIds)
 			.then(data => {
-
+				// Load all deck data into the store
+				dispatch('decks/load', { ids: state.deckIds }, { root: true })
+					.then(() => {
+						// ???
+					})
+					.catch(err => {
+						this._vm.$log.error(err);
+					})
 			})
 			.catch(err => {
 				this._vm.$log.error(err);

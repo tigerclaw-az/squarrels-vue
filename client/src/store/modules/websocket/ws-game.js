@@ -26,6 +26,8 @@ const actions = {
 		let curRoute = router.currentRoute;
 		let nuts = data.nuts;
 
+		this._vm.$log.debug('wsGame/update', data);
+
 		// Only perform an update action if the player is on the proper route
 		if (curRoute.name === 'game' && curRoute.params.id === nuts.id) {
 			commit('game/UPDATE', data.nuts, { root: true });
