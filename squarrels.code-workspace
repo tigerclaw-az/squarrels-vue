@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"editor.formatOnPaste": true,
+		"prettier.singleQuote": true,
+		"prettier.eslintIntegration": true,
+		"javascript.format.enable": false,
+		"eslint.workingDirectories": [
+			"./client", "./server"
+		]
+	}
+}
