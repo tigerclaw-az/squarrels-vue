@@ -72,7 +72,7 @@ export default {
 		};
 	},
 	watch: {
-		isLoaded: function() {
+		isStarted: function() {
 			this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
 		}
 	},
