@@ -41,6 +41,9 @@ Vue.use(
 
 Vue.config.productionTip = false;
 
+Vue.prototype.$timeout = window.setTimeout;
+Vue.prototype.$timer = window.setInterval;
+
 Vue.filter('limit', function(value, amount) {
 	return value.filter(function(val, index) {
 		return index < amount;
@@ -57,6 +60,8 @@ const vm = new Vue({
 	router,
 	store
 }).$mount('#app');
+
+window.sqVue = vm;
 
 window.onbeforeunload = function() {
 	vm.$disconnect();
