@@ -81,59 +81,23 @@ players.get('/:id?', function(req, res) {
 
 players.post('/:id?', function(req, res) {
 	const sessionId = req.sessionID;
+	const playerId = req.params.id;
 
-	var playerId = req.params.id,
-		validatePlayer = pl => {
-			if (pl.name) {
-				pl.name = validator.stripLow(validator.escape(pl.name));
+	let validatePlayer = pl => {
+		if (pl.name) {
+			pl.name = validator.stripLow(validator.escape(pl.name));
 
-				if (pl.name.length > 24) {
-					let err = `The name you provided (${
-						pl.name
-					}) is longer than 24 chars!`;
+			if (pl.name.length > 24) {
+				let err = `The name you provided (${
+					pl.name
+				}) is longer than 24 chars!`;
 
-					return err;
-				}
+				return err;
 			}
+		}
 
-			return pl;
-		},
-		addPlayer = () => {
-			let playerDefaults = {
-					sessionId,
-					name: config.getRandomStr(8),
-					img: config.playerImage
-				},
-				pData = Object.assign({}, playerDefaults, req.body);
-
-			pData = validatePlayer(pData);
-
-			if (!pData) {
-				return false;
-			}
-
-			let pl = new Player(pData);
-
-			pl
-				.save()
-				.then(() => {
-					logger.debug('Player.save()', pl);
-
-					/* eslint-disable no-undef */
-					wss.broadcast(
-						{ namespace: 'wsPlayers', action: 'create', nuts: pl },
-						req.session.id,
-						false
-					);
-					/* eslint-enable no-undef */
-
-					res.status(201).json(pl);
-				})
-				.catch(err => {
-					logger.error(err);
-					res.status(500).json(config.apiError(err));
-				});
-		};
+		return pl;
+	};
 
 	if (!sessionId) {
 		logger.error('!!Possible Attack!!', req);
@@ -167,7 +131,9 @@ players.post('/:id?', function(req, res) {
 			});
 	} else {
 		// Add new player, if the player with current session doesn't already exist
-		Player.find({ sessionId })
+		// prettier-ignore
+		Player
+			.find({ sessionId })
 			.exec()
 			.then(list => {
 				if (list.length) {
@@ -176,6 +142,43 @@ players.post('/:id?', function(req, res) {
 					res.status(500).json(config.apiError(err));
 					return false;
 				}
+
+				let addPlayer = () => {
+					const playerDefaults = {
+						sessionId,
+						name: config.getRandomStr(8),
+						img: config.playerImage
+					};
+					let pData = Object.assign({}, playerDefaults, req.body);
+
+					pData = validatePlayer(pData);
+
+					if (!pData) {
+						return false;
+					}
+
+					let playerModel = new Player(pData);
+
+					playerModel
+						.save()
+						.then(() => {
+							logger.debug('Player.save()', playerModel);
+
+							/* eslint-disable no-undef */
+							wss.broadcast(
+								{ namespace: 'wsPlayers', action: 'create', nuts: playerModel },
+								req.session.id,
+								false
+							);
+							/* eslint-enable no-undef */
+
+							res.status(201).json(playerModel);
+						})
+						.catch(err => {
+							logger.error(err);
+							res.status(500).json(config.apiError(err));
+						});
+				};
 
 				addPlayer();
 			})
