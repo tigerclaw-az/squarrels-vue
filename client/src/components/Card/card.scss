@@ -36,7 +36,8 @@ $card-images: (
 
 			@if $name == 'special--rotten' {
 				$box-shadow-color: get-color('darkolivegreen');
-			} @elseif $name == 'special--golden' {
+			}
+			@elseif $name == 'special--golden' {
 				$box-shadow-color: get-color('saffron');
 			}
 
@@ -48,7 +49,7 @@ $card-images: (
 %playing-cards {
 	position: relative;
 
-	card,
+	.btn-card,
 	.card {
 		height: rem-calc(map-get($card-height, 'small'));
 		position: absolute;
@@ -72,7 +73,7 @@ $card-images: (
 
 @media (min-width: $screen-md-min) {
 	%playing-cards {
-		card,
+		.btn-card,
 		.card {
 			height: rem-calc(map-get($card-height, 'medium'));
 			width: rem-calc(map-get($card-width, 'medium'));

@@ -48,13 +48,15 @@
 		<div v-if="isCurrentPlayer" class="sq-player-cards">
 			<div v-if="hasCards" class="cards-group hand">
 				<div v-if="player.message" class="message">{{player.message}}</div>
+				<transition-group>
 				<Card
 					v-for="cardId in myCardsSorted"
 					:key="cardId"
 					:class="{ mine: hasCards }"
 					:id="cardId"
-					:cardType="hand"
+						:cardType="'hand'"
 				></Card>
+				</transition-group>
 			</div>
 			<div v-else-if="isGameStarted" class="empty"></div>
 		</div>
