@@ -122,7 +122,7 @@ const actions = {
 								// All players and decks have been updated, game can start
 								commit('END_DEAL');
 								api.games.start(state.id);
-								// dispatch('players/nextPlayer', -1, { root: true });
+								dispatch('players/nextPlayer', null, { root: true });
 							});
 					})
 					.catch(err => {

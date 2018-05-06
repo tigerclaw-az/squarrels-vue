@@ -8,13 +8,18 @@ const plDefault = {
 	name: utils.getRandomStr(12),
 };
 
-const state = {};
+const state = {
+	ids: [],
+};
 
 const getters = {
 	getById: state => id => {},
 
-	getByProp: state => (prop, value, index = false, all = false) => {
-		this._vm.$log.debug('get()', prop, value, index);
+	getByProp: state => (prop, value, options = {}) => {
+		let index = options.index || false;
+		let all = options.all || false;
+
+		Vue.$log.debug('get()', prop, value, index);
 
 		let method = index ? 'findIndex' : all ? 'filter' : 'find';
 
@@ -43,6 +48,22 @@ const getters = {
 		}
 
 		return { id: '' };
+	},
+
+	getNextPlayer: state => activeIndex => {
+		Vue.$log.debug('getNextPlayer()', activeIndex, state);
+
+		if (activeIndex === -1) {
+			// Get random player from list of player IDs
+			return _.sample(state.ids);
+		} else if (activeIndex === state.ids.length - 1) {
+			// Reset active player to first player
+			activeIndex = 0;
+		} else {
+			activeIndex++;
+		}
+
+		return state.ids[activeIndex];
 	},
 };
 
@@ -108,6 +129,37 @@ const actions = {
 		}
 	},
 
+	nextPlayer({ getters }) {
+		const activePlayer = getters.getByProp('isActive', true);
+		const activePlayerIndex = activePlayer
+			? state.ids.indexOf(activePlayer.id)
+			: -1;
+		const nextPlayerId = getters.getNextPlayer(activePlayerIndex);
+
+		this._vm.$log.debug(
+			'nextPlayer()',
+			activePlayer,
+			activePlayerIndex,
+			nextPlayerId
+		);
+
+		if (activePlayerIndex !== -1) {
+			api.players
+				.update(activePlayer.id, { isActive: false })
+				.then(res => {
+					// Merge data with existing object of player
+					if (res.status === 200) {
+						// this.update(res.data.id, res.data);
+					}
+				})
+				.catch(err => {
+					this.$log.error(err);
+				});
+		}
+
+		api.players.update(nextPlayerId, { isActive: true, isFirstTurn: true });
+	},
+
 	update({ commit }, data) {
 		this._vm.$log.debug('players/update', data);
 	},
@@ -123,6 +175,7 @@ const mutations = {
 		if (playerId) {
 			if (!state[playerId]) {
 				Vue.set(state, playerId, {});
+				state.ids.push(playerId);
 			}
 
 			for (let prop in payload) {

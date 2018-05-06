@@ -64,9 +64,6 @@ export default {
 		});
 	},
 	computed: {
-		...mapGetters({
-			getPlayerByProp: 'players/getByProp',
-		}),
 		...mapState({
 			currentPlayer: state => state.localPlayer,
 			isGameLoaded: state => state.game.isLoaded,
