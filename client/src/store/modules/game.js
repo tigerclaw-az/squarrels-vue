@@ -11,6 +11,7 @@ const initialState = {
 	deckIds: [],
 	id: null,
 	instantAction: false,
+	isDealing: false,
 	isLoaded: false,
 	isStarted: false,
 	playerIds: [],
@@ -74,10 +75,12 @@ const actions = {
 			});
 	},
 
-	start({ dispatch, rootGetters, state }) {
+	start({ commit, dispatch, rootGetters, state }) {
 		let dealPromises = [];
 
 		this._vm.$log.debug('game/start', state);
+
+		commit('START_DEAL');
 
 		return api.games
 			.dealCards(state.id, state.playerIds)
@@ -117,6 +120,8 @@ const actions = {
 							.update(mainDeck.id, { cards: rootGetters['decks/getCardIds'](mainDeck.id) })
 							.then(() => {
 								// All players and decks have been updated, game can start
+								commit('END_DEAL');
+								api.games.start(state.id);
 								// dispatch('players/nextPlayer', -1, { root: true });
 							});
 					})
@@ -168,6 +173,14 @@ const mutations = {
 		}
 
 		Vue.set(state, 'isLoaded', false);
+	},
+
+	END_DEAL(state) {
+		state.isDealing = false;
+	},
+
+	START_DEAL(state) {
+		state.isDealing = true;
 	},
 
 	UPDATE(state, payload) {

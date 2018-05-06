@@ -1,6 +1,6 @@
 <template>
 	<div id="board">
-		<div v-if="!isStarted" class="overlay-text" v-cloak>
+		<div v-if="!isStarted && !isDealing" class="overlay-text" v-cloak>
 			<div v-if="needPlayers" class="waiting-message">
 				Waiting for other players to join...
 			</div>
@@ -10,7 +10,7 @@
 				START GAME
 			</button>
 		</div>
-		<div v-if="!isStarted" class="start-game-overlay"></div>
+		<div v-if="!isStarted && !isDealing" class="start-game-overlay"></div>
 		<BoardHeader v-if="isStarted"></BoardHeader>
 		<canvas v-if="actionCard && actionCard.name === 'winter'" class="winter-snow"></canvas>
 		<b-row>
@@ -89,6 +89,7 @@ export default {
 		...mapState('game', [
 			'actionCard',
 			'deckIds',
+			'isDealing',
 			'isLoaded',
 			'isStarted',
 			'instantAction',
