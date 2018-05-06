@@ -46,15 +46,15 @@
 			</div>
 		</div>
 		<div v-if="isCurrentPlayer" class="sq-player-cards">
-			<div v-if="myCards.length" class="cards-group hand">
+			<div v-if="hasCards" class="cards-group hand">
 				<div v-if="player.message" class="message">{{player.message}}</div>
-				<card
+				<Card
 					v-for="cardId in myCardsSorted"
 					:key="cardId"
-					:class="{ mine: myCards.length }"
-					:card-id="cardId"
-					:card-type="hand"
-				></card>
+					:class="{ mine: hasCards }"
+					:id="cardId"
+					:cardType="hand"
+				></Card>
 			</div>
 			<div v-else-if="isGameStarted" class="empty"></div>
 		</div>
@@ -62,10 +62,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import _ from 'lodash';
 import Icon from 'vue-awesome/components/Icon';
+
+import Card from '@/components/Card/Card.vue';
 
 export default {
 	name: 'Player',
@@ -76,6 +78,7 @@ export default {
 		},
 	},
 	components: {
+		Card,
 		Icon,
 	},
 	data: function() {
@@ -83,21 +86,25 @@ export default {
 	},
 	mounted: function() {},
 	computed: {
-		isCurrentPlayer: function(id) {
-			return this.currentPlayer.id === this.player.id;
-		},
+		...mapGetters({
+			myPlayer: 'players/getMyPlayer',
+		}),
 		...mapState({
-			currentPlayer: state => state.localPlayer,
 			isGameStarted: state => state.game.isStarted,
 		}),
-	},
-	methods: {
-		myCards: function() {
-			return this.currentPlayer.cardsInHand;
+		isCurrentPlayer: function() {
+			this.$log.debug('isCurrentPlayer', this.myPlayer, this.player);
+			return this.myPlayer.id === this.player.id;
+		},
+		hasCards: function() {
+			let cards = this.myPlayer.cardsInHand;
+			return cards && cards.length;
 		},
 		myCardsSorted: function() {
-			return _.sortBy(this.myCards(), ['amount']);
+			return _.sortBy(this.myPlayer.cardsInHand, ['amount']);
 		},
+	},
+	methods: {
 		onClickStorage: function(e) {
 			this.$log.debug(e);
 		},

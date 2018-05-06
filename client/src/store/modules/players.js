@@ -33,8 +33,16 @@ const getters = {
 		return state;
 	},
 
-	getMyPlayer: (state, rootState) => {
-		return _.filter(pl => pl.id === rootState.localPlayer.id);
+	getMyPlayer: (state, getters, rootState) => {
+		Vue.$log.debug('getMyPlayer()', state, rootState);
+
+		for (let id in state) {
+			if (id === rootState.localPlayer.id) {
+				return state[id];
+			}
+		}
+
+		return { id: '' };
 	},
 };
 
