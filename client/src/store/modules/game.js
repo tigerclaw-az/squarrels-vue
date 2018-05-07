@@ -22,6 +22,10 @@ const initialState = {
 const state = Object.assign({}, initialState);
 
 const getters = {
+	isActionCard: state => name => {
+		return state.actionCard && state.actionCard.name === name;
+	},
+
 	isPlayerInGame: state => id => {
 		return state.playerIds.filter(pl => pl.id === id).length;
 	},
