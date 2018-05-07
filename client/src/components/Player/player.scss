@@ -44,11 +44,12 @@
 		}
 
 		.sq-player-card-count {
-			@extend %center-horizontal;
+			bottom: 0;
 			color: get-color('alabaster');
-			font-size: 5rem;
+			font-size: 2rem;
 			line-height: 1;
-			top: -30%;
+			position: absolute;
+			right: 0;
 		}
 	}
 
