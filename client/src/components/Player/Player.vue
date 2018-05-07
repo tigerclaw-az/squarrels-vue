@@ -54,7 +54,7 @@
 					:key="cardId"
 					:class="{ mine: hasCards }"
 					:id="cardId"
-						:cardType="'hand'"
+					:cardType="'hand'"
 				></Card>
 				</transition-group>
 			</div>
@@ -103,7 +103,9 @@ export default {
 			return cards && cards.length;
 		},
 		myCardsSorted: function() {
-			return _.sortBy(this.myPlayer.cardsInHand, ['amount']);
+			this.$log.debug('myPlayer', this.myPlayer);
+			// return _.sortBy(this.myPlayer.cardsInHand, ['amount']);
+			return this.myPlayer.cardsInHand;
 		},
 	},
 	methods: {
