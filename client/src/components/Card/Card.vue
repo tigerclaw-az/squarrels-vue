@@ -53,6 +53,10 @@ export default {
 			});
 	},
 	computed: {
+		...mapGetters({
+			canDrawCard: 'players/canDrawCard',
+			myPlayer: 'players/getMyPlayer',
+		}),
 		canDrag: function() {
 			return true;
 		},
@@ -63,8 +67,16 @@ export default {
 				}`;
 			}
 		},
+		isActivePlayer: function() {
+			const activePlayer = this.$store.getters['players/getByProp'](
+				'isActive',
+				true
+			);
+
+			return activePlayer.id === this.myPlayer.id;
+		},
 		isDisabled: function() {
-			return true;
+			return !this.canDrawCard && !this.isActivePlayer;
 		},
 	},
 	methods: {
