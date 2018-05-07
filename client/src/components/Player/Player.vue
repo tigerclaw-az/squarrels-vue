@@ -15,20 +15,10 @@
 				href="#"
 				class="sq-player-info-item sq-player-storage"
 				title="View or Store Nuts"
-				@click="onClickStorage($event)"
+				@click.prevent="onClickStorage($event)"
 			>
 				<icon name="tree" scale="6" class="icon icon-storage"></icon>
 				<span class="sq-player-score">{{player.score}}</span>
-			</a>
-			<a
-				v-if="isCurrentPlayer"
-				href="#"
-				class="sq-player-info-item sq-player-storage-auto"
-				title="Auto Storage of Nuts"
-				@click="onClickStorageAuto($event)"
-				:class="{ disabled: !player.isActive }"
-			>
-				<icon name="download" scale="2" class="icon icon-storage-auto"></icon>
 			</a>
 			<div
 				v-if="player.quarrel"
@@ -50,11 +40,12 @@
 				<div v-if="player.message" class="message">{{player.message}}</div>
 				<transition-group>
 				<Card
-					v-for="cardId in myCardsSorted"
+					v-for="(cardId, index) in myCardsSorted"
 					:key="cardId"
-					:class="{ mine: hasCards }"
 					:id="cardId"
 					:cardType="'hand'"
+					:class="{ mine: hasCards }"
+					:position="{ left: (index * 32) + 'px' }"
 				></Card>
 				</transition-group>
 			</div>
@@ -109,11 +100,8 @@ export default {
 		},
 	},
 	methods: {
-		onClickStorage: function(e) {
-			this.$log.debug(e);
-		},
-		onClickStorageAuto: function(e) {
-			this.$log.debug(e);
+		onClickStorage: function(evt) {
+			this.$log.debug(evt);
 		},
 	},
 };
