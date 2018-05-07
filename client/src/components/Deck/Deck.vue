@@ -4,7 +4,7 @@
 		<div
 			class="deck"
 			:class="{
-				'draw-card': isType('main') && canDraw
+				'draw-card': isType('main') && canDrawCard
 			}"
 			:drop="isType('discard')"
 			:drop-success="onDropCompleted"
@@ -70,8 +70,9 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			myPlayer: 'players/getMyPlayer',
+			canDrawCard: 'players/canDrawCard',
 			isActionCard: 'game/isActionCard',
+			myPlayer: 'players/getMyPlayer',
 		}),
 		...mapState(['isAdmin']),
 		...mapState({
@@ -80,9 +81,6 @@ export default {
 			isLoaded: state => state.decks.isLoaded,
 			decks: state => state.decks,
 		}),
-		canDraw: function() {
-			return this.myPlayer.isActive && this.myPlayer.isFirstTurn;
-		},
 		canHoard: function() {
 			return !this.myPlayer.isActive && this.isActionCard('hoard');
 		},
@@ -97,7 +95,7 @@ export default {
 		},
 		isDisabled: function() {
 			return (
-				(this.isType('main') && !this.canDraw) ||
+				(this.isType('main') && !this.canDrawCard) ||
 				(this.isType('discard') && this.tooManyClicks) ||
 				this.isType('action')
 			);
@@ -147,7 +145,7 @@ export default {
 		onClick: function(evt) {
 			this.$log.debug(evt, this);
 
-			if (this.isType('main') && this.canDraw) {
+			if (this.isType('main') && this.canDrawCard) {
 				this.$store
 					.dispatch('decks/drawCard')
 					.then(card => {
