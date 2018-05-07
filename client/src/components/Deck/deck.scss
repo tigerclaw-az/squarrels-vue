@@ -3,8 +3,9 @@ $deck-height: 16;
 @import '~@/components/Card/card.scss';
 
 #deck {
-	flex: 1;
 	$height: map-get($card-height, 'small') + $deck-height;
+
+	flex: 1 0 auto;
 	height: rem-calc($height);
 	margin-right: 1rem;
 	position: relative;
@@ -21,13 +22,13 @@ $deck-height: 16;
 	&[type='main'] {
 		.deck {
 			// box-shadow: 4px 6px 1px get-color('pickled-bean');
-			border: 2px outset get-color('zest');
+			// border: 2px outset get-color('zest');
 		}
 	}
 
 	&[type='discard'] {
-		border: 1px dashed get-color('black');
-		height: rem-calc($height + 32);
+		border: 1px dashed get-color(black);
+		height: rem-calc($height + 16);
 		padding: 1rem;
 
 		.deck {
@@ -53,7 +54,7 @@ $deck-height: 16;
 
 	&[type='action'] {
 		.card {
-			animation: .5s linear shrink;
+			animation: 0.5s linear shrink;
 		}
 	}
 
@@ -77,7 +78,7 @@ $deck-height: 16;
 		width: rem-calc(map-get($card-width, 'medium'));
 
 		&[type='discard'] {
-			height: rem-calc($height + $deck-height * 2);
+			height: rem-calc($height + $deck-height);
 			padding: 1rem;
 		}
 

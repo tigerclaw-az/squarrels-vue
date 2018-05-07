@@ -170,10 +170,12 @@ export default {
 }
 
 .decks-container {
-	// @include clearfix;
-
+	align-content: center;
+	align-items: center;
 	display: flex;
-	flex-direction: columns;
+	flex-direction: row;
+	flex-flow: row wrap;
+	justify-content: center;
 	margin-bottom: 1.5rem;
 	margin-top: 2.5rem;
 	padding: 1rem;
