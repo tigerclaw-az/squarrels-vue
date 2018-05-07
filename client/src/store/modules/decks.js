@@ -22,7 +22,7 @@ const getters = {
 };
 
 const actions = {
-	dealCards({ commit, dispatch, getters }, playerId) {
+	dealCards({ dispatch, getters }, playerId) {
 		const drawCardOptions = { numOnly: true, playerId };
 		const mainDeck = getters.getByType('main');
 
@@ -98,7 +98,7 @@ const actions = {
 	 * @param {Object} param1 (Optional)
 	 * @param {String} param2 (Optional)
 	 */
-	drawCard({ commit, getters }, options) {
+	drawCard({ commit, getters }, options = {}) {
 		const mainDeck = getters.getByType('main');
 		this._vm.$log.debug('decks/drawCard -> ', options, mainDeck);
 
@@ -131,14 +131,16 @@ const actions = {
 
 		// Need to update the cards drawn by the player so that
 		// the subscribe knows when to stop
-		commit(
-			'players/DRAW_CARD',
-			{
-				id: options.playerId,
-				cardDrawnId: cardDrawn.id,
-			},
-			{ root: true }
-		);
+		if (options.numOnly) {
+			commit(
+				'players/DRAW_CARD',
+				{
+					id: options.playerId,
+					cardDrawnId: cardDrawn.id,
+				},
+				{ root: true }
+			);
+		}
 
 		return Promise.resolve(cardDrawn.id);
 
