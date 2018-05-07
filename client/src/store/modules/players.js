@@ -13,7 +13,15 @@ const state = {
 };
 
 const getters = {
-	getById: state => id => {},
+	canDrawCard: (state, getter) => {
+		const myPlayer = getter.getMyPlayer;
+
+		return myPlayer.isActive && myPlayer.isFirstTurn;
+	},
+
+	getById: state => id => {
+		return state[id] || {};
+	},
 
 	getByProp: state => (prop, value, options = {}) => {
 		let index = options.index || false;
