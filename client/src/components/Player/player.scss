@@ -131,19 +131,14 @@
 	}
 
 	.sq-player-cards {
-		display: flex;
-		flex: 1 0 100%;
+		flex: 1 1 100%;
+		height: 100%;
 
 		.cards-group {
 			@extend %playing-cards;
-
-			[role='button'] {
-				position: absolute;
-			}
+			height: 100%;
 
 			.btn-card {
-				float: left;
-				position: relative !important;
 				width: rem-calc($card-width-stack);
 
 				&.mine {

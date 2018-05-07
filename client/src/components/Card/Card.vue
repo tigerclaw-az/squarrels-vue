@@ -6,6 +6,7 @@
 		:class="{
 			disabled: isDisabled
 		}"
+		:style="{ left: position.left }"
 		@click="onClick">
 		<span
 			class="card"
@@ -34,6 +35,7 @@ export default {
 			type: String,
 			required: true,
 		},
+		position: '',
 	},
 	data: function() {
 		return {
@@ -90,19 +92,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-@import '~@/components/Card/card.scss';
-
-.card {
-	@include generate-cards;
-
-	background-repeat: no-repeat;
-	background-size: contain;
-	height: inherit;
-	outline: none;
-
-	&:focus {
-		outline: none;
-	}
-}
-</style>
+<style lang="scss" scoped src="./card.scss"></style>
