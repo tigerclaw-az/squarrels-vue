@@ -85,6 +85,26 @@ const actions = {
 		}
 	},
 
+	addCard({ commit, getters }, cardId) {
+		this._vm.$log.debug('players/addCard', cardId, getters, this);
+
+		const player = getters.getMyPlayer;
+		const cardsMerge = _.union(player.cardsInHand, [cardId]);
+
+		this._vm.$log.debug('cards:union -> ', cardsMerge);
+
+		return api.players
+			.update(player.id, { cardsInHand: cardsMerge })
+			.then(res => {
+				this._vm.$log.debug('playersApi:update()', res, this);
+				// FIXME: 'hasDrawnCard' will be reset when player refreshes
+				commit('UPDATE', { id: player.id, hasDrawnCard: true });
+			})
+			.catch(err => {
+				this._vm.$log.error('This is nuts! Error: ', err);
+			});
+	},
+
 	create({ commit }, plObj) {
 		let plData = Object.assign({}, plDefault, plObj);
 

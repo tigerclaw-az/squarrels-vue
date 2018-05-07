@@ -16,7 +16,7 @@
 				role="button"
 				v-show="totalCards"
 				@mousedown.prevent="onMousedown"
-				@click.prevent="onClickCard"
+				@click.prevent="onClick"
 			>
 				<span
 					class="card"
@@ -60,7 +60,8 @@ export default {
 	},
 	data: function() {
 		return {
-			isCurrentDeckLoaded: false,
+			maxClicks: 4,
+			tooManyClicks: false,
 		};
 	},
 	watch: {},
@@ -70,15 +71,20 @@ export default {
 	computed: {
 		...mapGetters({
 			myPlayer: 'players/getMyPlayer',
+			isActionCard: 'game/isActionCard',
 		}),
 		...mapState(['isAdmin']),
 		...mapState({
+			actionCard: state => state.game.actionCard,
 			isGameStarted: state => state.game.isStarted,
 			isLoaded: state => state.decks.isLoaded,
 			decks: state => state.decks,
 		}),
 		canDraw: function() {
 			return this.myPlayer.isActive && this.myPlayer.isFirstTurn;
+		},
+		canHoard: function() {
+			return !this.myPlayer.isActive && this.isActionCard('hoard');
 		},
 		cards: function() {
 			return this.deck.cards;
@@ -101,12 +107,73 @@ export default {
 		},
 	},
 	methods: {
+		handleCardDrawn: function(cardDrawn) {
+			const cardAction = cardDrawn.action;
+			let cardsMerge = [];
+
+			this.$log.debug(cardDrawn, cardAction, this);
+
+			if (!cardAction) {
+				// Player drew a non-"action" card, so add to their hand and update
+				this.$store.dispatch('players/addCard', cardDrawn);
+			} else {
+				// this.gamesApi
+				// 	.actionCard(this.game.id, cardDrawn.id)
+				// 	.then(res => {
+				// 		this.$log.debug('gameUpdate:actionCard -> ', res);
+				// 	}, err => {
+				// 		this.$log.error(err);
+				// 	});
+				// // Don't allow player to draw more than 7 cards
+				// if (plData.totalCards >= this.playerModel.numDrawCards) {
+				// 	plData.isFirstTurn = false;
+				// }
+			}
+
+			// this.playersApi
+			// 	.update(player.id, plData)
+			// 	.then(res => {
+			// 		this.$log.debug('playersApi:update()', res, this);
+			// 		this.playersStore.update(player.id, { hasDrawnCard: true });
+			// 	})
+			// 	.catch(err => {
+			// 		this.$log.error('This is nuts! Error: ', err);
+			// 	});
+		},
 		// Must be method as you can't pass parameters to 'computed' functions
 		isType: function(name) {
 			return this.deck.deckType === name;
 		},
-		onClickCard: function(evt) {
-			this.$log.debug(evt);
+		onClick: function(evt) {
+			this.$log.debug(evt, this);
+
+			if (this.isType('main') && this.canDraw) {
+				this.$store
+					.dispatch('decks/drawCard')
+					.then(card => {
+						this.handleCardDrawn(card);
+					})
+					.catch(err => {
+						this.$log.error(err);
+						this.$toasted.error(`Error drawing card! ${err}`);
+					});
+			} else if (this.isType('discard') && this.canHoard) {
+				this.maxClicks--;
+				// this.collectHoard();
+			} else {
+				if (this.maxClicks >= 0) {
+					this.$toasted.warn(
+						`STOP THAT! Only ${this.maxClicks} clicks LEFT!`
+					);
+				} else {
+					this.$toasted.error(
+						'You have been banned from collecting the Hoard!'
+					);
+					this.tooManyClicks = true;
+
+					// TODO: Disable clicking even when user refreshes page
+				}
+			}
 		},
 		onClickDropdown: function(evt) {
 			this.$log.debug(evt);
