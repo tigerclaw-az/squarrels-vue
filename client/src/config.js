@@ -9,7 +9,7 @@ export const logger = Object.freeze({
 	showLogLevel: true,
 	showMethodName: true,
 	separator: '|',
-	showConsoleColors: true
+	showConsoleColors: true,
 });
 
 export const toast = Object.freeze({
@@ -21,10 +21,10 @@ export const websocket = Object.freeze({
 	format: 'json',
 	reconnection: true, // (Boolean) whether to reconnect automatically (false)
 	reconnectionAttempts: 10, // (Number) number of reconnection attempts before giving up (Infinity),
-	reconnectionDelay: 2000 // (Number) how long to initially wait before attempting a new (1000)
+	reconnectionDelay: 2000, // (Number) how long to initially wait before attempting a new (1000)
 });
 
 export const webStorage = Object.freeze({
 	prefix: 'squarrels',
-	driver: 'local'
+	driver: 'local',
 });

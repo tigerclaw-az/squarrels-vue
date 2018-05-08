@@ -20,9 +20,6 @@ import Player from '@/components/Player/Player.vue';
 
 export default {
 	name: 'BoardPlayers',
-	components: {
-		Player,
-	},
 	props: {
 		isGameStarted: {
 			type: Boolean,
@@ -92,6 +89,9 @@ export default {
 		},
 	},
 	methods: {},
+	components: {
+		Player,
+	},
 };
 </script>
 

@@ -21,7 +21,7 @@ import {
 	toast as toastConfig,
 	websocket as wsConfig,
 	webStorage as storageConfig,
-	logger as loggerConfig
+	logger as loggerConfig,
 } from './config';
 
 Vue.use(BootstrapVue);
@@ -29,7 +29,7 @@ Vue.use(Layout);
 
 Vue.use(Toasted, {
 	router,
-	...toastConfig
+	...toastConfig,
 });
 Vue.use(Storage, storageConfig);
 Vue.use(VueLogger, loggerConfig);
@@ -58,7 +58,7 @@ const vm = new Vue({
 	components: {},
 	...App,
 	router,
-	store
+	store,
 }).$mount('#app');
 
 window.sqVue = vm;
