@@ -53,39 +53,6 @@
 		}
 	}
 
-	.sq-player-info {
-		@include clearfix;
-
-		align-items: center;
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		margin-right: 1rem;
-		max-width: 10rem;
-
-		.sq-player-info-item {
-			color: inherit;
-			font-size: 2.5rem;
-			position: relative;
-		}
-
-		.sq-player-name {
-			flex: 1 0 100%;
-		}
-
-		.sq-player-storage {
-			font-size: 4rem;
-
-			.sq-player-score {
-				@extend %center-horizontal;
-				color: get-color('carnaby-tan');
-				font-size: 2rem;
-				line-height: 2.25;
-				top: 0;
-			}
-		}
-	}
-
 	.sq-player-quarrel {
 		@extend %playing-cards;
 
@@ -179,29 +146,6 @@
 					.card {
 						transform: scale(1);
 					}
-				}
-			}
-		}
-
-		.sq-player-thumbnail {
-			img {
-				width: 10rem;
-			}
-		}
-
-		.sq-player-info {
-			max-width: 11rem;
-
-			.sq-player-info-item {
-				font-size: 3.5rem;
-			}
-
-			.sq-player-storage {
-				font-size: 5.5rem;
-
-				.sq-player-score {
-					font-size: 2.75rem;
-					font-weight: $font-weight-bold;
 				}
 			}
 		}
