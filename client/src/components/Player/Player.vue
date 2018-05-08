@@ -15,11 +15,13 @@
 				<div v-if="player.message" class="message">{{player.message}}</div>
 				<transition-group>
 				<Card
-					v-for="(cardId, index) in myCardsSorted"
-					:key="cardId"
-					:id="cardId"
-					:cardType="'hand'"
+					v-for="(card, index) in myCardsSorted"
+					:key="card.id"
+					:id="card.id"
 					:class="{ mine: hasCards }"
+					:cardData="card"
+					:cardType="'hand'"
+					:matches="findCardMatches(card.amount)"
 					:position="{ left: (index * 32) + 'px' }"
 				></Card>
 				</transition-group>
@@ -35,6 +37,7 @@ import { mapGetters, mapState } from 'vuex';
 import _ from 'lodash';
 import Icon from 'vue-awesome/components/Icon';
 
+import api from '@/api/index';
 import Card from '@/components/Card/Card.vue';
 import PlayerInfo from '@/components/Player/PlayerInfo.vue';
 
@@ -47,7 +50,24 @@ export default {
 		},
 	},
 	data: function() {
-		return {};
+		return {
+			myCardsDetails: [],
+		};
+	},
+	watch: {
+		myCards: function() {
+			this.$log.debug('myCards->changed');
+			api.cards
+				.get(this.myCards.join(','))
+				.then(res => {
+					if (res.status === 200) {
+						this.myCardsDetails = res.data;
+					}
+				})
+				.catch(err => {
+					this.$log.error('myCards->get', err);
+				});
+		},
 	},
 	mounted: function() {},
 	computed: {
@@ -62,16 +82,29 @@ export default {
 			return this.myPlayer.id === this.player.id;
 		},
 		hasCards: function() {
-			let cards = this.myPlayer.cardsInHand;
+			let cards = this.myCards;
 			return cards && cards.length;
+		},
+		myCards: function() {
+			return this.myPlayer.cardsInHand;
 		},
 		myCardsSorted: function() {
 			this.$log.debug('myPlayer', this.myPlayer);
-			// return _.sortBy(this.myPlayer.cardsInHand, ['amount']);
-			return this.myPlayer.cardsInHand;
+			return _.sortBy(this.myCardsDetails, ['amount']);
+			// return this.myPlayer.cardsInHand;
 		},
 	},
-	methods: {},
+	methods: {
+		findCardMatches: function(amount) {
+			let groups = _.groupBy(this.myCardsDetails, c => c.amount);
+
+			if (groups[amount].length >= 3) {
+				return groups[amount];
+			}
+
+			return [];
+		},
+	},
 	components: {
 		Card,
 		Icon,

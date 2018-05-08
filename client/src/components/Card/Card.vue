@@ -4,10 +4,11 @@
 		role="button"
 		class="btn-card"
 		:class="{
-			disabled: isDisabled
+			disabled: isDisabled,
+			hightlight: hasMatch,
 		}"
 		:style="{ left: position.left }"
-		@click="onClick">
+		@click.prevent="onClick">
 		<span
 			class="card"
 			:class="cardClass"
@@ -27,9 +28,16 @@ import api from '@/api/index';
 export default {
 	name: 'Card',
 	props: {
+		cardData: {
+			type: Object,
+			required: false,
+		},
 		cardType: {
 			type: String,
 			required: true,
+		},
+		matches: {
+			type: Array,
 		},
 		id: {
 			type: String,
@@ -39,20 +47,22 @@ export default {
 	},
 	data: function() {
 		return {
-			cardData: {},
+			// cardData: {},
 		};
 	},
 	created: function() {
-		api.cards
-			.get(this.id)
-			.then(res => {
-				if (res.status === 200) {
-					this.cardData = res.data[0];
-				}
-			})
-			.catch(err => {
-				this.$log.error(err);
-			});
+		if (!this.cardData) {
+			api.cards
+				.get(this.id)
+				.then(res => {
+					if (res.status === 200) {
+						this.cardData = res.data[0];
+					}
+				})
+				.catch(err => {
+					this.$log.error(err);
+				});
+		}
 	},
 	computed: {
 		...mapGetters({
@@ -69,6 +79,9 @@ export default {
 				}`;
 			}
 		},
+		hasMatch: function() {
+			return this.matches.length;
+		},
 		isActivePlayer: function() {
 			const activePlayer = this.$store.getters['players/getByProp'](
 				'isActive',
@@ -78,7 +91,9 @@ export default {
 			return activePlayer.id === this.myPlayer.id;
 		},
 		isDisabled: function() {
-			return !this.canDrawCard && !this.isActivePlayer;
+			return (
+				(!this.canDrawCard && !this.isActivePlayer) || !this.hasMatch
+			);
 		},
 	},
 	methods: {
