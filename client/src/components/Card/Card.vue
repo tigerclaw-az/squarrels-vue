@@ -1,13 +1,12 @@
 <template>
-	<a
-		href="#"
+	<div
 		role="button"
 		class="btn-card"
 		:class="{
 			disabled: isDisabled,
-			hightlight: hasMatch,
+			highlight: hasMatch,
 		}"
-		:style="{ left: position.left }"
+		:style="cardStyle"
 		@click.prevent="onClick">
 		<span
 			class="card"
@@ -17,7 +16,7 @@
 			:drag-stop="onDragStop"
 		>
 		</span>
-	</a>
+	</div>
 </template>
 
 <script>
@@ -44,25 +43,12 @@ export default {
 			required: true,
 		},
 		position: '',
+		zIndex: 0,
 	},
 	data: function() {
 		return {
 			// cardData: {},
 		};
-	},
-	created: function() {
-		if (!this.cardData) {
-			api.cards
-				.get(this.id)
-				.then(res => {
-					if (res.status === 200) {
-						this.cardData = res.data[0];
-					}
-				})
-				.catch(err => {
-					this.$log.error(err);
-				});
-		}
 	},
 	computed: {
 		...mapGetters({
@@ -78,6 +64,9 @@ export default {
 					this.cardData.name
 				}`;
 			}
+		},
+		cardStyle: function() {
+			return { left: this.position.left, 'z-index': this.zIndex };
 		},
 		hasMatch: function() {
 			return this.matches.length;
@@ -95,6 +84,20 @@ export default {
 				(!this.canDrawCard && !this.isActivePlayer) || !this.hasMatch
 			);
 		},
+	},
+	created: function() {
+		if (!this.cardData) {
+			api.cards
+				.get(this.id)
+				.then(res => {
+					if (res.status === 200) {
+						this.cardData = res.data[0];
+					}
+				})
+				.catch(err => {
+					this.$log.error(err);
+				});
+		}
 	},
 	methods: {
 		onClick: function(evt) {

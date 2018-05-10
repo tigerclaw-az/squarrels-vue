@@ -23,6 +23,7 @@
 					:cardType="'hand'"
 					:matches="findCardMatches(card.amount)"
 					:position="{ left: (index * 32) + 'px' }"
+					:zIndex="index"
 				></Card>
 				</transition-group>
 			</div>
@@ -43,6 +44,11 @@ import PlayerInfo from '@/components/Player/PlayerInfo.vue';
 
 export default {
 	name: 'Player',
+	components: {
+		Card,
+		Icon,
+		PlayerInfo,
+	},
 	props: {
 		player: {
 			type: Object,
@@ -54,22 +60,6 @@ export default {
 			myCardsDetails: [],
 		};
 	},
-	watch: {
-		myCards: function() {
-			this.$log.debug('myCards->changed');
-			api.cards
-				.get(this.myCards.join(','))
-				.then(res => {
-					if (res.status === 200) {
-						this.myCardsDetails = res.data;
-					}
-				})
-				.catch(err => {
-					this.$log.error('myCards->get', err);
-				});
-		},
-	},
-	mounted: function() {},
 	computed: {
 		...mapGetters({
 			myPlayer: 'players/getMyPlayer',
@@ -94,6 +84,22 @@ export default {
 			// return this.myPlayer.cardsInHand;
 		},
 	},
+	watch: {
+		myCards: function() {
+			this.$log.debug('myCards->changed');
+			api.cards
+				.get(this.myCards.join(','))
+				.then(res => {
+					if (res.status === 200) {
+						this.myCardsDetails = res.data;
+					}
+				})
+				.catch(err => {
+					this.$log.error('myCards->get', err);
+				});
+		},
+	},
+	mounted: function() {},
 	methods: {
 		findCardMatches: function(amount) {
 			let groups = _.groupBy(this.myCardsDetails, c => c.amount);
@@ -104,11 +110,6 @@ export default {
 
 			return [];
 		},
-	},
-	components: {
-		Card,
-		Icon,
-		PlayerInfo,
 	},
 };
 </script>
