@@ -5,18 +5,31 @@ $deck-height: 16;
 #deck {
 	$height: map-get($card-height, 'small') + $deck-height;
 
+	align-items: center;
+	display: flex;
 	flex: 1 0 auto;
-	height: rem-calc($height);
+	flex-direction: column;
 	margin-right: 1rem;
-	position: relative;
-	width: rem-calc(map-get($card-width, 'small'));
 
 	.count {
-		@extend %center-horizontal;
-
 		font-size: 2rem;
-		top: -30%;
 		z-index: 1;
+	}
+
+	.deck {
+		@extend %playing-cards;
+
+		height: 100%;
+		width: auto;
+
+		.cards-group {
+			height: rem-calc($height);
+			width: rem-calc(map-get($card-width, 'small'));
+
+			&:not(.disabled) {
+				cursor: pointer;
+			}
+		}
 	}
 
 	&[type='main'] {
@@ -28,7 +41,6 @@ $deck-height: 16;
 
 	&[type='discard'] {
 		border: 1px dashed get-color(black);
-		height: rem-calc($height + 16);
 		padding: 1rem;
 
 		.deck {
@@ -58,32 +70,16 @@ $deck-height: 16;
 		}
 	}
 
-	.deck {
-		@extend %playing-cards;
-
-		display: block;
-		height: 100%;
-		margin: 0 auto;
-		width: 100%;
-
-		.cards-group {
-			margin: 0 auto;
-			width: rem-calc(map-get($card-width, 'small'));
-		}
-	}
-
 	@media (min-width: $screen-md-min) {
 		$height: map-get($card-height, 'medium') + $deck-height;
-		height: rem-calc($height);
-		width: rem-calc(map-get($card-width, 'medium'));
 
 		&[type='discard'] {
-			height: rem-calc($height + $deck-height);
 			padding: 1rem;
 		}
 
 		.deck {
 			.cards-group {
+				height: rem-calc($height);
 				width: rem-calc(map-get($card-width, 'medium'));
 			}
 		}
