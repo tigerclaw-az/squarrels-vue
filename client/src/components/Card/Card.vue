@@ -1,4 +1,5 @@
 <template>
+	<!-- TODO: Add icons to each card for 'storage' and 'discard' -->
 	<div
 		role="button"
 		class="btn-card"
@@ -7,7 +8,8 @@
 			highlight: hasMatch,
 		}"
 		:style="cardStyle"
-		@click.prevent="onClick">
+		@click="!isDisabled && onClick(cardData, matches, $event)"
+	>
 		<span
 			class="card"
 			:class="cardClass"
@@ -42,6 +44,9 @@ export default {
 			type: String,
 			required: true,
 		},
+		onClick: {
+			type: Function,
+		},
 		position: '',
 		zIndex: 0,
 	},
@@ -52,7 +57,6 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			canDrawCard: 'players/canDrawCard',
 			myPlayer: 'players/getMyPlayer',
 		}),
 		canDrag: function() {
@@ -77,11 +81,13 @@ export default {
 				true
 			);
 
-			return activePlayer.id === this.myPlayer.id;
+			return activePlayer && activePlayer.id === this.myPlayer.id;
 		},
 		isDisabled: function() {
 			return (
-				(!this.canDrawCard && !this.isActivePlayer) || !this.hasMatch
+				!this.isActivePlayer ||
+				this.cardData.action ||
+				!this.myPlayer.hasDrawnCard
 			);
 		},
 	},
@@ -100,9 +106,6 @@ export default {
 		}
 	},
 	methods: {
-		onClick: function(evt) {
-			this.$log.debug(evt);
-		},
 		onDragStop: function(evt) {
 			this.$log.debug(evt);
 		},

@@ -19,6 +19,7 @@
 					:key="card.id"
 					:id="card.id"
 					:class="{ mine: hasCards }"
+					:onClick="onClickCard"
 					:cardData="card"
 					:cardType="'hand'"
 					:matches="findCardMatches(card.amount)"
@@ -63,6 +64,7 @@ export default {
 	computed: {
 		...mapGetters({
 			myPlayer: 'players/getMyPlayer',
+			isActionCard: 'game/isActionCard',
 		}),
 		...mapState({
 			isGameStarted: state => state.game.isStarted,
@@ -85,8 +87,13 @@ export default {
 		},
 	},
 	watch: {
-		myCards: function() {
-			this.$log.debug('myCards->changed');
+		myCards: function(newCards, oldCards) {
+			this.$log.debug('myCards->changed', newCards, oldCards);
+
+			if (!this.myCards.length) {
+				return;
+			}
+
 			api.cards
 				.get(this.myCards.join(','))
 				.then(res => {
@@ -101,6 +108,27 @@ export default {
 	},
 	mounted: function() {},
 	methods: {
+		discard: function(card) {
+			this.$log.debug(card);
+			// Don't allow 'special' cards to be discarded unless it's the only card
+			let deckUpdate = this.$store.dispatch('decks/discard', card);
+			let playerUpdate = this.$store.dispatch('players/discard', {
+				id: this.myPlayer.id,
+				card,
+			});
+
+			Promise.all([deckUpdate, playerUpdate])
+				.then(res => {
+					this.$store.dispatch('sound/play', 'discard');
+					this.$store.dispatch('players/nextPlayer');
+				})
+				.catch(err => {
+					this.$log.error(err);
+					this.$toasted.error(
+						`ERROR: Unable to discard card: ${card.name}`
+					);
+				});
+		},
 		findCardMatches: function(amount) {
 			let groups = _.groupBy(this.myCardsDetails, c => c.amount);
 
@@ -109,6 +137,48 @@ export default {
 			}
 
 			return [];
+		},
+		onClickCard: function(card, cardsToStore, evt) {
+			this.$log.debug(card, cardsToStore, evt);
+
+			if (this.isActionCard()) {
+				return;
+			}
+
+			if (cardsToStore.length !== 3) {
+				this.discard(card);
+			} else {
+				this.storeCards(cardsToStore);
+			}
+		},
+		storeCards: function(cardsToStore) {
+			this.$log.debug(cardsToStore);
+
+			const cardsInStorage = this.myPlayer.cardsInStorage;
+			const cardsInHand = this.myCards;
+			const cardsToStoreIds = _.map(cardsToStore, c => c.id);
+
+			let plData = {
+				cardsInHand: _.difference(cardsInHand, cardsToStoreIds),
+				cardsInStorage: _.concat(cardsInStorage, cardsToStoreIds[0]),
+				score: this.myPlayer.score + cardsToStore[0].amount,
+			};
+
+			this.$log.debug('plData -> ', plData);
+
+			if (this.myPlayer.isActive && this.myPlayer.hasDrawnCard) {
+				this.$store
+					.dispatch('players/update', {
+						id: this.myPlayer.id,
+						data: plData,
+					})
+					.then(res => {
+						this.$log.debug(res);
+					})
+					.catch(err => {
+						this.$log.error(err);
+					});
+			}
 		},
 	},
 };
