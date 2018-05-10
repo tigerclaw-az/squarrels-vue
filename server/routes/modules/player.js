@@ -45,9 +45,9 @@ let playerMod = {
 				data.totalCards = cards.length;
 
 				// Make sure the player can't draw more than 7 cards
-				if (data.totalCards >= 7) {
-					data.isFirstTurn = false;
-				}
+				// if (data.totalCards >= 7) {
+				// 	data.isFirstTurn = false;
+				// }
 			}
 
 			// prettier-ignore

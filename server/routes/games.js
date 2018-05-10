@@ -139,7 +139,6 @@ games.post('/', function(req, res) {
 			wss.broadcast(
 				{ namespace: 'wsGame', action: 'create', nuts: gameDoc },
 				sessionId,
-				true
 			);
 			/* eslint-enable no-undef */
 
@@ -203,8 +202,7 @@ games.get('/:id/deal', function(req, res) {
 			});
 
 			// prettier-ignore
-			Promise
-				.all(deckPromises)
+			Promise.all(deckPromises)
 				.then(decksCreated => {
 					logger.debug('decksCreated -> ', decksCreated);
 
@@ -225,7 +223,6 @@ games.get('/:id/deal', function(req, res) {
 									nuts: doc,
 								},
 								sessionId,
-								true
 							);
 							/* eslint-enable no-undef */
 
@@ -263,8 +260,7 @@ games.get('/:id/start', function(req, res) {
 					action: 'update',
 					nuts: doc,
 				},
-				sessionId,
-				true
+				sessionId
 			);
 			/* eslint-enable no-undef */
 
