@@ -6,16 +6,12 @@
 			:class="{
 				'draw-card': isType('main') && canDrawCard
 			}"
-			:drop="isType('discard')"
-			:drop-success="onDropCompleted"
 		>
-			<a
-				href=""
+			<div
 				class="cards-group"
 				:class="{ disabled: isDisabled }"
 				role="button"
 				v-show="totalCards"
-				@mousedown.prevent="onMousedown"
 				@click.prevent="onClick"
 			>
 				<span
@@ -25,7 +21,7 @@
 					:key="card.id"
 				>
 				</span>
-			</a>
+			</div>
 		</div>
 		<div v-if="isType('main') && isAdmin" uib-dropdown>
 			<b-dropdown id="dropdown-settings" variant="danger" text="Choose Card" @click="onClickDropdown">
@@ -155,31 +151,27 @@ export default {
 						this.$log.error(err);
 						this.$toasted.error(`Error drawing card! ${err}`);
 					});
-			} else if (this.isType('discard') && this.canHoard) {
-				this.maxClicks--;
-				// this.collectHoard();
-			} else {
-				if (this.maxClicks >= 0) {
-					this.$toasted.warn(
-						`STOP THAT! Only ${this.maxClicks} clicks LEFT!`
-					);
+			} else if (this.isType('discard')) {
+				if (this.canHoard) {
+					// this.collectHoard();
 				} else {
-					this.$toasted.error(
-						'You have been banned from collecting the Hoard!'
-					);
-					this.tooManyClicks = true;
+					if (this.maxClicks >= 0) {
+						this.$toasted.info(
+							`STOP THAT! Only ${this.maxClicks} clicks LEFT!`
+						);
+						this.maxClicks--;
+					} else {
+						this.$toasted.error(
+							'You have been banned from collecting the Hoard!'
+						);
+						this.tooManyClicks = true;
 
-					// TODO: Disable clicking even when user refreshes page
+						// TODO: Disable clicking even when user refreshes page
+					}
 				}
 			}
 		},
 		onClickDropdown: function(evt) {
-			this.$log.debug(evt);
-		},
-		onDropCompleted: function(evt) {
-			this.$log.debug(evt);
-		},
-		onMousedown: function(evt) {
 			this.$log.debug(evt);
 		},
 	},
