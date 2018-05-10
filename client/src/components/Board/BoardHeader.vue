@@ -1,5 +1,5 @@
 <template>
-	<b-container fluid class="header" v-if="isGameStarted">
+	<b-container fluid class="header">
 		<b-row>
 			<b-col class="header-item game-start">Started @ {{createdAt}}</b-col>
 			<b-col class="header-item game-round">ROUND: {{roundNumber}}</b-col>
