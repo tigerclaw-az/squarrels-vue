@@ -16,7 +16,18 @@ const getters = {
 	canDrawCard: (state, getter) => {
 		const myPlayer = getter.getMyPlayer;
 
-		return myPlayer.isActive && myPlayer.isFirstTurn;
+		Vue.$log.debug(state, myPlayer);
+
+		return (
+			myPlayer.isActive &&
+			(myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard)
+		);
+	},
+
+	canDiscardCard: (state, getter) => {
+		const myPlayer = getter.getMyPlayer;
+
+		return myPlayer.isActive && myPlayer.hasDrawnCard;
 	},
 
 	getById: state => id => {
@@ -102,11 +113,10 @@ const actions = {
 		this._vm.$log.debug('cards:union -> ', cardsMerge);
 
 		return api.players
-			.update(player.id, { cardsInHand: cardsMerge })
+			.update(player.id, { cardsInHand: cardsMerge, hasDrawnCard: true })
 			.then(res => {
 				this._vm.$log.debug('playersApi:update()', res, this);
-				// FIXME: 'hasDrawnCard' will be reset when player refreshes
-				commit('UPDATE', { id: player.id, hasDrawnCard: true });
+				// commit('UPDATE', { id: player.id });
 			})
 			.catch(err => {
 				this._vm.$log.error('This is nuts! Error: ', err);
@@ -128,6 +138,17 @@ const actions = {
 					this._vm.$log.error(err);
 					reject(err);
 				});
+		});
+	},
+
+	discard({ state }, payload) {
+		this._vm.$log.debug(state, payload);
+
+		const playerId = payload.id;
+		const cardIds = state[playerId].cardsInHand;
+
+		return api.players.update(playerId, {
+			cardsInHand: _.difference(cardIds, [payload.card.id]),
 		});
 	},
 
@@ -157,7 +178,7 @@ const actions = {
 		}
 	},
 
-	nextPlayer({ getters }) {
+	nextPlayer({ dispatch, getters }) {
 		const activePlayer = getters.getByProp('isActive', true);
 		const activePlayerIndex = activePlayer
 			? state.ids.indexOf(activePlayer.id)
@@ -172,8 +193,12 @@ const actions = {
 		);
 
 		if (activePlayerIndex !== -1) {
-			api.players
-				.update(activePlayer.id, { isActive: false })
+			// api.players
+			// 	.update(activePlayer.id, { isActive: false })
+			dispatch('update', {
+				id: activePlayer.id,
+				data: { isActive: false },
+			})
 				.then(res => {
 					// Merge data with existing object of player
 					if (res.status === 200) {
@@ -185,18 +210,28 @@ const actions = {
 				});
 		}
 
-		api.players.update(nextPlayerId, { isActive: true, isFirstTurn: true });
+		return dispatch('update', {
+			id: nextPlayerId,
+			data: {
+				isActive: true,
+				hasDrawnCard: false,
+			},
+		});
 	},
 
-	update({ commit }, data) {
-		this._vm.$log.debug('players/update', data);
+	update({ commit }, payload) {
+		this._vm.$log.debug('players/update', payload);
+
+		return api.players.update(payload.id, payload.data);
 	},
 };
 
 const mutations = {
 	UPDATE(state, payload) {
-		let playerId = payload.id,
-			localPlayerId = Vue.$storage.get('player').id;
+		const playerId = payload.id;
+		const $playerStorage = Vue.$storage.get('player');
+		const localPlayerId = $playerStorage && $playerStorage.id;
+		// const localPlayerId = state.localPlayer && state.localPlayer.id;
 
 		this._vm.$log.debug('mutation::players/UPDATE', state, payload);
 
@@ -209,6 +244,8 @@ const mutations = {
 			for (let prop in payload) {
 				Vue.set(state[playerId], prop, payload[prop]);
 			}
+
+			this._vm.$log.debug('playerMatch?', playerId, localPlayerId);
 
 			if (playerId === localPlayerId) {
 				this._vm.$storage.set('player', state[playerId]);
