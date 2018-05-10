@@ -92,12 +92,17 @@ const actions = {
 		});
 	},
 
-	/**
-	 *
-	 * @param {Boolean} param0 (Optional)
-	 * @param {Object} param1 (Optional)
-	 * @param {String} param2 (Optional)
-	 */
+	discard({ getters }, card) {
+		const hoardDeck = getters.getByType('discard');
+		const cardsInDeck = hoardDeck.cards;
+
+		this._vm.$log.debug(card, hoardDeck, cardsInDeck);
+
+		return api.decks.update(hoardDeck.id, {
+			cards: _.concat(cardsInDeck, card.id),
+		});
+	},
+
 	drawCard({ commit, getters }, options = {}) {
 		const mainDeck = getters.getByType('main');
 		this._vm.$log.debug('decks/drawCard -> ', options, mainDeck);
