@@ -23,17 +23,10 @@ const getters = {
 
 const actions = {
 	dealCards({ dispatch, getters }, playerId) {
-		const drawCardOptions = { numOnly: true, playerId };
+		const drawCardOptions = { numOnly: true, isDeal: true, playerId };
 		const mainDeck = getters.getByType('main');
 
 		this._vm.$log.debug('decks/dealCards', playerId);
-
-		// Instead of -> for (i=0; i<config.MAX_CARDS; ++i)
-		// [...Array(config.MAX_CARDS)].forEach(() => {
-		// 	if (!state.isDrawingCard) {
-		// 		drawPromises.push(dispatch('drawCard', { numOnly: true }));
-		// 	}
-		// });
 
 		return new Promise((resolve, reject) => {
 			// Watch for each time a card was drawn and updated for
@@ -105,6 +98,7 @@ const actions = {
 
 	drawCard({ commit, getters }, options = {}) {
 		const mainDeck = getters.getByType('main');
+
 		this._vm.$log.debug('decks/drawCard -> ', options, mainDeck);
 
 		let cardsFromDeck = {
@@ -113,12 +107,11 @@ const actions = {
 				? _.filter(mainDeck.cards, { cardType: 'number' })
 				: mainDeck.cards,
 		};
-		let cardDrawn;
+
+		let cardDrawn = _.sampleSize(cardsFromDeck.toDraw)[0];
 
 		if (options.adminCard) {
 			cardDrawn = _.find(cardsFromDeck.toDraw, options.adminCard);
-		} else {
-			cardDrawn = _.sampleSize(cardsFromDeck.toDraw)[0];
 		}
 
 		this._vm.$log.debug('cardsFromDeck -> ', cardsFromDeck);
@@ -136,7 +129,7 @@ const actions = {
 
 		// Need to update the cards drawn by the player so that
 		// the subscribe knows when to stop
-		if (options.numOnly) {
+		if (options.isDeal) {
 			commit(
 				'players/DRAW_CARD',
 				{
@@ -145,17 +138,17 @@ const actions = {
 				},
 				{ root: true }
 			);
+
+			return Promise.resolve(cardDrawn.id);
 		}
 
-		return Promise.resolve(cardDrawn.id);
-
-		// return new Promise((resolve, reject) => {
-		// 	api.decks
-		// 		.update(mainDeck.id, { cards: cardsFromDeck.ids })
-		// 		.then(() => {
-		// 			resolve(cardDrawn.id);
-		// 		});
-		// });
+		return new Promise((resolve, reject) => {
+			api.decks
+				.update(mainDeck.id, { cards: cardsFromDeck.ids })
+				.then(() => {
+					resolve(cardDrawn.id);
+				});
+		});
 	},
 
 	load({ commit, dispatch }, { ids }) {
