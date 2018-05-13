@@ -1,6 +1,6 @@
 <template>
 	<div id="start">
-		<b-row class="winter">
+		<div class="winter">
 			<div v-if="!isConnected"
 				class="alert alert-danger error" role="alert"
 				v-cloak>
@@ -22,7 +22,7 @@
 				</ul>
 				<button class="btn btn-primary btn-new-game" @click="createGame">NEW GAME</button>
 			</div>
-		</b-row>
+		</div>
 	</div>
 </template>
 
@@ -92,9 +92,7 @@ export default {
 .winter {
 	background-image: url('~@/assets/images/winter-background.jpg');
 	background-size: cover;
-	height: 100vh;
-	margin: -0.25rem -1.25rem;
-	width: 100vw;
+	height: 99vh;
 }
 
 .error {
