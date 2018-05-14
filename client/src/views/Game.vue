@@ -115,6 +115,10 @@ export default {
 <style lang="scss">
 @import '~@/assets/scss/variables';
 
+#board {
+	padding: ($grid-gutter-width / 2);
+}
+
 .winter-snow {
 	background-image: linear-gradient(
 		bottom,
@@ -129,7 +133,7 @@ export default {
 .overlay-text {
 	@extend %center;
 
-	color: get-color(white);
+	color: $white;
 	font-size: 2em;
 	z-index: 100;
 

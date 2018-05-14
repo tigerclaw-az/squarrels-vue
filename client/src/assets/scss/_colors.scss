@@ -1,53 +1,103 @@
+// stylelint-disable
+$white: #fff;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
+$black: #000;
+
+$grays: (
+	'100': $gray-100,
+	'200': $gray-200,
+	'300': $gray-300,
+	'400': $gray-400,
+	'500': $gray-500,
+	'600': $gray-600,
+	'700': $gray-700,
+	'800': $gray-800,
+	'900': $gray-900
+);
+
 $colors: (
-	alabaster: 			#f9f9f9,
-	armadillo-black: 	#3f3f38,
-	bizarre: 			#f2dede,
-	carnaby-tan: 		#632401,
-	casablanca: 		#f6b149,
-	cioccolato: 		#541c09,
-	danube: 			#69ADD4,
-	dodger-blue: 		#3b99fc,
-	dove-grey: 			#666666,
-	dusty-grey: 		#999999,
-	emperor-grey: 		#555555,
-	fern: 				#61af71,
-	flamingo: 			#f8572d,
-	fountain: 			#539dc2,
-	gallery: 			#ebebeb,
-	galliano: 			#e2ad0d,
-	// gold
-	gold-light:			#ffcf40,
-	guardsman-red: 		#ba0010,
-	hopbush:			#cd6090,
-	kelly-green:		#0a7305,
-	kenyan-copper: 		#6c2505,
-	link-water: 		#d9edf7,
-	mandy:				#e25959,
-	matisse: 			#175291,
-	medium-grey:		#f3f3f3,
-	mercury:			#e6e6e6,
-	mine-shaft:			#2b2b2b,
-	neptune:			#82b8c0,
-	palma:				#0faf0c,
-	pearl-lusta: 		#fcf8e3,
-	peppermint:			#dff0d8,
-	pickled-bean: 		#664723,
-	// red
-	red-beech: 			#7a2e00,
-	red-light:			#b50000,
-	roman:				#d9534f,
-	saffron:			#f2bf24,
-	sandy-brown:		#f0ad4e,
-	// seashell
-	// silver
-	schoolbus:			#f7d900,
-	tia-maria-orange:	#c9480c,
-	tory-blue:			#134a9c,
-	tundora:			#4d4d4d,
-	tussock: 			#ba8243,
-	viking:				#5bc0de,
-	// yellow
-	yellow-mid:			#f2bf24,
-	// white
-	zest:				#e67325
+	alabaster: #f9f9f9,
+	armadillo-black: #3f3f38,
+	bizarre: #f2dede,
+	carnaby-tan: #632401,
+	casablanca: #f6b149,
+	cioccolato: #541c09,
+	danube: #69add4,
+	dodger-blue: #3b99fc,
+	dove-grey: #666666,
+	dusty-grey: #999999,
+	emperor-grey: #555555,
+	fern: #61af71,
+	flamingo: #f8572d,
+	fountain: #539dc2,
+	gallery: #ebebeb,
+	galliano: #e2ad0d,
+	/* gold*/ gold-light: #ffcf40,
+	guardsman-red: #ba0010,
+	hopbush: #cd6090,
+	kelly-green: #0a7305,
+	kenyan-copper: #6c2505,
+	link-water: #d9edf7,
+	mandy: #e25959,
+	matisse: #175291,
+	medium-grey: #f3f3f3,
+	mercury: #e6e6e6,
+	mine-shaft: #2b2b2b,
+	neptune: #82b8c0,
+	palma: #0faf0c,
+	pearl-lusta: #fcf8e3,
+	peppermint: #dff0d8,
+	pickled-bean: #664723,
+	/* red*/ red-beech: #7a2e00,
+	red-light: #b50000,
+	roman: #d9534f,
+	saffron: #f2bf24,
+	sandy-brown: #f0ad4e,
+	/* seashell*/ /* silver*/ schoolbus: #f7d900,
+	tia-maria-orange: #c9480c,
+	tory-blue: #134a9c,
+	tundora: #4d4d4d,
+	tussock: #ba8243,
+	viking: #5bc0de,
+	/* yellow*/ yellow-mid: #f2bf24,
+	/* white*/ zest: #e67325
+);
+
+$blue: #007bff;
+$indigo: #6610f2;
+$purple: #6f42c1;
+$pink: #e83e8c;
+$red: #dc3545;
+$orange: #fd7e14;
+$yellow: #ffc107;
+$green: #28a745;
+$teal: #20c997;
+$cyan: #17a2b8;
+
+$primary: $blue;
+$secondary: $gray-600;
+$success: $green;
+$info: $cyan;
+$warning: $yellow;
+$danger: $red;
+$light: $gray-100;
+$dark: $gray-800;
+
+$theme-colors: (
+	'primary': $primary,
+	'secondary': $secondary,
+	'success': $success,
+	'info': $info,
+	'warning': $warning,
+	'danger': $danger,
+	'light': $light,
+	'dark': $dark
 );
