@@ -23,7 +23,13 @@ const state = Object.assign({}, initialState);
 
 const getters = {
 	isActionCard: state => name => {
-		return state.actionCard && state.actionCard.name === name;
+		let action = state.actionCard;
+
+		if (!name) {
+			return action;
+		}
+
+		return action && action.name === name;
 	},
 
 	isPlayerInGame: state => id => {
@@ -112,8 +118,7 @@ const actions = {
 				}
 
 				// prettier-ignore
-				Promise
-					.all(dealPromises)
+				Promise.all(dealPromises)
 					.then(() => {
 						const mainDeck = rootGetters['decks/getByType']('main');
 

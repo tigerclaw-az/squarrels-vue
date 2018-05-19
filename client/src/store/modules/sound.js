@@ -3,22 +3,19 @@ const SOUND_EFFECTS = {
 	'action-card': 'action-card.mp3',
 	'active-player': 'active-player.mp3',
 	discard: 'discard.mp3',
-	'new-player': 'new-player.mp3'
+	'new-player': 'new-player.mp3',
 };
 
 const state = {
 	isEnabled: true,
 };
 
-const getters = {
-
-};
+const getters = {};
 
 const actions = {
 	play({ commit }, name) {
 		let audio = new Audio(SOUNDS_PATH + SOUND_EFFECTS[name]);
 		audio.play();
-		commit();
 	},
 	toggle: ({ commit }) => {
 		commit('toggle');
@@ -26,7 +23,7 @@ const actions = {
 };
 
 const mutations = {
-	toggle: (state) => {
+	toggle: state => {
 		state.isEnabled = !state.isEnabled;
 	},
 };

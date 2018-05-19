@@ -4,6 +4,7 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 import api from '@/api/index';
+import cards from '@/store/modules/cards';
 import decks from '@/store/modules/decks';
 import game from '@/store/modules/game';
 import players from '@/store/modules/players';
@@ -12,25 +13,25 @@ import start from '@/store/modules/start';
 import websocket from '@/store/modules/websocket';
 
 const modules = {
-	// api,
+	cards,
 	decks,
 	game,
 	players,
 	sound,
 	start,
-	websocket
+	websocket,
 };
 
 const state = {
 	isAdmin: false,
 	isLoggedIn: false,
-	localPlayer: {}
+	localPlayer: {},
 };
 
 const actions = {
 	init({ commit }) {
 		commit('SET_CONFIG', {
-			isAdmin: Vue.$storage.get('isAdmin') || false
+			isAdmin: Vue.$storage.get('isAdmin') || false,
 		});
 	},
 
@@ -43,8 +44,8 @@ const actions = {
 
 			if (player) {
 				if (localPlayer.id) {
-					resolve(localPlayer);
 					commit('LOGIN', player);
+					resolve(localPlayer);
 				} else {
 					api.players
 						.get(player.id)
@@ -57,8 +58,8 @@ const actions = {
 							}
 
 							let pl = res.data[0];
-							resolve(pl);
 							commit('LOGIN', pl);
+							resolve(pl);
 						})
 						.catch(err => {
 							this._vm.$toasted.error(err);
@@ -69,17 +70,18 @@ const actions = {
 				reject('User not logged in');
 			}
 		});
-	}
+	},
 };
 
 const mutations = {
 	LOGIN(state, player) {
 		state.isLoggedIn = true;
 		state.localPlayer = player;
+		this._vm.$storage.set('player', player);
 	},
 	SET_CONFIG(state, config) {
 		state.isAdmin = config.isAdmin;
-	}
+	},
 };
 
 export default new Vuex.Store({
@@ -87,5 +89,5 @@ export default new Vuex.Store({
 	modules,
 	state: state,
 	actions,
-	mutations
+	mutations,
 });
