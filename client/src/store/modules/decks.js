@@ -108,11 +108,8 @@ const actions = {
 				: mainDeck.cards,
 		};
 
-		let cardDrawn = _.sampleSize(cardsFromDeck.toDraw)[0];
-
-		if (options.adminCard) {
-			cardDrawn = _.find(cardsFromDeck.toDraw, options.adminCard);
-		}
+		let cardDrawn =
+			options.adminCard || _.sampleSize(cardsFromDeck.toDraw)[0];
 
 		this._vm.$log.debug('cardsFromDeck -> ', cardsFromDeck);
 		this._vm.$log.debug('cardDrawn -> ', cardDrawn);

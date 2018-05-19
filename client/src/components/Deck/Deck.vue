@@ -24,19 +24,21 @@
 			</div>
 		</div>
 		<div v-if="isType('main') && isAdmin" uib-dropdown>
-			<b-dropdown id="dropdown-settings" variant="danger" text="Choose Card" @click="onClickDropdown">
-				<b-dropdown-item data-type="action" data-name="ambush">Ambush</b-dropdown-item>
-				<b-dropdown-item data-type="action" data-name="communism">Communism</b-dropdown-item>
-				<b-dropdown-item data-type="action" data-name="hoard">Hoard</b-dropdown-item>
-				<b-dropdown-item data-type="action" data-name="quarrel">Quarrel</b-dropdown-item>
-				<b-dropdown-item data-type="action" data-name="whirlwind">Whirlwind</b-dropdown-item>
-				<b-dropdown-item data-type="action" data-name="winter">Winter</b-dropdown-item>
-				<b-dropdown-divider></b-dropdown-divider>
-				<b-dropdown-item data-type="number" data-name="1">1</b-dropdown-item>
-				<b-dropdown-item data-type="number" data-name="2">2</b-dropdown-item>
-				<b-dropdown-item data-type="number" data-name="3">3</b-dropdown-item>
-				<b-dropdown-item data-type="number" data-name="4">4</b-dropdown-item>
-				<b-dropdown-item data-type="number" data-name="5">5</b-dropdown-item>
+			<b-dropdown
+				id="dropdown-settings"
+				text="Choose Card"
+				variant="danger"
+			>
+				<b-dropdown-item
+					v-for="(item, index) in dropdownList"
+					:key="index"
+					:data-id="item.id"
+					:data-type="item.cardType"
+					:data-name="item.name"
+					@click="onClickDrawCard(item)"
+				>
+				{{item.name}}
+				</b-dropdown-item>
 			</b-dropdown>
 		</div>
 	</div>
@@ -89,6 +91,9 @@ export default {
 		deck: function() {
 			return this.decks[this.id];
 		},
+		dropdownList: function() {
+			return this.deck.cards;
+		},
 		isDisabled: function() {
 			return (
 				(this.isType('main') && !this.canDrawCard) ||
@@ -123,16 +128,6 @@ export default {
 				// 	plData.isFirstTurn = false;
 				// }
 			}
-
-			// this.playersApi
-			// 	.update(player.id, plData)
-			// 	.then(res => {
-			// 		this.$log.debug('playersApi:update()', res, this);
-			// 		this.playersStore.update(player.id, { hasDrawnCard: true });
-			// 	})
-			// 	.catch(err => {
-			// 		this.$log.error('This is nuts! Error: ', err);
-			// 	});
 		},
 		// Must be method as you can't pass parameters to 'computed' functions
 		isType: function(name) {
@@ -171,12 +166,23 @@ export default {
 				}
 			}
 		},
-		onClickDropdown: function(evt) {
-			this.$log.debug(evt);
+		onClickDrawCard: function(adminCard) {
+			this.$log.debug(adminCard);
+			this.$store
+				.dispatch('decks/drawCard', { adminCard })
+				.then(card => {
+					this.$log.debug('card->', card);
+					this.handleCardDrawn(card);
+				})
+				.catch(err => {
+					this.$log.error(err);
+					this.$toasted.error(`Error drawing card! ${err}`);
+				});
 		},
 	},
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss" src='./deck.scss'></style>
+<style lang="scss" src='./deck.scss'>
+</style>
