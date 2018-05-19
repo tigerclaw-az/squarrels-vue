@@ -9,28 +9,31 @@ import Start from '@/views/Start.vue';
 Vue.use(VueRouter);
 
 let router = new VueRouter({
-	routes: [{
-		path: '/',
-		name: 'start',
-		component: Start,
-	},
-	{
-		path: '/login',
-		name: 'login',
-		component: Login,
-	},
-	{
-		path: '/game/:id',
-		name: 'game',
-		component: Game,
-		props: true,
-	}],
+	routes: [
+		{
+			path: '/',
+			name: 'start',
+			component: Start,
+		},
+		{
+			path: '/login',
+			name: 'login',
+			component: Login,
+		},
+		{
+			path: '/game/:id',
+			name: 'game',
+			component: Game,
+			props: true,
+		},
+	],
 });
 
 router.beforeEach((to, from, next) => {
 	Vue.$log.debug('router.beforeEach', store, to, from);
 
-	store.dispatch('checkLogin')
+	store
+		.dispatch('checkLogin')
 		.then(pl => {
 			pl.isCurrent = true;
 			store.dispatch('players/update', pl);
