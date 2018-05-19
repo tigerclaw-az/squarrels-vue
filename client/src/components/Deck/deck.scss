@@ -1,87 +1,93 @@
 $deck-height: 16;
 
-@import '~@/components/Card/card.scss';
+@import "~@/components/Card/card";
+
+.dropdown-menu {
+    max-height: 200px;
+    overflow: auto;
+}
 
 #deck {
-	$height: map-get($card-height, 'small') + $deck-height;
+    $height: map-get($card-height, "small") + $deck-height;
 
-	align-items: center;
-	display: flex;
-	flex: 1 0 auto;
-	flex-direction: column;
-	margin-right: 1rem;
+    align-items: center;
+    display: flex;
+    flex: 1 0 auto;
+    flex-direction: column;
+    margin-right: 1rem;
 
-	.count {
-		font-size: 2rem;
-		z-index: 1;
-	}
+    .count {
+        font-size: 2rem;
+        z-index: 1;
+    }
 
-	.deck {
-		@extend %playing-cards;
+    .deck {
+        @extend %playing-cards;
 
-		height: 100%;
-		width: auto;
+        height: 100%;
+        width: auto;
 
-		.cards-group {
-			height: rem-calc($height);
-			width: rem-calc(map-get($card-width, 'small'));
+        .cards-group {
+            height: rem-calc($height);
+            width: rem-calc(map-get($card-width, "small"));
 
-			&:not(.disabled) {
-				cursor: pointer;
-			}
-		}
-	}
+            &:not(.disabled) {
+                cursor: pointer;
+            }
+        }
+    }
 
-	&[type='main'] {
-		.deck {
-			// box-shadow: 4px 6px 1px get-color('pickled-bean');
-			// border: 2px outset get-color('zest');
-		}
-	}
+    &[type='main'] {
+        .deck {
+            // box-shadow: 4px 6px 1px get-color('pickled-bean');
+            // border: 2px outset get-color('zest');
+       
+        }
+    }
 
-	&[type='discard'] {
-		border: 1px dashed get-color(black);
-		padding: 1rem;
+    &[type='discard'] {
+        border: 1px dashed get-color(black);
+        padding: 1rem;
 
-		.deck {
-			border: 2px dashed transparent;
+        .deck {
+            border: 2px dashed transparent;
 
-			&.drag-enter {
-				border-color: get-color('zest');
-			}
+            &.drag-enter {
+                border-color: get-color("zest");
+            }
 
-			.card {
-				$rotate: 0;
+            .card {
+                $rotate: 0;
 
-				@for $i from 1 through 20 {
-					&:nth-child(#{$i}) {
-						transform: rotate(#{$rotate}deg);
-					}
+                @for $i from 1 through 20 {
+                    &:nth-child(#{$i}) {
+                        transform: rotate(#{$rotate}deg);
+                    }
 
-					$rotate: $rotate + 5;
-				}
-			}
-		}
-	}
+                    $rotate: $rotate + 5;
+                }
+            }
+        }
+    }
 
-	&[type='action'] {
-		.card {
-			animation: 0.5s linear shrink;
-		}
-	}
+    &[type='action'] {
+        .card {
+            animation: 0.5s linear shrink;
+        }
+    }
 
-	@media (min-width: $screen-md-min) {
-		$height: map-get($card-height, 'medium') + $deck-height;
+    @media (min-width: $screen-md-min) {
+        $height: map-get($card-height, "medium") + $deck-height;
 
-		&[type='discard'] {
-			padding: 1rem;
-		}
+        &[type='discard'] {
+            padding: 1rem;
+        }
 
-		.deck {
-			.cards-group {
-				height: rem-calc($height);
-				width: rem-calc(map-get($card-width, 'medium'));
-			}
-		}
-	}
+        .deck {
+            .cards-group {
+                height: rem-calc($height);
+                width: rem-calc(map-get($card-width, "medium"));
+            }
+        }
+    }
 }
