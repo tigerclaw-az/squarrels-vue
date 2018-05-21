@@ -115,17 +115,7 @@ export default {
 				// Player drew a non-"action" card, so add to their hand and update
 				this.$store.dispatch('players/addCard', cardDrawn);
 			} else {
-				// this.gamesApi
-				// 	.actionCard(this.game.id, cardDrawn.id)
-				// 	.then(res => {
-				// 		this.$log.debug('gameUpdate:actionCard -> ', res);
-				// 	}, err => {
-				// 		this.$log.error(err);
-				// 	});
-				// // Don't allow player to draw more than 7 cards
-				// if (plData.totalCards >= this.playerModel.numDrawCards) {
-				// 	plData.isFirstTurn = false;
-				// }
+				this.$store.dispatch('game/actionCard', cardDrawn);
 			}
 		},
 		// Must be method as you can't pass parameters to 'computed' functions

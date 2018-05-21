@@ -136,19 +136,19 @@ const actions = {
 				{ root: true }
 			);
 
-			return Promise.resolve(cardDrawn.id);
+			return Promise.resolve(cardDrawn);
 		}
 
-		return new Promise((resolve, reject) => {
+		return new Promise(resolve => {
 			api.decks
 				.update(mainDeck.id, { cards: cardsFromDeck.ids })
 				.then(() => {
-					resolve(cardDrawn.id);
+					resolve(cardDrawn);
 				});
 		});
 	},
 
-	load({ commit, dispatch }, { ids }) {
+	load({ commit }, { ids }) {
 		this._vm.$log.debug('decks/load', ids);
 
 		return new Promise((resolve, reject) => {
