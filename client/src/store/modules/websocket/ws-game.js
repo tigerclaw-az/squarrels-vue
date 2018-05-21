@@ -32,7 +32,7 @@ const actions = {
 		if (curRoute.name === 'game' && curRoute.params.id === nuts.id) {
 			commit('game/UPDATE', data.nuts, { root: true });
 		}
-	}
+	},
 };
 
 const mutations = {};
@@ -42,5 +42,5 @@ export default {
 	state,
 	getters,
 	actions,
-	mutations
+	mutations,
 };

@@ -1,10 +1,6 @@
-const state = {
+const state = {};
 
-};
-
-const getters = {
-
-};
+const getters = {};
 
 const actions = {
 	create({ commit }, data) {

@@ -108,7 +108,6 @@ export default {
 	methods: {
 		handleCardDrawn: function(cardDrawn) {
 			const cardAction = cardDrawn.action;
-			let cardsMerge = [];
 
 			this.$log.debug(cardDrawn, cardAction, this);
 

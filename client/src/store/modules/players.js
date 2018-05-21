@@ -104,7 +104,7 @@ const actions = {
 		}
 	},
 
-	addCard({ commit, getters }, cardId) {
+	addCard({ getters }, cardId) {
 		this._vm.$log.debug('players/addCard', cardId, getters, this);
 
 		const player = getters.getMyPlayer;

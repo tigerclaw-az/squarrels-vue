@@ -34,5 +34,5 @@ export default {
 
 			return v.toString(16);
 		});
-	}
+	},
 };

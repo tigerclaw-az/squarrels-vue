@@ -10,18 +10,16 @@ const state = {
 		isConnected: false,
 		message: '',
 		reconnectError: false,
-	}
+	},
 };
 
 const getters = {
-	isConnected: (state) => {
+	isConnected: state => {
 		return state.socket.isConnected;
-	}
+	},
 };
 
-const actions = {
-
-};
+const actions = {};
 
 const mutations = {
 	SOCKET_ONOPEN(state, event) {
