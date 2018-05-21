@@ -23,7 +23,9 @@
 		<b-row>
 			<b-col>
 				<BoardPlayers :isGameStarted="isStarted" :gameId="id"></BoardPlayers>
-				<ActionCard></ActionCard>
+				<transition>
+					<ActionCard v-if="actionCard"></ActionCard>
+				</transition>
 			</b-col>
 		</b-row>
 		<b-row>
@@ -71,6 +73,23 @@ export default {
 		return {};
 	},
 	watch: {
+		actionCard: function() {
+			let hoardDeck = this.$store.getters['decks/getByType']('discard');
+
+			this.$store.dispatch('sound/play', 'action-card');
+
+			switch (this.actionCard) {
+				case 'communism':
+					break;
+
+				case 'quarrel':
+					break;
+
+				case 'winter':
+					break;
+
+			}
+		},
 		isStarted: function() {
 			this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
 		},

@@ -22,17 +22,20 @@ const initialState = {
 const state = Object.assign({}, initialState);
 
 const getters = {
-	isActionCard: state => name => {
+	isActionCard: state => (name = '') => {
+		Vue.$log.debug('isActionCard->', state, name);
+
 		let action = state.actionCard;
 
 		if (!name) {
-			return action;
+			return action !== null;
 		}
 
 		return action && action.name === name;
 	},
 
 	isPlayerInGame: state => id => {
+		Vue.$log.debug('isPlayerInGame->', state, id);
 		return state.playerIds.filter(pl => pl.id === id).length;
 	},
 };

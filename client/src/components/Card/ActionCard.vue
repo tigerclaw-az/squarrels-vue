@@ -1,10 +1,16 @@
 <template>
-	<div id="action-card" v-if="card">
+	<div id="action-card">
 		<span
-			v-class="{ instant: instant || card.name === 'winter' }"
-			class="action-card">
+			class="action-card"
+			:class="{ instant: isInstant }"
+		>
 			<span class="card blank--"></span>
-			<!-- <Card card-id="{{card.id}}" card-type="action"></Card> -->
+			<Card
+				:id="card.id"
+				:cardData="card"
+				cardType="action"
+			>
+			</Card>
 		</span>
 	</div>
 </template>
@@ -12,33 +18,43 @@
 <script>
 import { mapState } from 'vuex';
 
+import Card from '@/components/Card/Card.vue';
+
 export default {
 	name: 'ActionCard',
+	components: {
+		Card,
+	},
 	computed: {
 		...mapState('game', {
 			card: 'actionCard',
-			instant: 'instantAction',
+			instantAction: 'instantAction',
 		}),
+		isInstant: function() {
+			return this.instantAction ||  this.card.name === 'winter';
+		},
 	},
 };
 </script>
 
 <style lang="scss">
-	@import '~@/components/Card/card';
+@import '~@/components/Card/card';
 
-	.action-card {
-		@extend %playing-cards;
-		@include flip-card {
-			animation-name: action-fadeout;
+.action-card {
+	@extend %playing-cards;
 
-			&.action--whirlwind {
-				animation-name: action-whirlwind;
-			}
+	@include flip-card {
+		animation-name: action-fadeout;
+
+		&.action--whirlwind {
+			animation-name: action-whirlwind;
 		}
-
-		left: 40%;
-		position: absolute !important;
-		top: -20%;
-		transform: scale(2);
 	}
+
+	left: 40%;
+	position: absolute !important;
+	top: -20%;
+	transform: scale(2);
+	z-index: 100;
+}
 </style>

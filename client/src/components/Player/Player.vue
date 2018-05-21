@@ -14,18 +14,18 @@
 			<div v-if="hasCards" class="cards-group hand">
 				<div v-if="player.message" class="message">{{player.message}}</div>
 				<transition-group>
-				<Card
-					v-for="(card, index) in myCardsSorted"
-					:key="card.id"
-					:id="card.id"
-					:class="{ mine: hasCards }"
-					:onClick="onClickCard"
-					:cardData="card"
-					:cardType="'hand'"
-					:matches="findCardMatches(card.amount)"
-					:position="{ left: (index * 32) + 'px' }"
-					:zIndex="index"
-				></Card>
+					<Card
+						v-for="(card, index) in myCardsSorted"
+						:key="card.id"
+						:id="card.id"
+						:class="{ mine: hasCards }"
+						:onClick="onClickCard"
+						:cardData="card"
+						cardType="hand"
+						:matches="findCardMatches(card.amount)"
+						:position="{ left: (index * 32) + 'px' }"
+						:zIndex="index"
+					></Card>
 				</transition-group>
 			</div>
 			<div v-else-if="isGameStarted" class="empty"></div>

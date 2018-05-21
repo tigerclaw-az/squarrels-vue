@@ -13,9 +13,6 @@
 		<span
 			class="card"
 			:class="cardClass"
-			:drag="canDrag"
-			:drag-data="cardData"
-			:drag-stop="onDragStop"
 		>
 		</span>
 	</div>
@@ -39,6 +36,9 @@ export default {
 		},
 		matches: {
 			type: Array,
+			default: function() {
+				return [];
+			},
 		},
 		id: {
 			type: String,
@@ -70,7 +70,11 @@ export default {
 			}
 		},
 		cardStyle: function() {
-			return { left: this.position.left, 'z-index': this.zIndex };
+			if (this.cardType !== 'action') {
+				return { left: this.position.left, 'z-index': this.zIndex };
+			}
+
+			return {};
 		},
 		hasMatch: function() {
 			return this.matches.length;
