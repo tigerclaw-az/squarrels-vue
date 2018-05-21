@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
 import api from '@/api/index';
 
@@ -113,4 +113,5 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped src="./card.scss"></style>
+<style lang="scss" scoped src="./card.scss">
+</style>

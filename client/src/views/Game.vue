@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapState } from 'vuex';
 
 import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
 

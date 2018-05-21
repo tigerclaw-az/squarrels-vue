@@ -106,7 +106,6 @@ export default {
 				});
 		},
 	},
-	mounted: function() {},
 	methods: {
 		discard: function(card) {
 			this.$log.debug(card);
@@ -118,7 +117,7 @@ export default {
 			});
 
 			Promise.all([deckUpdate, playerUpdate])
-				.then(res => {
+				.then(() => {
 					this.$store.dispatch('sound/play', 'discard');
 					this.$store.dispatch('players/nextPlayer');
 				})
@@ -184,4 +183,5 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped src="./player.scss"></style>
+<style lang="scss" scoped src="./player.scss">
+</style>
