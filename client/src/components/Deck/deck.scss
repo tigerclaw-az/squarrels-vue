@@ -37,15 +37,15 @@ $deck-height: 16;
         }
     }
 
-    &[type='main'] {
+    &[type="main"] {
         .deck {
-            // box-shadow: 4px 6px 1px get-color('pickled-bean');
-            // border: 2px outset get-color('zest');
+            // box-shadow: 4px 6px 1px get-color("pickled-bean");
+            // border: 2px outset get-color("zest");
        
         }
     }
 
-    &[type='discard'] {
+    &[type="discard"] {
         border: 1px dashed get-color(black);
         padding: 1rem;
 
@@ -70,7 +70,7 @@ $deck-height: 16;
         }
     }
 
-    &[type='action'] {
+    &[type="action"] {
         .card {
             animation: 0.5s linear shrink;
         }
@@ -79,7 +79,7 @@ $deck-height: 16;
     @media (min-width: $screen-md-min) {
         $height: map-get($card-height, "medium") + $deck-height;
 
-        &[type='discard'] {
+        &[type="discard"] {
             padding: 1rem;
         }
 

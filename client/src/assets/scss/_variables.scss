@@ -1,9 +1,10 @@
-@import 'animations';
+@import "animations";
+
 //== Colors
 //
-@import 'colors';
-@import 'functions';
-@import 'mixins';
+@import "colors";
+@import "functions";
+@import "mixins";
 
 $brand-neutral: get-color(tussock);
 $brand-primary: get-color(zest);
@@ -18,13 +19,16 @@ $brand-danger: get-color(guardsman-red);
 
 //** Background color for `<body>`.
 $body-bg: lighten(get-color(cioccolato), 7);
+
 //** Global text color on `<body>`.
 $text-color: $gray-200;
 
 //** Global textual link color.
 $link-color: $brand-info;
+
 //** Link hover color set via `darken()` function.
 $link-hover-color: darken($link-color, 15%);
+
 //** Link hover decoration.
 $link-hover-decoration: underline;
 
@@ -37,26 +41,27 @@ $font-weight-medium: 500;
 $font-weight-bold: 700;
 $font-weight-xbold: 900;
 
-$font-family-sans-serif: 'Comic Sans MS', Helvetica, Arial, sans-serif;
-$font-family-serif: Georgia, 'Times New Roman', Times, serif;
+$font-family-sans-serif: "Comic Sans MS", Helvetica, Arial, sans-serif;
+$font-family-serif: Georgia, "Times New Roman", Times, serif;
+
 //** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
-$font-family-monospace: Menlo, Monaco, Consolas, 'Courier New', monospace;
+$font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
 $font-family-base: $font-family-sans-serif;
 
-$font-size-large: ceil(($font-size-base * 1.25)); // ~18px
-$font-size-small: ceil(($font-size-base * 0.85)); // ~12px
+$font-size-large: ceil($font-size-base * 1.25); // ~18px
+$font-size-small: ceil($font-size-base * 0.85); // ~12px
 
-$font-size-h1: floor(($font-size-base * 2.6)); // ~36px
-$font-size-h2: floor(($font-size-base * 2.15)); // ~30px
-$font-size-h3: ceil(($font-size-base * 1.7)); // ~24px
-$font-size-h4: ceil(($font-size-base * 1.25)); // ~18px
+$font-size-h1: floor($font-size-base * 2.6); // ~36px
+$font-size-h2: floor($font-size-base * 2.15); // ~30px
+$font-size-h3: ceil($font-size-base * 1.7); // ~24px
+$font-size-h4: ceil($font-size-base * 1.25); // ~18px
 $font-size-h5: $font-size-base;
-$font-size-h6: ceil(($font-size-base * 0.85)); // ~12px
+$font-size-h6: ceil($font-size-base * 0.85); // ~12px
 
 //** Unit-less `line-height` for use in components like buttons.
 $line-height-base: 1.428571429; // 20/14
 //** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
-$line-height-computed: floor(($font-size-base * $line-height-base)); // ~20px
+$line-height-computed: floor($font-size-base * $line-height-base); // ~20px
 
 //** By default, this inherits from the `<body>`.
 $headings-font-family: inherit;
@@ -89,11 +94,13 @@ $border-radius-small: 0.25rem;
 
 //** Global color for active items (e.g., navs or dropdowns).
 $component-active-color: get-color(viking);
+
 //** Global background color for active items (e.g., navs or dropdowns).
 $component-active-bg: $brand-primary;
 
 //** Width of the `border` for generating carets that indicate dropdowns.
 $caret-width-base: rem-calc(4);
+
 //** Carets increase slightly in size for larger components.
 $caret-width-large: calc($caret-width-base + 1px);
 
@@ -140,11 +147,13 @@ $btn-border-radius-small: 0;
 
 //** `<input>` background color
 $input-bg: get-color(white);
+
 //** `<input disabled>` background color
 $input-bg-disabled: $gray-200;
 
 //** Text color for `<input>`s
 $input-color: $gray-500;
+
 //** `<input>` border color
 $input-border: $gray-500;
 
@@ -152,38 +161,37 @@ $input-border: $gray-500;
 //** Default `.form-control` border radius
 // This has no effect on `<select>`s in some browsers, due to the limited stylability of `<select>`s in CSS.
 $input-border-radius: $border-radius-base;
+
 //** Large `.form-control` border radius
 $input-border-radius-large: $border-radius-large;
+
 //** Small `.form-control` border radius
 $input-border-radius-small: $border-radius-small;
 
 //** Border color for inputs on focus
-$input-border-focus: get-color('viking');
+$input-border-focus: get-color("viking");
 
 //** Placeholder text color
 $input-color-placeholder: $gray-200;
 
 //** Default `.form-control` height
-$input-height-base: ($line-height-computed + ($padding-base-vertical * 2) + 2);
+$input-height-base: $line-height-computed + $padding-base-vertical * 2 + 2;
+
 //** Large `.form-control` height
-$input-height-large: (
-	ceil($font-size-large * $line-height-large) + ($padding-large-vertical * 2) +
-		2
-);
+$input-height-large: ceil($font-size-large * $line-height-large) + $padding-large-vertical * 2 + 2;
+
 //** Small `.form-control` height
-$input-height-small: (
-	floor($font-size-small * $line-height-small) + ($padding-small-vertical * 2) +
-		2
-);
+$input-height-small: floor($font-size-small * $line-height-small) + $padding-small-vertical * 2 + 2;
 
 //** `.form-group` margin
 $form-group-margin-bottom: rem-calc(12);
 
 $legend-color: $gray-600;
-$legend-border-color: get-color('gallery');
+$legend-border-color: get-color("gallery");
 
 //** Background color for textual input addons
 $input-group-addon-bg: $gray-200;
+
 //** Border color for textual input addons
 $input-group-addon-border-color: $input-border;
 
@@ -195,19 +203,19 @@ $cursor-disabled: default;
 //## Define colors for form feedback states and, by default, alerts.
 
 $state-success-text: $brand-success;
-$state-success-bg: get-color('peppermint');
+$state-success-bg: get-color("peppermint");
 $state-success-border: darken(adjust-hue($state-success-bg, -10), 5%);
 
 $state-info-text: $brand-info;
-$state-info-bg: get-color('link-water');
+$state-info-bg: get-color("link-water");
 $state-info-border: darken(adjust-hue($state-info-bg, -10), 7%);
 
 $state-warning-text: $brand-warning;
-$state-warning-bg: get-color('pearl-lusta');
+$state-warning-bg: get-color("pearl-lusta");
 $state-warning-border: darken(adjust-hue($state-warning-bg, -10), 5%);
 
 $state-danger-text: $brand-danger;
-$state-danger-bg: get-color('bizarre');
+$state-danger-bg: get-color("bizarre");
 $state-danger-border: darken(adjust-hue($state-danger-bg, -10), 5%);
 
 //== Media queries breakpoints
@@ -230,9 +238,9 @@ $screen-md-min: 768px;
 $screen-lg-min: 1200px;
 
 // So media queries don't overlap when required, provide a maximum
-$screen-xs-max: ($screen-sm-min - 1);
-$screen-sm-max: ($screen-md-min - 1);
-$screen-md-max: ($screen-lg-min - 1);
+$screen-xs-max: $screen-sm-min - 1;
+$screen-sm-max: $screen-md-min - 1;
+$screen-md-max: $screen-lg-min - 1;
 
 //== Grid system
 //
@@ -240,30 +248,36 @@ $screen-md-max: ($screen-lg-min - 1);
 
 //** Number of columns in the grid.
 $grid-columns: 12;
+
 //** Padding between columns. Gets divided in half for the left and right.
 $grid-gutter-width: 1.5rem;
+
 // Navbar collapse
 //** Point at which the navbar becomes uncollapsed.
 $grid-float-breakpoint: $screen-sm-min;
+
 //** Point at which the navbar begins collapsing.
-$grid-float-breakpoint-max: ($grid-float-breakpoint - 1);
+$grid-float-breakpoint-max: $grid-float-breakpoint - 1;
 
 //== Container sizes
 //
 //## Define the maximum width of `.container` for different screen sizes.
 
 // Small screen / tablet
-$container-tablet: (45rem + $grid-gutter-width);
+$container-tablet: 45rem + $grid-gutter-width;
+
 //** For `$screen-sm-min` and up.
 $container-sm: $container-tablet;
 
 // Medium screen / desktop
-$container-desktop: (58.75rem + $grid-gutter-width);
+$container-desktop: 58.75rem + $grid-gutter-width;
+
 //** For `$screen-md-min` and up.
 $container-md: $container-desktop;
 
 // Large screen / wide desktop
-$container-large-desktop: (71.25rem + $grid-gutter-width);
+$container-large-desktop: 71.25rem + $grid-gutter-width;
+
 //** For `$screen-lg-min` and up.
 $container-lg: $container-large-desktop;
 

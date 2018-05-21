@@ -99,7 +99,7 @@ rules:
   property-sort-order: 1
   quotes:
     - 1
-    - style: single
+    - style: double
   shorthand-values:
     - 1
     - allowed-shorthands:
