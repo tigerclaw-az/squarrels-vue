@@ -7,11 +7,12 @@
 	"settings": {
 		"editor.formatOnPaste": true,
 		"editor.formatOnSave": true,
-		"prettier.singleQuote": true,
-		"prettier.eslintIntegration": true,
-		"javascript.format.enable": true,
 		"eslint.workingDirectories": [
-			"./client", "./server"
-		]
+			"./client",
+			"./server"
+		],
+		"prettier.singleQuote": true,
+		"javascript.format.enable": true,
+		"sasslint.enable": false,
 	}
 }
