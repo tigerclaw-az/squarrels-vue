@@ -6,9 +6,10 @@
 	],
 	"settings": {
 		"editor.formatOnPaste": true,
+		"editor.formatOnSave": true,
 		"prettier.singleQuote": true,
 		"prettier.eslintIntegration": true,
-		"javascript.format.enable": false,
+		"javascript.format.enable": true,
 		"eslint.workingDirectories": [
 			"./client", "./server"
 		]
