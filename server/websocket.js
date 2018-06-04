@@ -176,9 +176,9 @@ module.exports = function(server, sessionParser) {
 
 				quarrel: () => {
 					let wsObj = {
-						action: data.action,
-						id: data.player || null,
-						type: 'players',
+						action: `actioncard_${data.action}`,
+						playerId: data.player || null,
+						namespace: 'wsPlayers',
 					};
 
 					if (data.hasOwnProperty('card')) {
