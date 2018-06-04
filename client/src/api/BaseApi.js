@@ -8,7 +8,7 @@ export default class BaseApi {
 
 		this.http = axios.create({
 			baseURL: this.url,
-			timeout: 2000,
+			timeout: 5000,
 			withCredentials: true,
 		});
 	}
@@ -23,6 +23,10 @@ export default class BaseApi {
 
 	get(query = '') {
 		return this.http.get(`/${query}`);
+	}
+
+	reset(id) {
+		return this.http.post(`/${id}/reset`);
 	}
 
 	update(id, data) {

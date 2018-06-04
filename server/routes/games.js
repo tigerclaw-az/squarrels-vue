@@ -3,6 +3,7 @@ const config = require('../config/config');
 const logger = config.logger('routes:games');
 const games = require('express').Router();
 const gameMod = require('./modules/game');
+const playerMod = require('./modules/player');
 
 const DeckModel = require('../models/DeckModel').model;
 const GameModel = require('../models/GameModel').model;
@@ -19,78 +20,51 @@ games.delete('/:id', function(req, res) {
 		.findById(id)
 		.exec()
 		.then(game => {
-			let deckIds = game.deckIds,
-				playerIds = game.playerIds,
-				playerUpdate = {
-					cardsInHand: [],
-					cardsInStorage: [],
-					isFirstTurn: true,
-					isActive: false,
-					score: 0,
-					totalCards: 0,
-				};
+			const deckIds = game.deckIds;
+			const playerIds = game.playerIds;
 
 			logger.debug('decks -> ', deckIds);
+			logger.debug('players -> ', playerIds);
+
+			_.forEach(playerIds, id => {
+				playerMod.reset(id).then(doc => {
+					/* eslint-disable no-undef */
+					wss.broadcast(
+						{
+							namespace: 'wsPlayers',
+							action: 'update',
+							nuts: doc,
+						},
+						sessionId
+					);
+				});
+			});
+
+			// prettier-ignore
+			GameModel
+				.remove({ _id: game.id })
+				.then(function () {
+					/* eslint-disable no-undef */
+					wss.broadcast(
+						{
+							namespace: 'wsGame',
+							action: 'delete',
+							id: game.id,
+						},
+						sessionId
+					);
+					/* eslint-enable no-undef */
+
+					res.sendStatus(200);
+				})
+				.catch(function (err) {
+					logger.error(err);
+					res.status(500).json(config.apiError(err));
+				});
 
 			// prettier-ignore
 			DeckModel
 				.deleteMany({ _id: { $in: deckIds } })
-				.then(() => {
-					/* eslint-disable no-undef */
-					// NOTE: No need to know when decks are removed
-					// wss.broadcast(
-					// 	{ namespace: 'wsDecks', action: 'remove' },
-					// 	sessionId
-					// );
-					/* eslint-enable no-undef */
-
-					logger.debug('players -> ', playerIds);
-
-					// prettier-ignore
-					PlayerModel
-						.updateMany(
-							{ _id: { $in: playerIds } },
-							playerUpdate
-						)
-						.then(() => {
-							/* eslint-disable no-undef */
-							wss.broadcast(
-								{
-									namespace: 'wsPlayers',
-									action: 'update',
-									nuts: playerUpdate,
-								},
-								sessionId
-							);
-							/* eslint-enable no-undef */
-
-							// prettier-ignore
-							GameModel
-								.remove({ _id: game.id })
-								.then(function() {
-									/* eslint-disable no-undef */
-									wss.broadcast(
-										{
-											namespace: 'wsGame',
-											action: 'delete',
-											id: game.id,
-										},
-										sessionId
-									);
-									/* eslint-enable no-undef */
-
-									res.sendStatus(200);
-								})
-								.catch(function(err) {
-									logger.error(err);
-									res.status(500).json(config.apiError(err));
-								});
-						})
-						.catch(err => {
-							logger.error(err);
-							res.status(500).json(config.apiError(err));
-						});
-				})
 				.catch(err => {
 					logger.error(err);
 					res.status(500).json(config.apiError(err));
@@ -165,6 +139,61 @@ games.post('/:id', function(req, res) {
 		})
 		.catch(err => {
 			res.status(500).json(config.apiError(err));
+		});
+});
+
+games.post('/:id/reset', function(req, res) {
+	const gameId = req.params.id;
+	const sessionId = req.sessionID;
+
+	const init = {
+		actionCard: null,
+		deckIds: [],
+		instantAction: false,
+		isDealing: false,
+		isLoaded: false,
+		isStarted: false,
+		roundNumber: 1,
+	};
+
+	// prettier-ignore
+	GameModel
+		.findById(gameId)
+		.exec()
+		.then(game => {
+			const deckIds = game.deckIds;
+			const playerIds = game.playerIds;
+
+			logger.debug('decks -> ', deckIds);
+			logger.debug('players -> ', playerIds);
+
+			DeckModel.deleteMany({ _id: { $in: deckIds } });
+
+			_.forEach(playerIds, id => {
+				// prettier-ignore
+				playerMod
+					.reset(id)
+					.then(doc => {
+						wss.broadcast(
+							{
+								namespace: 'wsPlayers',
+								action: 'update',
+								nuts: doc,
+							},
+							sessionId
+						);
+					});
+			});
+
+			gameMod
+				.update(gameId, init, sessionId)
+				.then(doc => {
+					res.status(200).json(doc);
+				})
+				.catch(err => {
+					logger.error(err);
+					res.status(500).json(config.apiError(err));
+				});
 		});
 });
 

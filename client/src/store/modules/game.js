@@ -171,6 +171,12 @@ const actions = {
 			});
 	},
 
+	reset({ commit, state }) {
+		return api.games.reset(state.id).then(() => {
+			// commit('INIT');
+		});
+	},
+
 	/**
 	 * Unload the current local game state, this will
 	 * only affect current player. Since the player is

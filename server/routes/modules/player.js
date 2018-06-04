@@ -12,6 +12,19 @@ let playerMod = {
 			.select('+cardsInHand')
 			.exec();
 	},
+	reset: id => {
+		const init = {
+			cardsInHand: [],
+			cardsInStorage: [],
+			hasDrawnCard: false,
+			isFirstTurn: true,
+			isActive: false,
+			score: 0,
+			totalCards: 0,
+		};
+
+		return Player.update(id, init);
+	},
 	update: (id, data, sid) => {
 		let playerId = { _id: id },
 			options = { new: true },

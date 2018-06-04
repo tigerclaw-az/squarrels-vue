@@ -126,6 +126,12 @@ export default {
 	methods: {
 		onClickAdminOption: function(name) {
 			this.$log.debug(name);
+
+			switch (name) {
+				case 'reset-game':
+					this.$store.dispatch('game/reset');
+					break;
+			}
 		},
 		onClickStartGame: function(e) {
 			this.$log.debug('onClickStartGame', e);

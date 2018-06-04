@@ -7,6 +7,7 @@ let gameMod = {
 			options = { new: true },
 			defer = Q.defer();
 
+		// prettier-ignore
 		Game
 			.findByIdAndUpdate(gameId, data, options)
 			.populate('actionCard')
@@ -26,7 +27,7 @@ let gameMod = {
 			});
 
 		return defer.promise;
-	}
+	},
 };
 
 module.exports = gameMod;
