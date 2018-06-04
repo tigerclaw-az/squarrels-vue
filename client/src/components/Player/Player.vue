@@ -20,11 +20,11 @@
 						:id="card.id"
 						:class="{ mine: hasCards }"
 						:onClick="onClickCard"
-						:cardData="card"
-						cardType="hand"
+						:card-data="card"
+						card-type="hand"
 						:matches="findCardMatches(card.amount)"
 						:position="{ left: (index * 32) + 'px' }"
-						:zIndex="index"
+						:z-index="index"
 					></Card>
 				</transition-group>
 			</div>
@@ -67,6 +67,7 @@ export default {
 			isActionCard: 'game/isActionCard',
 		}),
 		...mapState({
+			actionCard: state => state.game.actionCard,
 			isGameStarted: state => state.game.isStarted,
 		}),
 		isCurrentPlayer: function() {
@@ -143,7 +144,26 @@ export default {
 		onClickCard: function(card, cardsToStore, evt) {
 			this.$log.debug(card, cardsToStore, evt);
 
-			if (this.isActionCard()) {
+			if (this.myPlayer.quarrel) {
+				this.$store
+					.dispatch('players/discard', {
+						id: this.myPlayer.id,
+						card,
+					})
+					.then(() => {
+						this.$socket.sendObj({
+							action: 'quarrel',
+							card: card,
+							player: this.myPlayer.id,
+						});
+					})
+					.catch(err => {
+						this.$log.error(err);
+						this.$toasted.error(err.toString());
+					});
+			}
+
+			if (this.actionCard) {
 				return;
 			}
 
@@ -157,8 +177,7 @@ export default {
 				cardsToStore = _.sampleSize(cardsToStore, 3);
 			}
 
-				this.storeCards(cardsToStore);
-			}
+			this.storeCards(cardsToStore);
 		},
 		storeCards: function(cardsToStore) {
 			this.$log.debug(cardsToStore);
