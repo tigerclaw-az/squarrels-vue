@@ -4,15 +4,11 @@ var config = require('../config/config'),
 
 const DeckModel = require('../models/DeckModel').model;
 
-decks.get('/:id?', function(req, res) {
-	let ids = req.params.id.split(','),
-		deckQuery = DeckModel.find();
-
-	if (ids.length) {
-		deckQuery = deckQuery
-						.where('_id')
-						.in(ids);
-	}
+decks.get('/:id', function(req, res) {
+	const ids = req.params.id.split(',');
+	let deckQuery = DeckModel.find()
+		.where('_id')
+		.in(ids);
 
 	deckQuery
 		// .find(query)
@@ -40,6 +36,7 @@ decks.post('/:id', function(req, res) {
 	const deck = { _id: deckId };
 	const options = { new: true };
 
+	// prettier-ignore
 	DeckModel
 		.findOneAndUpdate(deck, req.body, options)
 		.populate('cards')
