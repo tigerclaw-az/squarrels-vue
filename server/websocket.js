@@ -16,11 +16,20 @@ module.exports = function(server, sessionParser) {
 				done(info.req.sessionID);
 			});
 		},
-		server
+		server,
 	});
 
 	let hoardPlayer = null,
 		CLIENTS = {};
+
+	const resetActionCard = (id, sid) => {
+		// Remove the 'actionCard' from the game, which will trigger a
+		// message back to each client that the actionCard was removed
+		gameMod
+			.update(id, { actionCard: null }, sid)
+			.then(() => {})
+			.catch(() => {});
+	};
 
 	wss.broadcast = (data, sid, all = true) => {
 		logger.debug('broadcast() -> ', data, sid, all);
@@ -34,30 +43,280 @@ module.exports = function(server, sessionParser) {
 		});
 	};
 
-	wss.on('connection', function connection(ws, req) {
+	wss.on('connection', (ws, req) => {
 		const sid = req.sessionID;
 
-		let playerIt = pl => {
-				let index = 0;
+		const playerIt = pl => {
+			let index = 0;
 
-				return {
-					next: () => {
-						if (index >= pl.length) {
-							index = 0;
-						}
-
-						return pl[index++];
+			return {
+				next: () => {
+					if (index >= pl.length) {
+						index = 0;
 					}
-				};
-			},
-			resetActionCard = id => {
-				// Remove the 'actionCard' from the game, which will trigger a
-				// message back to each client that the actionCard was removed
-				gameMod
-					.update(id, { actionCard: null }, sid)
-					.then(() => {})
-					.catch(() => {});
+
+					return pl[index++];
+				},
 			};
+		};
+
+		const onMessage = message => {
+			let data = JSON.parse(message),
+				query = {
+					sessionId: sid,
+				};
+
+			// Process WebSocket message
+			logger.debug('Message received: ', data);
+			logger.debug(`websocket:onmessage:${data.action} -> `, query);
+
+			const actions = {
+				ambush: () => {
+					const stealCards = players => {
+						let cards = [],
+							plData = {},
+							playerToUpdate = {};
+
+						_.forEach(players, pl => {
+							let card = _.sampleSize(pl.cardsInHand)[0];
+
+							if (!pl.isActive) {
+								logger.debug('card -> ', card);
+
+								// Only update if the player has at least 1 card
+								if (card) {
+									_.pull(pl.cardsInHand, card);
+									cards.push(card);
+
+									plData = {
+										cardsInHand: pl.cardsInHand,
+									};
+
+									playerMod
+										.update(pl.id, plData, sid)
+										.then(() => {})
+										.catch(() => {});
+								}
+							} else {
+								cards = _.union(cards, pl.cardsInHand);
+								playerToUpdate = pl;
+								logger.debug(
+									'playerToUpdate -> ',
+									playerToUpdate
+								);
+							}
+						});
+
+						plData = {
+							cardsInHand: cards,
+						};
+
+						playerMod
+							.update(playerToUpdate.id, plData, sid)
+							.then(() => {})
+							.catch(() => {});
+					};
+
+					playerMod
+						.get()
+						.then(stealCards)
+						.catch(err => {
+							logger.error(err);
+						});
+
+					resetActionCard(data.gameId, sid);
+				},
+
+				communism: () => {
+					// prettier-ignore
+					playerMod
+						.get()
+						.then(players => {
+							let wsObj = {
+								action: data.action,
+								type: 'game',
+								nuts: players,
+							};
+
+							ws.send(JSON.stringify(wsObj));
+						});
+				},
+
+				hoard: () => {
+					let wsObj = {};
+
+					delete data.playerHoard.cardsInHand;
+
+					if (!hoardPlayer) {
+						hoardPlayer = query;
+
+						// 	FIXME: HACK!!
+						setTimeout(() => {
+							wsObj = {
+								namespace: 'wsPlayers',
+								action: `actioncard_${data.action}`,
+								nuts: data.playerHoard,
+							};
+
+							wss.broadcast(wsObj, sid);
+							hoardPlayer = null;
+
+							// resetActionCard();
+						}, 250);
+					} else {
+						wsObj = {
+							namespace: 'wsPlayers',
+							action: 'showMessage',
+							nuts: 'NO HOARD FOR YOU!',
+						};
+
+						ws.send(JSON.stringify(wsObj));
+					}
+				},
+
+				quarrel: () => {
+					let wsObj = {
+						action: data.action,
+						id: data.player || null,
+						type: 'players',
+					};
+
+					if (data.hasOwnProperty('card')) {
+						wsObj.card = data.card;
+					}
+
+					wss.broadcast(wsObj, sid);
+				},
+
+				whirlwind: () => {
+					playerMod.get().then(players => {
+						let cardIds = [],
+							startPlayer = 0,
+							updatePromises = [];
+
+						_.forEach(players, (pl, index) => {
+							let plCards = pl.cardsInHand.slice(); // Copy array
+
+							logger.debug('plCards -> ', plCards);
+
+							cardIds = _.union(cardIds, plCards);
+
+							// Remove cards from player's hand
+							pl.cardsInHand = [];
+							updatePromises.push(
+								playerMod.update(
+									pl.id,
+									{ cardsInHand: [] },
+									sid
+								)
+							);
+
+							if (pl.isActive) {
+								startPlayer = index;
+							}
+						});
+
+						Q.all(updatePromises).then(() => {
+							let dealCards = () => {
+								let playersOrder = _.union(
+									players.slice(startPlayer),
+									players.slice(0, startPlayer)
+								);
+
+								cardIds = _(cardIds)
+									.flatten()
+									.shuffle()
+									.value();
+
+								logger.debug('cards -> ', cardIds);
+								logger.debug('playersOrder1 -> ', playersOrder);
+
+								let pIt = playerIt(playersOrder);
+
+								_.forEach(cardIds, cardId => {
+									let player = pIt.next();
+
+									logger.debug('card -> ', cardId);
+
+									player.cardsInHand.push(cardId);
+								});
+
+								logger.debug('playersOrder2 -> ', playersOrder);
+
+								_.forEach(playersOrder, player => {
+									let playerData = {
+										cardsInHand: player.cardsInHand,
+									};
+
+									logger.debug('playerData -> ', playerData);
+
+									playerMod.update(
+										player.id,
+										playerData,
+										sid
+									);
+								});
+
+								resetActionCard(data.gameId, sid);
+							};
+
+							setTimeout(dealCards, 3000);
+						});
+					});
+				},
+			};
+
+			switch (data.action) {
+				case 'ambush':
+					actions.ambush();
+
+					break;
+
+				case 'communism':
+					actions.communism();
+
+					break;
+
+				case 'hoard':
+					actions.hoard();
+
+					break;
+
+				case 'quarrel':
+					actions.quarrel();
+
+					break;
+
+				case 'whirlwind':
+					actions.whirlwind();
+
+					break;
+
+				case 'getMyCards':
+					Player.find(query)
+						.select('+sessionId +cardsInHand')
+						.exec()
+						.then(list => {
+							const wsObj = {
+								namespace: 'wsPlayers',
+								action: 'getMyCards',
+								nuts: list[0],
+							};
+
+							ws.send(JSON.stringify(wsObj));
+						})
+						.catch(err => {
+							logger.error(err);
+						});
+
+					break;
+
+				default:
+					wss.broadcast(data);
+
+					break;
+			}
+		};
 
 		logger.info('Connection accepted:', sid);
 		logger.info('Clients Connected: %s', wss.clients.size);
@@ -69,231 +328,7 @@ module.exports = function(server, sessionParser) {
 
 		// This is the most important callback for us, we'll handle
 		// all messages from users here.
-		ws.on('message', message => {
-			var data = JSON.parse(message),
-				query = {
-					sessionId: sid
-				},
-				wsData = data;
-
-			// Process WebSocket message
-			logger.debug('Message received: ', data);
-			logger.debug(`websocket:onmessage:${data.action} -> `, query);
-
-			switch (data.action) {
-				case 'ambush':
-					playerMod
-						.get()
-						.then(players => {
-							let cards = [],
-								plData = {},
-								playerToUpdate = {};
-
-							_.forEach(players, pl => {
-								let card = _.sampleSize(pl.cardsInHand)[0];
-
-								if (!pl.isActive) {
-									logger.debug('card -> ', card);
-
-									// Only update if the player has at least 1 card
-									if (card) {
-										_.pull(pl.cardsInHand, card);
-										cards.push(card);
-
-										plData = {
-											cardsInHand: pl.cardsInHand
-										};
-
-										playerMod
-											.update(pl.id, plData, sid)
-											.then(() => {})
-											.catch(() => {});
-									}
-								} else {
-									cards = _.union(cards, pl.cardsInHand);
-									playerToUpdate = pl;
-									logger.debug(
-										'playerToUpdate -> ',
-										playerToUpdate
-									);
-								}
-							});
-
-							plData = {
-								cardsInHand: cards
-							};
-
-							playerMod
-								.update(playerToUpdate.id, plData, sid)
-								.then(() => {})
-								.catch(() => {});
-						})
-						.catch(err => {
-							logger.error(err);
-						});
-
-					resetActionCard(data.gameId);
-
-					break;
-
-				case 'communism':
-					playerMod
-						.get()
-						.then(players => {
-							let wsData = {
-								action: data.action,
-								type: 'game',
-								nuts: players
-							};
-
-							ws.send(JSON.stringify(wsData));
-						});
-
-					break;
-
-				case 'hoard':
-					delete data.playerHoard.cardsInHand;
-
-					wsData = {
-						action: data.action,
-						type: 'player' + (!hoardPlayer ? 's' : ''),
-						nuts: data.playerHoard
-					};
-
-					if (!hoardPlayer) {
-						hoardPlayer = query;
-
-						// 	FIXME: HACK!!
-						setTimeout(() => {
-							wss.broadcast(wsData, sid);
-							hoardPlayer = null;
-						}, 250);
-					} else {
-						ws.send(JSON.stringify(wsData));
-					}
-
-					break;
-
-				case 'quarrel':
-					wsData = {
-						action: data.action,
-						id: data.player || null,
-						type: 'players'
-					};
-
-					if (data.hasOwnProperty('card')) {
-						wsData.card = data.card;
-					}
-
-					wss.broadcast(wsData, sid);
-
-					break;
-
-				case 'whirlwind':
-					playerMod
-						.get()
-						.then(players => {
-							let cardIds = [],
-								startPlayer = 0,
-								updatePromises = [];
-
-							_.forEach(players, (pl, index) => {
-								let plCards = pl.cardsInHand.slice(); // Copy array
-
-								logger.debug('plCards -> ', plCards);
-
-								cardIds = _.union(cardIds, plCards);
-
-								// Remove cards from player's hand
-								pl.cardsInHand = [];
-								updatePromises.push(
-									playerMod.update(
-										pl.id,
-										{ cardsInHand: [] },
-										sid
-									)
-								);
-
-								if (pl.isActive) {
-									startPlayer = index;
-								}
-							});
-
-							Q.all(updatePromises)
-								.then(() => {
-									let dealCards = () => {
-										let playersOrder = _.union(
-											players.slice(startPlayer),
-											players.slice(0, startPlayer)
-										);
-
-										cardIds = _(cardIds)
-											.flatten()
-											.shuffle()
-											.value();
-
-										logger.debug('cards -> ', cardIds);
-										logger.debug('playersOrder1 -> ', playersOrder);
-
-										let pIt = playerIt(playersOrder);
-
-										_.forEach(cardIds, cardId => {
-											let player = pIt.next();
-
-											logger.debug('card -> ', cardId);
-
-											player.cardsInHand.push(cardId);
-										});
-
-										logger.debug('playersOrder2 -> ', playersOrder);
-
-										_.forEach(playersOrder, player => {
-											let playerData = {
-												cardsInHand: player.cardsInHand
-											};
-
-											logger.debug('playerData -> ', playerData);
-
-											playerMod.update(
-												player.id,
-												playerData,
-												sid
-											);
-										});
-
-										resetActionCard(data.gameId);
-									};
-
-									setTimeout(dealCards, 3000);
-								});
-						});
-
-					break;
-
-				case 'getMyCards':
-					Player.find(query)
-						.select('+sessionId +cardsInHand')
-						.exec()
-						.then(list => {
-							wsData = {
-								namespace: 'wsPlayers',
-								action: 'getMyCards',
-								nuts: list[0]
-							};
-
-							ws.send(JSON.stringify(wsData));
-						})
-						.catch(err => {
-							logger.error(err);
-						});
-
-					break;
-
-				default:
-					wss.broadcast(wsData);
-					break;
-			}
-		});
+		ws.on('message', onMessage);
 
 		ws.on('error', err => {
 			logger.error(err);
