@@ -6,6 +6,6 @@ module.exports = {
 			host: 'squarrels',
 			port: 8181,
 			open: true,
-		}
-	}
-}
+		},
+	},
+};
