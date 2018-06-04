@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import api from '@/api/index';
 
@@ -59,6 +59,9 @@ export default {
 		...mapGetters({
 			myPlayer: 'players/getMyPlayer',
 		}),
+		...mapState({
+			actionCard: state => state.game.actionCard,
+		}),
 		canDrag: function() {
 			return true;
 		},
@@ -88,14 +91,14 @@ export default {
 			return activePlayer && activePlayer.id === this.myPlayer.id;
 		},
 		isDisabled: function() {
-			return (
-				!this.isActivePlayer ||
-				this.cardData.action ||
-				!this.myPlayer.hasDrawnCard
-			);
+			if (this.myPlayer.quarrel) {
+				return false;
+			}
+
+			return !(this.isActivePlayer || this.myPlayer.hasDrawnCard);
 		},
 	},
-	created: function() {
+	mounted: function() {
 		if (!this.cardData) {
 			api.cards
 				.get(this.id)
@@ -109,11 +112,7 @@ export default {
 				});
 		}
 	},
-	methods: {
-		onDragStop: function(evt) {
-			this.$log.debug(evt);
-		},
-	},
+	methods: {},
 };
 </script>
 
