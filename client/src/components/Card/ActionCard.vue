@@ -31,7 +31,7 @@ export default {
 			instantAction: 'instantAction',
 		}),
 		isInstant: function() {
-			return this.instantAction ||  this.card.name === 'winter';
+			return this.instantAction || this.card.name === 'winter';
 		},
 	},
 };

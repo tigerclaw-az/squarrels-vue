@@ -54,10 +54,12 @@ const actions = {
 								this._vm.$toasted.error('USER NOT FOUND');
 								Vue.$storage.remove('player');
 								reject('USER NOT FOUND');
+
 								return false;
 							}
 
 							let pl = res.data[0];
+
 							commit('LOGIN', pl);
 							resolve(pl);
 						})

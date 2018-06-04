@@ -36,6 +36,7 @@ const getters = {
 
 	isPlayerInGame: state => id => {
 		Vue.$log.debug('isPlayerInGame->', state, id);
+
 		return state.playerIds.filter(pl => pl.id === id).length;
 	},
 };
@@ -46,7 +47,9 @@ const actions = {
 
 		try {
 			let res = await api.games.actionCard(state.id, actionCard.id);
+
 			Vue.$log.debug('gameUpdate:actionCard -> ', res);
+
 			return res;
 		} catch (err) {
 			return err;
@@ -208,6 +211,7 @@ const mutations = {
 
 	UPDATE(state, payload) {
 		const prevPlayerCount = state.playerIds.length;
+
 		Vue.$log.debug('mutation::game/update', state, payload);
 
 		if (payload) {

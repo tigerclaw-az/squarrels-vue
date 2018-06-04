@@ -27,13 +27,9 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import { mapGetters, mapState } from 'vuex';
 import Icon from 'vue-awesome/components/Icon';
 
-import EventBus from '@/EventBus';
-
-// FIXME: Make sure games are being added when another player creates the game
 export default {
 	name: 'Start',
 	components: {
@@ -87,10 +83,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~@/assets/scss/mixins';
+// prettier-ignore
+@import "~@/assets/scss/mixins";
 
 .winter {
-	background-image: url('~@/assets/images/winter-background.jpg');
+	// prettier-ignore
+	background-image: url("~@/assets/images/winter-background.jpg");
 	background-size: cover;
 	height: 99vh;
 }

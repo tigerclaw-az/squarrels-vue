@@ -71,10 +71,12 @@ export default {
 		}),
 		isCurrentPlayer: function() {
 			this.$log.debug('isCurrentPlayer', this.myPlayer, this.player);
+
 			return this.myPlayer.id === this.player.id;
 		},
 		hasCards: function() {
 			let cards = this.myCards;
+
 			return cards && cards.length;
 		},
 		myCards: function() {
@@ -82,6 +84,7 @@ export default {
 		},
 		myCardsSorted: function() {
 			this.$log.debug('myPlayer', this.myPlayer);
+
 			return _.sortBy(this.myCardsDetails, ['amount']);
 			// return this.myPlayer.cardsInHand;
 		},

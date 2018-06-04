@@ -17,6 +17,7 @@ const getters = {};
 const actions = {
 	play({ commit }, name) {
 		let audio = new Audio(SOUNDS_PATH + SOUND_EFFECTS[name]);
+
 		audio.play();
 	},
 	toggle: ({ commit }) => {
