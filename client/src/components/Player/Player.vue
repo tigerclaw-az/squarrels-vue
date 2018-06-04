@@ -147,9 +147,16 @@ export default {
 				return;
 			}
 
-			if (cardsToStore.length !== 3) {
+			if (cardsToStore.length < 3) {
 				this.discard(card);
-			} else {
+
+				return;
+			}
+
+			if (cardsToStore.length > 3) {
+				cardsToStore = _.sampleSize(cardsToStore, 3);
+			}
+
 				this.storeCards(cardsToStore);
 			}
 		},
