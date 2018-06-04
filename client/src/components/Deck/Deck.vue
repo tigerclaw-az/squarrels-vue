@@ -69,7 +69,6 @@ export default {
 	computed: {
 		...mapGetters({
 			canDrawCard: 'players/canDrawCard',
-			isActionCard: 'game/isActionCard',
 			myPlayer: 'players/getMyPlayer',
 		}),
 		...mapState(['isAdmin']),
@@ -80,7 +79,11 @@ export default {
 			decks: state => state.decks,
 		}),
 		canHoard: function() {
-			return !this.myPlayer.isActive && this.isActionCard('hoard');
+			if (!this.actionCard) {
+				return false;
+			}
+
+			return !this.myPlayer.isActive && this.actionCard.name === 'hoard';
 		},
 		cards: function() {
 			return this.deck.cards;
@@ -106,6 +109,41 @@ export default {
 		},
 	},
 	methods: {
+		collectHoard: function() {
+			if (this.canHoard) {
+				// TODO: Send websocket message for
+				this.$socket.sendObj({
+					action: 'hoard',
+					playerHoard: this.myPlayer,
+				});
+				return;
+			}
+
+			if (this.myPlayer.cardsInHand.length) {
+				// TODO: Remove highest card (that isn't special) from player
+				/**
+				 * this.$store.dispatch('players/removeHighCard');
+				 this.playerModel.getCards()
+				.then(res => {
+					let cards = res.data,
+						highCard = this._.maxBy(cards, (card) => {
+							return card.cardType === 'special' ? -1 : card.amount;
+						});
+
+					this.$log.debug('highCard ->', highCard);
+
+					if (!this._.isEmpty(highCard)) {
+						this.toastr.warning(highCard.name, 'You just lost a card!');
+
+						// FIXME: Only 1 card should be discarded
+						this.deckStore.discard(highCard.id, false);
+					}
+				}, (err) => {
+					this.$log.error(err);
+				});
+				 */
+			}
+		},
 		handleCardDrawn: function(cardDrawn) {
 			const cardAction = cardDrawn.action;
 
@@ -136,8 +174,8 @@ export default {
 						this.$toasted.error(`Error drawing card! ${err}`);
 					});
 			} else if (this.isType('discard')) {
-				if (this.canHoard) {
-					// this.collectHoard();
+				if (this.actionCard) {
+					this.collectHoard();
 				} else {
 					if (this.maxClicks >= 0) {
 						this.$toasted.info(
