@@ -3,7 +3,17 @@ const state = {};
 const getters = {};
 
 const actions = {
-	create({ commit }, data) {
+	actioncard_hoard({ dispatch }, data) {
+		this._vm.$log.debug(data);
+	},
+
+	actioncard_quarrel({ dispatch }, data) {
+		this._vm.$log.debug(data);
+
+		dispatch('game/addQuarrelCard', data, { root: true });
+	},
+
+	create({ dispatch }, data) {
 		this._vm.$log.debug(data);
 	},
 
@@ -17,7 +27,12 @@ const actions = {
 
 		let id = data.nuts.id;
 		let cardsInHand = data.nuts.cardsInHand;
+
 		commit('players/UPDATE_CARDS', { id, cardsInHand }, { root: true });
+	},
+
+	showMessage({ state }, data) {
+		this._vm.$toasted.error(data.nuts);
 	},
 };
 
