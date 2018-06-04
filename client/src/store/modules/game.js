@@ -41,17 +41,16 @@ const getters = {
 };
 
 const actions = {
-	actionCard({ state }, actionCard) {
+	async actionCard({ state }, actionCard) {
 		Vue.$log.debug('game/actionCard->', actionCard, state);
 
-		return api.games.actionCard(state.id, actionCard.id).then(
-			res => {
-				Vue.$log.debug('gameUpdate:actionCard -> ', res);
-			},
-			err => {
-				Vue.$log.error(err);
-			}
-		);
+		try {
+			let res = await api.games.actionCard(state.id, actionCard.id);
+			Vue.$log.debug('gameUpdate:actionCard -> ', res);
+			return res;
+		} catch (err) {
+			return err;
+		}
 	},
 	addPlayer({ commit, state }, { gameId, playerId }) {
 		let newPlayers = _.union(playerId, [...state.playerIds, playerId]);
