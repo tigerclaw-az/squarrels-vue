@@ -4,6 +4,10 @@
 		"es6": true,
 		"node": true
 	},
+	"parserOptions": {
+		"ecmaVersion": 8,
+		"parser": "babel-eslint"
+	},
 	"extends": ["plugin:prettier/recommended", "plugin:vue/essential"],
 	"rules": {
 		"class-methods-use-this": ["error"],
@@ -13,7 +17,6 @@
 		"eol-last": ["error", "always"],
 		"eqeqeq": ["error", "always"],
 		"indent": ["error", "tab", { "SwitchCase": 1 }],
-		"quotes": ["error", "single"],
 		"no-alert": ["error"],
 		"no-await-in-loop": ["error"],
 		"no-caller": ["error"],
@@ -22,16 +25,48 @@
 		"no-eval": ["error"],
 		"no-extra-bind": ["error"],
 		"no-multi-spaces": ["error"],
+		"no-return-assign": ["error"],
+		"no-return-await": ["error"],
 		"no-tabs": 0,
 		"no-template-curly-in-string": ["error"],
 		"no-throw-literal": ["error"],
 		"no-unused-vars": ["warn"],
-		"no-useless-concat": ["error"],
+		"no-useless-concat": ["warn"],
+		"no-useless-return": ["warn"],
+		"no-void": ["error"],
+		"no-warning-comments": ["warn"],
+		"padding-line-between-statements": [
+			"warn",
+			{ "blankLine": "always", "prev": "*", "next": "return" },
+			{
+				"blankLine": "always",
+				"prev": ["const", "let", "var"],
+				"next": "*"
+			},
+			{
+				"blankLine": "any",
+				"prev": ["const", "let", "var"],
+				"next": ["const", "let", "var"]
+			},
+			{
+				"blankLine": "always",
+				"prev": "directive",
+				"next": "*"
+			},
+			{
+				"blankLine": "any",
+				"prev": "directive",
+				"next": "directive"
+			}
+		],
+		"quotes": ["error", "single"],
+		"require-await": ["error"],
+		"semi": ["error", "always"],
+		"tabWidth": 4,
+		"useTabs": true,
 		"valid-jsdoc": ["warn"],
 		"vars-on-top": ["error"],
 		"wrap-iife": ["error", "inside"],
-		"semi": ["error", "always"],
-		"tabWidth": 4,
-		"useTabs": true
+		"yoda": ["error", "never"]
 	}
 }
