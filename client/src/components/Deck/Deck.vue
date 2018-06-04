@@ -111,12 +111,12 @@ export default {
 	methods: {
 		collectHoard: function() {
 			if (this.canHoard) {
-				// TODO: Send websocket message for
 				this.$socket.sendObj({
 					action: 'hoard',
 					playerHoard: this.myPlayer,
 				});
-				return;
+
+				return true;
 			}
 
 			if (this.myPlayer.cardsInHand.length) {
@@ -146,15 +146,15 @@ export default {
 		},
 		handleCardDrawn: function(cardDrawn) {
 			const cardAction = cardDrawn.action;
+			let dispatchAction = 'players/addCard';
 
 			this.$log.debug(cardDrawn, cardAction, this);
 
-			if (!cardAction) {
-				// Player drew a non-"action" card, so add to their hand and update
-				this.$store.dispatch('players/addCard', cardDrawn);
-			} else {
-				this.$store.dispatch('game/actionCard', cardDrawn);
+			if (cardAction) {
+				dispatchAction = 'game/actionCard';
 			}
+
+			this.$store.dispatch(dispatchAction, cardDrawn);
 		},
 		// Must be method as you can't pass parameters to 'computed' functions
 		isType: function(name) {
