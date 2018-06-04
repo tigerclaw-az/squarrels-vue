@@ -1,0 +1,72 @@
+@import "~@/assets/scss/variables";
+
+#board {
+	padding: ($grid-gutter-width / 2);
+}
+
+.winter-snow {
+	background-image: linear-gradient(
+		to bottom,
+		get-color("danube") 0%,
+		get-color("matisse") 84%
+	);
+	left: 0;
+	position: absolute;
+	top: 0;
+}
+
+.overlay-text {
+	@extend %center;
+
+	color: $white;
+	font-size: 2em;
+	z-index: 100;
+
+	.waiting-message {
+		animation-name: blink;
+		animation-duration: 1.4s;
+		animation-iteration-count: infinite;
+		/**
+			* This makes sure that the starting style (opacity: .2)
+			* of the animation is applied before the animation starts.
+			* Otherwise we would see a short flash or would have
+			* to set the default styling of the dots to the same
+			* as the animation. Same applies for the ending styles.
+			*/
+		animation-fill-mode: both;
+		transform: translateZ(0);
+	}
+
+	.btn-start-game {
+		// @extend %center;
+		@include animation-pulse;
+
+		font-size: inherit;
+		z-index: 80;
+	}
+}
+
+.start-game-overlay {
+	background-color: get-color("mine-shaft");
+	height: auto !important;
+	margin: 0 auto -20px;
+	min-height: 100%;
+	opacity: 0.9;
+	position: fixed;
+	width: 100%;
+	z-index: 60;
+}
+
+.decks-container {
+	align-content: center;
+	align-items: center;
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+	padding: 1rem;
+}
+
+.game-buttons {
+	position: absolute;
+	z-index: 5;
+}
