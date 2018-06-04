@@ -73,16 +73,21 @@ export default {
 		return {};
 	},
 	watch: {
-		actionCard: function() {
-			let hoardDeck = this.$store.getters['decks/getByType']('discard');
+		actionCard: function(to, from) {
+			this.$log.debug(to, from);
 
 			this.$store.dispatch('sound/play', 'action-card');
 
-			switch (this.actionCard) {
+			if (!to) {
+				return false;
+			}
+
+			switch (to.name) {
 				case 'communism':
 					break;
 
 				case 'quarrel':
+					this.$store.dispatch('players/initQuarrel');
 					break;
 
 				case 'winter':
