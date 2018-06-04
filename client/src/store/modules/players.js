@@ -141,14 +141,32 @@ const actions = {
 		});
 	},
 
-	discard({ state }, payload) {
+	discard({ commit, state }, payload) {
 		this._vm.$log.debug(state, payload);
 
 		const playerId = payload.id;
 		const cardIds = state[playerId].cardsInHand;
 
+		commit('UPDATE', {
+			id: playerId,
+			quarrel: false,
+			message: null,
+		});
+
 		return api.players.update(playerId, {
 			cardsInHand: _.difference(cardIds, [payload.card.id]),
+		});
+	},
+
+	initQuarrel({ commit, state }) {
+		this._vm.$log.debug();
+
+		_.forEach(state.ids, id => {
+			commit('UPDATE', {
+				id,
+				message: 'Choose a Card',
+				quarrel: true,
+			});
 		});
 	},
 
@@ -193,11 +211,9 @@ const actions = {
 		);
 
 		if (activePlayerIndex !== -1) {
-			// api.players
-			// 	.update(activePlayer.id, { isActive: false })
 			dispatch('update', {
 				id: activePlayer.id,
-				data: { isActive: false },
+				data: { isActive: false, hasDrawnCard: false },
 			})
 				.then(res => {
 					// Merge data with existing object of player
