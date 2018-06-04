@@ -15,6 +15,7 @@ const initialState = {
 	isLoaded: false,
 	isStarted: false,
 	playerIds: [],
+	quarrelCards: [],
 	roundNumber: 1,
 	updatedAt: null,
 };
@@ -42,7 +43,7 @@ const getters = {
 };
 
 const actions = {
-	async actionCard({ state }, actionCard) {
+	async actionCard({ dispatch, state }, actionCard) {
 		Vue.$log.debug('game/actionCard->', actionCard, state);
 
 		try {
@@ -54,6 +55,13 @@ const actions = {
 		} catch (err) {
 			return err;
 		}
+	},
+	addQuarrelCard({ commit, state }, card) {
+		this._vm.$log.debug(card);
+
+		const newCards = _.concat(state.quarrelCards, card);
+
+		commit('UPDATE', { quarrelCards: newCards });
 	},
 	addPlayer({ commit, state }, { gameId, playerId }) {
 		let newPlayers = _.union(playerId, [...state.playerIds, playerId]);
