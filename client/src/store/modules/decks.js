@@ -188,6 +188,32 @@ const actions = {
 	unload({ commit }) {
 		commit('INIT');
 	},
+
+	async updateById({ commit }, payload) {
+		if (!payload.id) {
+			throw new Error('Missing required "id" property.');
+		}
+
+		try {
+			return await api.decks.update(payload.id, payload.data);
+		} catch (err) {
+			return err;
+		}
+	},
+
+	async updateByType({ getters }, payload) {
+		if (!payload.type) {
+			throw new Error('Missing required "type" property.');
+		}
+
+		const deck = getters.getByType(payload.type);
+
+		try {
+			return await api.decks.update(deck.id, payload.data);
+		} catch (err) {
+			return err;
+		}
+	},
 };
 
 const mutations = {
