@@ -10,7 +10,6 @@ const initialState = {
 	createdAt: null,
 	deckIds: [],
 	id: null,
-	instantAction: false,
 	isDealing: false,
 	isLoaded: false,
 	isStarted: false,
@@ -175,6 +174,21 @@ const actions = {
 		return api.games.reset(state.id).then(() => {
 			// commit('INIT');
 		});
+	},
+
+	async resetAction({ dispatch }) {
+		try {
+			// Add current action card to the 'action' deck
+			await dispatch(
+				'decks/addCard',
+				{ type: 'action', cardId: state.actionCard.id },
+				{ root: true }
+			);
+
+			return api.games.actionCard(state.id, null);
+		} catch (err) {
+			this._vm.$toasted.error(err);
+		}
 	},
 
 	/**
