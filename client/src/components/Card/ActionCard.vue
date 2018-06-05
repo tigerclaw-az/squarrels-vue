@@ -25,10 +25,41 @@ export default {
 	components: {
 		Card,
 	},
+	data: function() {
+		return {
+			instantAction: false,
+		};
+	},
+	mounted: function() {
+		this.$store.dispatch('sound/play', 'action-card');
+
+		const hoardDeck = this.$store.getters['decks/getByType']('discard');
+		const hoardCards = hoardDeck.cards;
+
+		if (!hoardCards.length) {
+			this.instantAction = true;
+		}
+
+		switch (this.card.name) {
+			case 'hoard':
+				if (!hoardCards.length) {
+					this.$toasted.info('No cards to Hoard');
+					this.$store.dispatch('game/resetAction');
+				}
+				break;
+
+			case 'quarrel':
+				this.$store.dispatch('players/initQuarrel');
+				break;
+
+			default:
+				this.$store.dispatch('game/resetAction');
+				break;
+		}
+	},
 	computed: {
 		...mapState('game', {
 			card: 'actionCard',
-			instantAction: 'instantAction',
 		}),
 		isInstant: function() {
 			return this.instantAction || this.card.name === 'winter';

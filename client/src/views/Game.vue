@@ -73,27 +73,6 @@ export default {
 		return {};
 	},
 	watch: {
-		actionCard: function(to, from) {
-			this.$log.debug(to, from);
-
-			this.$store.dispatch('sound/play', 'action-card');
-
-			if (!to) {
-				return false;
-			}
-
-			switch (to.name) {
-				case 'communism':
-					break;
-
-				case 'quarrel':
-					this.$store.dispatch('players/initQuarrel');
-					break;
-
-				case 'winter':
-					break;
-			}
-		},
 		isStarted: function() {
 			this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
 		},
@@ -115,7 +94,6 @@ export default {
 			'isDealing',
 			'isLoaded',
 			'isStarted',
-			'instantAction',
 			'playerIds',
 		]),
 		...mapState(['isAdmin']),
