@@ -149,7 +149,6 @@ games.post('/:id/reset', function(req, res) {
 	const init = {
 		actionCard: null,
 		deckIds: [],
-		instantAction: false,
 		isDealing: false,
 		isLoaded: false,
 		isStarted: false,
