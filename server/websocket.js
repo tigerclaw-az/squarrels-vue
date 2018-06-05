@@ -145,7 +145,7 @@ module.exports = function(server, sessionParser) {
 				hoard: () => {
 					let wsObj = {};
 
-					delete data.playerHoard.cardsInHand;
+					delete data.player.cardsInHand;
 
 					if (!hoardPlayer) {
 						hoardPlayer = query;
@@ -155,7 +155,7 @@ module.exports = function(server, sessionParser) {
 							wsObj = {
 								namespace: 'wsPlayers',
 								action: `actioncard_${data.action}`,
-								nuts: data.playerHoard,
+								nuts: data.player,
 							};
 
 							wss.broadcast(wsObj, sid);

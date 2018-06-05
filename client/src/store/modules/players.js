@@ -141,6 +141,40 @@ const actions = {
 		});
 	},
 
+	collectHoard({ dispatch, getters, rootGetters }, pl) {
+		const myPlayer = getters.getMyPlayer;
+		const hoardDeck = rootGetters['decks/getByType']('discard');
+		const hoardCards = rootGetters['decks/getCardIds'](hoardDeck.id);
+		const cardsInHand = _.union(myPlayer.cardsInHand, hoardCards);
+
+		if (pl.id === myPlayer.id) {
+			// Add hoard cards to player cards
+			// prettier-ignore
+			api.players
+				.update(myPlayer.id, { cardsInHand })
+				.then(async () => {
+					try {
+						await dispatch(
+							'decks/updateById',
+							{ id: hoardDeck.id, data: { cards: [] } },
+							{ root: true }
+						);
+
+						dispatch(
+							'game/resetAction',
+							{},
+							{ root: true }
+						);
+					} catch (err) {
+						this._vm.$toasted.error(err);
+						this._vm.$log.error(err);
+					}
+				});
+		} else {
+			this._vm.$toasted.info(`HOARD TAKEN BY: ${pl.name}`);
+		}
+	},
+
 	discard({ commit, state }, payload) {
 		this._vm.$log.debug(state, payload);
 

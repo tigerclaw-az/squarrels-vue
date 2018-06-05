@@ -5,6 +5,8 @@ const getters = {};
 const actions = {
 	actioncard_hoard({ dispatch }, data) {
 		this._vm.$log.debug(data);
+
+		dispatch('players/collectHoard', data.nuts, { root: true });
 	},
 
 	actioncard_quarrel({ dispatch }, data) {
