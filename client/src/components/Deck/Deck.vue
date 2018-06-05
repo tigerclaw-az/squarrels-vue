@@ -15,10 +15,10 @@
 				@click.prevent="onClick"
 			>
 				<span
-					class="card"
-					:class="isType('action') ? 'action--{{card.name}}' : 'blank--'"
 					v-for="card in cardsToDisplay"
 					:key="card.id"
+					class="card"
+					:class="[cardClassName(card.name)]"
 				>
 				</span>
 			</div>
@@ -109,11 +109,14 @@ export default {
 		},
 	},
 	methods: {
+		cardClassName: function(name) {
+			return this.isType('action') ? `action--${name}` : 'blank--';
+		},
 		collectHoard: function() {
 			if (this.canHoard) {
 				this.$socket.sendObj({
 					action: 'hoard',
-					playerHoard: this.myPlayer,
+					player: this.myPlayer,
 				});
 
 				return true;
