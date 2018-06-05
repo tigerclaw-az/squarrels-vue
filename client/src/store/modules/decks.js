@@ -22,6 +22,20 @@ const getters = {
 };
 
 const actions = {
+	addCard({ getters }, payload) {
+		const deck = payload.type
+			? getters.getByType(payload.type)
+			: getters.getById(payload.id);
+
+		const cardsInDeck = deck.cards;
+
+		this._vm.$log.debug(payload, deck, cardsInDeck);
+
+		return api.decks.update(deck.id, {
+			cards: _.concat(cardsInDeck, payload.cardId),
+		});
+	},
+
 	dealCards({ dispatch, getters }, playerId) {
 		const drawCardOptions = { numOnly: true, isDeal: true, playerId };
 		const mainDeck = getters.getByType('main');
@@ -85,15 +99,8 @@ const actions = {
 		});
 	},
 
-	discard({ getters }, card) {
-		const hoardDeck = getters.getByType('discard');
-		const cardsInDeck = hoardDeck.cards;
-
-		this._vm.$log.debug(card, hoardDeck, cardsInDeck);
-
-		return api.decks.update(hoardDeck.id, {
-			cards: _.concat(cardsInDeck, card.id),
-		});
+	discard({ dispatch }, card) {
+		return dispatch('addCard', { type: 'discard', cardId: card.id });
 	},
 
 	drawCard({ commit, getters }, options = {}) {
