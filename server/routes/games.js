@@ -166,13 +166,20 @@ games.post('/:id/reset', function(req, res) {
 			logger.debug('decks -> ', deckIds);
 			logger.debug('players -> ', playerIds);
 
-			DeckModel.deleteMany({ _id: { $in: deckIds } });
+			DeckModel
+				.deleteMany({ _id: { $in: deckIds } })
+				.then(() => {
+				})
+				.catch(err => {
+					logger.error(err);
+				});
 
 			_.forEach(playerIds, id => {
 				// prettier-ignore
 				playerMod
-					.reset(id)
+					.reset(id, sessionId)
 					.then(doc => {
+						logger.debug('player reset -> ', doc);
 						wss.broadcast(
 							{
 								namespace: 'wsPlayers',
@@ -181,12 +188,22 @@ games.post('/:id/reset', function(req, res) {
 							},
 							sessionId
 						);
+					})
+					.catch(err => {
+						logger.error(err);
 					});
 			});
 
 			gameMod
 				.update(gameId, init, sessionId)
 				.then(doc => {
+					logger.debug('game reset -> ', doc);
+
+					wss.broadcast(
+						{ namespace: 'wsGame', action: 'update', nuts: doc },
+						sessionId
+					);
+
 					res.status(200).json(doc);
 				})
 				.catch(err => {
