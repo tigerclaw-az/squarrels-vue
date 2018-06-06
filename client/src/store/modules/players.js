@@ -192,16 +192,22 @@ const actions = {
 		});
 	},
 
-	initQuarrel({ commit, state }) {
+	initQuarrel({ commit, dispatch, getters, state }) {
+		const myPlayer = getters.getMyPlayer;
+
 		this._vm.$log.debug();
 
-		_.forEach(state.ids, id => {
+		// dispatch('game/update', state.ids.length, { root: true });
+
+		if (myPlayer.cardsInHand.length) {
 			commit('UPDATE', {
-				id,
+				id: myPlayer.id,
 				message: 'Choose a Card',
 				quarrel: true,
 			});
-		});
+		} else {
+			dispatch('selectQuarrelCard', { id: myPlayer.id });
+		}
 	},
 
 	/**
