@@ -84,6 +84,10 @@ const getters = {
 
 		return state.ids[activeIndex];
 	},
+
+	totalPlayers: state => {
+		return state.ids.length;
+	},
 };
 
 const actions = {
