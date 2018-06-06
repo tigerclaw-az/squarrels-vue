@@ -26,7 +26,7 @@
 @mixin clearfix() {
 	&::after {
 		display: block;
-		content: '';
+		content: "";
 		clear: both;
 	}
 }
@@ -37,7 +37,7 @@
 	font-size: rem-calc($size);
 }
 
-@mixin flip-card($type: 'action') {
+@mixin flip-card($type: "action") {
 	.card {
 		animation-fill-mode: forwards;
 		backface-visibility: hidden;
@@ -49,10 +49,10 @@
 		}
 	}
 
-	[card-type=#{$type}] {
+	[card-type="#{$type}"] {
 		.card {
 			animation-delay: 2.5s;
-			animation-duration: .5s;
+			animation-duration: 0.5s;
 			animation-name: spin-reverse;
 			animation-timing-function: ease-out;
 			transform: rotateY(-90deg);
@@ -63,10 +63,10 @@
 
 	&.instant {
 		.card {
-			animation-delay: .2s;
+			animation-delay: 0.2s;
 
 			&.blank-- {
-				animation-duration: .25s;
+				animation-duration: 0.25s;
 			}
 		}
 	}
