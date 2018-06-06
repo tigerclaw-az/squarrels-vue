@@ -23,9 +23,7 @@
 		<b-row>
 			<b-col>
 				<BoardPlayers :isGameStarted="isStarted" :gameId="id"></BoardPlayers>
-				<transition>
-					<ActionCard v-if="actionCard"></ActionCard>
-				</transition>
+				<ActionCard v-if="actionCard"></ActionCard>
 			</b-col>
 		</b-row>
 		<b-row>
@@ -73,8 +71,10 @@ export default {
 		return {};
 	},
 	watch: {
-		isStarted: function() {
-			this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
+		isStarted: function(to, from) {
+			if (to) {
+				this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
+			}
 		},
 	},
 	mounted: function() {
