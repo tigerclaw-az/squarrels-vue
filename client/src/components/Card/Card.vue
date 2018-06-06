@@ -1,12 +1,13 @@
 <template>
 	<!-- TODO: Add icons to each card for 'storage' and 'discard' -->
 	<div
-		role="button"
+		:card-type="cardType"
 		class="btn-card"
 		:class="{
 			disabled: isDisabled,
 			highlight: hasMatch,
 		}"
+		role="button"
 		:style="cardStyle"
 		@click="!isDisabled && onClick(cardData, matches, $event)"
 	>
