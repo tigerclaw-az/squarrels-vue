@@ -269,6 +269,22 @@ const actions = {
 		});
 	},
 
+	selectQuarrelCard({}, data) {
+		let wsObj = {
+			action: 'quarrel',
+			player: data.id,
+		};
+
+		// If the player doesn't have any cards, then the 'card' property
+		// won't be sent through the websocket, but we still need to send
+		// a message so the game is updated properly.
+		if (data.card) {
+			wsObj.card = data.card;
+		}
+
+		this._vm.$socket.sendObj(wsObj);
+	},
+
 	update({ commit }, payload) {
 		this._vm.$log.debug('players/update', payload);
 

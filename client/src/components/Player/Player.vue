@@ -94,7 +94,9 @@ export default {
 		myCards: function(newCards, oldCards) {
 			this.$log.debug('myCards->changed', newCards, oldCards);
 
-			if (!this.myCards.length) {
+			const diff = _.difference(newCards, oldCards);
+
+			if (!this.myCards.length || !diff.length) {
 				return;
 			}
 
@@ -151,10 +153,9 @@ export default {
 						card,
 					})
 					.then(() => {
-						this.$socket.sendObj({
-							action: 'quarrel',
-							card: card,
-							player: this.myPlayer.id,
+						this.$store.dispatch('players/selectQuarrelCard', {
+							id: this.myPlayer.id,
+							card,
 						});
 					})
 					.catch(err => {
