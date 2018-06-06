@@ -12,7 +12,12 @@ const actions = {
 	actioncard_quarrel({ dispatch }, data) {
 		this._vm.$log.debug(data);
 
-		dispatch('game/addQuarrelCard', data, { root: true });
+		const quarrelData = {
+			playerId: data.playerId,
+			card: data.card || null,
+		};
+
+		dispatch('game/addQuarrelCard', quarrelData, { root: true });
 	},
 
 	create({ dispatch }, data) {
