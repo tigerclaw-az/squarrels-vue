@@ -12,7 +12,7 @@ let playerMod = {
 			.select('+cardsInHand')
 			.exec();
 	},
-	reset: id => {
+	reset: (id, sid) => {
 		const init = {
 			cardsInHand: [],
 			cardsInStorage: [],
@@ -23,7 +23,7 @@ let playerMod = {
 			totalCards: 0,
 		};
 
-		return Player.update(id, init);
+		return playerMod.update(id, init, sid);
 	},
 	update: (id, data, sid) => {
 		let playerId = { _id: id },
@@ -50,39 +50,46 @@ let playerMod = {
 			cardsDefer.resolve(null);
 		}
 
-		cardsDefer.promise.then(cards => {
-			logger.debug('cards -> ', cards);
+		logger.debug(cardsDefer);
 
-			if (cards) {
-				data.cardsInHand = cards;
-				data.totalCards = cards.length;
+		cardsDefer.promise
+			.then(cards => {
+				logger.debug('cards -> ', cards);
 
-				// Make sure the player can't draw more than 7 cards
-				// if (data.totalCards >= 7) {
-				// 	data.isFirstTurn = false;
-				// }
-			}
+				if (cards) {
+					data.cardsInHand = cards;
+					data.totalCards = cards.length;
 
-			// prettier-ignore
-			Player
-				.findOneAndUpdate(playerId, data, options)
-				.then(doc => {
-					let wsData = {
-						namespace: 'wsPlayers',
-						action: 'update',
-						nuts: doc,
-					};
+					// Make sure the player can't draw more than 7 cards
+					// if (data.totalCards >= 7) {
+					// 	data.isFirstTurn = false;
+					// }
+				}
 
-					/* eslint-disable no-undef */
-					wss.broadcast(wsData, sid);
-					/* eslint-enable no-undef */
+				// prettier-ignore
+				Player
+					.findOneAndUpdate(playerId, data, options)
+					.then(doc => {
+						let wsData = {
+							namespace: 'wsPlayers',
+							action: 'update',
+							nuts: doc,
+						};
 
-					defer.resolve(doc);
-				})
-				.catch(err => {
-					defer.reject(err);
-				});
-		});
+						/* eslint-disable no-undef */
+						wss.broadcast(wsData, sid);
+						/* eslint-enable no-undef */
+
+						defer.resolve(doc);
+					})
+					.catch(err => {
+						defer.reject(err);
+					});
+			})
+			.catch(err => {
+				logger.error(err);
+				defer.reject(err);
+			});
 
 		return defer.promise;
 	},
