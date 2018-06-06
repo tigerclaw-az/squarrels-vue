@@ -1,17 +1,22 @@
 <template>
 	<div id="action-card">
-		<span
-			class="action-card"
-			:class="{ instant: isInstant }"
-		>
-			<span class="card blank--"></span>
-			<Card
-				:id="card.id"
-				:cardData="card"
-				cardType="action"
+		<transition appear mode="in-out">
+			<span
+				v-if="decksReady"
+				card-type="action"
+				class="action-card"
+				:class="{ fadeout: hideCard, instant: isInstant }"
 			>
-			</Card>
-		</span>
+				<span class="card blank--"></span>
+				<Card
+					:id="card.id"
+					:card-data="card"
+					card-type="action"
+					ref="card"
+				>
+				</Card>
+			</span>
+		</transition>
 	</div>
 </template>
 
@@ -27,39 +32,76 @@ export default {
 	},
 	data: function() {
 		return {
+			decksReady: false,
+			hideCard: false,
 			instantAction: false,
 		};
+	},
+	watch: {
+		decksLoaded: function(to, from) {
+			this.$log.debug('decksLoaded', to, from);
+
+			if (to) {
+				this.decksReady = true;
+			}
+		},
+		decksReady: function(to, from) {
+			if (!to) {
+				return;
+			}
+
+			const hoardDeck = this.$store.getters['decks/getByType']('discard');
+			const hoardCards = hoardDeck.cards;
+
+			const onAnimationEnd = () => {
+				this.hideCard = true;
+
+				switch (this.card.name) {
+					case 'hoard':
+						if (!hoardCards.length) {
+							this.$toasted.info('No cards to Hoard');
+							this.$store.dispatch('game/resetAction');
+						}
+						break;
+
+					case 'quarrel':
+						this.$store.dispatch('players/initQuarrel');
+						break;
+
+					default:
+						this.$store.dispatch('game/resetAction');
+						break;
+				}
+			};
+
+			this.$nextTick(() => {
+				this.$log.debug('ActionCard.mounted', hoardDeck, hoardCards);
+
+				this.$el
+					.querySelector('.card')
+					.addEventListener('animationend', onAnimationEnd);
+			});
+
+			if (!hoardCards.length) {
+				this.instantAction = true;
+			}
+		},
 	},
 	mounted: function() {
 		this.$store.dispatch('sound/play', 'action-card');
 
-		const hoardDeck = this.$store.getters['decks/getByType']('discard');
-		const hoardCards = hoardDeck.cards;
-
-		if (!hoardCards.length) {
-			this.instantAction = true;
-		}
-
-		switch (this.card.name) {
-			case 'hoard':
-				if (!hoardCards.length) {
-					this.$toasted.info('No cards to Hoard');
-					this.$store.dispatch('game/resetAction');
-				}
-				break;
-
-			case 'quarrel':
-				this.$store.dispatch('players/initQuarrel');
-				break;
-
-			default:
-				this.$store.dispatch('game/resetAction');
-				break;
-		}
+		this.$nextTick(() => {
+			if (this.decksLoaded) {
+				this.decksReady = true;
+			}
+		});
 	},
 	computed: {
 		...mapState('game', {
 			card: 'actionCard',
+		}),
+		...mapState({
+			decksLoaded: state => state.decks.isLoaded,
 		}),
 		isInstant: function() {
 			return this.instantAction || this.card.name === 'winter';
@@ -69,23 +111,29 @@ export default {
 </script>
 
 <style lang="scss">
-@import '~@/components/Card/card';
+// prettier-ignore
+@import "~@/components/Card/card";
 
 .action-card {
 	@extend %playing-cards;
 
 	@include flip-card {
-		animation-name: action-fadeout;
-
 		&.action--whirlwind {
 			animation-name: action-whirlwind;
 		}
 	}
 
 	left: 40%;
+	opacity: 1;
 	position: absolute !important;
 	top: -20%;
 	transform: scale(2);
+	transition-duration: 1s;
 	z-index: 100;
+
+	&.fadeout {
+		opacity: 0;
+		transform: scale(0);
+	}
 }
 </style>
