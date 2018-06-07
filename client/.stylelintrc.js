@@ -8,6 +8,7 @@ module.exports = {
 		indentation: 'tab',
 		'length-zero-no-unit': true,
 		'max-nesting-depth': 6,
+		'no-descending-specificity': null,
 		'no-missing-end-of-source-newline': true,
 		'number-leading-zero': 'always',
 		'property-no-vendor-prefix': true,
