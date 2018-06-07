@@ -94,23 +94,20 @@ export default {
 		myCards: function(newCards, oldCards) {
 			this.$log.debug('myCards->changed', newCards, oldCards);
 
-			const diff = _.difference(newCards, oldCards);
+			const diff1 = _.difference(newCards, oldCards);
+			const diff2 = _.difference(oldCards, newCards);
 
-			if (!this.myCards.length || !diff.length) {
+			if (!this.myCards.length || (!diff1.length && !diff2.length)) {
 				return;
 			}
 
-			api.cards
-				.get(this.myCards.join(','))
-				.then(res => {
-					if (res.status === 200) {
-						this.myCardsDetails = res.data;
-					}
-				})
-				.catch(err => {
-					this.$log.error('myCards->get', err);
-				});
+			this.getCardDetails();
 		},
+	},
+	mounted: function() {
+		if (this.myCards && this.myCards.length) {
+			this.getCardDetails();
+		}
 	},
 	methods: {
 		discard: function(card) {
@@ -142,6 +139,18 @@ export default {
 			}
 
 			return [];
+		},
+		getCardDetails: function() {
+			api.cards
+				.get(this.myCards.join(','))
+				.then(res => {
+					if (res.status === 200) {
+						this.myCardsDetails = res.data;
+					}
+				})
+				.catch(err => {
+					this.$log.error('myCards->get', err);
+				});
 		},
 		onClickCard: function(card, cardsToStore, evt) {
 			this.$log.debug(card, cardsToStore, evt);
