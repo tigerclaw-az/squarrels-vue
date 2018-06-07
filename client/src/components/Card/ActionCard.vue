@@ -59,13 +59,15 @@ export default {
 				switch (this.card.name) {
 					case 'hoard':
 						if (!hoardCards.length) {
-							this.$toasted.info('No cards to Hoard');
+							this.$toasted.success('No cards to Hoard', {
+								duration: 250,
+							});
 							this.$store.dispatch('game/resetAction');
 						}
 						break;
 
 					case 'quarrel':
-						this.$store.dispatch('players/initQuarrel');
+						this.$store.dispatch('players/startQuarrel');
 						break;
 
 					default:

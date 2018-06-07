@@ -108,21 +108,30 @@ const actions = {
 		}
 	},
 
-	addCard({ getters }, cardId) {
-		this._vm.$log.debug('players/addCard', cardId, getters, this);
+	addCards({ getters }, data) {
+		this._vm.$log.debug('players/addCards', data, getters, this);
 
-		const player = getters.getMyPlayer;
-		const cardsMerge = _.union(player.cardsInHand, [cardId]);
+		if (!data.cards) {
+			throw new Error('Parameter "cards" cannot be empty!');
+		}
 
-		this._vm.$log.debug('cards:union -> ', cardsMerge);
+		const cardsToAdd = _.flatten([data.cards]);
+		const playerId = data.id || getters.getMyPlayer.id;
+		// const cardsMerge = _.union(player.cardsInHand, cards);
+
+		// this._vm.$log.debug('cards:union -> ', cardsMerge);
 
 		return api.players
-			.update(player.id, { cardsInHand: cardsMerge, hasDrawnCard: true })
+			.update(playerId, {
+				addCards: true,
+				cardsInHand: cardsToAdd,
+				hasDrawnCard: true,
+			})
 			.then(res => {
 				this._vm.$log.debug('playersApi:update()', res, this);
-				// commit('UPDATE', { id: player.id });
 			})
 			.catch(err => {
+				this._vm.$toasted.error('This is nuts! ' + err);
 				this._vm.$log.error('This is nuts! Error: ', err);
 			});
 	},
@@ -196,12 +205,17 @@ const actions = {
 		});
 	},
 
-	initQuarrel({ commit, dispatch, getters, state }) {
+	startQuarrel({ commit, dispatch, getters, state }, options = {}) {
 		const myPlayer = getters.getMyPlayer;
+		const players = options.players || state.ids;
 
-		this._vm.$log.debug();
+		this._vm.$log.debug(players, myPlayer);
 
-		// dispatch('game/update', state.ids.length, { root: true });
+		if (!_.includes(players, myPlayer.id)) {
+			return;
+		}
+
+		dispatch('game/setQuarrelCount', players.length, { root: true });
 
 		if (myPlayer.cardsInHand.length) {
 			commit('UPDATE', {

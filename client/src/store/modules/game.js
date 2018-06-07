@@ -14,7 +14,11 @@ const initialState = {
 	isLoaded: false,
 	isStarted: false,
 	playerIds: [],
-	quarrelCards: [],
+	quarrelCards: {
+		current: [],
+		saved: [],
+	},
+	quarrelCount: 0,
 	roundNumber: 1,
 	updatedAt: null,
 };
@@ -42,7 +46,7 @@ const getters = {
 };
 
 const actions = {
-	async actionCard({ dispatch, state }, actionCard) {
+	async actionCard({ state }, actionCard) {
 		Vue.$log.debug('game/actionCard->', actionCard, state);
 
 		try {
@@ -55,12 +59,24 @@ const actions = {
 			return err;
 		}
 	},
-	addQuarrelCard({ commit, state }, card) {
+	addQuarrelCard({ commit, dispatch, state }, card) {
 		this._vm.$log.debug(card);
 
-		const newCards = _.concat(state.quarrelCards, card);
+		const newCards = _.concat(state.quarrelCards.current, card);
+		const savedCards = _.concat(state.quarrelCards.saved, card);
+		const quarrelCards = {
+			current: newCards,
+			saved: savedCards,
+		};
 
-		commit('UPDATE', { quarrelCards: newCards });
+		commit('UPDATE', { quarrelCards });
+
+		this._vm.$log.debug('addQuarrelCard', newCards, state.quarrelCount);
+
+		// All players have selected a card
+		if (newCards.length === state.quarrelCount) {
+			dispatch('quarrelWinner');
+		}
 	},
 	addPlayer({ commit, state }, { gameId, playerId }) {
 		let newPlayers = _.union(playerId, [...state.playerIds, playerId]);
@@ -107,6 +123,50 @@ const actions = {
 			.catch(err => {
 				this._vm.$log.error(err);
 			});
+	},
+
+	quarrelWinner({ commit, dispatch, state }) {
+		const quarrelGroup = _.groupBy(state.quarrelCards.current, data => {
+			return data.card.name === 'golden' ? 6 : data.card.amount;
+		});
+		const winningCard = _.max(_.keys(quarrelGroup));
+		const winners = quarrelGroup[winningCard];
+
+		this._vm.$log.debug(quarrelGroup, winners);
+
+		if (winners.length === 1) {
+			let cards = _.map(state.quarrelCards.saved, obj => {
+				return obj.card;
+			});
+
+			this._vm.$log.debug('cards -> ', cards);
+
+			dispatch(
+				'players/addCards',
+				{ id: winners[0].playerId, cards },
+				{
+					root: true,
+				}
+			);
+
+			commit('UPDATE', { quarrelCards: { current: [], saved: [] } });
+
+			dispatch('resetAction');
+		} else {
+			// Reset current quarrelCards
+			commit('UPDATE', {
+				quarrelCards: {
+					current: [],
+					saved: state.quarrelCards.saved,
+				},
+			});
+
+			dispatch(
+				'players/startQuarrel',
+				{ players: winners },
+				{ root: true }
+			);
+		}
 	},
 
 	start({ commit, dispatch, rootGetters, state }) {
@@ -191,6 +251,10 @@ const actions = {
 		}
 	},
 
+	setQuarrelCount({ commit }, count) {
+		commit('UPDATE', { quarrelCount: count });
+	},
+
 	/**
 	 * Unload the current local game state, this will
 	 * only affect current player. Since the player is
@@ -243,8 +307,8 @@ const mutations = {
 		Vue.$log.debug('mutation::game/update', state, payload);
 
 		if (payload) {
-			for (let prop in state) {
-				if (payload.hasOwnProperty(prop)) {
+			for (let prop in payload) {
+				if (state.hasOwnProperty(prop)) {
 					Vue.set(state, prop, payload[prop]);
 					if (prop === 'playerIds' && prevPlayerCount > 0) {
 						const newPlayerCount = payload[prop].length;
