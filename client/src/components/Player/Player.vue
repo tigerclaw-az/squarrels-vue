@@ -5,11 +5,24 @@
 		current: isCurrentPlayer
 	}">
 		<div class="sq-player-thumbnail">
-			<!-- <img class="img-circle" :src="player.img"/> -->
 			<img class="img-circle" src="@/assets/images/squirrel-placeholder.jpg"/>
 			<span class="sq-player-card-count">{{player.totalCards}}</span>
 		</div>
 		<PlayerInfo :player="player"></PlayerInfo>
+		<div
+			v-if="quarrelCard(player.id)"
+			class="sq-player-quarrel"
+			:class="{
+				flip: showQuarrel,
+				winner: isQuarrelWinner
+			}">
+			<span class="card blank--"></span>
+			<card
+				v-if="showQuarrel"
+				:card-data="quarrelCard(player.id)"
+				:card-type="'quarrel'"
+			></card>
+		</div>
 		<div v-if="isCurrentPlayer" class="sq-player-cards">
 			<div v-if="hasCards" class="cards-group hand">
 				<div v-if="player.message" class="message">{{player.message}}</div>
@@ -69,16 +82,20 @@ export default {
 		...mapState({
 			actionCard: state => state.game.actionCard,
 			isGameStarted: state => state.game.isStarted,
+			showQuarrel: state => state.game.showQuarrel,
 		}),
+		hasCards: function() {
+			let cards = this.myCards;
+
+			return cards && cards.length;
+		},
 		isCurrentPlayer: function() {
 			this.$log.debug('isCurrentPlayer', this.myPlayer, this.player);
 
 			return this.myPlayer.id === this.player.id;
 		},
-		hasCards: function() {
-			let cards = this.myCards;
-
-			return cards && cards.length;
+		isQuarrelWinner: function() {
+			return this.$store.state.players[this.myPlayer.id].isQuarrelWinner;
 		},
 		myCards: function() {
 			return this.myPlayer.cardsInHand;
@@ -92,8 +109,6 @@ export default {
 	},
 	watch: {
 		myCards: function(newCards, oldCards) {
-			this.$log.debug('myCards->changed', newCards, oldCards);
-
 			const diff1 = _.difference(newCards, oldCards);
 			const diff2 = _.difference(oldCards, newCards);
 
@@ -141,6 +156,8 @@ export default {
 			return [];
 		},
 		getCardDetails: function() {
+			this.$log.debug('getting cards ->', this.myCards);
+
 			api.cards
 				.get(this.myCards.join(','))
 				.then(res => {
@@ -188,6 +205,9 @@ export default {
 			}
 
 			this.storeCards(cardsToStore);
+		},
+		quarrelCard: function(id) {
+			return this.$store.getters['game/getQuarrelCardByPlayer'](id);
 		},
 		storeCards: function(cardsToStore) {
 			this.$log.debug(cardsToStore);

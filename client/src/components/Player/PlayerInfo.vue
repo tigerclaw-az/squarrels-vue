@@ -10,20 +10,6 @@
 			<icon name="tree" scale="6" class="icon icon-storage"></icon>
 			<span class="sq-player-score">{{player.score}}</span>
 		</a>
-		<div
-			v-if="player.quarrel"
-			class="sq-player-quarrel animated"
-			:class="{
-				flip: player.showQuarrel,
-				winner: player.isQuarrelWinner
-			}">
-			<span class="card blank--"></span>
-			<card
-				v-if="player.showQuarrel"
-				:card-id="player.quarrel.id"
-				:card-type="quarrel"
-			></card>
-		</div>
 	</div>
 </template>
 
