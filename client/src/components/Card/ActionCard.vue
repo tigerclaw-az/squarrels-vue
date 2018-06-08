@@ -57,6 +57,14 @@ export default {
 				this.hideCard = true;
 
 				switch (this.card.name) {
+					case 'ambush':
+						this.$socket.sendObj({
+							action: this.card.name,
+							gameId: this.gameId,
+						});
+
+						break;
+
 					case 'hoard':
 						if (!hoardCards.length) {
 							this.$toasted.success('No cards to Hoard', {
@@ -100,6 +108,7 @@ export default {
 	},
 	computed: {
 		...mapState('game', {
+			gameId: 'id',
 			card: 'actionCard',
 		}),
 		...mapState({
