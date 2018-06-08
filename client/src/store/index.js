@@ -4,7 +4,6 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 import api from '@/api/index';
-import cards from '@/store/modules/cards';
 import decks from '@/store/modules/decks';
 import game from '@/store/modules/game';
 import players from '@/store/modules/players';
@@ -13,7 +12,6 @@ import start from '@/store/modules/start';
 import websocket from '@/store/modules/websocket';
 
 const modules = {
-	cards,
 	decks,
 	game,
 	players,
