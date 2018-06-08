@@ -1,8 +1,9 @@
 <template>
 	<div class="sq-player"
 	:class="{
-		active: player.isActive,
-		current: isCurrentPlayer
+		active: isActivePlayer,
+		current: isCurrentPlayer,
+		'my-turn': isMyTurn,
 	}">
 		<div class="sq-player-thumbnail">
 			<img class="img-circle" src="@/assets/images/squirrel-placeholder.jpg"/>
@@ -77,7 +78,6 @@ export default {
 	computed: {
 		...mapGetters({
 			myPlayer: 'players/getMyPlayer',
-			isActionCard: 'game/isActionCard',
 		}),
 		...mapState({
 			actionCard: state => state.game.actionCard,
@@ -89,25 +89,32 @@ export default {
 
 			return cards && cards.length;
 		},
+		isActivePlayer: function() {
+			return this.player.isActive;
+		},
 		isCurrentPlayer: function() {
-			this.$log.debug('isCurrentPlayer', this.myPlayer, this.player);
-
 			return this.myPlayer.id === this.player.id;
 		},
 		isQuarrelWinner: function() {
 			return this.$store.state.players[this.myPlayer.id].isQuarrelWinner;
 		},
+		isMyTurn: function() {
+			return this.isActivePlayer && this.myPlayer.id === this.player.id;
+		},
 		myCards: function() {
 			return this.myPlayer.cardsInHand;
 		},
 		myCardsSorted: function() {
-			this.$log.debug('myPlayer', this.myPlayer);
-
 			return _.sortBy(this.myCardsDetails, ['amount']);
-			// return this.myPlayer.cardsInHand;
 		},
 	},
 	watch: {
+		isMyTurn: function(to, from) {
+			if (to && to !== from) {
+				this.$toasted.success('YOUR TURN');
+				this.$store.dispatch('sound/play', 'active-player');
+			}
+		},
 		myCards: function(newCards, oldCards) {
 			const diff1 = _.difference(newCards, oldCards);
 			const diff2 = _.difference(oldCards, newCards);
@@ -190,21 +197,28 @@ export default {
 					});
 			}
 
-			if (this.actionCard) {
-				return;
+			this.$log.debug(this);
+
+			// User can't click card if action card has been drawn
+			if (this.actionCard || !this.myPlayer.hasDrawnCard) {
+				return false;
 			}
 
-			if (cardsToStore.length < 3) {
-				this.discard(card);
+			if (this.myPlayer.isActive) {
+				// If the card selected doesn't have at least 3 matching cards
+				// then we are just discarding the selected card
+				if (cardsToStore.length < 3) {
+					return this.discard(card);
+				}
 
-				return;
+				// If the card selected has at least 3 matching cards
+				// then we are storing the cards for end of game
+				if (cardsToStore.length >= 3) {
+					cardsToStore = _.sampleSize(cardsToStore, 3);
+
+					return this.storeCards(cardsToStore);
+				}
 			}
-
-			if (cardsToStore.length > 3) {
-				cardsToStore = _.sampleSize(cardsToStore, 3);
-			}
-
-			this.storeCards(cardsToStore);
 		},
 		quarrelCard: function(id) {
 			return this.$store.getters['game/getQuarrelCardByPlayer'](id);
@@ -224,19 +238,17 @@ export default {
 
 			this.$log.debug('plData -> ', plData);
 
-			if (this.myPlayer.isActive && this.myPlayer.hasDrawnCard) {
-				this.$store
-					.dispatch('players/update', {
-						id: this.myPlayer.id,
-						data: plData,
-					})
-					.then(res => {
-						this.$log.debug(res);
-					})
-					.catch(err => {
-						this.$log.error(err);
-					});
-			}
+			this.$store
+				.dispatch('players/update', {
+					id: this.myPlayer.id,
+					data: plData,
+				})
+				.then(res => {
+					this.$log.debug(res);
+				})
+				.catch(err => {
+					this.$log.error(err);
+				});
 		},
 	},
 };
