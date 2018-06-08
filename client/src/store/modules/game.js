@@ -27,6 +27,25 @@ const initialState = {
 const state = Object.assign({}, initialState);
 
 const getters = {
+	getQuarrelCardByPlayer: state => playerId => {
+		Vue.$log.debug(
+			'quarrelCardByPlayer->',
+			state.quarrelCards.current,
+			playerId
+		);
+
+		const quarrelObj = _.find(state.quarrelCards.current, obj => {
+			return obj.playerId === playerId;
+		});
+
+		Vue.$log.debug('playerQuarrelCard->', quarrelObj);
+
+		if (quarrelObj) {
+			return quarrelObj.card;
+		}
+
+		return null;
+	},
 	isActionCard: state => (name = '') => {
 		Vue.$log.debug('isActionCard->', state, name);
 
@@ -155,7 +174,7 @@ const actions = {
 					quarrelCards: { current: [], saved: [] },
 				});
 
-			dispatch('resetAction');
+				dispatch('resetAction');
 			}, 2000);
 		} else {
 			// Reset current quarrelCards
@@ -171,6 +190,25 @@ const actions = {
 				{ players: winners },
 				{ root: true }
 			);
+		}
+	},
+
+	reset({ commit, state }) {
+		return api.games.reset(state.id).then(() => {
+			// commit('INIT');
+		});
+	},
+
+	async resetAction({ dispatch }) {
+		try {
+			// Add current action card to the 'action' deck
+			return await dispatch(
+				'decks/addCard',
+				{ type: 'action', cardId: state.actionCard.id },
+				{ root: true }
+			);
+		} catch (err) {
+			this._vm.$toasted.error(err);
 		}
 	},
 
@@ -233,27 +271,6 @@ const actions = {
 			.catch(err => {
 				this._vm.$log.error(err);
 			});
-	},
-
-	reset({ commit, state }) {
-		return api.games.reset(state.id).then(() => {
-			// commit('INIT');
-		});
-	},
-
-	async resetAction({ dispatch }) {
-		try {
-			// Add current action card to the 'action' deck
-			await dispatch(
-				'decks/addCard',
-				{ type: 'action', cardId: state.actionCard.id },
-				{ root: true }
-			);
-
-			return api.games.actionCard(state.id, null);
-		} catch (err) {
-			this._vm.$toasted.error(err);
-		}
 	},
 
 	setQuarrelCount({ commit }, count) {
