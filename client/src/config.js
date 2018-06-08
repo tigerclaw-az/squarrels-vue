@@ -13,6 +13,7 @@ export const logger = Object.freeze({
 });
 
 export const toast = Object.freeze({
+	duration: 8000,
 	iconPack: 'fontawesome',
 });
 
