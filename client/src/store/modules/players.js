@@ -309,6 +309,17 @@ const actions = {
 		this._vm.$socket.sendObj(wsObj);
 	},
 
+	setQuarrelWinner({ commit, dispatch }, payload) {
+		commit('UPDATE', {
+			id: payload.id,
+			isQuarrelWinner: true,
+		});
+
+		setTimeout(() => {
+			dispatch('addCards', payload);
+		}, 1000);
+	},
+
 	update({ commit }, payload) {
 		this._vm.$log.debug('players/update', payload);
 
