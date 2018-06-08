@@ -202,11 +202,13 @@ const actions = {
 	async resetAction({ dispatch }) {
 		try {
 			// Add current action card to the 'action' deck
-			return await dispatch(
+			await dispatch(
 				'decks/addCard',
 				{ type: 'action', cardId: state.actionCard.id },
 				{ root: true }
 			);
+
+			return await api.games.actionCard(state.id, null);
 		} catch (err) {
 			this._vm.$toasted.error(err);
 		}
