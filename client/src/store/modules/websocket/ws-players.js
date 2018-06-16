@@ -20,13 +20,8 @@ const actions = {
 		dispatch('game/addQuarrelCard', quarrelData, { root: true });
 	},
 
-	create({ dispatch }, data) {
+	create({}, data) {
 		this._vm.$log.debug(data);
-	},
-
-	update({ commit }, data) {
-		this._vm.$log.debug('wsPlayers/update', data);
-		commit('players/UPDATE', data.nuts, { root: true });
 	},
 
 	getMyCards({ commit }, data) {
@@ -38,8 +33,17 @@ const actions = {
 		commit('players/UPDATE_CARDS', { id, cardsInHand }, { root: true });
 	},
 
-	showMessage({ state }, data) {
+	reset({}, data) {
+		this._vm.$log.debug('ws-players:reset', data);
+	},
+
+	showMessage({}, data) {
 		this._vm.$toasted.error(data.nuts);
+	},
+
+	update({ commit }, data) {
+		this._vm.$log.debug('wsPlayers/update', data);
+		commit('players/UPDATE', data.nuts, { root: true });
 	},
 };
 
