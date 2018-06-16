@@ -18,16 +18,16 @@
 				winner: isQuarrelWinner
 			}">
 			<span class="card blank--"></span>
-			<card
+			<Card
 				v-if="showQuarrel"
 				:card-data="quarrelCard(player.id)"
 				:card-type="'quarrel'"
-			></card>
+			></Card>
 		</div>
 		<div v-if="isCurrentPlayer" class="sq-player-cards">
 			<div v-if="hasCards" class="cards-group hand">
 				<div v-if="player.message" class="message">{{player.message}}</div>
-				<transition-group>
+				<transition-group name="cards">
 					<Card
 						v-for="(card, index) in myCardsSorted"
 						:key="card.id"
@@ -134,7 +134,14 @@ export default {
 	methods: {
 		discard: function(card) {
 			this.$log.debug(card);
-			// Don't allow 'special' cards to be discarded unless it's the only card
+
+			// FIXME: Find a way to just remove card from array so it
+			//		transitions properly
+			// this.myCardsDetails = _.filter(this.myCardsDetails, {
+			// 	id: !card.id,
+			// });
+
+			// TODO: Don't allow 'special' cards to be discarded unless it's the only card
 			let deckUpdate = this.$store.dispatch('decks/discard', card);
 			let playerUpdate = this.$store.dispatch('players/discard', {
 				id: this.myPlayer.id,
