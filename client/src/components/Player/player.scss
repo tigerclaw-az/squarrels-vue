@@ -100,14 +100,21 @@
 			@extend %playing-cards;
 			height: 100%;
 
-			.v-leave,
-			.v-leave-active {
-				.card {
-					animation: 0.75s ease-out fade-out;
-				}
+			.cards-enter {
+				opacity: 0;
+				position: absolute;
+			}
+
+			.cards-leave-to {
+				opacity: 0;
+			}
+
+			.cards-leave-active {
+				position: absolute;
 			}
 
 			.btn-card {
+				transition: opacity 1s;
 				width: rem-calc($card-width-stack);
 
 				&.mine {
