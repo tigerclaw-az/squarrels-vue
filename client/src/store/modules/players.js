@@ -205,29 +205,6 @@ const actions = {
 		});
 	},
 
-	startQuarrel({ commit, dispatch, getters, state }, options = {}) {
-		const myPlayer = getters.getMyPlayer;
-		const players = options.players || state.ids;
-
-		this._vm.$log.debug(players, myPlayer);
-
-		if (!_.includes(players, myPlayer.id)) {
-			return;
-		}
-
-		dispatch('game/setQuarrelCount', players.length, { root: true });
-
-		if (myPlayer.cardsInHand.length) {
-			commit('UPDATE', {
-				id: myPlayer.id,
-				message: 'Choose a Card',
-				quarrel: true,
-			});
-		} else {
-			dispatch('selectQuarrelCard', { id: myPlayer.id });
-		}
-	},
-
 	/**
 	 * Load player data for each player in game
 	 * @param  {Array} ids            Array of player IDs
@@ -293,6 +270,14 @@ const actions = {
 		});
 	},
 
+	resetCardsDrawn({ commit }, data) {
+		commit('UPDATE', {
+			id: data.id,
+			cardsDrawnCount: 0,
+			cardsDrawnIds: [],
+		});
+	},
+
 	selectQuarrelCard({}, data) {
 		let wsObj = {
 			action: 'quarrel',
@@ -320,6 +305,29 @@ const actions = {
 		}, 1000);
 	},
 
+	startQuarrel({ commit, dispatch, getters, state }, options = {}) {
+		const myPlayer = getters.getMyPlayer;
+		const players = options.players || state.ids;
+
+		this._vm.$log.debug(players, myPlayer);
+
+		if (!_.includes(players, myPlayer.id)) {
+			return;
+		}
+
+		dispatch('game/setQuarrelCount', players.length, { root: true });
+
+		if (myPlayer.cardsInHand.length) {
+			commit('UPDATE', {
+				id: myPlayer.id,
+				message: 'Choose a Card',
+				quarrel: true,
+			});
+		} else {
+			dispatch('selectQuarrelCard', { id: myPlayer.id });
+		}
+	},
+
 	update({ commit }, payload) {
 		this._vm.$log.debug('players/update', payload);
 
@@ -328,6 +336,27 @@ const actions = {
 };
 
 const mutations = {
+	DRAW_CARD(state, payload) {
+		this._vm.$log.debug('players/DRAW_CARD', payload, state);
+
+		if (!state[payload.id].hasOwnProperty('cardsDrawnCount')) {
+			Vue.set(state[payload.id], 'cardsDrawnCount', 0);
+		}
+
+		if (!state[payload.id].hasOwnProperty('cardsDrawnIds')) {
+			Vue.set(state[payload.id], 'cardsDrawnIds', []);
+		}
+
+		state[payload.id].cardsDrawnIds.push(payload.cardDrawnId);
+		state[payload.id].cardsDrawnCount += 1;
+
+		this._vm.$log.debug(
+			'cardsDrawn',
+			state[payload.id].cardsDrawnIds,
+			state[payload.id].cardsDrawnCount
+		);
+	},
+
 	UPDATE(state, payload) {
 		const playerId = payload.id;
 		const $playerStorage = Vue.$storage.get('player');
@@ -362,23 +391,6 @@ const mutations = {
 		const cards = payload.cardsInHand;
 
 		Vue.set(state[id], 'cardsInHand', cards);
-	},
-
-	DRAW_CARD(state, payload) {
-		this._vm.$log.debug('players/DRAW_CARD', payload, state);
-
-		if (!state[payload.id].cardsDrawnCount) {
-			Vue.set(state[payload.id], 'cardsDrawnCount', 0);
-		}
-
-		if (!state[payload.id].cardsDrawnIds) {
-			Vue.set(state[payload.id], 'cardsDrawnIds', []);
-		}
-
-		this._vm.$log.debug('players/DRAW_CARD2', payload, state);
-
-		state[payload.id].cardsDrawnIds.push(payload.cardDrawnId);
-		state[payload.id].cardsDrawnCount += 1;
 	},
 };
 

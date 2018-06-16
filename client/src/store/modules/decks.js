@@ -42,6 +42,10 @@ const actions = {
 
 		this._vm.$log.debug('decks/dealCards', playerId);
 
+		// Need to reset cardsDrawn* properties so they can be
+		// used again with new deal later
+		dispatch('players/resetCardsDrawn', { id: playerId }, { root: true });
+
 		return new Promise((resolve, reject) => {
 			// Watch for each time a card was drawn and updated for
 			// a given player, then continue to draw until they have MAX_CARDS
@@ -59,15 +63,6 @@ const actions = {
 						config.MAX_CARDS
 					) {
 						unsubscribe();
-
-						// Ensure no card is 'null'
-						if (
-							!state.players[playerId].cardsDrawnIds.some(
-								el => el !== null
-							)
-						) {
-							reject('Invalid cardId: null');
-						}
 
 						api.players
 							.update(playerId, {
