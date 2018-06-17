@@ -175,7 +175,7 @@ const actions = {
 				});
 
 				dispatch('resetAction');
-			}, 2000);
+			}, 3000);
 		} else {
 			// Reset current quarrelCards
 			commit('UPDATE', {
@@ -193,9 +193,9 @@ const actions = {
 		}
 	},
 
-	reset({ commit, state }) {
+	reset({ dispatch, state }) {
 		return api.games.reset(state.id).then(() => {
-			// commit('INIT');
+			dispatch('decks/unload', {}, { root: true });
 		});
 	},
 
