@@ -1,43 +1,46 @@
 <template>
 	<div id="board">
-		<div v-if="!isStarted && !isDealing" class="overlay-text" v-cloak>
-			<div v-if="needPlayers" class="waiting-message">
-				Waiting for other players to join...
+		<div v-if="!isStarted && !isLoading" class="start-game-overlay">
+			<div class="overlay-text" v-cloak>
+				<div v-if="needPlayers" class="waiting-message">
+					Waiting for other players to join...
+				</div>
+				<button v-else
+					class="btn btn-info btn-start-game"
+					@click="onClickStartGame">
+					START GAME
+				</button>
 			</div>
-			<button v-else
-				class="btn btn-info btn-start-game"
-				@click="onClickStartGame">
-				START GAME
-			</button>
 		</div>
-		<div v-if="!isStarted && !isDealing" class="start-game-overlay"></div>
-		<BoardHeader v-if="isStarted"></BoardHeader>
-		<canvas v-if="actionCard && actionCard.name === 'winter'" class="winter-snow"></canvas>
-		<b-row>
-			<b-col>
-				<div class="decks-container">
-					<Deck v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
-				</div>
-			</b-col>
-		</b-row>
-		<b-row>
-			<b-col>
-				<BoardPlayers :isGameStarted="isStarted" :gameId="id"></BoardPlayers>
-				<ActionCard v-if="actionCard"></ActionCard>
-			</b-col>
-		</b-row>
-		<b-row>
-			<b-col>
-				<div class="admin-options" v-if="isAdmin && isStarted">
-					<b-dropdown id="dropdown-options" variant="info" text="Option">
-						<b-dropdown-item @click="onClickAdminOption('reset-game')">Reset Game</b-dropdown-item>
-						<b-dropdown-item @click="onClickAdminOption('reset-hoard')">Reset Hoard</b-dropdown-item>
-						<b-dropdown-item @click="onClickAdminOption('reset-player-cards')">Reset Player Cards</b-dropdown-item>
-						<b-dropdown-item @click="onClickAdminOption('skip-player')">Skip Player</b-dropdown-item>
-					</b-dropdown>
-				</div>
-			</b-col>
-		</b-row>
+		<b-container fluid>
+			<BoardHeader></BoardHeader>
+			<img v-if="isWinter" class="winter-snow" src="https://media.giphy.com/media/gvKru3mU4wLFm/giphy.gif">
+			<b-row>
+				<b-col>
+					<div class="decks-container">
+						<Deck v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
+					</div>
+				</b-col>
+			</b-row>
+			<b-row>
+				<b-col>
+					<BoardPlayers :isGameStarted="isStarted" :gameId="id"></BoardPlayers>
+					<ActionCard v-if="actionCard"></ActionCard>
+				</b-col>
+			</b-row>
+			<b-row>
+				<b-col>
+					<div class="admin-options" v-if="isAdmin && isStarted">
+						<b-dropdown id="dropdown-options" variant="info" text="Option">
+							<b-dropdown-item @click="onClickAdminOption('reset-game')">Reset Game</b-dropdown-item>
+							<b-dropdown-item @click="onClickAdminOption('reset-hoard')">Reset Hoard</b-dropdown-item>
+							<b-dropdown-item @click="onClickAdminOption('reset-player-cards')">Reset Player Cards</b-dropdown-item>
+							<b-dropdown-item @click="onClickAdminOption('skip-player')">Skip Player</b-dropdown-item>
+						</b-dropdown>
+					</div>
+				</b-col>
+			</b-row>
+		</b-container>
 	</div>
 </template>
 
@@ -68,7 +71,9 @@ export default {
 		},
 	},
 	data: function() {
-		return {};
+		return {
+			isLoading: false,
+		};
 	},
 	watch: {
 		isStarted: function(to, from) {
@@ -97,6 +102,9 @@ export default {
 			'playerIds',
 		]),
 		...mapState(['isAdmin']),
+		isWinter: function() {
+			return this.actionCard && this.actionCard.name === 'winter';
+		},
 		needPlayers: function() {
 			return this.playerIds.length < 2;
 		},
@@ -113,6 +121,7 @@ export default {
 		},
 		onClickStartGame: function(e) {
 			this.$log.debug('onClickStartGame', e);
+			this.isLoading = true;
 			this.$store.dispatch({ type: 'game/start' });
 		},
 	},
