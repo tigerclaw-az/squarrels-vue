@@ -1,7 +1,7 @@
 @import "~@/assets/scss/variables";
 
 #board {
-	padding: ($grid-gutter-width / 2);
+	position: relative;
 }
 
 .winter-snow {
@@ -10,9 +10,11 @@
 		get-color("danube") 0%,
 		get-color("matisse") 84%
 	);
+	height: 100%;
 	left: 0;
 	position: absolute;
 	top: 0;
+	width: 100%;
 }
 
 .overlay-text {
