@@ -34,22 +34,26 @@ decks.post('/:id', function(req, res) {
 
 	const deckId = req.params.id;
 	const deck = { _id: deckId };
-	const options = { returnNewDocument: true };
+	const options = { new: true, returnNewDocument: true };
+
+	logger.debug('decks/:id', deck, req.body);
 
 	// prettier-ignore
 	DeckModel
 		.findOneAndUpdate(deck, req.body, options)
 		.populate('cards')
 		.then(function(doc) {
+			logger.debug('findOneAndUpdate', doc);
+
+			/* eslint-disable no-undef */
+			wss.broadcast(
+				{ namespace: 'wsDecks', action: 'update', nuts: doc },
+				sessionId
+			);
+			/* eslint-enable no-undef */
+
 			if (doc) {
 				res.status(200).json(doc);
-
-				/* eslint-disable no-undef */
-				wss.broadcast(
-					{ namespace: 'wsDecks', action: 'update', nuts: doc },
-					sessionId
-				);
-				/* eslint-enable no-undef */
 			} else {
 				res.status(204).json([]);
 			}
