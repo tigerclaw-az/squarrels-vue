@@ -18,6 +18,10 @@ export default class BaseApi {
 	}
 
 	delete(id) {
+		if (!id) {
+			return Promise.reject('Missing "id" parameter');
+		}
+
 		return this.http.delete(`/${id}`);
 	}
 
@@ -26,10 +30,18 @@ export default class BaseApi {
 	}
 
 	reset(id) {
+		if (!id) {
+			return Promise.reject('Missing "id" parameter');
+		}
+
 		return this.http.post(`/${id}/reset`);
 	}
 
 	update(id, data) {
+		if (!id) {
+			return Promise.reject('Missing "id" parameter');
+		}
+
 		return this.http.post(`/${id}`, data);
 	}
 }
