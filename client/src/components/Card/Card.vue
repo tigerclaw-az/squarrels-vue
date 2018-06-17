@@ -74,7 +74,7 @@ export default {
 			}
 		},
 		cardStyle: function() {
-			if (this.cardType !== 'action') {
+			if (!['action', 'quarrel'].includes(this.cardType)) {
 				return { left: this.position.left, 'z-index': this.zIndex };
 			}
 
