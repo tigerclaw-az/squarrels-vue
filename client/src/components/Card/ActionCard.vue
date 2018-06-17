@@ -78,6 +78,13 @@ export default {
 						this.$store.dispatch('players/startQuarrel');
 						break;
 
+					case 'winter':
+						this.$store.dispatch('decks/addCard', {
+							type: 'action',
+							cardId: this.card.id,
+						});
+						break;
+
 					default:
 						this.$store.dispatch('game/resetAction');
 						break;
