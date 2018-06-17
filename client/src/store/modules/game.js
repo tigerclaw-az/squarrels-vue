@@ -163,10 +163,14 @@ const actions = {
 
 			commit('UPDATE', { showQuarrel: true });
 
-			dispatch('players/setQuarrelWinner', {
+			dispatch(
+				'players/setQuarrelWinner',
+				{
 				id: winners[0].playerId,
 				cards,
-			});
+				},
+				{ root: true }
+			);
 
 			setTimeout(() => {
 				commit('UPDATE', {
