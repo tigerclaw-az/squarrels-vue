@@ -11,10 +11,12 @@ $deck-height: 16;
 	$height: map-get($card-height, "small") + $deck-height;
 
 	align-items: center;
+	border: 1px dashed $black;
 	display: flex;
 	flex: 0 0 25%;
 	flex-direction: column;
 	margin-right: 1rem;
+	padding: 1rem;
 
 	.count {
 		font-size: 2rem;
@@ -26,6 +28,11 @@ $deck-height: 16;
 
 		height: 100%;
 		width: auto;
+
+		&.empty::before {
+			content: "X";
+			font-size: 8rem;
+		}
 
 		.cards-group {
 			height: rem-calc($height);
@@ -45,9 +52,6 @@ $deck-height: 16;
 	}
 
 	&[type="discard"] {
-		border: 1px dashed $black;
-		padding: 1rem;
-
 		&[type="action"] {
 			.card {
 				animation: 0.5s linear shrink;
@@ -56,10 +60,6 @@ $deck-height: 16;
 
 		.deck {
 			border: 2px dashed transparent;
-
-			&.drag-enter {
-				border-color: get-color("zest");
-			}
 
 			.card {
 				$rotate: 0;

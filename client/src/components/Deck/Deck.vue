@@ -4,7 +4,8 @@
 		<div
 			class="deck"
 			:class="{
-				'draw-card': isType('main') && canDrawCard
+				'draw-card': isType('main') && canDrawCard,
+				'empty': !totalCards,
 			}"
 		>
 			<div
