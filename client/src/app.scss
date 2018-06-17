@@ -1,5 +1,5 @@
-@import '~@/assets/scss/variables';
-@import '../node_modules/bootstrap/scss/bootstrap.scss';
+@import "~@/assets/scss/variables";
+@import "../node_modules/bootstrap/scss/bootstrap.scss";
 
 * {
 	// @include user-select(none);
@@ -10,12 +10,6 @@
 html,
 body {
 	height: 100%;
-}
-
-/* Space out content a bit */
-body {
-	padding-bottom: 0.25rem;
-	padding-top: 0.25rem;
 }
 
 a {
@@ -57,8 +51,8 @@ textarea {
 
 /* Custom page footer */
 .footer {
-	border-top: 1px solid map-get($colors, 'gallery-grey');
-	color: map-get($colors, 'boulder');
+	border-top: 1px solid map-get($colors, "gallery-grey");
+	color: map-get($colors, "boulder");
 	padding-top: 1rem;
 }
 
