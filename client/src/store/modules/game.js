@@ -127,6 +127,7 @@ const actions = {
 				Vue.$log.debug('game/load', res);
 				if (res.status === 200) {
 					let gameData = res.data[0],
+						deckIds = gameData.deckIds,
 						playersInGame = gameData.playerIds;
 
 					commit('UPDATE', gameData);
@@ -135,6 +136,14 @@ const actions = {
 					// Add all players to the current state of game
 					if (playersInGame.length) {
 						dispatch('players/add', playersInGame, { root: true });
+					}
+
+					if (deckIds.length) {
+						dispatch(
+							'decks/load',
+							{ ids: deckIds },
+							{ root: true }
+						);
 					}
 				} else {
 					router.push('/');
@@ -166,8 +175,8 @@ const actions = {
 			dispatch(
 				'players/setQuarrelWinner',
 				{
-				id: winners[0].playerId,
-				cards,
+					id: winners[0].playerId,
+					cards,
 				},
 				{ root: true }
 			);
