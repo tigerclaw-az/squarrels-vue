@@ -1,5 +1,5 @@
 var config = require('../config/config'),
-	logger = config.logger(),
+	logger = config.logger('routes:decks'),
 	decks = require('express').Router();
 
 const DeckModel = require('../models/DeckModel').model;
@@ -34,7 +34,7 @@ decks.post('/:id', function(req, res) {
 
 	const deckId = req.params.id;
 	const deck = { _id: deckId };
-	const options = { new: true };
+	const options = { returnNewDocument: true };
 
 	// prettier-ignore
 	DeckModel
