@@ -13,14 +13,15 @@ const state = {
 };
 
 const getters = {
-	canDrawCard: (state, getter) => {
+	canDrawCard: (state, getter, rootState, rootGetters) => {
 		const myPlayer = getter.getMyPlayer;
 
 		Vue.$log.debug(state, myPlayer);
 
 		return (
 			myPlayer.isActive &&
-			(myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard)
+			(myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard) &&
+			!rootGetters['game/isActionCard']()
 		);
 	},
 
