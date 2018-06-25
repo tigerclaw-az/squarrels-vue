@@ -168,6 +168,8 @@ const actions = {
 				return obj.card;
 			});
 
+			const winner = winners[0].playerId;
+
 			this._vm.$log.debug('cards -> ', cards);
 
 			commit('UPDATE', { showQuarrel: true });
@@ -175,7 +177,7 @@ const actions = {
 			dispatch(
 				'players/setQuarrelWinner',
 				{
-					id: winners[0].playerId,
+					id: winner,
 					cards,
 				},
 				{ root: true }
@@ -187,8 +189,14 @@ const actions = {
 					quarrelCards: { current: [], saved: [] },
 				});
 
+				dispatch(
+					'players/resetQuarrelWinner',
+					{ id: winner },
+					{ root: true }
+				);
+
 				dispatch('resetAction');
-			}, 3000);
+			}, 4000);
 		} else {
 			// Reset current quarrelCards
 			commit('UPDATE', {

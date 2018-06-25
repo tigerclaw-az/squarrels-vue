@@ -18,13 +18,10 @@
 		position: absolute;
 		top: 0;
 
-		&.flip {
-			@include flip-card($type: "quarrel");
-		}
-
-		.card {
+		.card:not(.blank--) {
 			box-shadow: none;
 			left: 0;
+			transform: rotateY(120deg);
 
 			&::after {
 				box-shadow: 0 0 20px 20px get-color("saffron");
@@ -36,6 +33,10 @@
 				transition: opacity 0.5s linear;
 				width: 100%;
 			}
+		}
+
+		&.flip {
+			@include flip-card($type: "quarrel");
 		}
 
 		&.winner {

@@ -21,7 +21,7 @@
 			<Card
 				v-if="showQuarrel"
 				:card-data="quarrelCard(player.id)"
-				:card-type="'quarrel'"
+				card-type="quarrel"
 			></Card>
 		</div>
 		<div v-if="isCurrentPlayer" class="sq-player-cards">
@@ -96,7 +96,7 @@ export default {
 			return this.myPlayer.id === this.player.id;
 		},
 		isQuarrelWinner: function() {
-			return this.$store.state.players[this.myPlayer.id].isQuarrelWinner;
+			return this.$store.state.players[this.player.id].isQuarrelWinner;
 		},
 		isMyTurn: function() {
 			return this.isActivePlayer && this.myPlayer.id === this.player.id;
@@ -261,5 +261,5 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped src="./player.scss">
+<style lang="scss" src="./player.scss">
 </style>

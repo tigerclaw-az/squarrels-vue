@@ -20,8 +20,9 @@ const getters = {
 
 		return (
 			myPlayer.isActive &&
-			(myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard) &&
-			!rootGetters['game/isActionCard']()
+			!rootGetters['game/isActionCard']() &&
+			myPlayer.cardsInHand &&
+			(myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard)
 		);
 	},
 
@@ -279,6 +280,15 @@ const actions = {
 		});
 	},
 
+	resetQuarrelWinner({ commit }, id) {
+		Vue.$log.debug(id);
+
+		return commit('UPDATE', {
+			id,
+			isQuarrelWinner: false,
+		});
+	},
+
 	selectQuarrelCard({}, data) {
 		let wsObj = {
 			action: 'quarrel',
@@ -303,7 +313,7 @@ const actions = {
 
 		setTimeout(() => {
 			dispatch('addCards', payload);
-		}, 1000);
+		}, 4000);
 	},
 
 	startQuarrel({ commit, dispatch, getters, state }, options = {}) {
