@@ -13,7 +13,7 @@
 
 <script>
 import _ from 'lodash';
-import { mapGetters, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import { config } from '@/config';
 
 import Player from '@/components/Player/Player.vue';
