@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 const state = {};
 
 const getters = {};
@@ -9,7 +11,9 @@ const actions = {
 		dispatch('game/end');
 	},
 	update({ commit }, data) {
-		commit('decks/UPDATE', data.nuts, { root: true });
+		if (data.nuts && !_.isEmpty(data.nuts)) {
+			commit('decks/UPDATE', data.nuts, { root: true });
+		}
 	},
 };
 
