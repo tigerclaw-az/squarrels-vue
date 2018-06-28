@@ -63,6 +63,11 @@ export default {
 							gameId: this.gameId,
 						});
 
+						this.$store.dispatch('decks/addCard', {
+							type: 'action',
+							cardId: this.card.id,
+						});
+
 						break;
 
 					case 'hoard':
