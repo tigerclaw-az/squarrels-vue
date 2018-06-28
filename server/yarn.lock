@@ -1252,9 +1252,9 @@ lodash@^4.0.0, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.10, lodash@^4.17.4, 
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
 
-log4js@^2.9.0:
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/log4js/-/log4js-2.9.0.tgz#41d99ac2f140b7da54001a21a3bca61a164746a7"
+log4js@^2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/log4js/-/log4js-2.10.0.tgz#4980bd9148a030d69f9edde32a5b19c0a551e2c4"
   dependencies:
     circular-json "^0.5.4"
     date-format "^1.2.0"
@@ -1378,9 +1378,9 @@ mongodb-core@2.1.18:
     bson "~1.0.4"
     require_optional "~1.0.0"
 
-mongodb-core@3.0.9:
-  version "3.0.9"
-  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-3.0.9.tgz#8327410c88811013fb3e4ac7c4c670f324349be1"
+mongodb-core@3.0.11:
+  version "3.0.11"
+  resolved "https://registry.yarnpkg.com/mongodb-core/-/mongodb-core-3.0.11.tgz#737c496119aebbf3548d3fc7553266e56c826c77"
   dependencies:
     bson "~1.0.4"
     require_optional "^1.0.1"
@@ -1394,10 +1394,10 @@ mongodb@2.2.34:
     readable-stream "2.2.7"
 
 mongodb@~3.0.4:
-  version "3.0.10"
-  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.0.10.tgz#f948cb9595adcbfcad7444f6b24a040b653b23e8"
+  version "3.0.11"
+  resolved "https://registry.yarnpkg.com/mongodb/-/mongodb-3.0.11.tgz#f09163b8928e8eb2fc0240b5a0e557e806947954"
   dependencies:
-    mongodb-core "3.0.9"
+    mongodb-core "3.0.11"
 
 mongoose-seed-db@0.0.10:
   version "0.0.10"
@@ -1407,7 +1407,7 @@ mongoose-seed-db@0.0.10:
     fs-readdir-recursive "^1.0.0"
     mongoose "^4.11.5"
 
-mongoose@^4.11.5, mongoose@~4:
+mongoose@4, mongoose@^4.11.5:
   version "4.13.14"
   resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-4.13.14.tgz#0eb6d4fc6a15c9834994ab4102da614421d1dff0"
   dependencies:
@@ -2489,8 +2489,8 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
 
 uuid@^3.1.0:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.2.1.tgz#12c528bb9d58d0b9265d9a2f6f0fe8be17ff1f14"
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.0.tgz#b237147804881d7b86f40a7ff8f590f15c37de32"
 
 validator@^10.4.0:
   version "10.4.0"
@@ -2560,9 +2560,9 @@ wrappy@1:
     options ">=0.0.5"
     ultron "1.0.x"
 
-ws@^5.1.1:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-5.2.0.tgz#9fd95e3ac7c76f6ae8bcc868a0e3f11f1290c33e"
+ws@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-5.2.1.tgz#37827a0ba772d072a843c3615b0ad38bcdb354eb"
   dependencies:
     async-limiter "~1.0.0"
 
