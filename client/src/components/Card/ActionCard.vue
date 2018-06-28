@@ -1,22 +1,20 @@
 <template>
 	<div id="action-card">
-		<transition appear mode="in-out">
-			<span
-				v-if="decksReady"
+		<span
+			v-if="decksReady"
+			card-type="action"
+			class="action-card--wrapper"
+			:class="{ shown: hideCard, instant: isInstant }"
+		>
+			<span class="card blank--"></span>
+			<Card
+				:id="card.id"
+				:card-data="card"
 				card-type="action"
-				class="action-card"
-				:class="{ fadeout: hideCard, instant: isInstant }"
+				ref="card"
 			>
-				<span class="card blank--"></span>
-				<Card
-					:id="card.id"
-					:card-data="card"
-					card-type="action"
-					ref="card"
-				>
-				</Card>
-			</span>
-		</transition>
+			</Card>
+		</span>
 	</div>
 </template>
 
@@ -45,7 +43,7 @@ export default {
 				this.decksReady = true;
 			}
 		},
-		decksReady: function(to, from) {
+		decksReady: function(to) {
 			if (!to) {
 				return;
 			}
@@ -137,7 +135,7 @@ export default {
 // prettier-ignore
 @import "~@/components/Card/card";
 
-.action-card {
+.action-card--wrapper {
 	@extend %playing-cards;
 
 	@include flip-card {
@@ -151,12 +149,12 @@ export default {
 	position: absolute !important;
 	top: -20%;
 	transform: scale(2);
-	transition-duration: 1s;
+	transition-duration: 0.5s;
+	transition-property: transform, opacity;
 	z-index: 100;
 
-	&.fadeout {
-		opacity: 0;
-		transform: scale(0);
+	&.shown {
+		transform: translate(30vw, -30vh);
 	}
 }
 </style>
