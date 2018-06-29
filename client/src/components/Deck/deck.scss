@@ -11,15 +11,20 @@ $deck-height: 16;
 	$height: map-get($card-height, "small") + $deck-height;
 
 	align-items: center;
-	border: 1px dashed $black;
 	display: flex;
-	flex: 0 0 25%;
+	flex: 0 0 5%;
 	flex-direction: column;
 	margin-right: 1rem;
-	padding: 1rem;
+	padding: 0.5rem;
+	position: relative;
 
 	.count {
+		color: theme-color("danger");
 		font-size: 2rem;
+		font-weight: $font-weight-bold;
+		position: absolute;
+		right: 0;
+		top: -1rem;
 		z-index: 1;
 	}
 
@@ -40,6 +45,14 @@ $deck-height: 16;
 
 			&:not(.disabled) {
 				cursor: pointer;
+			}
+
+			.cards-enter-active {
+				animation: grow 0.5s;
+			}
+
+			.cards-leave-active {
+				animation: shrink 0.5s;
 			}
 		}
 	}
