@@ -86,6 +86,11 @@ export default {
 							type: 'action',
 							cardId: this.card.id,
 						});
+
+						this.$store.dispatch('game/update', {
+							isStarted: false,
+						});
+
 						break;
 
 					default:
@@ -154,7 +159,7 @@ export default {
 	z-index: 100;
 
 	&.shown {
-		transform: translate(30vw, -30vh);
+		transform: translate(18vw, -32vh);
 	}
 }
 </style>
