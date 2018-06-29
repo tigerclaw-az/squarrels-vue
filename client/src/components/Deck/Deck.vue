@@ -16,8 +16,8 @@
 				@click.prevent="onClick"
 			>
 				<span
-					v-for="card in cardsToDisplay"
-					:key="card.id"
+						v-for="(card, index) in cardsToDisplay"
+						:key="index"
 					class="card"
 					:class="[cardClassName(card.name)]"
 				>
