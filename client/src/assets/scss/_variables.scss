@@ -178,10 +178,12 @@ $input-color-placeholder: $gray-200;
 $input-height-base: $line-height-computed + $padding-base-vertical * 2 + 2;
 
 //** Large `.form-control` height
-$input-height-large: ceil($font-size-large * $line-height-large) + $padding-large-vertical * 2 + 2;
+$input-height-large: ceil($font-size-large * $line-height-large) +
+	$padding-large-vertical * 2 + 2;
 
 //** Small `.form-control` height
-$input-height-small: floor($font-size-small * $line-height-small) + $padding-small-vertical * 2 + 2;
+$input-height-small: floor($font-size-small * $line-height-small) +
+	$padding-small-vertical * 2 + 2;
 
 //** `.form-group` margin
 $form-group-margin-bottom: rem-calc(12);
@@ -286,3 +288,5 @@ $container-lg: $container-large-desktop;
 //================================================
 $column-width: 3.5;
 $letter-height: 3.5;
+
+@import "~@/../node_modules/bootstrap/scss/variables";
