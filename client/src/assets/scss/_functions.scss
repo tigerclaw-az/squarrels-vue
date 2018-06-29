@@ -1,9 +1,12 @@
+@import "~@/../node_modules/bootstrap/scss/functions";
+
 $font-size-base: 1rem !default;
 
 @function convert-to-rem($value, $base-value: $font-size-base) {
 	$value: strip-unit($value) / strip-unit(16px) * 1rem;
 
-	@if ($value == '0rem') { // Turn 0rem into 0
+	@if ($value == "0rem") {
+		// Turn 0rem into 0
 		$value: 0;
 	}
 
@@ -49,7 +52,10 @@ $font-size-base: 1rem !default;
 	$rem-values: ();
 
 	@for $i from 1 through $max {
-		$rem-values: append($rem-values, convert-to-rem(nth($values, $i), $base-value));
+		$rem-values: append(
+			$rem-values,
+			convert-to-rem(nth($values, $i), $base-value)
+		);
 	}
 
 	@return $rem-values;
