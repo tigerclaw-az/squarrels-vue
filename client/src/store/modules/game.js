@@ -322,7 +322,9 @@ const actions = {
 			});
 	},
 
-	update({ commit }, data) {},
+	update({ commit }, data) {
+		return api.games.update(state.id, data);
+	},
 };
 
 const mutations = {
