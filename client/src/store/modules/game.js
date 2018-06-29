@@ -214,10 +214,14 @@ const actions = {
 		}
 	},
 
-	reset({ dispatch, state }) {
-		return api.games.reset(state.id).then(() => {
-			dispatch('decks/unload', {}, { root: true });
-		});
+	async reset({ dispatch, state }) {
+		try {
+			await api.games.reset(state.id);
+
+			return dispatch('decks/unload', {}, { root: true });
+		} catch (err) {
+			throw new Error(err);
+		}
 	},
 
 	async resetAction({ dispatch }) {
