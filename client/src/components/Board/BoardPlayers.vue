@@ -96,8 +96,6 @@ export default {
 
 <style lang="scss" scoped>
 .sq-board-players {
-	padding: 1rem;
-
 	.sq-players {
 		display: flex;
 		flex-wrap: wrap;
