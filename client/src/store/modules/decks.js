@@ -182,6 +182,8 @@ const actions = {
 
 	unload({ commit }) {
 		commit('INIT');
+
+		return Promise.resolve();
 	},
 
 	async updateById({ commit }, payload) {
