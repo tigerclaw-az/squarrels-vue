@@ -1,20 +1,31 @@
 <template>
 	<div id="board">
-		<div v-if="!isStarted && !isLoading" class="start-game-overlay">
-			<div class="overlay-text" v-cloak>
+		<div v-if="!isStarted" class="game-overlay" :class="{ winter: isWinter }">
+			<div class="game-overlay--start-game" v-cloak v-if="!isLoading && !isWinter">
 				<div v-if="needPlayers" class="waiting-message">
 					Waiting for other players to join...
 				</div>
-				<button v-else
-					class="btn btn-info btn-start-game"
+				<b-button v-else
+					class="btn btn-start-game"
+					variant="success"
 					@click="onClickStartGame">
 					START GAME
-				</button>
+				</b-button>
+			</div>
+			<div class="game-overlay--new-game" v-if="isWinter">
+				<div class="container-button">
+					<b-button
+						class="btn btn-new-game"
+						variant="success"
+						@click="onClickNewGame"
+					>
+					NEW GAME
+					</b-button>
+				</div>
 			</div>
 		</div>
 		<b-container fluid>
 			<BoardHeader :is-game-started="isStarted"></BoardHeader>
-			<img v-if="isWinter" class="winter-snow" src="https://media.giphy.com/media/gvKru3mU4wLFm/giphy.gif">
 			<b-row>
 				<b-col>
 					<div class="decks-container">
@@ -98,10 +109,22 @@ export default {
 		},
 	},
 	methods: {
-		onClickStartGame: function(e) {
-			this.$log.debug('onClickStartGame', e);
+		onClickStartGame: function(evt) {
+			this.$log.debug('onClickStartGame', evt);
 			this.isLoading = true;
 			this.$store.dispatch({ type: 'game/start' });
+		},
+		onClickNewGame: async function(evt) {
+			this.$log.debug('onClickStartGame', evt);
+			this.isLoading = true;
+
+			try {
+				await this.$store.dispatch({ type: 'game/reset' });
+				this.$store.dispatch({ type: 'game/start' });
+			} catch (err) {
+				this.$log.error(err);
+				this.$toasted.error(err.message);
+			}
 		},
 	},
 };
