@@ -90,7 +90,7 @@ export default {
 	// prettier-ignore
 	background-image: url("~@/assets/images/winter-background.jpg");
 	background-size: cover;
-	height: 99vh;
+	height: 100vh;
 }
 
 .error {
