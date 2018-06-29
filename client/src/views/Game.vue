@@ -13,7 +13,7 @@
 			</div>
 		</div>
 		<b-container fluid>
-			<BoardHeader></BoardHeader>
+			<BoardHeader :is-game-started="isStarted"></BoardHeader>
 			<img v-if="isWinter" class="winter-snow" src="https://media.giphy.com/media/gvKru3mU4wLFm/giphy.gif">
 			<b-row>
 				<b-col>
@@ -26,18 +26,6 @@
 				<b-col>
 					<BoardPlayers :isGameStarted="isStarted" :gameId="id"></BoardPlayers>
 					<ActionCard v-if="actionCard"></ActionCard>
-				</b-col>
-			</b-row>
-			<b-row>
-				<b-col>
-					<div class="admin-options" v-if="isAdmin && isStarted">
-						<b-dropdown id="dropdown-options" variant="info" text="Option">
-							<b-dropdown-item @click="onClickAdminOption('reset-game')">Reset Game</b-dropdown-item>
-							<b-dropdown-item @click="onClickAdminOption('reset-hoard')">Reset Hoard</b-dropdown-item>
-							<b-dropdown-item @click="onClickAdminOption('reset-player-cards')">Reset Player Cards</b-dropdown-item>
-							<b-dropdown-item @click="onClickAdminOption('skip-player')">Skip Player</b-dropdown-item>
-						</b-dropdown>
-					</div>
 				</b-col>
 			</b-row>
 		</b-container>
@@ -76,7 +64,7 @@ export default {
 		};
 	},
 	watch: {
-		isStarted: function(to, from) {
+		isStarted: function(to) {
 			if (to) {
 				this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
 			}
@@ -110,15 +98,6 @@ export default {
 		},
 	},
 	methods: {
-		onClickAdminOption: function(name) {
-			this.$log.debug(name);
-
-			switch (name) {
-				case 'reset-game':
-					this.$store.dispatch('game/reset');
-					break;
-			}
-		},
 		onClickStartGame: function(e) {
 			this.$log.debug('onClickStartGame', e);
 			this.isLoading = true;

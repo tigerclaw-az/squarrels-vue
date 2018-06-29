@@ -1,19 +1,28 @@
 <template>
-	<b-container fluid class="header">
+	<b-container fluid class="header" v-if="isGameStarted">
 		<b-row class="align-items-center">
 			<b-col class="header-item game-start">Started @ {{createdAt}}</b-col>
 			<b-col class="header-item game-settings">
-				<b-dropdown id="dropdown-settings" variant="info">
+				<b-dropdown id="dropdown-game-settings" variant="info">
 					<template slot="button-content">
 						<icon name="cog" class="icon icon-settings" label="Settings"></icon>
 					</template>
-					<b-dropdown-item @click="onSettingClick('toggleSound')">
+					<b-dropdown-item @click="onClickSetting('toggleSound')">
 						<icon :name="getIcon('sound')" class="icon icon-sound" label="Sound"></icon>
-						<span v-if="sound.isEnabled">Disable Sounds</span>
-						<span v-else>Enable Sounds</span>
+						<span v-if="sound.isEnabled">Sounds Off</span>
+						<span v-else>Sounds On</span>
 					</b-dropdown-item>
 				</b-dropdown>
+				<b-dropdown id="dropdown-admin-options" class="ml-2" variant="info" text="Option">
+					<b-dropdown-item @click="onClickAdminOption('reset-game')">Reset Game</b-dropdown-item>
+					<b-dropdown-item @click="onClickAdminOption('reset-hoard')">Reset Hoard</b-dropdown-item>
+					<b-dropdown-item @click="onClickAdminOption('reset-player-cards')">Reset Player Cards</b-dropdown-item>
+					<b-dropdown-item @click="onClickAdminOption('skip-player')">Skip Player</b-dropdown-item>
+				</b-dropdown>
 			</b-col>
+			<!-- <b-col v-if="isAdmin">
+
+			</b-col> -->
 			<b-col class="header-item game-round">ROUND: {{roundNumber}}</b-col>
 		</b-row>
 	</b-container>
@@ -32,11 +41,17 @@ export default {
 		'b-dropdown': bDropdown,
 		Icon,
 	},
-	props: ['isGameStarted'],
+	props: {
+		isGameStarted: {
+			type: Boolean,
+			required: true,
+		},
+	},
 	data: function() {
 		return {};
 	},
 	computed: {
+		...mapState(['isAdmin']),
 		...mapState('game', ['createdAt', 'roundNumber']),
 		...mapState({
 			// This is required for nested modules
@@ -51,7 +66,16 @@ export default {
 					return 'volume-' + (this.sound.isEnabled ? 'up' : 'off');
 			}
 		},
-		onSettingClick: function(event) {
+		onClickAdminOption: function(name) {
+			this.$log.debug(name);
+
+			switch (name) {
+				case 'reset-game':
+					this.$store.dispatch('game/reset');
+					break;
+			}
+		},
+		onClickSetting: function(event) {
 			this.$log.debug(event);
 		},
 	},
