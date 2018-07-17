@@ -41,9 +41,11 @@ const actions = {
 		this._vm.$toasted.error(data.nuts);
 	},
 
-	update({ commit }, data) {
+	update({ dispatch }, data) {
 		this._vm.$log.debug('wsPlayers/update', data);
-		commit('players/UPDATE', data.nuts, { root: true });
+		if (!_.isEmpty(data.nuts)) {
+			dispatch('players/updateLocalPlayer', data.nuts, { root: true });
+		}
 	},
 };
 
