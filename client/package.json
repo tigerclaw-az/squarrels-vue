@@ -14,6 +14,7 @@
 		"bootstrap": "^4.1.1",
 		"bootstrap-vue": "^2.0.0-rc.9",
 		"dotenv": "^6.0.0",
+		"localforage": "^1.7.2",
 		"lodash": "^4.17.10",
 		"moment": "^2.22.0",
 		"popper.js": "^1.12.9",
@@ -22,7 +23,6 @@
 		"vue-native-websocket": "^2.0.8",
 		"vue-router": "^3.0.1",
 		"vue-toasted": "^1.1.24",
-		"vue-web-storage": "^2.0.2",
 		"vuejs-logger": "^1.3.4",
 		"vuex": "^3.0.1"
 	},
