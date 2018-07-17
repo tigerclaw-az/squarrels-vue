@@ -187,7 +187,7 @@ const actions = {
 				});
 		} else {
 			this._vm.$toasted.info(`HOARD TAKEN BY: ${pl.name}`);
-			this.$store.dispatch('sound/play', 'hoard-taken');
+			dispatch('sound/play', 'hoard-taken');
 		}
 	},
 
