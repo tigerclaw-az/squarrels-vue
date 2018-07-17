@@ -191,7 +191,16 @@ const actions = {
 		}
 	},
 
-	discard({ commit, state }, payload) {
+	async delete({}, id) {
+		const myPlayer = getters.getMyPlayer;
+
+		try {
+			await api.players.delete(myPlayer.id);
+		} catch (err) {
+			this._vm.$toasted.error(err);
+			throw new Error(err);
+		}
+	},
 		this._vm.$log.debug(state, payload);
 
 		const playerId = payload.id;
