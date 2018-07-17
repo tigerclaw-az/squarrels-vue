@@ -1,5 +1,8 @@
 module.exports = {
 	extends: 'stylelint-config-recommended-scss',
+	plugins: [
+		'stylelint-order',
+	],
 	rules: {
 		'at-rule-blacklist': ['debug'],
 		'color-hex-length': 'long',
@@ -14,5 +17,24 @@ module.exports = {
 		'property-no-vendor-prefix': true,
 		'selector-no-vendor-prefix': true,
 		'string-quotes': 'double',
+		'order/order': [
+			'custom-properties',
+			'dollar-variables',
+			{
+				type: 'at-rule',
+				name: 'extend',
+			},
+			{
+				type: 'at-rule',
+				name: 'include',
+			},
+			'declarations',
+			'rules',
+			{
+				type: 'at-rule',
+				name: 'media',
+			},
+		],
+		'order/properties-alphabetical-order': true,
 	},
 };
