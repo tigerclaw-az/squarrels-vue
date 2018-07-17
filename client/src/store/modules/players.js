@@ -93,7 +93,7 @@ const getters = {
 };
 
 const actions = {
-	add({ commit }, plArr) {
+	add({ dispatch }, plArr) {
 		this._vm.$log.debug('add()', plArr);
 
 		if (plArr.length) {
@@ -101,7 +101,7 @@ const actions = {
 				.get(plArr.join(','))
 				.then(res => {
 					if (res.status === 200) {
-						commit('UPDATE', res.data[0]);
+						dispatch('updateLocalPlayer', res.data[0]);
 					}
 				})
 				.catch(err => {
@@ -138,7 +138,7 @@ const actions = {
 			});
 	},
 
-	create({ commit }, plObj) {
+	create({ commit, dispatch }, plObj) {
 		let plData = Object.assign({}, plDefault, plObj);
 
 		return new Promise((resolve, reject) => {
@@ -146,7 +146,7 @@ const actions = {
 				.create(plData)
 				.then(res => {
 					commit('LOGIN', res.data, { root: true });
-					commit('UPDATE', res.data);
+					dispatch('updateLocalPlayer', res.data);
 					resolve();
 				})
 				.catch(err => {
@@ -201,12 +201,14 @@ const actions = {
 			throw new Error(err);
 		}
 	},
+
+	discard({ dispatch, state }, payload) {
 		this._vm.$log.debug(state, payload);
 
 		const playerId = payload.id;
 		const cardIds = state[playerId].cardsInHand;
 
-		commit('UPDATE', {
+		dispatch('updateLocalPlayer', {
 			id: playerId,
 			quarrel: false,
 			message: null,
@@ -223,7 +225,7 @@ const actions = {
 	 *
 	 * @return {Object} Promise
 	 */
-	load({ commit }, { ids }) {
+	load({ dispatch }, { ids }) {
 		this._vm.$log.debug('players/load', ids);
 
 		if (ids.length) {
@@ -233,7 +235,7 @@ const actions = {
 					this._vm.$log.debug('api/players/get', res);
 					if (res.status === 200) {
 						res.data.forEach(plData => {
-							commit('UPDATE', plData);
+							dispatch('updateLocalPlayer', plData);
 						});
 					}
 				})
@@ -282,18 +284,18 @@ const actions = {
 		});
 	},
 
-	resetCardsDrawn({ commit }, data) {
-		commit('UPDATE', {
+	resetCardsDrawn({ dispatch }, data) {
+		dispatch('updateLocalPlayer', {
 			id: data.id,
 			cardsDrawnCount: 0,
 			cardsDrawnIds: [],
 		});
 	},
 
-	resetQuarrelWinner({ commit }, id) {
+	resetQuarrelWinner({ dispatch }, id) {
 		Vue.$log.debug(id);
 
-		return commit('UPDATE', {
+		return dispatch('updateLocalPlayer', {
 			id,
 			isQuarrelWinner: false,
 		});
@@ -316,7 +318,7 @@ const actions = {
 	},
 
 	setQuarrelWinner({ commit, dispatch }, payload) {
-		commit('UPDATE', {
+		dispatch('updateLocalPlayer', {
 			id: payload.id,
 			isQuarrelWinner: true,
 		});
@@ -326,7 +328,7 @@ const actions = {
 		}, 4000);
 	},
 
-	startQuarrel({ commit, dispatch, getters, state }, options = {}) {
+	startQuarrel({ dispatch, getters, state }, options = {}) {
 		const myPlayer = getters.getMyPlayer;
 		const players = options.players || state.ids;
 
@@ -336,10 +338,13 @@ const actions = {
 			return;
 		}
 
-		dispatch('game/setQuarrelCount', players.length, { root: true });
+		// Find all players that have at least 1 card
+		const quarrelPlayers = _.reject(players, { totalCards: 0 });
+
+		dispatch('game/setQuarrelCount', quarrelPlayers.length, { root: true });
 
 		if (myPlayer.cardsInHand.length) {
-			commit('UPDATE', {
+			dispatch('updateLocalPlayer', {
 				id: myPlayer.id,
 				message: 'Choose a Card',
 				quarrel: true,
@@ -353,6 +358,28 @@ const actions = {
 		this._vm.$log.debug('players/update', payload);
 
 		return api.players.update(payload.id, payload.data);
+	},
+
+	async updateLocalPlayer({ commit, state }, payload) {
+		if (!payload.id) {
+			this._vm.$toasted.warn('Did not receive "id" for player!');
+			this._vm.$log.warn('Missing "id" from payload:', payload);
+		}
+
+		commit('UPDATE', payload);
+
+		const playerId = payload.id;
+		const $playerStorage = await Vue.$storage.getItem('player');
+		const localPlayerId = $playerStorage && $playerStorage.id;
+
+		this._vm.$log.debug('playerMatch?', playerId, localPlayerId);
+
+		if (playerId === localPlayerId) {
+			await Vue.$storage.setItem('player', state[playerId]);
+			// Send async websocket request for 'whoami' to update
+			// cardsInHand for local player
+			this._vm.$socket.sendObj({ action: 'getMyCards' });
+		}
 	},
 };
 
@@ -380,9 +407,6 @@ const mutations = {
 
 	UPDATE(state, payload) {
 		const playerId = payload.id;
-		const $playerStorage = Vue.$storage.get('player');
-		const localPlayerId = $playerStorage && $playerStorage.id;
-		// const localPlayerId = state.localPlayer && state.localPlayer.id;
 
 		this._vm.$log.debug('mutation::players/UPDATE', state, payload);
 
@@ -394,15 +418,6 @@ const mutations = {
 
 			for (let prop in payload) {
 				Vue.set(state[playerId], prop, payload[prop]);
-			}
-
-			this._vm.$log.debug('playerMatch?', playerId, localPlayerId);
-
-			if (playerId === localPlayerId) {
-				this._vm.$storage.set('player', state[playerId]);
-				// Send async websocket request for 'whoami' to update
-				// cardsInHand for local player
-				this._vm.$socket.sendObj({ action: 'getMyCards' });
 			}
 		}
 	},
