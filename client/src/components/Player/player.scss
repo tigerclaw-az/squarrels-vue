@@ -6,7 +6,6 @@
 	display: flex;
 	flex-flow: row wrap;
 	justify-content: center;
-	margin-bottom: 3.5rem;
 	position: relative;
 	text-align: center;
 
@@ -50,6 +49,7 @@
 
 	&.current {
 		flex: 1 0 100%;
+		margin-bottom: 3.5rem;
 
 		.btn-card {
 			&:not(.disabled) {
