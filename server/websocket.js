@@ -297,13 +297,15 @@ module.exports = function(server, sessionParser) {
 						.select('+sessionId +cardsInHand')
 						.exec()
 						.then(list => {
-							const wsObj = {
-								namespace: 'wsPlayers',
-								action: 'getMyCards',
-								nuts: list[0],
-							};
+							if (list[0]) {
+								const wsObj = {
+									namespace: 'wsPlayers',
+									action: 'getMyCards',
+									nuts: list[0],
+								};
 
-							ws.send(JSON.stringify(wsObj));
+								ws.send(JSON.stringify(wsObj));
+							}
 						})
 						.catch(err => {
 							logger.error(err);
