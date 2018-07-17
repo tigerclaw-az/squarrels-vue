@@ -135,12 +135,6 @@ export default {
 		discard: function(card) {
 			this.$log.debug(card);
 
-			// FIXME: Find a way to just remove card from array so it
-			//		transitions properly
-			// this.myCardsDetails = _.filter(this.myCardsDetails, {
-			// 	id: !card.id,
-			// });
-
 			// TODO: Don't allow 'special' cards to be discarded unless it's the only card
 			let deckUpdate = this.$store.dispatch('decks/discard', card);
 			let playerUpdate = this.$store.dispatch('players/discard', {
