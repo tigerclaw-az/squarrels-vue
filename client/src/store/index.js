@@ -27,16 +27,18 @@ const state = {
 };
 
 const actions = {
-	init({ commit }) {
+	async init({ commit }) {
+		const isAdmin = await Vue.$storage.getItem('isAdmin');
+
 		commit('SET_CONFIG', {
-			isAdmin: Vue.$storage.get('isAdmin') || false,
+			isAdmin,
 		});
 	},
 
 	checkLogin({ commit, state }) {
-		return new Promise((resolve, reject) => {
-			let player = Vue.$storage.get('player'),
-				localPlayer = state.localPlayer;
+		return new Promise(async (resolve, reject) => {
+			const player = await Vue.$storage.getItem('player');
+			const localPlayer = state.localPlayer;
 
 			this._vm.$log.debug('checkLogin', player, localPlayer);
 
@@ -47,10 +49,10 @@ const actions = {
 				} else {
 					api.players
 						.get(player.id)
-						.then(res => {
+						.then(async res => {
 							if (res.status !== 200) {
 								this._vm.$toasted.error('USER NOT FOUND');
-								Vue.$storage.remove('player');
+								await Vue.$storage.removeItem('player');
 								reject('USER NOT FOUND');
 
 								return false;
@@ -77,7 +79,7 @@ const mutations = {
 	LOGIN(state, player) {
 		state.isLoggedIn = true;
 		state.localPlayer = player;
-		this._vm.$storage.set('player', player);
+		Vue.$storage.setItem('player', player);
 	},
 	SET_CONFIG(state, config) {
 		state.isAdmin = config.isAdmin;

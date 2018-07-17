@@ -24,7 +24,7 @@ export const websocket = Object.freeze({
 	reconnectionDelay: 2000, // (Number) how long to initially wait before attempting a new (1000)
 });
 
-export const webStorage = Object.freeze({
-	prefix: 'squarrels',
-	driver: 'local',
-});
+// export const webStorage = Object.freeze({
+// 	prefix: 'squarrels',
+// 	driver: 'local',
+// });

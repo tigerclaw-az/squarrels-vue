@@ -10,7 +10,8 @@ import Toasted from 'vue-toasted';
 
 import Vue from 'vue';
 import VueLogger from 'vuejs-logger';
-import Storage from 'vue-web-storage';
+// import Storage from 'vue-web-storage';
+import localForage from 'localforage';
 import VueWS from 'vue-native-websocket';
 import App from './App.vue';
 
@@ -20,7 +21,7 @@ import store from './store/index';
 import {
 	toast as toastConfig,
 	websocket as wsConfig,
-	webStorage as storageConfig,
+	// webStorage as storageConfig,
 	logger as loggerConfig,
 } from './config';
 
@@ -31,7 +32,7 @@ Vue.use(Toasted, {
 	router,
 	...toastConfig,
 });
-Vue.use(Storage, storageConfig);
+
 Vue.use(VueLogger, loggerConfig);
 Vue.use(
 	VueWS,
@@ -39,8 +40,18 @@ Vue.use(
 	Object.assign({}, wsConfig, { store })
 );
 
+const storageConfig = Object.freeze({
+	driver: localForage.WEBSQL,
+	name: process.env.VUE_APP_NAME || 'squarrels',
+	version: process.env.VUE_APP_VERSION || 1.0,
+});
+
+// Vue.use(Storage, storageConfig);
+
 Vue.config.productionTip = false;
 
+Vue.$storage = localForage;
+Vue.$storage.config(storageConfig);
 Vue.prototype.$timeout = window.setTimeout;
 Vue.prototype.$timer = window.setInterval;
 
