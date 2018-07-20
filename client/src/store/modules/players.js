@@ -127,7 +127,6 @@ const actions = {
 			.update(playerId, {
 				addCards: true,
 				cardsInHand: cardsToAdd,
-				hasDrawnCard: true,
 			})
 			.then(res => {
 				this._vm.$log.debug('playersApi:update()', res, this);
@@ -217,6 +216,20 @@ const actions = {
 		return api.players.update(playerId, {
 			cardsInHand: _.difference(cardIds, [payload.card.id]),
 		});
+	},
+
+	async drawCard({ getters }, payload) {
+		const playerId = payload.id || getters.getMyPlayer.id;
+
+		try {
+			return await api.players.update(playerId, {
+				hasDrawnCard: true,
+			});
+		} catch (err) {
+			this._vm.$log.error(err);
+
+			return false;
+		}
 	},
 
 	/**

@@ -151,16 +151,18 @@ export default {
 		handleCardDrawn: function(cardDrawn) {
 			const cardAction = cardDrawn.action;
 			let dispatchAction = 'players/addCards';
-			let actionData = { cards: [cardDrawn] };
+			let cardData = { cards: [cardDrawn] };
 
 			this.$log.debug(cardDrawn, cardAction, this);
 
+			this.$store.dispatch('players/drawCard', cardData);
+
 			if (cardAction) {
-				actionData = cardDrawn;
+				cardData = cardDrawn;
 				dispatchAction = 'game/actionCard';
 			}
 
-			this.$store.dispatch(dispatchAction, actionData);
+			this.$store.dispatch(dispatchAction, cardData);
 		},
 		// Must be method as you can't pass parameters to 'computed' functions
 		isType: function(name) {
