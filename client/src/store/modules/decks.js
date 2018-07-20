@@ -98,10 +98,12 @@ const actions = {
 		return dispatch('addCard', { type: 'discard', cardId: card.id });
 	},
 
-	drawCard({ commit, getters }, options = {}) {
+	drawCard({ commit, dispatch, getters }, options = {}) {
 		const mainDeck = getters.getByType('main');
 
 		this._vm.$log.debug('decks/drawCard -> ', options, mainDeck);
+
+		dispatch('sound/play', 'draw-card', { root: true });
 
 		let cardsFromDeck = {
 			ids: getters.getCardIds(mainDeck.id),

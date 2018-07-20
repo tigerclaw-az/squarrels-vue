@@ -5,6 +5,7 @@ const SOUND_EFFECTS = {
 	'action-card': 'action-card.mp3',
 	'active-player': 'active-player.mp3',
 	discard: 'discard.mp3',
+	'draw-card': 'draw-card.m4a',
 	'hoard-taken': 'hoard-taken.mp3',
 	'new-player': 'new-player.mp3',
 };
