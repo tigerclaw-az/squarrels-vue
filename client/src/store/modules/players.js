@@ -332,15 +332,15 @@ const actions = {
 		this._vm.$socket.sendObj(wsObj);
 	},
 
-	setQuarrelWinner({ commit, dispatch }, payload) {
-		dispatch('updateLocalPlayer', {
+	setQuarrelWinner({ dispatch }, payload) {
+		dispatch('update', {
 			id: payload.id,
 			isQuarrelWinner: true,
 		});
 
 		setTimeout(() => {
 			dispatch('addCards', payload);
-		}, 4000);
+		}, 1000);
 	},
 
 	startQuarrel({ dispatch, getters, state }, options = {}) {
