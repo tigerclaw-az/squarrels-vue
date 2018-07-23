@@ -305,13 +305,15 @@ const actions = {
 		});
 	},
 
-	resetQuarrelWinner({ dispatch }, id) {
-		Vue.$log.debug(id);
+	async resetQuarrelWinner({ dispatch }, payload) {
+		Vue.$log.debug(payload);
 
-		return dispatch('updateLocalPlayer', {
-			id,
+		await dispatch('update', {
+			id: payload.id,
 			isQuarrelWinner: false,
 		});
+
+		return true;
 	},
 
 	selectQuarrelCard({}, data) {
