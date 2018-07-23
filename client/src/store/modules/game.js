@@ -7,7 +7,6 @@ import api from '@/api/index';
 
 const initialState = {
 	actionCard: null,
-	createdAt: null,
 	deckIds: [],
 	id: null,
 	isDealing: false,
@@ -20,6 +19,7 @@ const initialState = {
 	},
 	quarrelCount: 0,
 	showQuarrel: false,
+	startDate: null,
 	roundNumber: 1,
 	updatedAt: null,
 };
@@ -176,43 +176,43 @@ const actions = {
 
 			// Wait until cards are shown to display winner
 			setTimeout(() => {
-			dispatch(
-				'players/setQuarrelWinner',
-				{
-					id: winner,
-					cards,
-				},
-				{ root: true }
-			);
-
-				// Wait some time after winner has been set before resetting
-			setTimeout(() => {
-				commit('UPDATE', {
-					showQuarrel: false,
-					quarrelCards: { current: [], saved: [] },
-				});
-
 				dispatch(
-					'players/resetQuarrelWinner',
-					{ id: winner },
+					'players/setQuarrelWinner',
+					{
+						id: winner,
+						cards,
+					},
 					{ root: true }
 				);
 
-				dispatch('resetAction');
+				// Wait some time after winner has been set before resetting
+				setTimeout(() => {
+					commit('UPDATE', {
+						showQuarrel: false,
+						quarrelCards: { current: [], saved: [] },
+					});
+
+					dispatch(
+						'players/resetQuarrelWinner',
+						{ id: winner },
+						{ root: true }
+					);
+
+					dispatch('resetAction');
 				}, 800);
 			}, 3500);
 		} else {
 			const players = _.map(winners, obj => obj.playerId);
 
 			setTimeout(() => {
-			// Reset current quarrelCards
-			commit('UPDATE', {
-				quarrelCards: {
-					current: [],
-					saved: state.quarrelCards.saved,
-				},
+				// Reset current quarrelCards
+				commit('UPDATE', {
+					quarrelCards: {
+						current: [],
+						saved: state.quarrelCards.saved,
+					},
 					showQuarrel: false,
-			});
+				});
 
 				dispatch('players/startQuarrel', { players }, { root: true });
 			}, 4000);
@@ -381,6 +381,8 @@ const mutations = {
 					}
 				}
 			}
+
+			state.startDate = state.updatedAt;
 		}
 	},
 };
