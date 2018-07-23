@@ -53,11 +53,6 @@ export default {
 	},
 	mounted: function() {
 		this.$log.debug(this);
-
-		// TODO: Remove player from game
-		window.addEventListener('beforeunload', () => {
-			this.$log.debug('unloaded!', this.playerIdsInGame);
-		});
 	},
 	computed: {
 		...mapState({
