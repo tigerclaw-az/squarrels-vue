@@ -163,6 +163,8 @@ const actions = {
 
 		this._vm.$log.debug(quarrelGroup, winners);
 
+		commit('UPDATE', { showQuarrel: true });
+
 		if (winners.length === 1) {
 			let cards = _.map(state.quarrelCards.saved, obj => {
 				return obj.card;
@@ -172,8 +174,8 @@ const actions = {
 
 			this._vm.$log.debug('cards -> ', cards);
 
-			commit('UPDATE', { showQuarrel: true });
-
+			// Wait until cards are shown to display winner
+			setTimeout(() => {
 			dispatch(
 				'players/setQuarrelWinner',
 				{
@@ -183,6 +185,7 @@ const actions = {
 				{ root: true }
 			);
 
+				// Wait some time after winner has been set before resetting
 			setTimeout(() => {
 				commit('UPDATE', {
 					showQuarrel: false,
@@ -196,21 +199,23 @@ const actions = {
 				);
 
 				dispatch('resetAction');
-			}, 4000);
+				}, 800);
+			}, 3500);
 		} else {
+			const players = _.map(winners, obj => obj.playerId);
+
+			setTimeout(() => {
 			// Reset current quarrelCards
 			commit('UPDATE', {
 				quarrelCards: {
 					current: [],
 					saved: state.quarrelCards.saved,
 				},
+					showQuarrel: false,
 			});
 
-			dispatch(
-				'players/startQuarrel',
-				{ players: winners },
-				{ root: true }
-			);
+				dispatch('players/startQuarrel', { players }, { root: true });
+			}, 4000);
 		}
 	},
 
