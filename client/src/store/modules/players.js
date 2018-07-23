@@ -423,7 +423,7 @@ const mutations = {
 
 		this._vm.$log.debug('mutation::players/UPDATE', state, payload);
 
-		if (playerId) {
+		if (_.isString(playerId)) {
 			if (!state[playerId]) {
 				Vue.set(state, playerId, {});
 				state.ids.push(playerId);
