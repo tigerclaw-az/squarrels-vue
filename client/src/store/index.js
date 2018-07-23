@@ -27,8 +27,10 @@ const state = {
 };
 
 const actions = {
-	async init({ commit }) {
-		const isAdmin = await Vue.$storage.getItem('isAdmin');
+	init({ commit }) {
+		const isAdmin = window.localStorage.getItem('isAdmin');
+
+		this._vm.$log.debug('store/init', isAdmin);
 
 		commit('SET_CONFIG', {
 			isAdmin,
