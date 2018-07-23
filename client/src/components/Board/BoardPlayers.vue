@@ -93,8 +93,8 @@ export default {
 .sq-board-players {
 	.sq-players {
 		display: flex;
-		flex-wrap: wrap;
 		flex: 1 0 100%;
+		flex-wrap: wrap;
 	}
 }
 </style>
