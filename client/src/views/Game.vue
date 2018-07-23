@@ -53,7 +53,6 @@ import Deck from '@/components/Deck/Deck.vue';
 import BoardHeader from '@/components/Board/BoardHeader.vue';
 import BoardPlayers from '@/components/Board/BoardPlayers.vue';
 
-// TODO: Validate player can join if there are less than 6 players
 export default {
 	name: 'Game',
 	components: {
