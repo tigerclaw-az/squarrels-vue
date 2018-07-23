@@ -83,13 +83,14 @@ export default {
 	},
 	mounted: function() {
 		this.$store.dispatch({ type: 'game/load', id: this.id });
+
+		// Need to unload current game from player if they leave
+		window.onbeforeunload = () => {
+			this.unload();
+		};
 	},
 	beforeDestroy: function() {
-		// Only unload if the current game was valid
-		if (this.id) {
-			this.$store.dispatch({ type: 'game/unload' });
-			this.$store.dispatch({ type: 'decks/unload', gameId: this.id });
-		}
+		this.unload();
 	},
 	computed: {
 		...mapState('game', [
@@ -124,6 +125,13 @@ export default {
 			} catch (err) {
 				this.$log.error(err);
 				this.$toasted.error(err.message);
+			}
+		},
+		unload: function() {
+			// Only unload if the current game was valid
+			if (this.id) {
+				this.$store.dispatch({ type: 'game/unload' });
+				this.$store.dispatch({ type: 'decks/unload', gameId: this.id });
 			}
 		},
 	},
