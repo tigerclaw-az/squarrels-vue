@@ -1,9 +1,7 @@
 @import "~@/assets/scss/variables";
 
 #board {
-	height: 100vh;
 	position: relative;
-	width: 100vw;
 }
 
 .game-overlay {
@@ -37,17 +35,18 @@
 		@extend %center;
 
 		.waiting-message {
-			animation-name: blink;
 			animation-duration: 1.25s;
-			animation-iteration-count: infinite;
 			/**
-				* This makes sure that the starting style (opacity: .2)
-				* of the animation is applied before the animation starts.
-				* Otherwise we would see a short flash or would have
-				* to set the default styling of the dots to the same
-				* as the animation. Same applies for the ending styles.
-				*/
+			* This makes sure that the starting style (opacity: .2)
+			* of the animation is applied before the animation starts.
+			* Otherwise we would see a short flash or would have
+			* to set the default styling of the dots to the same
+			* as the animation. Same applies for the ending styles.
+			*/
 			animation-fill-mode: both;
+			animation-iteration-count: infinite;
+			animation-name: blink;
+
 			transform: translateZ(0);
 		}
 	}
