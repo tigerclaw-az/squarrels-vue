@@ -41,7 +41,7 @@ Vue.use(
 );
 
 const storageConfig = Object.freeze({
-	driver: localForage.WEBSQL,
+	driver: localForage.INDEXEDDB,
 	name: process.env.VUE_APP_NAME || 'squarrels',
 	version: process.env.VUE_APP_VERSION || 1.0,
 });
