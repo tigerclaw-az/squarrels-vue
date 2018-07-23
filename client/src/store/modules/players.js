@@ -369,8 +369,12 @@ const actions = {
 		}
 	},
 
-	update({ commit }, payload) {
+	update({}, payload) {
 		this._vm.$log.debug('players/update', payload);
+
+		if (!_.isString(payload.id)) {
+			throw new Error('"payload.id" MUST be a string');
+		}
 
 		return api.players.update(payload.id, payload.data);
 	},
