@@ -135,7 +135,8 @@ export default {
 		discard: function(card) {
 			this.$log.debug(card);
 
-			// TODO: Don't allow 'special' cards to be discarded unless it's the only card
+			this.$store.dispatch('sound/play', 'discard');
+
 			let deckUpdate = this.$store.dispatch('decks/discard', card);
 			let playerUpdate = this.$store.dispatch('players/discard', {
 				id: this.myPlayer.id,
@@ -144,7 +145,6 @@ export default {
 
 			Promise.all([deckUpdate, playerUpdate])
 				.then(() => {
-					this.$store.dispatch('sound/play', 'discard');
 					this.$store.dispatch('players/nextPlayer');
 				})
 				.catch(err => {
