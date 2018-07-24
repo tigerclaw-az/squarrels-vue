@@ -181,16 +181,15 @@ export default {
 			this.$log.debug(card, cardsToStore, evt);
 
 			if (this.myPlayer.quarrel) {
+				this.$store.dispatch('players/selectQuarrelCard', {
+					id: this.myPlayer.id,
+					card,
+				});
+
 				this.$store
 					.dispatch('players/discard', {
 						id: this.myPlayer.id,
 						card,
-					})
-					.then(() => {
-						this.$store.dispatch('players/selectQuarrelCard', {
-							id: this.myPlayer.id,
-							card,
-						});
 					})
 					.catch(err => {
 						this.$log.error(err);
