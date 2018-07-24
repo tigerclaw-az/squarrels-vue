@@ -1,7 +1,7 @@
 <template>
 	<b-container fluid class="header" v-if="isGameStarted">
 		<b-row class="align-items-center">
-			<b-col class="header-item game-start">Started @ {{startDate}}</b-col>
+			<b-col class="header-item game-start">{{startDate}}</b-col>
 			<b-col class="header-item game-settings">
 				<b-dropdown id="dropdown-game-settings" variant="info">
 					<template slot="button-content">
@@ -27,6 +27,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import moment from 'moment';
 
 import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
 
@@ -49,12 +50,17 @@ export default {
 	},
 	computed: {
 		...mapState(['isAdmin']),
-		...mapState('game', ['startDate', 'roundNumber']),
+		...mapState('game', ['roundNumber']),
 		...mapState({
 			// This is required for nested modules
 			// @see https://github.com/vuejs/vuex/issues/459
 			sound: state => state.sound,
 		}),
+		startDate: function() {
+			return moment(this.$store.state.game.startDate).format(
+				'dddd, MMMM Do YYYY, h:mm:ss a'
+			);
+		},
 	},
 	methods: {
 		getIcon: function(name) {
