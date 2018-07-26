@@ -127,21 +127,6 @@ module.exports = function(server, sessionParser) {
 					resetActionCard(data.gameId, sid);
 				},
 
-				communism: () => {
-					// prettier-ignore
-					playerMod
-						.get()
-						.then(players => {
-							let wsObj = {
-								action: data.action,
-								type: 'game',
-								nuts: players,
-							};
-
-							ws.send(JSON.stringify(wsObj));
-						});
-				},
-
 				hoard: () => {
 					let wsObj = {};
 

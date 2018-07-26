@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const config = require('../config/config');
-const logger = config.logger();
 
 var Schema = mongoose.Schema,
 	CardSchema = new Schema(

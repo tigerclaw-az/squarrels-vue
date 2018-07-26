@@ -180,9 +180,387 @@
 		"cardType": "number"
 	},
 	{
-		"name": "communism",
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "2",
+		"amount": 2,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "3",
+		"amount": 3,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "4",
+		"amount": 4,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "5",
+		"amount": 5,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "5",
+		"amount": 5,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "5",
+		"amount": 5,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "5",
+		"amount": 5,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "5",
+		"amount": 5,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "5",
+		"amount": 5,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "5",
+		"amount": 5,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "5",
+		"amount": 5,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "5",
+		"amount": 5,
+		"action": "",
+		"cardType": "number"
+	},
+	{
+		"name": "quarrel",
 		"amount": -1,
-		"action": "communism",
+		"action": "quarrel",
 		"cardType": "action"
 	},
 	{
@@ -340,383 +718,5 @@
 		"amount": -5,
 		"action": "",
 		"cardType": "special"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "2",
-		"amount": 2,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "3",
-		"amount": 3,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "4",
-		"amount": 4,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "5",
-		"amount": 5,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "5",
-		"amount": 5,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "5",
-		"amount": 5,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "5",
-		"amount": 5,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "5",
-		"amount": 5,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "5",
-		"amount": 5,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "5",
-		"amount": 5,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "5",
-		"amount": 5,
-		"action": "",
-		"cardType": "number"
-	},
-	{
-		"name": "5",
-		"amount": 5,
-		"action": "",
-		"cardType": "number"
 	}]
 }
