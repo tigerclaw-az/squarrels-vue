@@ -194,10 +194,48 @@ module.exports = function(server, sessionParser) {
 							startPlayer = 0,
 							updatePromises = [];
 
+						const dealCards = () => {
+							const playersOrder = _.union(
+								players.slice(startPlayer),
+								players.slice(0, startPlayer)
+							);
+
+							logger.debug('cardIds (before) -> ', cardIds);
+
+							cardIds = _(cardIds)
+								.flatten()
+								.shuffle()
+								.value();
+
+							logger.debug('cardIds (after) -> ', cardIds);
+
+							const pIt = playerIt(playersOrder);
+
+							_.forEach(cardIds, cardId => {
+								const player = pIt.next();
+
+								player.cardsInHand.push(cardId);
+							});
+
+							_.forEach(playersOrder, player => {
+								const playerData = {
+									cardsInHand: player.cardsInHand,
+								};
+
+								logger.debug('playerData -> ', playerData);
+
+								playerMod.update(
+									player.id,
+									playerData,
+									sid
+								);
+							});
+						};
+
+						logger.debug('players -> ', players);
+
 						_.forEach(players, (pl, index) => {
 							let plCards = pl.cardsInHand.slice(); // Copy array
-
-							logger.debug('plCards -> ', plCards);
 
 							cardIds = _.union(cardIds, plCards);
 
@@ -217,50 +255,8 @@ module.exports = function(server, sessionParser) {
 						});
 
 						Q.all(updatePromises).then(() => {
-							let dealCards = () => {
-								let playersOrder = _.union(
-									players.slice(startPlayer),
-									players.slice(0, startPlayer)
-								);
-
-								cardIds = _(cardIds)
-									.flatten()
-									.shuffle()
-									.value();
-
-								logger.debug('cards -> ', cardIds);
-								logger.debug('playersOrder1 -> ', playersOrder);
-
-								let pIt = playerIt(playersOrder);
-
-								_.forEach(cardIds, cardId => {
-									let player = pIt.next();
-
-									logger.debug('card -> ', cardId);
-
-									player.cardsInHand.push(cardId);
-								});
-
-								logger.debug('playersOrder2 -> ', playersOrder);
-
-								_.forEach(playersOrder, player => {
-									let playerData = {
-										cardsInHand: player.cardsInHand,
-									};
-
-									logger.debug('playerData -> ', playerData);
-
-									playerMod.update(
-										player.id,
-										playerData,
-										sid
-									);
-								});
-
-								resetActionCard(data.gameId, sid);
-							};
-
-							setTimeout(dealCards, 3000);
+							resetActionCard(data.gameId, sid);
+							setTimeout(dealCards, 1000);
 						});
 					});
 				},
@@ -268,28 +264,11 @@ module.exports = function(server, sessionParser) {
 
 			switch (data.action) {
 				case 'ambush':
-					actions.ambush();
-
-					break;
-
 				case 'communism':
-					actions.communism();
-
-					break;
-
 				case 'hoard':
-					actions.hoard();
-
-					break;
-
 				case 'quarrel':
-					actions.quarrel();
-
-					break;
-
 				case 'whirlwind':
-					actions.whirlwind();
-
+					actions[data.action]();
 					break;
 
 				case 'getMyCards':
