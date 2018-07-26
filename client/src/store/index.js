@@ -53,7 +53,6 @@ const actions = {
 						.get(player.id)
 						.then(async res => {
 							if (res.status !== 200) {
-								this._vm.$toasted.error('USER NOT FOUND');
 								await Vue.$storage.removeItem('player');
 								reject('USER NOT FOUND');
 
