@@ -97,6 +97,16 @@ const getters = {
 };
 
 const actions = {
+	actionCard({ getters }, payload) {
+		this._vm.$log.debug(payload, getters.isActivePlayer);
+
+		if (getters.isActivePlayer) {
+			this._vm.$socket.sendObj({
+				action: payload.name,
+				gameId: payload.gameId,
+			});
+		}
+	},
 	add({ dispatch }, plArr) {
 		this._vm.$log.debug('add()', plArr);
 
@@ -123,9 +133,15 @@ const actions = {
 
 		const cardsToAdd = _.flatten([data.cards]);
 		const playerId = data.id || getters.getMyPlayer.id;
-		// const cardsMerge = _.union(player.cardsInHand, cards);
+		// const player = getters.getById(playerId);
+		// const cardsMerge = _.union(player.cardsInHand, cardsToAdd);
 
 		// this._vm.$log.debug('cards:union -> ', cardsMerge);
+
+		// dispatch('updateLocalPlayer', {
+		// 	id: playerId,
+		// 	cardsInHand: cardsMerge,
+		// });
 
 		return api.players
 			.update(playerId, {
@@ -344,7 +360,7 @@ const actions = {
 
 		setTimeout(() => {
 			dispatch('addCards', payload);
-		}, 1000);
+		}, 1500);
 	},
 
 	startQuarrel({ dispatch, getters, state }, options = {}) {
