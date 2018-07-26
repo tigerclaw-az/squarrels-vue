@@ -399,6 +399,22 @@ const actions = {
 		return api.players.update(payload.id, payload.data);
 	},
 
+	updateGame({ dispatch }, payload) {
+		if (!payload.id) {
+			throw new Error('Missing required "id" property!');
+		}
+
+		const playerId = payload.id;
+		const gameId = payload.gameId || null;
+
+		return dispatch('update', {
+			id: playerId,
+			data: {
+				gameId,
+			},
+		});
+	},
+
 	async updateLocalPlayer({ commit, state }, payload) {
 		if (!payload.id) {
 			this._vm.$toasted.warn('Did not receive "id" for player!');

@@ -118,7 +118,7 @@ module.exports = function(server, sessionParser) {
 					};
 
 					playerMod
-						.get()
+						.get({ gameId: data.gameId })
 						.then(stealCards)
 						.catch(err => {
 							logger.error(err);
@@ -174,7 +174,7 @@ module.exports = function(server, sessionParser) {
 				},
 
 				whirlwind: () => {
-					playerMod.get().then(players => {
+					playerMod.get({ gameId: data.gameId }).then(players => {
 						let cardIds = [],
 							startPlayer = 0,
 							updatePromises = [];

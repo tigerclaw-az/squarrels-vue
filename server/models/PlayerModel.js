@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
 	Schema = mongoose.Schema,
+	Game = require('./GameModel'),
 	PlayerSchema = new Schema(
 		{
 			cardsInHand: {
@@ -13,12 +14,17 @@ var mongoose = require('mongoose'),
 					ref: 'Card',
 				},
 			],
-			img: {
-				type: String,
+			gameId: {
+				type: Schema.Types.ObjectId,
+				ref: Game.model,
+				default: null,
 			},
 			hasDrawnCard: {
 				type: Boolean,
 				default: false,
+			},
+			img: {
+				type: String,
 			},
 			isActive: {
 				type: Boolean,

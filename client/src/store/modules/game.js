@@ -98,23 +98,29 @@ const actions = {
 			dispatch('quarrelWinner');
 		}
 	},
-	addPlayer({ commit, state }, { gameId, playerId }) {
+	async addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
 		let newPlayers = _.union(playerId, [...state.playerIds, playerId]);
 
 		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
 
 		if (newPlayers.length) {
-			return api.games
-				.updatePlayers(gameId, newPlayers)
-				.then(res => {
-					Vue.$log.debug('addPlayer()', res);
-					let gameData = res.data;
+			const res = await api.games.updatePlayers(gameId, newPlayers);
 
-					commit('UPDATE', gameData);
-				})
-				.catch(err => {
-					Vue.$log.error(err);
-				});
+			Vue.$log.debug('updatePlayers()', res);
+			const gameData = res.data;
+
+			commit('UPDATE', gameData);
+
+			await dispatch(
+				'players/updateGame',
+				{
+					id: playerId,
+					gameId,
+				},
+				{ root: true }
+			);
+
+			return Promise.resolve(gameData);
 		}
 
 		return Promise.reject('NO PLAYERS TO ADD');
@@ -317,13 +323,22 @@ const actions = {
 	 *
 	 * @returns {Object} 	Promise
 	 */
-	unload({ commit, rootState }) {
+	unload({ commit, dispatch, rootState }) {
 		const playerIds = state.playerIds;
 		const updatedPlayerIds = _.without(playerIds, rootState.localPlayer.id);
 
 		return api.games
 			.updatePlayers(state.id, updatedPlayerIds)
-			.then(() => {
+			.then(async () => {
+				await dispatch(
+					'players/updateGame',
+					{
+						id: rootState.localPlayer.id,
+						gameId: null,
+					},
+					{ root: true }
+				);
+
 				commit('INIT');
 			})
 			.catch(err => {
