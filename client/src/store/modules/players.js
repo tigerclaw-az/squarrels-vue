@@ -87,6 +87,10 @@ const getters = {
 		return state.ids[activeIndex];
 	},
 
+	isActivePlayer: (state, getter) => {
+		return getter.getMyPlayer.isActive;
+	},
+
 	totalPlayers: state => {
 		return state.ids.length;
 	},
