@@ -56,10 +56,12 @@ export default {
 
 				switch (this.card.name) {
 					case 'ambush':
-						this.$socket.sendObj({
-							action: this.card.name,
-							gameId: this.gameId,
-						});
+					case 'whirlwind':
+						this.$store.dispatch(
+							'players/actionCard',
+							{ name: this.card.name, gameId: this.gameId },
+							{ root: true }
+						);
 
 						this.$store.dispatch('decks/addCard', {
 							type: 'action',
