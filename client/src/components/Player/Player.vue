@@ -11,7 +11,7 @@
 		</div>
 		<PlayerInfo :player="player"></PlayerInfo>
 		<div
-			v-if="quarrelCard(player.id)"
+			v-if="actionCard && quarrelCard(player.id)"
 			class="sq-player-quarrel"
 			:class="{
 				flip: showQuarrel,
