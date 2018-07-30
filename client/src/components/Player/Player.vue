@@ -237,22 +237,11 @@ export default {
 		storeCards: function(cardsToStore) {
 			this.$log.debug(cardsToStore);
 
-			const cardsInStorage = this.myPlayer.cardsInStorage;
-			const cardsInHand = this.myCards;
-			const cardsToStoreIds = _.map(cardsToStore, c => c.id);
-
-			let plData = {
-				cardsInHand: _.difference(cardsInHand, cardsToStoreIds),
-				cardsInStorage: _.concat(cardsInStorage, cardsToStoreIds[0]),
-				score: this.myPlayer.score + cardsToStore[0].amount,
-			};
-
-			this.$log.debug('plData -> ', plData);
-
 			this.$store
-				.dispatch('players/update', {
+				.dispatch('players/storeCards', {
 					id: this.myPlayer.id,
-					data: plData,
+					cards: cardsToStore,
+					cardsInHand: this.myCards,
 				})
 				.then(res => {
 					this.$log.debug(res);

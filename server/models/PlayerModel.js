@@ -19,6 +19,10 @@ var mongoose = require('mongoose'),
 				ref: Game.model,
 				default: null,
 			},
+			hasStoredCards: {
+				type: Boolean,
+				default: false,
+			},
 			hasDrawnCard: {
 				type: Boolean,
 				default: false,

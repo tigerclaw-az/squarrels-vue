@@ -295,7 +295,11 @@ const actions = {
 		if (activePlayerIndex !== -1) {
 			dispatch('update', {
 				id: activePlayer.id,
-				data: { isActive: false, hasDrawnCard: false },
+				data: {
+					isActive: false,
+					hasDrawnCard: false,
+					hasStoredCards: false,
+				},
 			})
 				.then(res => {
 					// Merge data with existing object of player
@@ -313,6 +317,7 @@ const actions = {
 			data: {
 				isActive: true,
 				hasDrawnCard: false,
+				hasStoredCards: false,
 			},
 		});
 	},
@@ -387,6 +392,29 @@ const actions = {
 		} else {
 			dispatch('selectQuarrelCard', { id: myPlayer.id });
 		}
+	},
+
+	storeCards({ dispatch, getters }, payload) {
+		this._vm.$log.debug('storeCards -> ', payload);
+
+		const currentPlayer = getters.getMyPlayer;
+		const cardsInStorage = currentPlayer.cardsInStorage;
+		const cardsToStore = payload.cards;
+		const cardsToStoreIds = _.map(cardsToStore, c => c.id);
+
+		const plData = {
+			cardsInHand: _.difference(payload.cardsInHand, cardsToStoreIds),
+			cardsInStorage: _.concat(cardsInStorage, cardsToStoreIds[0]),
+			hasStoredCards: true,
+			score: currentPlayer.score + cardsToStore[0].amount,
+		};
+
+		this._vm.$log.debug('plData -> ', plData);
+
+		return dispatch('update', {
+			id: currentPlayer.id,
+			data: plData,
+		});
 	},
 
 	update({}, payload) {
