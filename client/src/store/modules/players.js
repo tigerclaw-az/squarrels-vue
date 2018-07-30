@@ -18,12 +18,16 @@ const getters = {
 
 		Vue.$log.debug(state, myPlayer);
 
-		return (
-			myPlayer.isActive &&
-			!rootGetters['game/isActionCard']() &&
-			!myPlayer.hasStoredCards &&
-			(myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard)
-		);
+		if (myPlayer.id && myPlayer.cardsInHand) {
+			return (
+				myPlayer.isActive &&
+				!rootGetters['game/isActionCard']() &&
+				!myPlayer.hasStoredCards &&
+				(myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard)
+			);
+		}
+
+		return false;
 	},
 
 	canDiscardCard: (state, getter) => {
