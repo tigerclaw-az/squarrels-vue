@@ -36,7 +36,7 @@
 						:onClick="onClickCard"
 						:card-data="card"
 						card-type="hand"
-						:matches="findCardMatches(card.amount)"
+						:matches="card.cardType === 'special' ? [] : findCardMatches(card.amount)"
 						:position="{ left: (index * 32) + 'px' }"
 						:z-index="index"
 					></Card>
@@ -155,7 +155,9 @@ export default {
 				});
 		},
 		findCardMatches: function(amount) {
-			let groups = _.groupBy(this.myCardsDetails, c => c.amount);
+			const groups = _.groupBy(this.myCardsDetails, c => c.amount);
+
+			this.$log.debug('groups ->', groups);
 
 			if (groups[amount].length >= 3) {
 				return groups[amount];
