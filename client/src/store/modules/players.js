@@ -21,7 +21,7 @@ const getters = {
 		return (
 			myPlayer.isActive &&
 			!rootGetters['game/isActionCard']() &&
-			myPlayer.cardsInHand &&
+			!myPlayer.hasStoredCards &&
 			(myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard)
 		);
 	},
