@@ -135,17 +135,12 @@ const actions = {
 			throw new Error('Parameter "cards" cannot be empty!');
 		}
 
-		const cardsToAdd = _.flatten([data.cards]);
+		const cardsToAdd = _(data.cards)
+			.flatten([data.cards])
+			.map(card => card.id)
+			.value();
+
 		const playerId = data.id || getters.getMyPlayer.id;
-		// const player = getters.getById(playerId);
-		// const cardsMerge = _.union(player.cardsInHand, cardsToAdd);
-
-		// this._vm.$log.debug('cards:union -> ', cardsMerge);
-
-		// dispatch('updateLocalPlayer', {
-		// 	id: playerId,
-		// 	cardsInHand: cardsMerge,
-		// });
 
 		return api.players
 			.update(playerId, {
@@ -361,15 +356,18 @@ const actions = {
 		this._vm.$socket.sendObj(wsObj);
 	},
 
-	setQuarrelWinner({ dispatch }, payload) {
-		dispatch('update', {
+	setQuarrelWinner({ dispatch, getters }, payload) {
+		dispatch('updateLocalPlayer', {
 			id: payload.id,
 			isQuarrelWinner: true,
 		});
 
-		setTimeout(() => {
-			dispatch('addCards', payload);
-		}, 1500);
+		// Only send call for 'addCards' for player that is receiving them
+		if (payload.id === getters.getMyPlayer.id) {
+			setTimeout(() => {
+				dispatch('addCards', payload);
+			}, 1250);
+		}
 	},
 
 	startQuarrel({ dispatch, getters, state }, options = {}) {
