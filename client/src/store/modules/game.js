@@ -205,7 +205,7 @@ const actions = {
 					);
 
 					dispatch('resetAction');
-				}, 800);
+				}, 1000);
 			}, 3500);
 		} else {
 			const players = _.map(winners, obj => obj.playerId);
