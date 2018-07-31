@@ -3,9 +3,10 @@ const SOUND_EFFECTS = {
 	'action-card': 'action-card.mp3',
 	'active-player': 'active-player.mp3',
 	discard: 'discard.mp3',
-	'draw-card': 'draw-card.m4a',
+	'draw-card': 'draw-card.mp3',
 	'hoard-taken': 'hoard-taken.mp3',
 	'new-player': 'new-player.mp3',
+	'store-cards': 'store-cards.mp3',
 };
 
 let audio = {};

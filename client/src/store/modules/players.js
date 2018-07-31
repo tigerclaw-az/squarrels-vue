@@ -413,6 +413,8 @@ const actions = {
 
 		this._vm.$log.debug('plData -> ', plData);
 
+		dispatch('sound/play', 'store-cards', { root: true });
+
 		return dispatch('update', {
 			id: currentPlayer.id,
 			data: plData,
