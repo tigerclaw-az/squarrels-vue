@@ -1,5 +1,3 @@
-import Vue from 'vue';
-
 const SOUNDS_PATH = '/sounds/';
 const SOUND_EFFECTS = {
 	'action-card': 'action-card.mp3',
@@ -10,6 +8,12 @@ const SOUND_EFFECTS = {
 	'new-player': 'new-player.mp3',
 };
 
+let audio = {};
+
+for (const effect in SOUND_EFFECTS) {
+	audio[effect] = new Audio(SOUNDS_PATH + SOUND_EFFECTS[effect]);
+}
+
 const state = {
 	isEnabled: true,
 };
@@ -18,9 +22,9 @@ const getters = {};
 
 const actions = {
 	play({ commit }, name) {
-		let audio = new Audio(SOUNDS_PATH + SOUND_EFFECTS[name]);
+		let soundToPlay = audio[name];
 
-		audio.play();
+		soundToPlay.play();
 	},
 	toggle: ({ commit }) => {
 		commit('toggle');
