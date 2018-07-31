@@ -2,6 +2,7 @@ const SOUNDS_PATH = '/sounds/';
 const SOUND_EFFECTS = {
 	'action-card': 'action-card.mp3',
 	'active-player': 'active-player.mp3',
+	'cards-shuffle': 'cards-shuffle.mp3',
 	discard: 'discard.mp3',
 	'draw-card': 'draw-card.mp3',
 	'hoard-taken': 'hoard-taken.mp3',

@@ -46,6 +46,8 @@ const actions = {
 		// used again with new deal later
 		dispatch('players/resetCardsDrawn', { id: playerId }, { root: true });
 
+		dispatch('sound/play', 'cards-shuffle', { root: true });
+
 		return new Promise((resolve, reject) => {
 			// Watch for each time a card was drawn and updated for
 			// a given player, then continue to draw until they have MAX_CARDS
