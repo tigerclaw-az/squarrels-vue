@@ -76,6 +76,7 @@ export default {
 	watch: {
 		isStarted: function(to) {
 			if (to) {
+				this.isLoading = false;
 				this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
 			}
 		},
