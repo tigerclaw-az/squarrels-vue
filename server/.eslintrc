@@ -4,6 +4,13 @@
 		"es6": true,
 		"node": true
 	},
+	"globals": {
+		"wss": true
+	},
+	"parserOptions": {
+		"ecmaVersion": 8,
+		"parser": "babel-eslint"
+	},
 	"extends": ["eslint:recommended"],
 	"rules": {
 		"class-methods-use-this": ["error"],
