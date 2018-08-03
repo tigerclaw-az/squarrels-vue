@@ -10,23 +10,25 @@ const GameModel = require('../models/GameModel').model;
 // const PlayerModel = require('../models/PlayerModel').model;
 
 const resetGame = async function (gameData, options) {
+	logger.debug('resetGame:gameData -> ', gameData);
+	logger.debug('resetGame:options -> ', options);
+
 	const init = {
 		actionCard: null,
 		isDealing: false,
 		isLoaded: false,
 		isStarted: false,
+		roundNumber: 1,
 		'$set': { deckIds: [] },
 	};
 
 	const gameId = gameData.id;
 	const sessionId = gameData.sessionId;
 
-	if (!options.isNewRound) {
-		init.roundNumber = 1;
-	}
-
 	try {
 		const game = await GameModel.findById(gameId).exec();
+
+		logger.debug('game -> ', game);
 
 		const deckIds = game.deckIds;
 		const playerIds = game.playerIds;
@@ -54,27 +56,34 @@ const resetGame = async function (gameData, options) {
 					logger.error(err);
 				});
 		});
+
+		return new Promise((resolve, reject) => {
+			// Set roundNumber to correct value
+			if (options.isNewRound) {
+				init.roundNumber = game.roundNumber + 1;
+			}
+
+			logger.debug('game init -> ', init);
+
+			return gameMod.update(gameId, init, sessionId)
+				.then(doc => {
+					logger.debug('game reset -> ', doc);
+
+					wss.broadcast(
+						{ namespace: 'wsGame', action: 'update', nuts: doc },
+						sessionId
+					);
+
+					resolve(doc);
+				})
+				.catch(err => {
+					logger.error(err);
+					reject(err);
+				});
+		});
 	} catch (err) {
 		Promise.reject(err);
 	}
-
-	return new Promise((resolve, reject) => {
-		return gameMod.update(gameId, init, sessionId)
-			.then(doc => {
-				logger.debug('game reset -> ', doc);
-
-				wss.broadcast(
-					{ namespace: 'wsGame', action: 'update', nuts: doc },
-					sessionId
-				);
-
-				resolve(doc);
-			})
-			.catch(err => {
-				logger.error(err);
-				reject(err);
-			});
-	});
 };
 
 games.delete('/:id', function(req, res) {
@@ -272,8 +281,6 @@ games.get('/:id/deal', function(req, res) {
 			// prettier-ignore
 			Promise.all(deckPromises)
 				.then(decksCreated => {
-					logger.debug('decksCreated -> ', decksCreated);
-
 					let gameData = {
 						deckIds: _.map(decksCreated, deck => deck.id)
 					};
