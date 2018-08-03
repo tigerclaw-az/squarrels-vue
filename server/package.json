@@ -15,7 +15,7 @@
 		"express-session": "^1.15.6",
 		"express-ws-routes": "^1.1.0",
 		"lodash": "^4.17.5",
-		"log4js": "^2.10.0",
+		"log4js": "^3.0.4",
 		"mongoose": "4",
 		"mongoose-seed-db": "0.0.10",
 		"morgan": "^1.9.0",
