@@ -4,6 +4,14 @@ const logger = config.logger('routes:modules:player');
 const Q = require('q');
 const Player = require('../../models/PlayerModel.js').model;
 
+const initPlayer = {
+	'$set': { cardsInHand: [], cardsInStorage: [] },
+	hasDrawnCard: false,
+	hasStoredCards: false,
+	isActive: false,
+	totalCards: 0,
+};
+
 let playerMod = {
 	get: (data = {}) => {
 		// prettier-ignore
@@ -12,18 +20,17 @@ let playerMod = {
 			.select('+cardsInHand')
 			.exec();
 	},
+	newRound: (id, sid) => {
+		return playerMod.update(id, initPlayer, sid);
+	},
 	reset: (id, sid) => {
-		const init = {
-			cardsInHand: [],
-			cardsInStorage: [],
-			hasDrawnCard: false,
-			isFirstTurn: true,
-			isActive: false,
+		const newGameData = Object.assign({}, initPlayer, {
 			score: 0,
-			totalCards: 0,
-		};
+		});
 
-		return playerMod.update(id, init, sid);
+		logger.debug('newGameData -> ', newGameData);
+
+		return playerMod.update(id, newGameData, sid);
 	},
 	update: (id, data, sid) => {
 		let playerId = { _id: id },

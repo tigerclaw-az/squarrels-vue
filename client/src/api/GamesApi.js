@@ -13,6 +13,10 @@ export default class GamesApi extends BaseApi {
 		return this.http.get(`/${id}/deal`);
 	}
 
+	nextRound(id) {
+		return this.http.post(`/${id}/next-round`);
+	}
+
 	start(id) {
 		return this.http.get(`/${id}/start`);
 	}

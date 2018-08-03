@@ -184,6 +184,10 @@ const actions = {
 		});
 	},
 
+	remove({}, deckIds) {
+		return api.decks.delete(deckIds.join(','));
+	},
+
 	unload({ commit }) {
 		commit('INIT');
 

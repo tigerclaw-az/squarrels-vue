@@ -5,24 +5,27 @@ import _ from 'lodash';
 
 import api from '@/api/index';
 
-const initialState = {
+const newRoundState = {
 	actionCard: null,
-	deckIds: [],
-	id: null,
 	isDealing: false,
 	isLoaded: false,
 	isStarted: false,
-	playerIds: [],
 	quarrelCards: {
 		current: [],
 		saved: [],
 	},
 	quarrelCount: 0,
 	showQuarrel: false,
+};
+
+const initialState = Object.assign({}, newRoundState, {
+	deckIds: [],
+	id: null,
+	playerIds: [],
 	startDate: null,
 	roundNumber: 1,
 	updatedAt: null,
-};
+});
 
 const state = Object.assign({}, initialState);
 
@@ -160,6 +163,14 @@ const actions = {
 			});
 	},
 
+	async nextRound({ dispatch, state }) {
+		this._vm.$log.debug('game/nextRound');
+
+		await dispatch('decks/unload', {}, { root: true });
+
+		return api.games.nextRound(state.id);
+	},
+
 	quarrelWinner({ commit, dispatch, state }) {
 		const quarrelGroup = _.groupBy(state.quarrelCards.current, data => {
 			return data.card.name === 'golden' ? 6 : data.card.amount;
@@ -227,9 +238,9 @@ const actions = {
 
 	async reset({ dispatch, state }) {
 		try {
-			await api.games.reset(state.id);
+			await dispatch('decks/unload', {}, { root: true });
 
-			return dispatch('decks/unload', {}, { root: true });
+			return api.games.reset(state.id);
 		} catch (err) {
 			throw new Error(err);
 		}

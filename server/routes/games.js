@@ -7,7 +7,75 @@ const playerMod = require('./modules/player');
 
 const DeckModel = require('../models/DeckModel').model;
 const GameModel = require('../models/GameModel').model;
-const PlayerModel = require('../models/PlayerModel').model;
+// const PlayerModel = require('../models/PlayerModel').model;
+
+const resetGame = async function (gameData, options) {
+	const init = {
+		actionCard: null,
+		isDealing: false,
+		isLoaded: false,
+		isStarted: false,
+		'$set': { deckIds: [] },
+	};
+
+	const gameId = gameData.id;
+	const sessionId = gameData.sessionId;
+
+	if (!options.isNewRound) {
+		init.roundNumber = 1;
+	}
+
+	try {
+		const game = await GameModel.findById(gameId).exec();
+
+		const deckIds = game.deckIds;
+		const playerIds = game.playerIds;
+
+		logger.debug('decks -> ', deckIds);
+		logger.debug('players -> ', playerIds);
+
+		await DeckModel.deleteMany({ _id: { $in: deckIds } });
+
+		_.forEach(playerIds, id => {
+			// prettier-ignore
+			playerMod[options.isNewRound ? 'newRound' : 'reset'](id, sessionId)
+				.then(doc => {
+					logger.debug('player reset -> ', doc);
+					wss.broadcast(
+						{
+							namespace: 'wsPlayers',
+							action: 'update',
+							nuts: doc,
+						},
+						sessionId
+					);
+				})
+				.catch(err => {
+					logger.error(err);
+				});
+		});
+	} catch (err) {
+		Promise.reject(err);
+	}
+
+	return new Promise((resolve, reject) => {
+		return gameMod.update(gameId, init, sessionId)
+			.then(doc => {
+				logger.debug('game reset -> ', doc);
+
+				wss.broadcast(
+					{ namespace: 'wsGame', action: 'update', nuts: doc },
+					sessionId
+				);
+
+				resolve(doc);
+			})
+			.catch(err => {
+				logger.error(err);
+				reject(err);
+			});
+	});
+};
 
 games.delete('/:id', function(req, res) {
 	let id = req.params.id,
@@ -142,74 +210,29 @@ games.post('/:id', function(req, res) {
 		});
 });
 
+games.post('/:id/next-round', function(req, res) {
+	const gameId = req.params.id;
+	const sessionId = req.sessionID;
+
+	resetGame({ id: gameId, sessionId }, { isNewRound: true })
+		.then(doc => {
+			res.status(200).json(doc);
+		})
+		.catch(err => {
+			res.status(500).json(config.apiError(err));
+		});
+});
+
 games.post('/:id/reset', function(req, res) {
 	const gameId = req.params.id;
 	const sessionId = req.sessionID;
 
-	const init = {
-		actionCard: null,
-		deckIds: [],
-		isDealing: false,
-		isLoaded: false,
-		isStarted: false,
-		roundNumber: 1,
-	};
-
-	// prettier-ignore
-	GameModel
-		.findById(gameId)
-		.exec()
-		.then(game => {
-			const deckIds = game.deckIds;
-			const playerIds = game.playerIds;
-
-			logger.debug('decks -> ', deckIds);
-			logger.debug('players -> ', playerIds);
-
-			DeckModel
-				.deleteMany({ _id: { $in: deckIds } })
-				.then(() => {
-				})
-				.catch(err => {
-					logger.error(err);
-				});
-
-			_.forEach(playerIds, id => {
-				// prettier-ignore
-				playerMod
-					.reset(id, sessionId)
-					.then(doc => {
-						logger.debug('player reset -> ', doc);
-						wss.broadcast(
-							{
-								namespace: 'wsPlayers',
-								action: 'update',
-								nuts: doc,
-							},
-							sessionId
-						);
-					})
-					.catch(err => {
-						logger.error(err);
-					});
-			});
-
-			gameMod
-				.update(gameId, init, sessionId)
-				.then(doc => {
-					logger.debug('game reset -> ', doc);
-
-					wss.broadcast(
-						{ namespace: 'wsGame', action: 'update', nuts: doc },
-						sessionId
-					);
-
-					res.status(200).json(doc);
-				})
-				.catch(err => {
-					logger.error(err);
-					res.status(500).json(config.apiError(err));
-				});
+	resetGame({ id: gameId, sessionId }, { isNewRound: false })
+		.then(doc => {
+			res.status(200).json(doc);
+		})
+		.catch(err => {
+			res.status(500).json(config.apiError(err));
 		});
 });
 

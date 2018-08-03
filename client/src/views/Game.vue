@@ -116,11 +116,11 @@ export default {
 			this.$store.dispatch({ type: 'game/start' });
 		},
 		onClickNewGame: async function(evt) {
-			this.$log.debug('onClickStartGame', evt);
+			this.$log.debug('onClickNewGame', evt);
 			this.isLoading = true;
 
 			try {
-				await this.$store.dispatch({ type: 'game/reset' });
+				await this.$store.dispatch({ type: 'game/nextRound' });
 				this.$store.dispatch({ type: 'game/start' });
 			} catch (err) {
 				this.$log.error(err);
