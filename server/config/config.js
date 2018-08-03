@@ -25,21 +25,27 @@ let config = {
 		}).join('').replace(/`/g, ' ');
 	},
 
-	logger(name) {
+	logger(name, options) {
 		let mylog = log.getLogger(name || 'app');
+
+		if (options) {
+			return log.connectLogger(mylog, options);
+		}
 
 		return mylog;
 	},
 
 	playerImage: 'assets/images/squirrel-placeholder.jpg'
-}
+};
 
 log.configure({
 	appenders: {
 		console: { type: 'console' }
 	},
 	categories: {
-		default: { appenders: ['console'], level: process.env.LOGLEVEL }
+		default: { appenders: ['console'], level: process.env.LOGLEVEL },
+		websocket: { appenders: ['console'], level: 'WARN' },
+		'routes:decks': { appenders: ['console'], level: 'WARN' },
 	}
 });
 
