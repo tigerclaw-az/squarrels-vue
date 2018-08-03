@@ -43,8 +43,6 @@ decks.post('/:id', function(req, res) {
 		.findOneAndUpdate(deck, req.body, options)
 		.populate('cards')
 		.then(function(doc) {
-			logger.debug('findOneAndUpdate', doc);
-
 			/* eslint-disable no-undef */
 			wss.broadcast(
 				{ namespace: 'wsDecks', action: 'update', nuts: doc },
