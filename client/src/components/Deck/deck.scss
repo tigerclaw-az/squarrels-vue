@@ -1,6 +1,7 @@
-$deck-height: 16;
-
+@import "~@/assets/scss/variables";
 @import "~@/components/Card/card";
+
+$deck-height: 16 !default;
 
 .dropdown-menu {
 	max-height: 200px;

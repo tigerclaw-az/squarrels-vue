@@ -1,3 +1,5 @@
+@import "~@/assets/scss/variables";
+@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 @import "~@/components/Card/card";
 
 .sq-player {
@@ -47,9 +49,33 @@
 		}
 	}
 
+	.sq-player-thumbnail {
+		margin-right: 1rem;
+		position: relative;
+
+		img {
+			width: 6.5rem;
+		}
+
+		.sq-player-card-count {
+			bottom: 0;
+			color: get-color("alabaster");
+			font-size: 2rem;
+			line-height: 1;
+			position: absolute;
+			right: 0;
+		}
+	}
+
 	&.current {
 		flex: 1 0 100%;
 		margin-bottom: 3.5rem;
+
+		.sq-player-thumbnail {
+			img {
+				width: 7.5rem;
+			}
+		}
 
 		.btn-card {
 			&:not(.disabled) {
@@ -72,24 +98,6 @@
 		.sq-player-info {
 			color: get-color("zest");
 			font-weight: $font-weight-bold;
-		}
-	}
-
-	.sq-player-thumbnail {
-		margin-right: 1rem;
-		position: relative;
-
-		img {
-			width: 7.5rem;
-		}
-
-		.sq-player-card-count {
-			bottom: 0;
-			color: get-color("alabaster");
-			font-size: 2rem;
-			line-height: 1;
-			position: absolute;
-			right: 0;
 		}
 	}
 
@@ -152,13 +160,19 @@
 		}
 	}
 
-	@media (min-width: $screen-md-min) {
+	@include media-breakpoint-up(md) {
 		&.current {
 			.btn-card {
 				&.selected {
 					.card {
 						transform: scale(1);
 					}
+				}
+			}
+
+			.sq-player-thumbnail {
+				img {
+					width: 10rem;
 				}
 			}
 		}

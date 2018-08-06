@@ -36,7 +36,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~@/assets/scss/variables';
+// prettier-ignore
+@import "~@/assets/scss/variables";
+// prettier-ignore
+@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
 .sq-player-info {
 	align-items: center;
@@ -44,11 +47,11 @@ export default {
 	flex-wrap: wrap;
 	justify-content: center;
 	margin-right: 1rem;
-	max-width: 10rem;
+	max-width: 8rem;
 
 	.sq-player-info-item {
 		color: inherit;
-		font-size: 2.5rem;
+		font-size: inherit;
 		position: relative;
 	}
 
@@ -57,35 +60,22 @@ export default {
 	}
 
 	.sq-player-storage {
-		font-size: 4rem;
+		font-size: 3.5rem;
 
 		.sq-player-score {
 			@extend %center-horizontal;
-			color: get-color('carnaby-tan');
+			// prettier-ignore
+			color: get-color("carnaby-tan");
 			font-size: 2rem;
 			line-height: 2.25;
 			top: 0;
 		}
 	}
-}
 
-@media (min-width: $screen-md-min) {
-	.sq-player-thumbnail {
-		img {
-			width: 10rem;
-		}
-	}
-
-	.sq-player-info {
-		max-width: 11rem;
-
-		.sq-player-info-item {
-			font-size: 3.5rem;
-		}
+	@include media-breakpoint-up(md) {
+		max-width: 9rem;
 
 		.sq-player-storage {
-			font-size: 5.5rem;
-
 			.sq-player-score {
 				font-size: 2.75rem;
 				font-weight: $font-weight-bold;
