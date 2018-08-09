@@ -1,6 +1,5 @@
 <template>
-	<div id="deck" :type="deck.deckType" v-if="deck">
-		<div class="count" v-if="isType('main')">{{totalCards}}</div>
+	<div v-if="deck" id="deck" :type="deck.deckType" :class="{ 'can-draw': canDrawCard }">
 		<div
 			class="deck"
 			:class="{
@@ -8,6 +7,7 @@
 				'empty': !totalCards,
 			}"
 		>
+			<div class="count" v-if="isType('main')">{{totalCards}}</div>
 			<div
 				class="cards-group"
 				:class="{ disabled: isDisabled }"
@@ -16,8 +16,8 @@
 				@click.prevent="onClick"
 			>
 				<span
-						v-for="(card, index) in cardsToDisplay"
-						:key="index"
+					v-for="(card, index) in cardsToDisplay"
+					:key="index"
 					class="card"
 					:class="[cardClassName(card.name)]"
 				>

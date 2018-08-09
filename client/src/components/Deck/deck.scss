@@ -1,12 +1,7 @@
 @import "~@/assets/scss/variables";
 @import "~@/components/Card/card";
 
-$deck-height: 16 !default;
-
-.dropdown-menu {
-	max-height: 200px;
-	overflow: auto;
-}
+$deck-height: 8 !default;
 
 #deck {
 	$height: map-get($card-height, "small") + $deck-height;
@@ -20,12 +15,13 @@ $deck-height: 16 !default;
 	position: relative;
 
 	.count {
-		color: theme-color("danger");
-		font-size: 2rem;
+		bottom: 0;
+		color: $black;
+		font-size: 1.25rem;
 		font-weight: $font-weight-bold;
+		left: 50%;
 		position: absolute;
-		right: 0;
-		top: -1rem;
+		transform: translateX(-50%);
 		z-index: 1;
 	}
 
@@ -59,9 +55,20 @@ $deck-height: 16 !default;
 	}
 
 	&[type="main"] {
-		.deck {
-			// box-shadow: 4px 6px 1px get-color("pickled-bean");
-			// border: 2px outset get-color("zest");
+		&.can-draw {
+			.cards-group {
+				border: 2px dashed get-color("zest");
+				box-shadow: 0 0 15px 10px theme-color("success");
+			}
+		}
+
+		.dropdown {
+			margin-top: 1rem;
+
+			.dropdown-menu {
+				max-height: 200px;
+				overflow: auto;
+			}
 		}
 	}
 
@@ -79,11 +86,11 @@ $deck-height: 16 !default;
 				$rotate: 0;
 
 				@for $i from 1 through 20 {
+					$rotate: $rotate + 5;
+
 					&:nth-child(#{$i}) {
 						transform: rotate(#{$rotate}deg);
 					}
-
-					$rotate: $rotate + 5;
 				}
 			}
 		}
