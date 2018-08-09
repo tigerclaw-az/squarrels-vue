@@ -4,12 +4,7 @@
 			<b-col class="header-item game-start">{{startDate}}</b-col>
 			<b-col class="header-item game-settings">
 				<game-settings></game-settings>
-				<b-dropdown v-if="isAdmin" id="dropdown-admin-options" class="ml-2" variant="info" text="Option">
-					<b-dropdown-item @click="onClickAdminOption('reset-game')">Reset Game</b-dropdown-item>
-					<b-dropdown-item @click="onClickAdminOption('reset-hoard')">Reset Hoard</b-dropdown-item>
-					<b-dropdown-item @click="onClickAdminOption('reset-player-cards')">Reset Player Cards</b-dropdown-item>
-					<b-dropdown-item @click="onClickAdminOption('skip-player')">Skip Player</b-dropdown-item>
-				</b-dropdown>
+				<admin-options v-if="isAdmin"></admin-options>
 			</b-col>
 			<b-col class="header-item game-round">ROUND: {{roundNumber}}</b-col>
 		</b-row>
@@ -24,11 +19,13 @@ import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
 
 import Icon from 'vue-awesome/components/Icon';
 
+import AdminOptions from '@/components/AdminOptions.vue';
 import GameSettings from '@/components/GameSettings.vue';
 
 export default {
 	name: 'BoardHeader',
 	components: {
+		'admin-options': AdminOptions,
 		'b-dropdown': bDropdown,
 		'game-settings': GameSettings,
 		Icon,
@@ -49,17 +46,6 @@ export default {
 			return moment(this.$store.state.game.startDate).format(
 				'dddd, MMMM Do YYYY, h:mm:ss a'
 			);
-		},
-	},
-	methods: {
-		onClickAdminOption: function(name) {
-			this.$log.debug(name);
-
-			switch (name) {
-				case 'reset-game':
-					this.$store.dispatch('game/reset');
-					break;
-			}
 		},
 	},
 };
