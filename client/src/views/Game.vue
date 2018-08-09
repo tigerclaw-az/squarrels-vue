@@ -138,5 +138,88 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./game.scss">
+<style lang="scss">
+// prettier-ignore
+@import "~@/assets/scss/variables";
+
+#board {
+	position: relative;
+}
+
+.game-overlay {
+	height: auto !important;
+	margin: 0 auto -20px;
+	min-height: 100%;
+	position: fixed;
+	width: 100%;
+	z-index: 110;
+
+	&.winter {
+		background: url(https://media.giphy.com/media/gvKru3mU4wLFm/giphy.gif)
+			no-repeat;
+		background-position: center;
+		background-size: cover;
+	}
+
+	&:not(.winter) {
+		// prettier-ignore
+		background-color: get-color("mine-shaft");
+		opacity: 0.9;
+	}
+
+	.game-overlay--new-game,
+	.game-overlay--start-game {
+		color: $white;
+		font-size: 2em;
+		z-index: 120;
+	}
+
+	.game-overlay--start-game {
+		@extend %center;
+
+		.waiting-message {
+			animation-duration: 1.25s;
+			/**
+			* This makes sure that the starting style (opacity: .2)
+			* of the animation is applied before the animation starts.
+			* Otherwise we would see a short flash or would have
+			* to set the default styling of the dots to the same
+			* as the animation. Same applies for the ending styles.
+			*/
+			animation-fill-mode: both;
+			animation-iteration-count: infinite;
+			animation-name: blink;
+
+			transform: translateZ(0);
+		}
+	}
+
+	.game-overlay--new-game {
+		.container-button {
+			@extend %center;
+		}
+	}
+
+	.btn-start-game,
+	.btn-new-game {
+		@include animation-pulse;
+
+		font-size: inherit;
+		z-index: 130;
+	}
+}
+
+.decks-container {
+	align-content: center;
+	align-items: flex-start;
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: center;
+	padding: 0.5rem;
+}
+
+.game-buttons {
+	position: absolute;
+	z-index: 5;
+}
 </style>
