@@ -8,6 +8,9 @@
 			}"
 		>
 			<div class="count" v-if="isType('main')">{{totalCards}}</div>
+			<div v-if="isType('main') && !canDrawCard" class="overlay">
+				<icon name="ban" scale="7" class="icon"></icon>
+			</div>
 			<div
 				class="cards-group"
 				:class="{ disabled: isDisabled }"
@@ -47,10 +50,10 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
+import Icon from 'vue-awesome/components/Icon';
 
 export default {
 	name: 'Deck',
-	components: {},
 	props: {
 		id: {
 			type: String,
@@ -101,7 +104,8 @@ export default {
 		isDisabled: function() {
 			return (
 				(this.isType('main') && !this.canDrawCard) ||
-				(this.isType('discard') && this.tooManyClicks) ||
+				(this.isType('discard') &&
+					(this.tooManyClicks || !this.canHoard)) ||
 				this.isType('action')
 			);
 		},
@@ -214,6 +218,9 @@ export default {
 					this.$toasted.error(`Error drawing card! ${err}`);
 				});
 		},
+	},
+	components: {
+		icon: Icon,
 	},
 };
 </script>
