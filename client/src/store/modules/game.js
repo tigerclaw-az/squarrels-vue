@@ -402,7 +402,7 @@ const mutations = {
 								(countDiff > 0 ? 'joined' : 'left') +
 								'!';
 
-							this._vm.$toasted.info(msg);
+							this._vm.$toasted.info(msg, { duration: 500 });
 						}
 					}
 				}
