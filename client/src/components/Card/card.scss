@@ -3,15 +3,15 @@
 $card-height: (
 	small: 158,
 	medium: 158,
-);
+) !default;
 
 $card-width: (
 	small: 120,
 	medium: 120,
-);
+) !default;
 
-$card-width-stack: 120;
-$num-cards: 20;
+$card-width-stack: 120 !default;
+$num-cards: 20 !default;
 
 $card-images: (
 	"blank--",
@@ -81,10 +81,8 @@ $card-images: (
 	}
 }
 
-/* stylelint-disable */
 .card {
 	@include generate-cards;
-	/* stylelint-enable */
 
 	background-color: transparent;
 	background-repeat: no-repeat;
