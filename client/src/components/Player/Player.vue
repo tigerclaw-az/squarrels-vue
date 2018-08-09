@@ -157,8 +157,6 @@ export default {
 		findCardMatches: function(amount) {
 			const groups = _.groupBy(this.myCardsDetails, c => c.amount);
 
-			this.$log.debug('groups ->', groups);
-
 			if (groups[amount].length >= 3) {
 				return groups[amount];
 			}
@@ -166,8 +164,6 @@ export default {
 			return [];
 		},
 		getCardDetails: function() {
-			this.$log.debug('getting cards ->', this.myCards);
-
 			api.cards
 				.get(this.myCards.join(','))
 				.then(res => {
