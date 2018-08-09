@@ -111,7 +111,9 @@ export default {
 	watch: {
 		isMyTurn: function(to, from) {
 			if (to && to !== from) {
-				this.$toasted.success('YOUR TURN');
+				this.$toasted.success('YOUR TURN', {
+					duration: 1000,
+				});
 				this.$store.dispatch('sound/play', 'active-player');
 			}
 		},
