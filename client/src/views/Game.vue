@@ -55,13 +55,6 @@ import BoardPlayers from '@/components/Board/BoardPlayers.vue';
 
 export default {
 	name: 'Game',
-	components: {
-		'b-dropdown': bDropdown,
-		ActionCard,
-		BoardHeader,
-		BoardPlayers,
-		Deck,
-	},
 	props: {
 		id: {
 			type: String,
@@ -134,6 +127,13 @@ export default {
 				this.$store.dispatch({ type: 'decks/unload', gameId: this.id });
 			}
 		},
+	},
+	components: {
+		'b-dropdown': bDropdown,
+		ActionCard,
+		BoardHeader,
+		BoardPlayers,
+		Deck,
 	},
 };
 </script>
