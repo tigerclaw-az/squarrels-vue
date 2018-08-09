@@ -7,6 +7,8 @@
 				:key="p.id"
 				:player="p">
 			</Player>
+			<player-storage-modal v-for="(p, index) in playersOrder"
+				:key="index" :player="p"></player-storage-modal>
 		</div>
 	</div>
 </template>
@@ -17,6 +19,7 @@ import { mapState } from 'vuex';
 import { config } from '@/config';
 
 import Player from '@/components/Player/Player.vue';
+import PlayerStorageModal from '@/components/Player/PlayerStorageModal.vue';
 
 export default {
 	name: 'BoardPlayers',
@@ -85,6 +88,7 @@ export default {
 	methods: {},
 	components: {
 		Player,
+		'player-storage-modal': PlayerStorageModal,
 	},
 };
 </script>

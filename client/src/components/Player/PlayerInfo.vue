@@ -2,8 +2,8 @@
 	<div class="sq-player-info">
 		<div class="sq-player-name">{{player.name}}</div>
 		<a
-			href="#"
 			class="sq-player-info-item sq-player-storage"
+			href="#"
 			title="View or Store Nuts"
 			@click.prevent="onClickStorage"
 		>
@@ -25,8 +25,11 @@ export default {
 		},
 	},
 	methods: {
-		onClickStorage: function(evt) {
-			this.$log.debug(evt);
+		onClickStorage: function() {
+			this.$root.$emit(
+				'bv::show::modal',
+				`player-storage-modal-${this.player.id}`
+			);
 		},
 	},
 	components: {
