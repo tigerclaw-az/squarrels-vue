@@ -3,16 +3,7 @@
 		<b-row class="align-items-center">
 			<b-col class="header-item game-start">{{startDate}}</b-col>
 			<b-col class="header-item game-settings">
-				<b-dropdown id="dropdown-game-settings" variant="info">
-					<template slot="button-content">
-						<icon name="cog" class="icon icon-settings" label="Settings"></icon>
-					</template>
-					<b-dropdown-item @click="onClickSetting('toggleSound')">
-						<icon :name="getIcon('sound')" class="icon icon-sound" label="Sound"></icon>
-						<span v-if="sound.isEnabled">Sounds Off</span>
-						<span v-else>Sounds On</span>
-					</b-dropdown-item>
-				</b-dropdown>
+				<game-settings></game-settings>
 				<b-dropdown v-if="isAdmin" id="dropdown-admin-options" class="ml-2" variant="info" text="Option">
 					<b-dropdown-item @click="onClickAdminOption('reset-game')">Reset Game</b-dropdown-item>
 					<b-dropdown-item @click="onClickAdminOption('reset-hoard')">Reset Hoard</b-dropdown-item>
@@ -33,10 +24,13 @@ import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
 
 import Icon from 'vue-awesome/components/Icon';
 
+import GameSettings from './GameSettings.vue';
+
 export default {
 	name: 'BoardHeader',
 	components: {
 		'b-dropdown': bDropdown,
+		'game-settings': GameSettings,
 		Icon,
 	},
 	props: {
@@ -51,11 +45,6 @@ export default {
 	computed: {
 		...mapState(['isAdmin']),
 		...mapState('game', ['roundNumber']),
-		...mapState({
-			// This is required for nested modules
-			// @see https://github.com/vuejs/vuex/issues/459
-			sound: state => state.sound,
-		}),
 		startDate: function() {
 			return moment(this.$store.state.game.startDate).format(
 				'dddd, MMMM Do YYYY, h:mm:ss a'
@@ -63,12 +52,6 @@ export default {
 		},
 	},
 	methods: {
-		getIcon: function(name) {
-			switch (name) {
-				case 'sound':
-					return 'volume-' + (this.sound.isEnabled ? 'up' : 'off');
-			}
-		},
 		onClickAdminOption: function(name) {
 			this.$log.debug(name);
 
@@ -77,9 +60,6 @@ export default {
 					this.$store.dispatch('game/reset');
 					break;
 			}
-		},
-		onClickSetting: function(event) {
-			this.$log.debug(event);
 		},
 	},
 };
