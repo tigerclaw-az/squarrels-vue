@@ -23,10 +23,12 @@ const state = {
 const getters = {};
 
 const actions = {
-	play({ commit }, name) {
+	play({ state }, name) {
 		let soundToPlay = audio[name];
 
-		soundToPlay.play();
+		if (state.isEnabled) {
+			soundToPlay.play();
+		}
 	},
 	toggle: ({ commit }) => {
 		commit('toggle');
