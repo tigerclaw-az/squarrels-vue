@@ -5,22 +5,23 @@
 		class="btn-card"
 		:class="{
 			disabled: isDisabled,
-			highlight: hasMatch,
 		}"
 		role="button"
 		:style="cardStyle"
-		@click="!isDisabled && onClick(cardData, matches, $event)"
+		@click="!isDisabled && onClick(details, matches, $event)"
 	>
 		<span
 			class="card"
 			:class="cardClass"
 		>
+			<icon v-if="hasMatch" name="" class="icon"></icon>
 		</span>
 	</div>
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex';
+import Icon from 'vue-awesome/components/Icon';
 
 import api from '@/api/index';
 
@@ -53,7 +54,7 @@ export default {
 	},
 	data: function() {
 		return {
-			// cardData: {},
+			details: {},
 		};
 	},
 	computed: {
@@ -63,18 +64,15 @@ export default {
 		...mapState({
 			actionCard: state => state.game.actionCard,
 		}),
-		canDrag: function() {
-			return true;
-		},
 		cardClass: function() {
-			if (this.cardData) {
-				return `${this.cardData.cardType || 'blank'}--${
-					this.cardData.name
+			if (this.details) {
+				return `${this.details.cardType || 'blank'}--${
+					this.details.name
 				}`;
 			}
 		},
 		cardStyle: function() {
-			if (!['action', 'quarrel'].includes(this.cardType)) {
+			if (!['action', 'quarrel', 'storage'].includes(this.cardType)) {
 				return { left: this.position.left, 'z-index': this.zIndex };
 			}
 
@@ -100,20 +98,26 @@ export default {
 		},
 	},
 	mounted: function() {
-		if (!this.cardData) {
+		if (this.cardData) {
+			this.details = this.cardData;
+		} else if (this.id && !this.cardData) {
 			api.cards
 				.get(this.id)
 				.then(res => {
 					if (res.status === 200) {
-						this.cardData = res.data[0];
+						this.details = res.data[0];
 					}
 				})
 				.catch(err => {
 					this.$log.error(err);
 				});
+		} else {
+			this.$toasted.error('Unable to get card data!');
 		}
 	},
-	methods: {},
+	components: {
+		icon: Icon,
+	},
 };
 </script>
 
