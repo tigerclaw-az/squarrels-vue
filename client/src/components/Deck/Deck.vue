@@ -1,5 +1,6 @@
 <template>
 	<div v-if="deck" id="deck" :type="deck.deckType" :class="{ 'can-draw': canDrawCard }">
+		<span class="deck-label">{{deck.deckType}}</span>
 		<div
 			class="deck"
 			:class="{
