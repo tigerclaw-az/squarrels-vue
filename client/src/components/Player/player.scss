@@ -139,6 +139,12 @@
 
 			.btn-card {
 				width: rem-calc($card-width-stack);
+
+				&:hover {
+					.card {
+						top: -20px;
+					}
+				}
 			}
 		}
 
