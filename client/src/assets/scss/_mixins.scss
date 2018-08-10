@@ -18,16 +18,16 @@
 }
 
 @mixin animation-pulse() {
-	animation-name: pulse;
 	animation-duration: 1.25s;
-	animation-iteration-count: infinite;
 	animation-fill-mode: both;
+	animation-iteration-count: infinite;
+	animation-name: pulse;
 }
 @mixin clearfix() {
 	&::after {
-		display: block;
-		content: "";
 		clear: both;
+		content: "";
+		display: block;
 	}
 }
 
