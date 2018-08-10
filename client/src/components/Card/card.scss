@@ -38,7 +38,7 @@ $card-images: (
 			background-image: url("~@/assets/images/#{$name}.png");
 
 			@if $name == "special--rotten" {
-				$box-shadow-color: get-color("darkolivegreen");
+				$box-shadow-color: get-color("neptune");
 			} @else if $name == "special--golden" {
 				$box-shadow-color: get-color("saffron");
 			}
