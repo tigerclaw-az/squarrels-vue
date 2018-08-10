@@ -215,6 +215,10 @@ module.exports = function(server, sessionParser) {
 									sid
 								);
 							});
+
+							setTimeout(() => {
+								resetActionCard(data.gameId, sid);
+							}, 1500);
 						};
 
 						logger.debug('players -> ', players);
@@ -240,8 +244,7 @@ module.exports = function(server, sessionParser) {
 						});
 
 						Q.all(updatePromises).then(() => {
-							resetActionCard(data.gameId, sid);
-							setTimeout(dealCards, 1000);
+							setTimeout(dealCards, 1500);
 						});
 					});
 				},
