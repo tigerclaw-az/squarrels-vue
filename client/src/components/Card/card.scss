@@ -58,11 +58,6 @@ $card-images: (
 		width: rem-calc(map-get($card-width, "small"));
 	}
 
-	[card-type="action"] {
-		height: 0;
-		width: 0;
-	}
-
 	.card {
 		@include generate-cards;
 	}

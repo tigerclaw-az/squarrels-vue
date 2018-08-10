@@ -1,20 +1,17 @@
 <template>
-	<div id="action-card">
-		<span
-			v-if="decksReady"
+	<div v-if="decksReady"
+		id="action-card"
+		class="action-card--wrapper"
+		:class="[{ shown: hideCard, instant: isInstant }, card.name]"
+	>
+		<span class="card blank--"></span>
+		<Card
+			:id="card.id"
+			:card-data="card"
 			card-type="action"
-			class="action-card--wrapper"
-			:class="{ shown: hideCard, instant: isInstant }"
+			ref="card"
 		>
-			<span class="card blank--"></span>
-			<Card
-				:id="card.id"
-				:card-data="card"
-				card-type="action"
-				ref="card"
-			>
-			</Card>
-		</span>
+		</Card>
 	</div>
 </template>
 
@@ -52,20 +49,25 @@ export default {
 			const hoardCards = hoardDeck.cards;
 
 			const onAnimationEnd = () => {
+				const cardId = this.card.id;
+				const cardName = this.card.name;
+
 				this.hideCard = true;
 
 				this.$store.dispatch('sound/play', `action-card--${cardName}`);
-					case 'ambush':
+
+				switch (cardName) {
 					case 'whirlwind':
+					case 'ambush':
 						this.$store.dispatch(
 							'players/actionCard',
-							{ name: this.card.name, gameId: this.gameId },
+							{ name: cardName, gameId: this.gameId },
 							{ root: true }
 						);
 
 						this.$store.dispatch('decks/addCard', {
 							type: 'action',
-							cardId: this.card.id,
+							cardId,
 						});
 
 						break;
@@ -86,7 +88,7 @@ export default {
 					case 'winter':
 						this.$store.dispatch('decks/addCard', {
 							type: 'action',
-							cardId: this.card.id,
+							cardId,
 						});
 
 						this.$store.dispatch('game/update', {
@@ -147,19 +149,25 @@ export default {
 
 	@include flip-card {
 		&.action--whirlwind {
+			animation-duration: 2.5s;
 			animation-name: action-whirlwind;
 		}
 	}
 
 	left: 40%;
 	opacity: 1;
-	position: absolute !important;
-	top: -20%;
+	position: absolute;
+	top: 0;
 	transform: scale(2);
 	transition-duration: 0.5s;
 	transition-property: transform, opacity;
 	z-index: 100;
 
+	&.whirlwind {
+		transition-delay: 2.5s;
+	}
+
+	// Once the card is flipped we need to move it towards the 'action' deck
 	&.shown {
 		transform: translate(18vw, -32vh);
 	}
