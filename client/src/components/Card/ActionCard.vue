@@ -54,7 +54,7 @@ export default {
 			const onAnimationEnd = () => {
 				this.hideCard = true;
 
-				switch (this.card.name) {
+				this.$store.dispatch('sound/play', `action-card--${cardName}`);
 					case 'ambush':
 					case 'whirlwind':
 						this.$store.dispatch(

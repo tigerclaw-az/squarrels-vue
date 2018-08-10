@@ -1,6 +1,7 @@
 const SOUNDS_PATH = '/sounds/';
 const SOUND_EFFECTS = {
 	'action-card': 'action-card.mp3',
+	'action-card--whirlwind': 'action-card--whirlwind.mp3',
 	'active-player': 'active-player.mp3',
 	'cards-shuffle': 'cards-shuffle.mp3',
 	discard: 'discard.mp3',
@@ -24,6 +25,10 @@ const getters = {};
 
 const actions = {
 	play({ state }, name) {
+		if (!audio[name]) {
+			return;
+		}
+
 		let soundToPlay = audio[name];
 
 		if (state.isEnabled) {
