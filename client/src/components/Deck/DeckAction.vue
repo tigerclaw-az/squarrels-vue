@@ -11,7 +11,7 @@
 			v-show="numCards"
 		>
 			<span
-				v-for="(card, index) in numCards"
+				v-for="(card, index) in cards"
 				:key="index"
 				:class="`action--${card.name}`"
 				class="card"
@@ -43,6 +43,16 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .card {
+	$rotate: 0;
+
 	animation: 0.5s linear shrink;
+
+	@for $i from 1 through 20 {
+		$rotate: $rotate + 2.5;
+
+		&:nth-child(#{$i}) {
+			transform: rotate(#{$rotate}deg);
+		}
+	}
 }
 </style>
