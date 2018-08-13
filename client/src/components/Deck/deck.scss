@@ -3,7 +3,7 @@
 
 $deck-height: 8 !default;
 
-#deck {
+.deck-container {
 	$height: map-get($card-height, "small") + $deck-height;
 
 	align-items: center;
@@ -17,17 +17,6 @@ $deck-height: 8 !default;
 	.deck-label {
 		color: $white;
 		font-size: 1.25em;
-	}
-
-	.count {
-		bottom: 0;
-		color: $black;
-		font-size: 1.25rem;
-		font-weight: $font-weight-bold;
-		left: 50%;
-		position: absolute;
-		transform: translateX(-50%);
-		z-index: 1;
 	}
 
 	.deck {
@@ -55,62 +44,6 @@ $deck-height: 8 !default;
 
 			.cards-leave-active {
 				animation: shrink 0.5s;
-			}
-		}
-	}
-
-	&[type="main"] {
-		&.can-draw {
-			.cards-group {
-				border: 2px dashed get-color("zest");
-				box-shadow: 0 0 15px 10px theme-color("success");
-			}
-		}
-
-		.overlay {
-			height: 100%;
-			position: absolute;
-			width: 100%;
-			z-index: 5;
-
-			.icon {
-				color: theme-color("danger");
-				display: flex;
-				height: 100%;
-				margin: 0 auto;
-			}
-		}
-
-		.dropdown {
-			margin-top: 1rem;
-
-			.dropdown-menu {
-				max-height: 200px;
-				overflow: auto;
-			}
-		}
-	}
-
-	&[type="discard"] {
-		&[type="action"] {
-			.card {
-				animation: 0.5s linear shrink;
-			}
-		}
-
-		.deck {
-			border: 2px dashed transparent;
-
-			.card {
-				$rotate: 0;
-
-				@for $i from 1 through 20 {
-					$rotate: $rotate + 5;
-
-					&:nth-child(#{$i}) {
-						transform: rotate(#{$rotate}deg);
-					}
-				}
 			}
 		}
 	}
