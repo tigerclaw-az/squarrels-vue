@@ -33,6 +33,7 @@ module.exports = {
 			{
 				type: 'at-rule',
 				name: 'include',
+				parameter: 'media-breakpoint-*',
 				hasBlock: true,
 			},
 			{
