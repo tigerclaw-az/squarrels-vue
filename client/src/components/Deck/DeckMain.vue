@@ -22,6 +22,7 @@
 				v-for="(card, index) in numCards"
 				:key="index"
 				class="card blank--"
+				:style="cardStyle(index)"
 			>
 			</span>
 		</div>
@@ -82,6 +83,13 @@ export default {
 		},
 	},
 	methods: {
+		cardStyle: function(index) {
+			const pos = index * -0.25;
+
+			return {
+				transform: `translate(${pos}px, ${pos}px)`,
+			};
+		},
 		handleCardDrawn: function(cardDrawn) {
 			const cardAction = cardDrawn.action;
 			let dispatchAction = 'players/addCards';
