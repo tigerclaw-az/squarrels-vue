@@ -77,28 +77,7 @@ export default {
 			}
 
 			if (this.myPlayer.cardsInHand.length) {
-				// TODO: Remove highest card (that isn't special) from player
-				/**
-				 * this.$store.dispatch('players/removeHighCard');
-				 this.playerModel.getCards()
-				.then(res => {
-					let cards = res.data,
-						highCard = this._.maxBy(cards, (card) => {
-							return card.cardType === 'special' ? -1 : card.amount;
-						});
-
-					this.$log.debug('highCard ->', highCard);
-
-					if (!this._.isEmpty(highCard)) {
-						this.toastr.warning(highCard.name, 'You just lost a card!');
-
-						// FIXME: Only 1 card should be discarded
-						this.deckStore.discard(highCard.id, false);
-					}
-				}, (err) => {
-					this.$log.error(err);
-				});
-				 */
+				this.$store.dispatch('players/removeHighCard');
 			}
 		},
 		onClick: function() {
@@ -115,8 +94,6 @@ export default {
 						'You have been banned from collecting the Hoard!'
 					);
 					this.tooManyClicks = true;
-
-					// TODO: Disable clicking even when user refreshes page
 				}
 			}
 		},
