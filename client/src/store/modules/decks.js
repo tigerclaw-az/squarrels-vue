@@ -198,16 +198,21 @@ const actions = {
 		return Promise.resolve();
 	},
 
-	async updateById({}, payload) {
+	updateById({}, payload) {
 		if (!payload.id) {
 			throw new Error('Missing required "id" property.');
 		}
 
-		try {
-			return await api.decks.update(payload.id, payload.data);
-		} catch (err) {
-			return err;
-		}
+		return new Promise((resolve, reject) => {
+			api.decks
+				.update(payload.id, payload.data)
+				.then(res => {
+					resolve(res);
+				})
+				.catch(res => {
+					reject(res);
+				});
+		});
 	},
 
 	async updateByType({ getters }, payload) {
