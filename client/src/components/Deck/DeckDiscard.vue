@@ -12,12 +12,14 @@
 			v-show="numCards"
 			@click.prevent="onClick"
 		>
-			<span
-				v-for="(card, index) in numCards"
-				:key="index"
-				class="card blank--"
-			>
-			</span>
+			<transition-group name="cards-discard">
+				<span
+					v-for="(card, index) in numCards"
+					:key="index"
+					class="card blank--"
+				>
+				</span>
+			</transition-group>
 		</div>
 	</div>
 </template>
@@ -106,15 +108,39 @@ export default {
 .deck {
 	border: 2px dashed transparent;
 
-	.card {
-		$rotate: 0;
+	.cards-group {
+		.card {
+			$rotate: 0;
 
-		@for $i from 1 through 20 {
-			$rotate: $rotate + 5;
+			@for $i from 1 through 20 {
+				$rotate: $rotate + 5;
 
-			&:nth-child(#{$i}) {
-				transform: rotate(#{$rotate}deg);
+				&:nth-child(#{$i}) {
+					transform: rotate(#{$rotate}deg);
+				}
 			}
+		}
+
+		.cards-discard-enter-active,
+		.cards-discard-leave-active {
+			position: absolute;
+			transition-duration: 0.75s;
+			transition-property: opacity, transform;
+		}
+
+		.cards-discard-enter {
+			opacity: 0;
+			transform: translateY(-3rem);
+		}
+
+		.cards-discard-enter-to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		.cards-discard-leave-to {
+			opacity: 0;
+			transform: translateY(3rem);
 		}
 	}
 }
