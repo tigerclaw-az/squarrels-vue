@@ -14,7 +14,7 @@
 			class="card"
 			:class="cardClass"
 		>
-			<icon v-if="hasMatch" name="" class="icon"></icon>
+			<icon v-if="hasMatch" name="sun" class="icon"></icon>
 		</span>
 	</div>
 </template>
@@ -72,7 +72,7 @@ export default {
 			}
 		},
 		cardStyle: function() {
-			if (!['action', 'quarrel', 'storage'].includes(this.cardType)) {
+			if (['hand'].includes(this.cardType)) {
 				return { left: this.position.left, 'z-index': this.zIndex };
 			}
 
@@ -92,6 +92,8 @@ export default {
 		isDisabled: function() {
 			if (this.myPlayer.quarrel) {
 				return false;
+			} else if (this.cardType === 'deck') {
+				return true;
 			}
 
 			return !(this.isActivePlayer || this.myPlayer.hasDrawnCard);
