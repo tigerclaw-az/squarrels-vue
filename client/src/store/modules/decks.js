@@ -6,8 +6,6 @@ import store from '@/store/index';
 import { config } from '@/config';
 
 const state = {
-	cardDrawn: null,
-	isCardDrawn: false,
 	isLoaded: false,
 };
 
@@ -109,8 +107,6 @@ const actions = {
 
 		dispatch('sound/play', 'draw-card', { root: true });
 
-		commit('TOGGLE_CARD_DRAWN');
-
 		let cardsFromDeck = {
 			ids: getters.getCardIds(mainDeck.id),
 			toDraw: options.numOnly
@@ -123,8 +119,6 @@ const actions = {
 
 		this._vm.$log.debug('cardsFromDeck -> ', cardsFromDeck);
 		this._vm.$log.debug('cardDrawn -> ', cardDrawn);
-
-		commit('UPDATE_CARD_DRAWN', cardDrawn);
 
 		// Removes cardDrawn.id from cardsFromDeck.ids
 		_.pull(cardsFromDeck.ids, cardDrawn.id);
@@ -232,10 +226,6 @@ const actions = {
 };
 
 const mutations = {
-	TOGGLE_CARD_DRAWN(state) {
-		state.isCardDrawn = !state.isCardDrawn;
-	},
-
 	INIT(state) {
 		Vue.set(state, 'isLoaded', false);
 
@@ -260,10 +250,6 @@ const mutations = {
 		}
 
 		Vue.set(state, deckId, payload);
-	},
-
-	UPDATE_CARD_DRAWN(state, card) {
-		state.cardDrawn = card;
 	},
 
 	UPDATE_CARDS(state, payload) {

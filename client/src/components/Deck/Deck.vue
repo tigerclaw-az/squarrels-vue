@@ -1,7 +1,9 @@
 <template>
 	<div :type="deck.deckType" class="deck-container">
 		<span class="deck-label">{{deck.deckType}}</span>
-		<component :is="deckComponent" :cards="deck.cards" :numCards="totalCards"></component>
+		<keep-alive>
+			<component :is="deckComponent" :cards="deck.cards" :numCards="totalCards"></component>
+		</keep-alive>
 	</div>
 </template>
 
@@ -13,9 +15,6 @@ export default {
 			type: String,
 			required: true,
 		},
-	},
-	mounted: function() {
-		// this.$store.dispatch('decks/load', this.id);
 	},
 	computed: {
 		cards: function() {

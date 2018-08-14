@@ -16,7 +16,7 @@
 			role="button"
 			@click.prevent="onClick"
 		>
-			<div v-show="isCardDrawn" class="card-drawn" :style="cardDrawnStyle(numCards)">
+			<div v-show="isCardDrawn" class="card-drawn" :class="{ 'has-card': cardDrawn }" :style="cardDrawnStyle(numCards)">
 				<span class="card blank--"></span>
 				<Card
 					v-if="cardDrawn"
@@ -75,9 +75,12 @@ export default {
 		},
 	},
 	data: function() {
-		return {};
+		return {
+			isCardDrawn: false,
+			cardDrawn: null,
+		};
 	},
-	mounted: function() {
+	created: function() {
 		this.$nextTick(() => {
 			this.$cardDrawnEl = this.$el.querySelector('.card-drawn');
 			this.$cardDrawnEl.addEventListener(
@@ -95,14 +98,8 @@ export default {
 		...mapState({
 			decks: state => state.decks,
 		}),
-		cardDrawn: function() {
-			return this.decks.cardDrawn;
-		},
 		dropdownList: function() {
 			return this.cards;
-		},
-		isCardDrawn: function() {
-			return this.decks.isCardDrawn;
 		},
 		isDisabled: function() {
 			return !this.canDrawCard;
@@ -132,38 +129,37 @@ export default {
 
 			this.$log.debug(cardDrawn, cardAction, this);
 
-			this.$store.commit('decks/TOGGLE_CARD_DRAWN');
-			this.$store.commit('decks/UPDATE_CARD_DRAWN', null);
-
 			if (cardAction) {
 				cardData = cardDrawn;
 				dispatchAction = 'game/actionCard';
 			}
 
-			this.$store.dispatch(dispatchAction, cardData);
+			this.$store.dispatch(dispatchAction, cardData).then(() => {
+				this.isCardDrawn = false;
+				this.cardDrawn = null;
+			});
 		},
 		onCardDrawnAnimationEnd: function() {
 			this.$log.debug('animation ended -> ', this.cardDrawn);
 
-			if (this.cardDrawn) {
-				this.handleCardDrawn(this.cardDrawn);
-			}
+			setTimeout(() => {
+				if (this.cardDrawn) {
+					this.handleCardDrawn(this.cardDrawn);
+				}
+			}, 500);
 		},
 		onClick: function() {
 			if (this.canDrawCard) {
+				this.isCardDrawn = true;
+
 				this.$store.dispatch('players/drawCard', this.myPlayer);
 
-				let timer = setInterval(() => {
-					let left = parseInt(this.$cardDrawnEl.style.left);
-
-					this.$cardDrawnEl.style.left = left - 15 + 'px';
-				}, 20);
+				window.requestAnimationFrame(this.moveCard);
 
 				this.$store
 					.dispatch('decks/drawCard')
 					.then(card => {
-						// this.handleCardDrawn(card);
-						timer.clearInterval();
+						this.cardDrawn = card;
 					})
 					.catch(err => {
 						this.$log.error(err);
@@ -183,6 +179,15 @@ export default {
 					this.$log.error(err);
 					this.$toasted.error(`Error drawing card! ${err}`);
 				});
+		},
+		moveCard: function() {
+			let left = parseInt(this.$cardDrawnEl.style.left);
+
+			this.$cardDrawnEl.style.left = left - 1 + 'px';
+
+			if (left > -100) {
+				window.requestAnimationFrame(this.moveCard);
+			}
 		},
 	},
 	components: {
@@ -233,13 +238,12 @@ export default {
 }
 
 .card-drawn {
-	@include flip-card;
-
 	position: absolute;
-	transform: translateX(0);
-	transition-duration: 5.5s;
-	transition-property: transform;
 	z-index: 99;
+
+	&.has-card {
+		@include flip-card($flip-speed: 1s, $flip-delay: 1s);
+	}
 }
 
 .dropdown {
