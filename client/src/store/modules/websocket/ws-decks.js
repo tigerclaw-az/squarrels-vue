@@ -5,9 +5,7 @@ const state = {};
 const getters = {};
 
 const actions = {
-	actioncard_communism({ commit }) {},
-	actioncard_quarrel({ commit }) {},
-	actioncard_winter({ commit }) {
+	actioncard_winter({}) {
 		dispatch('game/end');
 	},
 	update({ commit }, data) {
