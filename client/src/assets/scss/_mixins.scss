@@ -49,7 +49,7 @@
 		}
 	}
 
-	[card-type="#{$type}"] {
+	.btn-card /deep/ {
 		.card {
 			animation-delay: 2.5s;
 			animation-duration: 0.5s;
