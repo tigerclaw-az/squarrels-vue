@@ -34,9 +34,6 @@ export default {
 			required: true,
 		},
 	},
-	mounted: function() {
-		// this.$store.dispatch('decks/load', this.id);
-	},
 };
 </script>
 
