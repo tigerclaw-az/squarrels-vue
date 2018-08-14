@@ -37,7 +37,7 @@
 		}
 
 		&.flip {
-			@include flip-card($type: "quarrel");
+			@include flip-card;
 		}
 
 		&.winner {

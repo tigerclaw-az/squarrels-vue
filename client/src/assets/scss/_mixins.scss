@@ -37,13 +37,13 @@
 	font-size: rem-calc($size);
 }
 
-@mixin flip-card($type: "action") {
+@mixin flip-card($flip-speed: 3s, $flip-delay: 2.5s) {
 	.card {
 		animation-fill-mode: forwards;
 		backface-visibility: hidden;
 
 		&.blank-- {
-			animation-duration: 3s;
+			animation-duration: $flip-speed;
 			animation-name: spin;
 			animation-timing-function: linear;
 		}
@@ -51,7 +51,7 @@
 
 	.btn-card /deep/ {
 		.card {
-			animation-delay: 2.5s;
+			animation-delay: $flip-delay;
 			animation-duration: 0.5s;
 			animation-name: spin-reverse;
 			animation-timing-function: ease-out;
