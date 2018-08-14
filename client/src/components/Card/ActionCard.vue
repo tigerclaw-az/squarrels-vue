@@ -57,8 +57,8 @@ export default {
 				this.$store.dispatch('sound/play', `action-card--${cardName}`);
 
 				switch (cardName) {
-					case 'whirlwind':
 					case 'ambush':
+					case 'whirlwind':
 						this.$store.dispatch(
 							'players/actionCard',
 							{ name: cardName, gameId: this.gameId },

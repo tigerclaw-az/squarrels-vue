@@ -37,14 +37,6 @@ $deck-height: 8 !default;
 			&:not(.disabled) {
 				cursor: pointer;
 			}
-
-			.cards-enter-active {
-				animation: grow 0.5s;
-			}
-
-			.cards-leave-active {
-				animation: shrink 0.5s;
-			}
 		}
 	}
 

@@ -45,8 +45,6 @@ export default {
 .card {
 	$rotate: 0;
 
-	animation: 0.5s linear shrink;
-
 	@for $i from 1 through 20 {
 		$rotate: $rotate + 2.5;
 
