@@ -51,7 +51,6 @@
 import { mapGetters, mapState } from 'vuex';
 
 import _ from 'lodash';
-import Icon from 'vue-awesome/components/Icon';
 
 import api from '@/api/index';
 import Card from '@/components/Card/Card.vue';
@@ -61,7 +60,6 @@ export default {
 	name: 'Player',
 	components: {
 		Card,
-		Icon,
 		PlayerInfo,
 	},
 	props: {
