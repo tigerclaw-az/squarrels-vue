@@ -157,6 +157,10 @@ export default {
 		findCardMatches: function(amount) {
 			const groups = _.groupBy(this.myCardsDetails, c => c.amount);
 
+			if (groups[5].length) {
+				groups[5] = _.filter(groups[5], c => c.cardType !== 'special');
+			}
+
 			if (groups[amount].length >= 3) {
 				return groups[amount];
 			}
