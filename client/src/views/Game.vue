@@ -29,7 +29,7 @@
 			<b-row>
 				<b-col>
 					<div class="decks-container">
-						<Deck v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
+						<Deck v-if="decksLoaded" v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
 					</div>
 				</b-col>
 			</b-row>
@@ -94,7 +94,13 @@ export default {
 			'isStarted',
 			'playerIds',
 		]),
+		...mapState({
+			decks: state => state.decks,
+		}),
 		...mapState(['isAdmin']),
+		decksLoaded: function() {
+			return this.decks.isLoaded;
+		},
 		isWinter: function() {
 			return this.actionCard && this.actionCard.name === 'winter';
 		},
