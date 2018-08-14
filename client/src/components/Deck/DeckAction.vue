@@ -23,7 +23,7 @@
 
 <script>
 export default {
-	name: 'DeckMain',
+	name: 'DeckAction',
 	props: {
 		cards: {
 			type: Array,
