@@ -6,6 +6,8 @@ import store from '@/store/index';
 import { config } from '@/config';
 
 const state = {
+	cardDrawn: null,
+	isCardDrawn: false,
 	isLoaded: false,
 };
 
@@ -107,6 +109,8 @@ const actions = {
 
 		dispatch('sound/play', 'draw-card', { root: true });
 
+		commit('TOGGLE_CARD_DRAWN');
+
 		let cardsFromDeck = {
 			ids: getters.getCardIds(mainDeck.id),
 			toDraw: options.numOnly
@@ -119,6 +123,8 @@ const actions = {
 
 		this._vm.$log.debug('cardsFromDeck -> ', cardsFromDeck);
 		this._vm.$log.debug('cardDrawn -> ', cardDrawn);
+
+		commit('UPDATE_CARD_DRAWN', cardDrawn);
 
 		// Removes cardDrawn.id from cardsFromDeck.ids
 		_.pull(cardsFromDeck.ids, cardDrawn.id);
@@ -157,11 +163,16 @@ const actions = {
 	load({ commit }, { ids }) {
 		this._vm.$log.debug('decks/load', ids);
 
+		if (!ids.length) {
+			return Promise.reject('ERROR: No ids provided for "decks/load"');
+		}
+
 		return new Promise((resolve, reject) => {
 			api.decks
 				.get(ids.join(','))
 				.then(res => {
 					this._vm.$log.debug('decks/load', res);
+
 					if (res.status === 200) {
 						let decks = res.data;
 
@@ -172,9 +183,8 @@ const actions = {
 						commit('LOADED');
 						resolve();
 					} else {
-						// TODO: Handle deck load error
 						this._vm.$log.error(res);
-						reject();
+						reject(res);
 					}
 				})
 				.catch(err => {
@@ -194,7 +204,7 @@ const actions = {
 		return Promise.resolve();
 	},
 
-	async updateById({ commit }, payload) {
+	async updateById({}, payload) {
 		if (!payload.id) {
 			throw new Error('Missing required "id" property.');
 		}
@@ -222,8 +232,8 @@ const actions = {
 };
 
 const mutations = {
-	LOADED(state) {
-		state.isLoaded = true;
+	TOGGLE_CARD_DRAWN(state) {
+		state.isCardDrawn = !state.isCardDrawn;
 	},
 
 	INIT(state) {
@@ -236,6 +246,10 @@ const mutations = {
 		}
 	},
 
+	LOADED(state) {
+		state.isLoaded = true;
+	},
+
 	UPDATE(state, payload) {
 		let deckId = payload.id;
 
@@ -246,6 +260,10 @@ const mutations = {
 		}
 
 		Vue.set(state, deckId, payload);
+	},
+
+	UPDATE_CARD_DRAWN(state, card) {
+		state.cardDrawn = card;
 	},
 
 	UPDATE_CARDS(state, payload) {
