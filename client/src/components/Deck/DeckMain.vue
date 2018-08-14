@@ -135,6 +135,7 @@ export default {
 			}
 
 			this.$store.dispatch(dispatchAction, cardData).then(() => {
+				this.$cardDrawnEl.style.left = '0px';
 				this.isCardDrawn = false;
 				this.cardDrawn = null;
 			});
@@ -183,7 +184,7 @@ export default {
 		moveCard: function() {
 			let left = parseInt(this.$cardDrawnEl.style.left);
 
-			this.$cardDrawnEl.style.left = left - 1 + 'px';
+			this.$cardDrawnEl.style.left = left - 2.5 + 'px';
 
 			if (left > -100) {
 				window.requestAnimationFrame(this.moveCard);
@@ -215,8 +216,6 @@ export default {
 
 .can-draw {
 	.cards-group {
-		// prettier-ignore
-		border: 2px dashed get-color("zest");
 		// prettier-ignore
 		box-shadow: 0 0 15px 10px theme-color("success");
 	}
