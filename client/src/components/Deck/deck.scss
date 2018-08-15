@@ -8,10 +8,10 @@ $deck-height: 8 !default;
 
 	align-items: center;
 	display: flex;
-	flex: 0 0 5%;
+	flex: 0 0 15%;
 	flex-direction: column;
 	margin-right: 1rem;
-	padding: 0.5rem;
+	padding: 0.25rem;
 	position: relative;
 
 	.deck-label {
@@ -23,6 +23,7 @@ $deck-height: 8 !default;
 		@extend %playing-cards;
 
 		height: 100%;
+		padding-top: 0.5rem;
 		width: auto;
 
 		&.empty::before {

@@ -40,13 +40,13 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .card {
-	$rotate: 0;
-
-	@for $i from 1 through 20 {
-		$rotate: $rotate + 2.5;
+	@for $i from 1 through 30 {
+		$rotate: random(30) - 15;
+		$left: random(30) - 15;
+		$top: random(20) - 10;
 
 		&:nth-child(#{$i}) {
-			transform: rotate(#{$rotate}deg);
+			transform: translate(#{$left}px, #{$top}px) rotate(#{$rotate}deg);
 		}
 	}
 }
