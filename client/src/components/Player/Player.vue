@@ -103,7 +103,8 @@ export default {
 			return this.myPlayer.cardsInHand;
 		},
 		myCardsSorted: function() {
-			return _.sortBy(this.myCardsDetails, ['amount']);
+			// return _.sortBy(this.myCardsDetails, ['amount']);
+			return this.myCardsDetails;
 		},
 	},
 	watch: {
@@ -126,7 +127,7 @@ export default {
 			this.getCardDetails();
 		},
 	},
-	mounted: function() {
+	beforeMount: function() {
 		if (this.myCards && this.myCards.length) {
 			this.getCardDetails();
 		}
@@ -139,7 +140,6 @@ export default {
 
 			let deckUpdate = this.$store.dispatch('decks/discard', card);
 			let playerUpdate = this.$store.dispatch('players/discard', {
-				id: this.myPlayer.id,
 				card,
 			});
 
@@ -157,7 +157,7 @@ export default {
 		findCardMatches: function(amount) {
 			const groups = _.groupBy(this.myCardsDetails, c => c.amount);
 
-			if (groups[5].length) {
+			if (groups[5] && groups[5].length) {
 				groups[5] = _.filter(groups[5], c => c.cardType !== 'special');
 			}
 
@@ -190,7 +190,6 @@ export default {
 
 				this.$store
 					.dispatch('players/discard', {
-						id: this.myPlayer.id,
 						card,
 					})
 					.catch(err => {

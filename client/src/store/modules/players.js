@@ -220,20 +220,22 @@ const actions = {
 		}
 	},
 
-	discard({ dispatch, state }, payload) {
+	discard({ dispatch, getters, state }, payload) {
 		this._vm.$log.debug(state, payload);
 
-		const playerId = payload.id;
+		const playerId = getters.getMyPlayer.id;
 		const cardIds = state[playerId].cardsInHand;
+		const cardsInHand = _.difference(cardIds, [payload.card.id]);
 
 		dispatch('updateLocalPlayer', {
 			id: playerId,
+			cardsInHand,
 			quarrel: false,
 			message: null,
 		});
 
 		return api.players.update(playerId, {
-			cardsInHand: _.difference(cardIds, [payload.card.id]),
+			cardsInHand,
 		});
 	},
 
