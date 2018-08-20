@@ -4,17 +4,16 @@ require('dotenv').config();
 /**
  * Module dependencies.
  */
-
-var appServe = require('../app-server'),
-    app = appServe.app,
-    sessionParser = appServe.sessionParser,
-    sessionStore = appServe.sessionStore,
-    config = require('../config/config'),
-    debug = require('debug')('squarrels:server'),
-    http = require('http'),
-    logger = config.logger('www'),
-    // Get port from environment and store in Express.
-    port = normalizePort(process.env.PORT || '3000');
+const appServe = require('../app-server');
+const app = appServe.app;
+const sessionParser = appServe.sessionParser;
+const sessionStore = appServe.sessionStore;
+const config = require('../config/config');
+const debug = require('debug')('squarrels:server');
+const http = require('http');
+const logger = config.logger('www');
+// Get port from environment and store in Express.
+const port = normalizePort(process.env.PORT || '3000');
 
 app.set('port', port);
 
@@ -37,19 +36,19 @@ server.on('listening', onListening);
  */
 
 function normalizePort(val) {
-    var port = parseInt(val, 10);
+	var port = parseInt(val, 10);
 
-    if (isNaN(port)) {
-        // named pipe
-        return val;
-    }
+	if (isNaN(port)) {
+		// named pipe
+		return val;
+	}
 
-    if (port >= 0) {
-        // port number
-        return port;
-    }
+	if (port >= 0) {
+		// port number
+		return port;
+	}
 
-    return false;
+	return false;
 }
 
 /**
@@ -57,27 +56,27 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-    if (error.syscall !== 'listen') {
-        throw error;
-    }
+	if (error.syscall !== 'listen') {
+		throw error;
+	}
 
-    var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
+	let bind = (typeof port === 'string' ? 'Pipe ' : 'Port ') + port;
 
-    // handle specific listen errors with friendly messages
-    switch (error.code) {
-        case 'EACCES':
-            logger.error(bind + ' requires elevated privileges');
-            process.exit(1);
-            break;
+	// handle specific listen errors with friendly messages
+	switch (error.code) {
+		case 'EACCES':
+			logger.error(bind + ' requires elevated privileges');
+			process.exit(1);
+			break;
 
-        case 'EADDRINUSE':
-            logger.error(bind + ' is already in use');
-            process.exit(1);
-            break;
+		case 'EADDRINUSE':
+			logger.error(bind + ' is already in use');
+			process.exit(1);
+			break;
 
-        default:
-            throw error;
-    }
+		default:
+			throw error;
+	}
 }
 
 /**
@@ -85,8 +84,8 @@ function onError(error) {
  */
 
 function onListening() {
-    var addr = server.address(),
-        bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+	const addr = server.address();
+	const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
 
-    debug('Listening on ' + bind);
+	debug('Listening on ' + bind);
 }

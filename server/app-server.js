@@ -49,14 +49,12 @@ const sessionStore = new MongodbSession({
 
 sessionStore.on('error', err => {
 	logger.error('sessionStore ERROR -> ', err);
-	assert.ifError(err);
-	assert.ok(false);
 });
 
 const sessionParser = session({
 	cookie: {
 		httpOnly: true,
-		maxAge: 1000 * 60 * 60 * 24 * 30, // 1 month
+		maxAge: 1000 * 60 * 60 * 24 * 90, // 3 months
 		sameSite: 'lax',
 		secure: false
 	},
