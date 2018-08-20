@@ -1,73 +1,76 @@
 @import "animations";
-
-//== Colors
-//
 @import "colors";
 @import "functions";
 @import "mixins";
 
-$brand-neutral: get-color(tussock);
-$brand-primary: get-color(zest);
-$brand-success: get-color(fern);
-$brand-info: get-color(tussock);
-$brand-warning: get-color(gold);
-$brand-danger: get-color(guardsman-red);
-
-//== Scaffolding
+// Options
 //
-//## Settings for some of the most global styles.
+// Quickly modify global styling by enabling or disabling optional features.
 
-//** Background color for `<body>`.
-$body-bg: lighten(get-color(cioccolato), 7);
+$enable-caret:              true;
+$enable-rounded:            true;
+$enable-shadows:            true;
+$enable-gradients:          false;
+$enable-transitions:        true;
+$enable-grid-classes:       true;
+$enable-print-styles:       true;
 
-//** Global text color on `<body>`.
-$text-color: $gray-200;
-
-//** Global textual link color.
-$link-color: $brand-info;
-
-//** Link hover color set via `darken()` function.
-$link-hover-color: darken($link-color, 15%);
-
-//** Link hover decoration.
-$link-hover-decoration: underline;
-
-//== Typography
+// Spacing
 //
-//## Font, line-height, and color for body text, headings, and more.
-$font-weight-lighter: 100;
-$font-weight-normal: 400;
-$font-weight-medium: 500;
-$font-weight-bold: 700;
-$font-weight-xbold: 900;
+// Control the default styling of most Bootstrap elements by modifying these
+// variables. Mostly focused on spacing.
+// You can add more entries to the $spacers map, should you need more variation.
 
-$font-family-sans-serif: "Comic Sans MS", Helvetica, Arial, sans-serif;
-$font-family-serif: Georgia, "Times New Roman", Times, serif;
+$spacer: 1rem;
+$spacers: ();
+// stylelint-disable-next-line scss/dollar-variable-default
+$spacers: map-merge(
+	(
+		0: 0,
+		1: ($spacer * 0.25),
+		2: ($spacer * 0.5),
+		3: $spacer,
+		4: ($spacer * 1.5),
+		5: ($spacer * 3)
+	),
+	$spacers
+);
 
-//** Default monospace fonts for `<code>`, `<kbd>`, and `<pre>`.
-$font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
-$font-family-base: $font-family-sans-serif;
+// This variable affects the `.h-*` and `.w-*` classes.
+$sizes: ();
+// stylelint-disable-next-line scss/dollar-variable-default
+$sizes: map-merge(
+	(
+		25: 25%,
+		50: 50%,
+		75: 75%,
+		100: 100%,
+		auto: auto
+	),
+	$sizes
+);
 
-$font-size-large: ceil($font-size-base * 1.25); // ~18px
-$font-size-small: ceil($font-size-base * 0.85); // ~12px
+// Body
+//
+// Settings for the `<body>` element.
 
-$font-size-h1: floor($font-size-base * 2.6); // ~36px
-$font-size-h2: floor($font-size-base * 2.15); // ~30px
-$font-size-h3: ceil($font-size-base * 1.7); // ~24px
-$font-size-h4: ceil($font-size-base * 1.25); // ~18px
-$font-size-h5: $font-size-base;
-$font-size-h6: ceil($font-size-base * 0.85); // ~12px
+$body-bg: 					lighten(color("cioccolato"), 7);
+$body-color:                $gray-900;
 
-//** Unit-less `line-height` for use in components like buttons.
-$line-height-base: 1.428571429; // 20/14
-//** Computed "line-height" (`font-size` * `line-height`) for use with `margin`, `padding`, etc.
-$line-height-computed: floor($font-size-base * $line-height-base); // ~20px
+// Links
+//
+// Style anchor elements.
 
-//** By default, this inherits from the `<body>`.
-$headings-font-family: inherit;
-$headings-font-weight: $font-weight-bold;
-$headings-line-height: 1.1;
-$headings-color: invert($body-bg);
+$link-color:                theme-color("primary");
+$link-decoration:           none;
+$link-hover-color:          darken($link-color, 15%);
+$link-hover-decoration:     underline;
+
+// Paragraphs
+//
+// Style p element.
+
+$paragraph-margin-bottom:   1rem;
 
 // Grid breakpoints
 //
@@ -84,7 +87,6 @@ $grid-breakpoints: (
 
 @include _assert-ascending($grid-breakpoints, "$grid-breakpoints");
 @include _assert-starts-at-zero($grid-breakpoints);
-
 
 // Grid containers
 //
@@ -134,105 +136,163 @@ $transition-base:             all 0.2s ease-in-out;
 $transition-fade:             opacity 0.15s linear;
 $transition-collapse:         height 0.35s ease;
 
-//== Buttons
+// Fonts
 //
-//## For each of Bootstrap's buttons, define text, background and border color.
+// Font, line-height, and color for body text, headings, and more.
 
-$btn-font-weight: $font-weight-bold;
+// stylelint-disable value-keyword-case
+$font-family-sans-serif: 	"Comic Sans MS", Helvetica, Arial, sans-serif;
+$font-family-monospace:       SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+$font-family-base:            $font-family-sans-serif;
+// stylelint-enable value-keyword-case
 
-$btn-default-color: get-color(black);
-$btn-default-bg: $brand-neutral;
-$btn-default-border: transparent;
+$font-size-base:              1rem; // Assumes the browser default, typically `16px`
+$font-size-lg:                ($font-size-base * 1.25);
+$font-size-sm:                ($font-size-base * 0.875);
 
-$btn-primary-color: get-color(black);
-$btn-primary-bg: get-color($brand-primary);
-$btn-primary-border: darken($btn-primary-bg, 5%);
+$font-weight-light:           300;
+$font-weight-normal:          400;
+$font-weight-bold:            700;
 
-$btn-success-bg: $brand-success;
-$btn-success-color: invert($btn-success-bg);
-$btn-success-border: darken($btn-success-bg, 5%);
+$font-weight-base:            $font-weight-normal;
+$line-height-base:            1.5;
 
-$btn-info-bg: $brand-info;
-$btn-info-color: invert($btn-info-bg);
-$btn-info-border: darken($btn-info-bg, 5%);
+$h1-font-size:                $font-size-base * 2.5;
+$h2-font-size:                $font-size-base * 2;
+$h3-font-size:                $font-size-base * 1.75;
+$h4-font-size:                $font-size-base * 1.5;
+$h5-font-size:                $font-size-base * 1.25;
+$h6-font-size:                $font-size-base;
 
-$btn-warning-bg: $brand-warning;
-$btn-warning-color: invert($btn-warning-bg);
-$btn-warning-border: darken($btn-warning-bg, 5%);
+$headings-margin-bottom:      ($spacer / 2);
+$headings-font-family:        inherit;
+$headings-font-weight:        500;
+$headings-line-height:        1.2;
+$headings-color:              inherit;
 
-$btn-danger-bg: $brand-danger;
-$btn-danger-color: invert($btn-danger-bg);
-$btn-danger-border: darken($btn-danger-bg, 5%);
+$display1-size:               6rem;
+$display2-size:               5.5rem;
+$display3-size:               4.5rem;
+$display4-size:               3.5rem;
 
-$btn-link-disabled-color: $gray-300;
+$display1-weight:             300;
+$display2-weight:             300;
+$display3-weight:             300;
+$display4-weight:             300;
+$display-line-height:         $headings-line-height;
+
+$lead-font-size:              ($font-size-base * 1.25);
+$lead-font-weight:            300;
+
+$small-font-size:             80%;
+
+$text-muted:                  $gray-600;
+
+$blockquote-small-color:      $gray-600;
+$blockquote-font-size:        ($font-size-base * 1.25);
+
+$hr-border-color:             rgba($black, 0.1);
+$hr-border-width:             $border-width;
+
+$mark-padding:                0.2em;
+
+$dt-font-weight:              $font-weight-bold;
+
+$kbd-box-shadow:              inset 0 -0.1rem 0 rgba($black, 0.25);
+$nested-kbd-font-weight:      $font-weight-bold;
+
+$list-inline-padding:         0.5rem;
+
+$mark-bg:                     #fcf8e3;
+
+$hr-margin-y:                 $spacer;
+
+// Tables
+//
+// Customizes the `.table` component with basic values, each used across all table variations.
+
+$table-cell-padding:          0.75rem;
+$table-cell-padding-sm:       0.3rem;
+
+$table-bg:                    transparent;
+$table-accent-bg:             rgba($black, 0.05);
+$table-hover-bg:              rgba($black, 0.075);
+$table-active-bg:             $table-hover-bg;
+
+$table-border-width:          $border-width;
+$table-border-color:          $gray-300;
+
+$table-head-bg:               $gray-200;
+$table-head-color:            $gray-700;
+
+$table-dark-bg:               $gray-900;
+$table-dark-accent-bg:        rgba($white, 0.05);
+$table-dark-hover-bg:         rgba($white, 0.075);
+$table-dark-border-color:     lighten($gray-900, 7.5%);
+$table-dark-color:            rgba($white, 0.9);
+
+$table-striped-order:         odd;
+
+$table-caption-color:         $text-muted;
+
+// Buttons + Forms
+//
+// Shared variables that are reassigned to `$input-` and `$btn-` specific variables.
+
+$input-btn-padding-y:         .375rem !default;
+$input-btn-padding-x:         .75rem !default;
+$input-btn-line-height:       $line-height-base !default;
+
+$input-btn-focus-width:       .2rem !default;
+$input-btn-focus-color:       rgba($component-active-bg, .25) !default;
+$input-btn-focus-box-shadow:  0 0 0 $input-btn-focus-width $input-btn-focus-color !default;
+
+$input-btn-padding-y-sm:      .25rem !default;
+$input-btn-padding-x-sm:      .5rem !default;
+$input-btn-line-height-sm:    $line-height-sm !default;
+
+$input-btn-padding-y-lg:      .5rem !default;
+$input-btn-padding-x-lg:      1rem !default;
+$input-btn-line-height-lg:    $line-height-lg !default;
+
+$input-btn-border-width:      $border-width !default;
+
+
+// Buttons
+//
+// For each of Bootstrap's buttons, define text, background, and border color.
+
+$btn-padding-y:               $input-btn-padding-y !default;
+$btn-padding-x:               $input-btn-padding-x !default;
+$btn-line-height:             $input-btn-line-height !default;
+
+$btn-padding-y-sm:            $input-btn-padding-y-sm !default;
+$btn-padding-x-sm:            $input-btn-padding-x-sm !default;
+$btn-line-height-sm:          $input-btn-line-height-sm !default;
+
+$btn-padding-y-lg:            $input-btn-padding-y-lg !default;
+$btn-padding-x-lg:            $input-btn-padding-x-lg !default;
+$btn-line-height-lg:          $input-btn-line-height-lg !default;
+
+$btn-border-width:            $input-btn-border-width !default;
+
+$btn-font-weight:             $font-weight-normal !default;
+$btn-box-shadow:              inset 0 1px 0 rgba($white, .15), 0 1px 1px rgba($black, .075) !default;
+$btn-focus-width:             $input-btn-focus-width !default;
+$btn-focus-box-shadow:        $input-btn-focus-box-shadow !default;
+$btn-disabled-opacity:        .65 !default;
+$btn-active-box-shadow:       inset 0 3px 5px rgba($black, .125) !default;
+
+$btn-link-disabled-color:     $gray-600 !default;
+
+$btn-block-spacing-y:         .5rem !default;
 
 // Allows for customizing button radius independently from global border radius
-$btn-border-radius-base: 0;
-$btn-border-radius-large: 0;
-$btn-border-radius-small: 0;
+$btn-border-radius:           $border-radius !default;
+$btn-border-radius-lg:        $border-radius-lg !default;
+$btn-border-radius-sm:        $border-radius-sm !default;
 
-//== Media queries breakpoints
-//
-//## Define the breakpoints at which your layout will change, adapting to different screen sizes.
-
-// Small screen / tablet
-//** Deprecated `$screen-sm` as of v3.0.1
-// $screen-sm:                  768px;
-$screen-sm-min: 420px;
-
-// Medium screen / desktop
-//** Deprecated `$screen-md` as of v3.0.1
-// $screen-md:                  992px;
-$screen-md-min: 768px;
-
-// Large screen / wide desktop
-//** Deprecated `$screen-lg` as of v3.0.1
-// $screen-lg:                  1200px;
-$screen-lg-min: 1200px;
-
-// So media queries don't overlap when required, provide a maximum
-$screen-xs-max: $screen-sm-min - 1;
-$screen-sm-max: $screen-md-min - 1;
-$screen-md-max: $screen-lg-min - 1;
-
-//== Grid system
-//
-//## Define your custom responsive grid.
-
-//** Number of columns in the grid.
-$grid-columns: 12;
-
-//** Padding between columns. Gets divided in half for the left and right.
-$grid-gutter-width: 1.5rem;
-
-// Navbar collapse
-//** Point at which the navbar becomes uncollapsed.
-$grid-float-breakpoint: $screen-sm-min;
-
-//** Point at which the navbar begins collapsing.
-$grid-float-breakpoint-max: $grid-float-breakpoint - 1;
-
-//== Container sizes
-//
-//## Define the maximum width of `.container` for different screen sizes.
-
-// Small screen / tablet
-$container-tablet: 45rem + $grid-gutter-width;
-
-//** For `$screen-sm-min` and up.
-$container-sm: $container-tablet;
-
-// Medium screen / desktop
-$container-desktop: 58.75rem + $grid-gutter-width;
-
-//** For `$screen-md-min` and up.
-$container-md: $container-desktop;
-
-// Large screen / wide desktop
-$container-large-desktop: 71.25rem + $grid-gutter-width;
-
-//** For `$screen-lg-min` and up.
-$container-lg: $container-large-desktop;
+$btn-transition:              color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out !default;
 
 // Modals
 
