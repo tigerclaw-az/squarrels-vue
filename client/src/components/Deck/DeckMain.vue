@@ -245,7 +245,7 @@ export default {
 	}
 }
 
-.dropdown {
+.dropdown /deep/ {
 	margin-top: 1rem;
 
 	.dropdown-menu {
