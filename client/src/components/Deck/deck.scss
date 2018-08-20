@@ -1,4 +1,5 @@
 @import "~@/assets/scss/variables";
+@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 @import "~@/components/Card/card";
 
 $deck-height: 8 !default;
@@ -41,7 +42,7 @@ $deck-height: 8 !default;
 		}
 	}
 
-	@media (min-width: $screen-md-min) {
+	@include media-breakpoint-up(md) {
 		$height: map-get($card-height, "medium") + $deck-height;
 
 		.deck {

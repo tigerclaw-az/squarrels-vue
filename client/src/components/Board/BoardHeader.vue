@@ -67,11 +67,11 @@ export default {
 		rgba(93, 33, 4, 0.2) 83%,
 		rgba(115, 43, 3, 0.5) 100%
 	),	// prettier-ignore
-	linear-gradient(90deg, get-color("cioccolato") 50%, transparent 50%), // prettier-ignore
+	linear-gradient(90deg, color("cioccolato") 50%, transparent 50%), // prettier-ignore
 	linear-gradient(
 		90deg,
-		get-color("red-beech") 50%,
-		get-color("carnaby-tan") 50%
+		color("red-beech") 50%,
+		color("carnaby-tan") 50%
 	);
 
 	background-size: 40px 160px, 60px 29px, 27px 27px;

@@ -35,10 +35,10 @@ textarea {
 	// animation: gradient 30s linear infinite;
 	background: linear-gradient(
 		320deg,
-		get-color(carnaby-tan),
-		get-color(cioccolato),
-		get-color(kenyan-copper),
-		get-color(carnaby-tan)
+		color(carnaby-tan),
+		color(cioccolato),
+		color(kenyan-copper),
+		color(carnaby-tan)
 	);
 	// background-size: 600% 600%;
 	height: 99vh;
@@ -69,8 +69,7 @@ textarea {
 	cursor: pointer;
 }
 
-/* Responsive: Portrait tablets and up */
-@media (min-width: #{$container-tablet}) {
+@include media-breakpoint-up(md) {
 	/* Remove the padding we set earlier */
 	.header,
 	.marketing,

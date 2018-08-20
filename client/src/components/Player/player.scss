@@ -25,7 +25,7 @@
 			transform: rotateY(120deg);
 
 			&::after {
-				box-shadow: 0 0 20px 20px get-color("saffron");
+				box-shadow: 0 0 20px 20px color("saffron");
 				content: "";
 				height: 100%;
 				left: 0;
@@ -59,7 +59,7 @@
 
 		.sq-player-card-count {
 			bottom: 0;
-			color: get-color("alabaster");
+			color: color("alabaster");
 			font-size: 2rem;
 			line-height: 1;
 			position: absolute;
@@ -86,7 +86,7 @@
 				transform: translateY(-15%);
 
 				.card {
-					border: 2px solid get-color("zest");
+					border: 2px solid color("zest");
 					border-radius: 0.75rem;
 					transform: scale(1.5);
 				}
@@ -96,7 +96,7 @@
 
 	&.active {
 		.sq-player-info {
-			color: get-color("zest");
+			color: color("zest");
 			font-weight: $font-weight-bold;
 		}
 	}

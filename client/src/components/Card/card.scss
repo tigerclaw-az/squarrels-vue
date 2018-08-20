@@ -1,4 +1,5 @@
 @import "~@/assets/scss/variables";
+@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
 $card-height: (
 	small: 158,
@@ -38,9 +39,9 @@ $card-images: (
 			background-image: url("~@/assets/images/#{$name}.png");
 
 			@if $name == "special--rotten" {
-				$box-shadow-color: get-color("neptune");
+				$box-shadow-color: color("neptune");
 			} @else if $name == "special--golden" {
-				$box-shadow-color: get-color("saffron");
+				$box-shadow-color: color("saffron");
 			}
 
 			box-shadow: 0 0 15px 4px $box-shadow-color;
@@ -67,7 +68,7 @@ $card-images: (
 		height: 100%;
 	}
 
-	@media (min-width: $screen-md-min) {
+	@include media-breakpoint-up(md) {
 		.btn-card,
 		.card {
 			height: rem-calc(map-get($card-height, "medium"));

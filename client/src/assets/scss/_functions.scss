@@ -14,20 +14,6 @@ $font-size-base: 1rem !default;
 }
 
 /**
- * Return a color from the $colors map, if it exists
- *
- * @param  {String} $color The color value to select from map
- * @return {String}        The color value found in map, or CSS color
- */
-@function get-color($color) {
-	@if (map-has-key($colors, $color)) {
-		@return map-get($colors, $color);
-	}
-
-	@return $color;
-}
-
-/**
  * Convert font-size from px to rem with px fallback
  *
  * Call with 1, 2, 3 or 4 parameters, 'px' is not required but supported:
