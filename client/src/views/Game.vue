@@ -12,17 +12,19 @@
 					START GAME
 				</b-button>
 			</div>
-			<div class="game-overlay--new-game" v-if="isWinter">
-				<div class="container-button">
-					<b-button
-						class="btn btn-new-game"
-						variant="success"
-						@click="onClickNewGame"
-					>
-					NEW GAME
-					</b-button>
+			<transition name="winter">
+				<div class="game-overlay--new-game" v-if="isWinter">
+					<div class="container-button">
+						<b-button
+							class="btn btn-new-game"
+							variant="success"
+							@click="onClickNewGame"
+						>
+						NEW GAME
+						</b-button>
+					</div>
 				</div>
-			</div>
+			</transition>
 		</div>
 		<b-container fluid>
 			<BoardHeader :is-game-started="isStarted"></BoardHeader>
@@ -169,8 +171,30 @@ export default {
 
 	&:not(.winter) {
 		// prettier-ignore
-		background-color: get-color("mine-shaft");
+		background-color: color("mine-shaft");
 		opacity: 0.9;
+	}
+
+	.winter-enter-active,
+	.winter-leave-active {
+		// position: absolute;
+		transition-duration: 0.75s;
+		transition-property: opacity, transform;
+	}
+
+	.winter-enter {
+		opacity: 0;
+		transform: translateX(-100vw);
+	}
+
+	.winter-enter-to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+
+	.winter-leave-to {
+		opacity: 0;
+		transform: translateY(100vh);
 	}
 
 	.game-overlay--new-game,
