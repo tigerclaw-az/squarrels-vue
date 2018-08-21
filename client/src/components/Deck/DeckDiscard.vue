@@ -121,28 +121,29 @@ export default {
 				}
 			}
 		}
+	}
 
-		.cards-discard-enter-active,
-		.cards-discard-leave-active {
-			position: absolute;
-			transition-duration: 0.75s;
-			transition-property: opacity, transform;
-		}
+	.cards-discard-enter-active,
+	.cards-discard-leave-active {
+		position: absolute;
+		transition-duration: 0.75s;
+		transition-property: opacity, transform;
+	}
 
-		.cards-discard-enter {
-			opacity: 0;
-			transform: translateY(-3rem);
-		}
+	.cards-discard-enter {
+		opacity: 0;
+		transform: scale(3);
+	}
 
-		.cards-discard-enter-to {
-			opacity: 1;
-			transform: translateY(0);
-		}
+	.cards-discard-enter-to,
+	.cards-discard-leave {
+		opacity: 1;
+		transform: scale(1);
+	}
 
-		.cards-discard-leave-to {
-			opacity: 0;
-			transform: translateY(3rem);
-		}
+	.cards-discard-leave-to {
+		opacity: 0;
+		transform: scale(3);
 	}
 }
 </style>
