@@ -175,7 +175,7 @@ const actions = {
 						});
 
 						commit('LOADED');
-						resolve();
+						resolve(decks);
 					} else {
 						this._vm.$log.error(res);
 						reject(res);
