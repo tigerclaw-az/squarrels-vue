@@ -1,42 +1,116 @@
 <template>
 	<div id="start">
 		<div class="winter">
-			<div v-if="!isConnected"
+			<div class="welcome-message">
+				<h2>Welcome {{player.name}}!</h2>
+				<p v-if="!hasGames">Start by pressing "New Game" to create a game</p>
+				<p v-else>Choose a game from the list, or start a "New Game"</p>
+			</div>
+			<div
+				v-if="!isConnected"
 				class="alert alert-danger error" role="alert"
-				v-cloak>
+				v-cloak
+			>
 				Taking a nap. Be back later.
 			</div>
-			<div v-else
-				class="games-list">
-				<ul>
-					<li v-for="(value, gameId) in gamesList" :key="gameId">
+			<div
+				v-else
+				class="games-list w-75"
+			>
+				<b-table
+					v-if="hasGames"
+					:bordered="true"
+					:dark="true"
+					:fields="tableFields"
+					:items="games"
+					:responsive="true"
+					:striped="true"
+					sort-by.sync="createdAt"
+				>
+					<template slot="join" slot-scope="data">
+						<router-link :to="{ name: 'game', params: { id: data.item.id }}" class="btn btn-primary btn-join-game">
+							JOIN
+						</router-link>
+					</template>
+					<template slot="delete" slot-scope="data">
+						<button class="btn btn-danger" @click="deleteGame(data.item.id)">
+							<icon name="trash" class="icon icon-delete"></icon>
+						</button>
+					</template>
+				</b-table>
+					<!-- <li v-for="(value, gameId) in games" :key="gameId">
 						<router-link :to="{ name: 'game', params: { id: gameId }}"
 							class="btn btn-primary btn-join-game"
 							v-cloak>
 							JOIN {{gameId}}
 						</router-link>
-						<button class="btn btn-danger" @click="deleteGame(gameId)">
-							<icon name="trash" class="icon icon-delete"></icon>
-						</button>
-					</li>
-				</ul>
-				<button class="btn btn-primary btn-new-game" @click="createGame">NEW GAME</button>
+					</li> -->
 			</div>
+			<button class="btn btn-primary btn-new-game" @click="createGame">NEW GAME</button>
 		</div>
 	</div>
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex';
+import _ from 'lodash';
+import moment from 'moment';
+
 import Icon from 'vue-awesome/components/Icon';
+import bTable from 'bootstrap-vue/es/components/table/table';
 
 export default {
 	name: 'Start',
 	components: {
+		'b-table': bTable,
 		Icon,
 	},
 	data: function() {
-		return {};
+		return {
+			tableFields: [
+				{
+					key: 'join',
+					label: '',
+				},
+				{
+					key: 'id',
+					label: 'ID',
+					formatter: value => {
+						return value.substr(0, 4) + '...' + value.substr(-4);
+					},
+					sortable: true,
+				},
+				{
+					key: 'createdAt',
+					label: 'Created',
+					formatter: value => {
+						return moment(value).format('dddd, MMMM Do YYYY');
+					},
+					sortable: true,
+				},
+				{
+					key: 'isStarted',
+					label: 'Started?',
+					formatter: value => {
+						return value ? 'Yes' : 'No';
+					},
+					sortable: true,
+				},
+				'roundNumber',
+				{
+					key: 'playerIds',
+					label: '# of Players',
+					formatter: value => {
+						return value.length;
+					},
+					sortable: true,
+				},
+				{
+					key: 'delete',
+					label: 'Delete Game',
+				},
+			],
+		};
 	},
 	watch: {
 		/**
@@ -58,13 +132,19 @@ export default {
 		this.loadGames();
 	},
 	computed: {
-		...mapGetters(['isConnected']),
+		...mapGetters({
+			isConnected: 'isConnected',
+			player: 'players/getMyPlayer',
+		}),
 		...mapState('start', [
-			'gamesList',
+			'games',
 			'waitCreateGame',
 			'waitDeleteGame',
 			'waitLoadGames',
 		]),
+		hasGames: function() {
+			return !_.isEmpty(this.games);
+		},
 	},
 	methods: {
 		createGame: function() {
@@ -87,10 +167,14 @@ export default {
 @import "~@/assets/scss/mixins";
 
 .winter {
+	align-items: center;
 	// prettier-ignore
 	background-image: url("~@/assets/images/winter-background.jpg");
 	background-size: cover;
+	display: flex;
+	flex-flow: column;
 	height: 100vh;
+	justify-content: center;
 }
 
 .error {
@@ -99,7 +183,8 @@ export default {
 }
 
 .games-list {
-	@extend %center;
+	max-height: 75vh;
+	overflow: auto;
 
 	.btn-join-game {
 		position: relative;

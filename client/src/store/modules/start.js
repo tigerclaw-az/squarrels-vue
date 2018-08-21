@@ -3,7 +3,7 @@ import Vue from 'vue';
 import api from '@/api/index';
 
 const state = {
-	gamesList: {},
+	games: [],
 	waitCreateGame: false,
 	waitDeleteGame: false,
 	waitLoadGames: false,
@@ -72,12 +72,12 @@ const actions = {
 };
 
 const mutations = {
-	// Comes from websocket/wsGame (ws-game.js)
 	ADD_GAME(state, nuts) {
-		Vue.set(state.gamesList, nuts.id, {});
+		state.games.push(nuts);
 	},
+	// Comes from websocket/wsGame (ws-game.js)
 	DELETE_GAME(state, id) {
-		Vue.delete(state.gamesList, id);
+		state.games = _.filter(state.games, g => g.id !== id);
 	},
 	GAME_CREATE(state, payload) {
 		state.waitCreateGame = payload.wait;
