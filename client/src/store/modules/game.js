@@ -173,6 +173,11 @@ const actions = {
 
 	quarrelWinner({ commit, dispatch, state }) {
 		const quarrelGroup = _.groupBy(state.quarrelCards.current, data => {
+			// User had no cards, so the card property will be 'null'
+			if (!data.card) {
+				return -1;
+			}
+
 			return data.card.name === 'golden' ? 6 : data.card.amount;
 		});
 		const winningCard = _.max(_.keys(quarrelGroup));
