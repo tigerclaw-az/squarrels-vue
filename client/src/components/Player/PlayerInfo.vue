@@ -7,7 +7,7 @@
 			title="View or Store Nuts"
 			@click.prevent="onClickStorage"
 		>
-			<icon name="tree" scale="6" class="icon icon-storage"></icon>
+			<icon name="tree" scale="4" class="icon icon-storage"></icon>
 			<span class="sq-player-score">{{player.score}}</span>
 		</a>
 	</div>
@@ -49,8 +49,6 @@ export default {
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
-	margin-right: 1rem;
-	max-width: 8rem;
 
 	.sq-player-info-item {
 		color: inherit;
@@ -63,25 +61,23 @@ export default {
 	}
 
 	.sq-player-storage {
-		font-size: 3.5rem;
+		font-size: 2rem;
 
 		.sq-player-score {
 			@extend %center-horizontal;
 			// prettier-ignore
 			color: color("carnaby-tan");
-			font-size: 2rem;
+			font-size: 1.25rem;
+			font-weight: $font-weight-bold;
 			line-height: 2.25;
 			top: 0;
 		}
 	}
 
 	@include media-breakpoint-up(md) {
-		max-width: 9rem;
-
 		.sq-player-storage {
 			.sq-player-score {
-				font-size: 2.75rem;
-				font-weight: $font-weight-bold;
+				font-size: 1.75rem;
 			}
 		}
 	}
