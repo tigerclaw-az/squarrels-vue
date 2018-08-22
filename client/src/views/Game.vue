@@ -1,5 +1,5 @@
 <template>
-	<div id="board">
+	<div id="game">
 		<div v-if="!isStarted" class="game-overlay" :class="{ winter: isWinter }">
 			<div class="game-overlay--start-game" v-cloak v-if="!isLoading && !isWinter">
 				<div v-if="needPlayers" class="waiting-message">
@@ -26,34 +26,19 @@
 				</div>
 			</transition>
 		</div>
-		<b-container fluid>
-			<BoardHeader :is-game-started="isStarted"></BoardHeader>
-			<b-row>
-				<b-col>
-					<div class="decks-container">
-						<Deck v-if="decksLoaded" v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
-					</div>
-				</b-col>
-			</b-row>
-			<b-row>
-				<b-col>
-					<BoardPlayers :isGameStarted="isStarted" :gameId="id"></BoardPlayers>
-					<ActionCard v-if="actionCard"></ActionCard>
-				</b-col>
-			</b-row>
-		</b-container>
+		<Board v-if="isStarted && isLoaded" :gameId="id" :deckIds="deckIds" :playerIds="playerIds">
+			<template slot="action">
+				<ActionCard v-if="actionCard"></ActionCard>
+			</template>
+		</Board>
 	</div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 
-import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
-
 import ActionCard from '@/components/Card/ActionCard.vue';
-import Deck from '@/components/Deck/Deck.vue';
-import BoardHeader from '@/components/Board/BoardHeader.vue';
-import BoardPlayers from '@/components/Board/BoardPlayers.vue';
+import Board from '@/components/Board/Board.vue';
 
 export default {
 	name: 'Game',
@@ -72,7 +57,6 @@ export default {
 		isStarted: function(to) {
 			if (to) {
 				this.isLoading = false;
-				this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
 			}
 		},
 	},
@@ -96,18 +80,8 @@ export default {
 			'isStarted',
 			'playerIds',
 		]),
-		...mapState({
-			decks: state => state.decks,
-		}),
-		...mapState(['isAdmin']),
-		decksLoaded: function() {
-			return this.decks.isLoaded;
-		},
 		isWinter: function() {
 			return this.actionCard && this.actionCard.name === 'winter';
-		},
-		needPlayers: function() {
-			return this.playerIds.length < 2;
 		},
 	},
 	methods: {
@@ -132,16 +106,12 @@ export default {
 			// Only unload if the current game was valid
 			if (this.id) {
 				this.$store.dispatch({ type: 'game/unload' });
-				this.$store.dispatch({ type: 'decks/unload', gameId: this.id });
 			}
 		},
 	},
 	components: {
-		'b-dropdown': bDropdown,
 		ActionCard,
-		BoardHeader,
-		BoardPlayers,
-		Deck,
+		Board,
 	},
 };
 </script>
@@ -150,7 +120,7 @@ export default {
 // prettier-ignore
 @import "~@/assets/scss/variables";
 
-#board {
+#game {
 	position: relative;
 }
 
