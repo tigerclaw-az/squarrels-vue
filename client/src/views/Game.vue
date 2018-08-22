@@ -209,15 +209,6 @@ export default {
 	}
 }
 
-.decks-container {
-	align-content: center;
-	align-items: flex-start;
-	display: flex;
-	flex-flow: row nowrap;
-	justify-content: center;
-	padding: 0.5rem;
-}
-
 .game-buttons {
 	position: absolute;
 	z-index: 5;
