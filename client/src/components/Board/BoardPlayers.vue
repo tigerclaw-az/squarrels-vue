@@ -24,10 +24,6 @@ import PlayerStorageModal from '@/components/Player/PlayerStorageModal.vue';
 export default {
 	name: 'BoardPlayers',
 	props: {
-		isGameStarted: {
-			type: Boolean,
-			required: true,
-		},
 		gameId: {
 			type: String,
 			required: true,
@@ -37,16 +33,6 @@ export default {
 		return {};
 	},
 	watch: {
-		isGameLoaded: function() {
-			if (this.needMorePlayers && !this.playerExists) {
-				this.$store.dispatch({
-					type: 'game/addPlayer',
-					gameId: this.gameId,
-					playerId: this.currentPlayer.id,
-				});
-			}
-		},
-
 		playerIdsInGame: function() {
 			this.$store.dispatch({
 				type: 'players/load',
@@ -56,11 +42,18 @@ export default {
 	},
 	mounted: function() {
 		this.$log.debug(this);
+
+		if (this.needMorePlayers && !this.playerExists) {
+			this.$store.dispatch({
+				type: 'game/addPlayer',
+				gameId: this.gameId,
+				playerId: this.currentPlayer.id,
+			});
+		}
 	},
 	computed: {
 		...mapState({
 			currentPlayer: state => state.localPlayer,
-			isGameLoaded: state => state.game.isLoaded,
 			playerIdsInGame: state => state.game.playerIds,
 			allPlayers: state => state.players,
 		}),

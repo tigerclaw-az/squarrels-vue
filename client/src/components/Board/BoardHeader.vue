@@ -1,5 +1,5 @@
 <template>
-	<b-container fluid class="header" v-if="isGameStarted">
+	<b-container fluid class="header">
 		<b-row class="align-items-center">
 			<b-col class="header-item game-start">{{startDate}}</b-col>
 			<b-col class="header-item game-settings">
@@ -30,12 +30,7 @@ export default {
 		'game-settings': GameSettings,
 		Icon,
 	},
-	props: {
-		isGameStarted: {
-			type: Boolean,
-			required: true,
-		},
-	},
+	props: {},
 	data: function() {
 		return {};
 	},
