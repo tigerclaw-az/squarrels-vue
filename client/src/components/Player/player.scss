@@ -1,15 +1,26 @@
 @import "~@/assets/scss/variables";
 @import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
+
+$card-height: (
+	small: 150,
+	medium: 150,
+);
+
+$card-width: (
+	small: 100,
+	medium: 100,
+);
+
 @import "~@/components/Card/card";
 
 .sq-player {
 	align-content: center;
 	align-items: center;
 	display: flex;
-	flex-flow: row wrap;
-	justify-content: center;
+	flex-flow: row nowrap;
 	position: relative;
 	text-align: center;
+	z-index: 10;
 
 	.sq-player-quarrel {
 		@extend %playing-cards;
@@ -50,8 +61,8 @@
 	}
 
 	.sq-player-thumbnail {
-		margin-right: 1rem;
 		position: relative;
+		z-index: 60;
 
 		img {
 			width: 6.5rem;
@@ -68,21 +79,13 @@
 	}
 
 	&.current {
-		flex: 1 0 100%;
-		margin-bottom: 3.5rem;
-
-		.sq-player-thumbnail {
-			img {
-				width: 7.5rem;
-			}
-		}
-
 		.btn-card {
 			&:not(.disabled) {
 				cursor: pointer;
 			}
 
-			&.selected {
+			&.selected,
+			&:hover {
 				transform: translateY(-15%);
 
 				.card {
@@ -102,8 +105,10 @@
 	}
 
 	.sq-player-cards {
-		flex: 1 1 100%;
 		height: 100%;
+		position: absolute;
+		top: -100%;
+		z-index: 5;
 
 		.cards-group {
 			@extend %playing-cards;
@@ -139,56 +144,6 @@
 
 			.btn-card {
 				width: rem-calc($card-width-stack);
-
-				&:hover {
-					.card {
-						top: -20px;
-					}
-				}
-			}
-		}
-
-		.empty {
-			@extend %playing-cards;
-
-			border: 2px dotted;
-			flex: 1;
-			font-size: 4rem;
-			height: rem-calc(map-get($card-height, "small"));
-			padding: 3.5rem;
-
-			&::after {
-				content: "NO CARDS";
-				left: 25%;
-				position: absolute;
-				top: 25%;
-			}
-		}
-	}
-
-	@include media-breakpoint-up(md) {
-		&.current {
-			.btn-card {
-				&.selected {
-					.card {
-						transform: scale(1);
-					}
-				}
-			}
-
-			.sq-player-thumbnail {
-				img {
-					width: 10rem;
-				}
-			}
-		}
-
-		.sq-player-cards {
-			flex-basis: auto;
-
-			.empty {
-				height: rem-calc(map-get($card-height, "medium"));
-				padding: 5rem;
 			}
 		}
 	}
