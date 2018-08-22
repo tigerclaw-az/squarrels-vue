@@ -44,6 +44,7 @@
 			</div>
 			<div v-else-if="isGameStarted" class="empty"></div>
 		</div>
+		<player-storage-modal :player="player"></player-storage-modal>
 	</div>
 </template>
 
@@ -55,13 +56,10 @@ import _ from 'lodash';
 import api from '@/api/index';
 import Card from '@/components/Card/Card.vue';
 import PlayerInfo from '@/components/Player/PlayerInfo.vue';
+import PlayerStorageModal from '@/components/Player/PlayerStorageModal.vue';
 
 export default {
 	name: 'Player',
-	components: {
-		Card,
-		PlayerInfo,
-	},
 	props: {
 		player: {
 			type: Object,
@@ -251,6 +249,11 @@ export default {
 					this.$log.error(err);
 				});
 		},
+	},
+	components: {
+		Card,
+		PlayerInfo,
+		'player-storage-modal': PlayerStorageModal,
 	},
 };
 </script>
