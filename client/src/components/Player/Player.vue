@@ -6,10 +6,10 @@
 		'my-turn': isMyTurn,
 	}">
 		<div class="sq-player-thumbnail">
+			<div class="sq-player-name">{{player.name}}</div>
 			<img class="img-circle" src="@/assets/images/squirrel-placeholder.jpg"/>
-			<span class="sq-player-card-count">{{player.totalCards}}</span>
+			<PlayerStorage :player="player"></PlayerStorage>
 		</div>
-		<PlayerInfo :player="player"></PlayerInfo>
 		<div
 			v-if="actionCard && quarrelCard(player.id)"
 			class="sq-player-quarrel"
@@ -53,14 +53,14 @@ import _ from 'lodash';
 
 import api from '@/api/index';
 import Card from '@/components/Card/Card.vue';
-import PlayerInfo from '@/components/Player/PlayerInfo.vue';
+import PlayerStorage from '@/components/Player/PlayerStorage.vue';
 import PlayerStorageModal from '@/components/Player/PlayerStorageModal.vue';
 
 export default {
 	name: 'Player',
 	components: {
 		Card,
-		PlayerInfo,
+		PlayerStorage,
 		'player-storage-modal': PlayerStorageModal,
 	},
 	props: {

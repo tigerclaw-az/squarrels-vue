@@ -1,8 +1,7 @@
 <template>
-	<div class="sq-player-info">
-		<div class="sq-player-name">{{player.name}}</div>
+	<!-- <div class="sq-player-storage"> -->
 		<a
-			class="sq-player-info-item sq-player-storage"
+			class="sq-player-storage"
 			href="#"
 			title="View or Store Nuts"
 			@click.prevent="onClickStorage"
@@ -10,14 +9,14 @@
 			<icon name="tree" scale="4" class="icon icon-storage"></icon>
 			<span class="sq-player-score">{{player.score}}</span>
 		</a>
-	</div>
+	<!-- </div> -->
 </template>
 
 <script>
 import Icon from 'vue-awesome/components/Icon';
 
 export default {
-	name: 'PlayerInfo',
+	name: 'PlayerStorage',
 	props: {
 		player: {
 			type: Object,
@@ -44,41 +43,27 @@ export default {
 // prettier-ignore
 @import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
-.sq-player-info {
-	align-items: center;
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
+.sq-player-storage {
+	bottom: 0;
+	color: inherit;
+	font-size: 2rem;
+	left: -10%;
+	position: absolute;
+	z-index: 80;
 
-	.sq-player-info-item {
-		color: inherit;
-		font-size: inherit;
-		position: relative;
-	}
-
-	.sq-player-name {
-		flex: 1 0 100%;
-	}
-
-	.sq-player-storage {
-		font-size: 2rem;
-
-		.sq-player-score {
-			@extend %center-horizontal;
-			// prettier-ignore
-			color: color("carnaby-tan");
-			font-size: 1.25rem;
-			font-weight: $font-weight-bold;
-			line-height: 2.25;
-			top: 0;
-		}
+	.sq-player-score {
+		@extend %center-horizontal;
+		// prettier-ignore
+		color: color("carnaby-tan");
+		font-size: 1.25rem;
+		font-weight: $font-weight-bold;
+		line-height: 2.25;
+		top: 0;
 	}
 
 	@include media-breakpoint-up(md) {
-		.sq-player-storage {
-			.sq-player-score {
-				font-size: 1.75rem;
-			}
+		.sq-player-score {
+			font-size: 1.75rem;
 		}
 	}
 }

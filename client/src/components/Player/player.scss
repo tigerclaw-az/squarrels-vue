@@ -17,7 +17,7 @@ $card-width: (
 	align-content: center;
 	align-items: center;
 	display: flex;
-	flex-flow: row nowrap;
+	flex-flow: column nowrap;
 	position: relative;
 	text-align: center;
 	z-index: 10;
@@ -67,15 +67,6 @@ $card-width: (
 		img {
 			width: 6.5rem;
 		}
-
-		.sq-player-card-count {
-			bottom: 0;
-			color: color("alabaster");
-			font-size: 2rem;
-			line-height: 1;
-			position: absolute;
-			right: 0;
-		}
 	}
 
 	&.current {
@@ -87,9 +78,6 @@ $card-width: (
 			&.selected,
 			&:hover {
 				.card {
-				// 	border: 2px solid color("zest");
-				// 	border-radius: 0.75rem;
-				// 	transform: scale(1.5);
 					transform: translateY(-15%);
 				}
 			}
@@ -97,7 +85,7 @@ $card-width: (
 	}
 
 	&.active {
-		.sq-player-info {
+		.sq-player-storage {
 			color: color("zest");
 			font-weight: $font-weight-bold;
 		}
