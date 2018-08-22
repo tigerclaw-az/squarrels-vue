@@ -6,10 +6,10 @@
 		'my-turn': isMyTurn,
 	}">
 		<div class="sq-player-thumbnail">
-			<div class="sq-player-name">{{player.name}}</div>
 			<img class="img-circle" src="@/assets/images/squirrel-placeholder.jpg"/>
 			<PlayerStorage :player="player"></PlayerStorage>
 		</div>
+		<div class="sq-player-name">{{player.name}}</div>
 		<div
 			v-if="actionCard && quarrelCard(player.id)"
 			class="sq-player-quarrel"
@@ -273,5 +273,147 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./player.scss">
+<style lang="scss">
+// prettier-ignore
+@import "~@/assets/scss/variables";
+// prettier-ignore
+@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
+
+$card-height: (
+	small: 150,
+	medium: 150,
+);
+
+$card-width: (
+	small: 100,
+	medium: 100,
+);
+
+// prettier-ignore
+@import "~@/components/Card/card";
+
+.sq-player {
+	align-content: center;
+	align-items: center;
+	display: flex;
+	flex-flow: column nowrap;
+	position: relative;
+	text-align: center;
+	z-index: 10;
+
+	.sq-player-quarrel {
+		@extend %playing-cards;
+
+		animation: 0.5s linear grow;
+		left: 0;
+		position: absolute;
+		top: 0;
+
+		.card:not(.blank--) {
+			box-shadow: none;
+			left: 0;
+			transform: rotateY(120deg);
+
+			&::after {
+				// prettier-ignore
+				box-shadow: 0 0 20px 20px color("saffron");
+				// prettier-ignore
+				content: "";
+				height: 100%;
+				left: 0;
+				opacity: 0;
+				position: absolute;
+				transition: opacity 0.5s linear;
+				width: 100%;
+			}
+		}
+
+		&.flip {
+			@include flip-card;
+		}
+
+		&.winner {
+			.card {
+				&::after {
+					opacity: 1;
+				}
+			}
+		}
+	}
+
+	.sq-player-thumbnail {
+		position: relative;
+		z-index: 60;
+
+		img {
+			width: 6.5rem;
+		}
+	}
+
+	&.current {
+		.btn-card {
+			&:not(.disabled) {
+				cursor: pointer;
+			}
+
+			&.selected,
+			&:hover {
+				.card {
+					transform: translateY(-15%);
+				}
+			}
+		}
+	}
+
+	&.active {
+		.sq-player-storage {
+			// prettier-ignore
+			color: color("zest");
+			font-weight: $font-weight-bold;
+		}
+	}
+
+	.sq-player-cards {
+		position: absolute;
+		top: -3.5rem;
+		z-index: 5;
+
+		.cards-group {
+			@extend %playing-cards;
+			height: 100%;
+
+			.message {
+				color: $white;
+				font-size: 1.25em;
+				text-align: left;
+			}
+
+			.cards-enter-active,
+			.cards-leave-active {
+				position: absolute;
+				transition-duration: 0.75s;
+				transition-property: opacity, transform;
+			}
+
+			.cards-enter {
+				opacity: 0;
+				transform: translateY(-3rem);
+			}
+
+			.cards-enter-to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			.cards-leave-to {
+				opacity: 0;
+				transform: translateY(3rem);
+			}
+
+			.btn-card {
+				width: rem-calc($card-width-stack);
+			}
+		}
+	}
+}
 </style>
