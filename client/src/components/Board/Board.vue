@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import { config } from '@/config';
 
 import BoardHeader from '@/components/Board/BoardHeader.vue';
@@ -85,10 +85,12 @@ export default {
 		}
 	},
 	computed: {
+		...mapGetters({
+			currentPlayer: 'players/getMyPlayer',
+		}),
 		...mapState(['isAdmin']),
 		...mapState({
 			allPlayers: state => state.players,
-			currentPlayer: state => state.localPlayer,
 			decks: state => state.decks,
 			playerIdsInGame: state => state.game.playerIds,
 		}),
@@ -164,7 +166,6 @@ export default {
 .container_decks {
 	align-content: center;
 	align-items: flex-start;
-	border: 1px solid #888;
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: center;
