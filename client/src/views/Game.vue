@@ -83,6 +83,9 @@ export default {
 		isWinter: function() {
 			return this.actionCard && this.actionCard.name === 'winter';
 		},
+		needPlayers: function() {
+			return this.playerIds.length < 2;
+		},
 	},
 	methods: {
 		onClickStartGame: function(evt) {
