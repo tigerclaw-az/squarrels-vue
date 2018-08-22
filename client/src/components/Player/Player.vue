@@ -36,13 +36,11 @@
 						:onClick="onClickCard"
 						:card-data="card"
 						card-type="hand"
+						:cardStyle="cardStyle(index)"
 						:matches="card.cardType === 'special' ? [] : findCardMatches(card.amount)"
-						:position="{ left: (index * 32) + 'px' }"
-						:z-index="index"
 					></Card>
 				</transition-group>
 			</div>
-			<div v-else-if="isGameStarted" class="empty"></div>
 		</div>
 		<player-storage-modal :player="player"></player-storage-modal>
 	</div>
@@ -60,6 +58,11 @@ import PlayerStorageModal from '@/components/Player/PlayerStorageModal.vue';
 
 export default {
 	name: 'Player',
+	components: {
+		Card,
+		PlayerInfo,
+		'player-storage-modal': PlayerStorageModal,
+	},
 	props: {
 		player: {
 			type: Object,
@@ -131,6 +134,25 @@ export default {
 		}
 	},
 	methods: {
+		cardStyle: function(index) {
+			let cardsCount = this.myCards.length;
+			let styles = {
+				'z-index': index + 1,
+			};
+			const halfCardsCount = cardsCount / 2;
+			const spacing = 90 / cardsCount + 20;
+			let spacingMultiplier = index - halfCardsCount;
+
+			if (index > halfCardsCount) {
+				spacingMultiplier = Math.abs(halfCardsCount - index);
+				// styles.top = index * Math.abs(halfCardsCount - index) + 'px';
+			}
+
+			styles.left = `${spacing * spacingMultiplier}px`;
+			// styles.transform = `rotate(${rotateBy * rotateMultiplier}deg)`;
+
+			return styles;
+		},
 		discard: function(card) {
 			this.$log.debug(card);
 
@@ -196,8 +218,6 @@ export default {
 					});
 			}
 
-			this.$log.debug(this);
-
 			// User can't click card if action card has been drawn
 			if (this.actionCard || !this.myPlayer.hasDrawnCard) {
 				return false;
@@ -249,11 +269,6 @@ export default {
 					this.$log.error(err);
 				});
 		},
-	},
-	components: {
-		Card,
-		PlayerInfo,
-		'player-storage-modal': PlayerStorageModal,
 	},
 };
 </script>

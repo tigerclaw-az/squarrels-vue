@@ -86,12 +86,11 @@ $card-width: (
 
 			&.selected,
 			&:hover {
-				transform: translateY(-15%);
-
 				.card {
-					border: 2px solid color("zest");
-					border-radius: 0.75rem;
-					transform: scale(1.5);
+				// 	border: 2px solid color("zest");
+				// 	border-radius: 0.75rem;
+				// 	transform: scale(1.5);
+					transform: translateY(-15%);
 				}
 			}
 		}
@@ -105,9 +104,8 @@ $card-width: (
 	}
 
 	.sq-player-cards {
-		height: 100%;
 		position: absolute;
-		top: -100%;
+		top: -3.5rem;
 		z-index: 5;
 
 		.cards-group {
