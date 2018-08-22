@@ -28,7 +28,7 @@
 		</div>
 		<Board v-if="isStarted && isLoaded" :gameId="id" :deckIds="deckIds" :playerIds="playerIds">
 			<template slot="action">
-				<ActionCard v-if="actionCard"></ActionCard>
+				<CardAction v-if="actionCard"></CardAction>
 			</template>
 		</Board>
 	</div>
@@ -37,7 +37,7 @@
 <script>
 import { mapState } from 'vuex';
 
-import ActionCard from '@/components/Card/ActionCard.vue';
+import CardAction from '@/components/Card/CardAction.vue';
 import Board from '@/components/Board/Board.vue';
 
 export default {
@@ -113,7 +113,7 @@ export default {
 		},
 	},
 	components: {
-		ActionCard,
+		CardAction,
 		Board,
 	},
 };

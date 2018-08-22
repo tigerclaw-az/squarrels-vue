@@ -21,7 +21,7 @@ import { mapState } from 'vuex';
 import Card from '@/components/Card/Card.vue';
 
 export default {
-	name: 'ActionCard',
+	name: 'CardAction',
 	components: {
 		Card,
 	},
@@ -104,8 +104,6 @@ export default {
 			};
 
 			this.$nextTick(() => {
-				this.$log.debug('ActionCard.mounted', hoardDeck, hoardCards);
-
 				this.$el
 					.querySelector('.card')
 					.addEventListener('animationend', onAnimationEnd);
