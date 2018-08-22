@@ -1,14 +1,12 @@
 <template>
-	<b-container fluid class="header">
-		<b-row class="align-items-center">
-			<b-col class="header-item game-start">{{startDate}}</b-col>
-			<b-col class="header-item game-settings">
-				<game-settings></game-settings>
-				<admin-options v-if="isAdmin"></admin-options>
-			</b-col>
-			<b-col class="header-item game-round">ROUND: {{roundNumber}}</b-col>
-		</b-row>
-	</b-container>
+	<b-row class="header align-items-center">
+		<b-col class="header-item game-start">{{startDate}}</b-col>
+		<b-col class="header-item game-settings">
+			<game-settings></game-settings>
+			<admin-options v-if="isAdmin"></admin-options>
+		</b-col>
+		<b-col class="header-item game-round">ROUND: {{roundNumber}}</b-col>
+	</b-row>
 </template>
 
 <script>
