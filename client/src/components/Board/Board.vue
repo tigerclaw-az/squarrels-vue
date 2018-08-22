@@ -2,9 +2,11 @@
 	<div id="board">
 		<b-container fluid>
 			<BoardHeader></BoardHeader>
-			<b-row>
-				<b-col cols="2">
-					<div class="container_players-left">
+		</b-container>
+		<b-container fluid class="container_board">
+			<b-row class="align-items-center justify-content-center mt-5">
+				<b-col cols="3">
+					<div class="container_players container_players-left">
 						<Player
 							v-for="(p, index) in opponents"
 							v-if="index % 2 === 0"
@@ -14,13 +16,13 @@
 						</Player>
 					</div>
 				</b-col>
-				<b-col cols="8">
+				<b-col cols="6">
 					<div class="container_decks">
 						<Deck v-if="decksLoaded" v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
 					</div>
 				</b-col>
-				<b-col cols="2">
-					<div class="container_players-right">
+				<b-col cols="3">
+					<div class="container_players container_players-right">
 						<Player
 							v-for="(p, index) in opponents"
 							v-if="index % 2 !== 0"
@@ -31,9 +33,9 @@
 					</div>
 				</b-col>
 			</b-row>
-			<b-row>
+			<div class="row_current-player">
 				<Player :player="currentPlayer"></Player>
-			</b-row>
+			</div>
 			<slot name="action"></slot>
 		</b-container>
 	</div>
@@ -125,12 +127,58 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#board {
+	display: flex;
+	flex-flow: column;
+}
+
+.container_board {
+	border: 1px solid yellow;
+	height: 90vh;
+}
+
+.container_players {
+	border: 1px solid green;
+	display: flex;
+	flex-flow: column;
+	height: 100%;
+
+	.sq-player-thumbnail {
+		order: 0;
+	}
+
+	.sq-player-info {
+		order: 1;
+	}
+
+	&.container_players-left {
+		.sq-player-thumbnail {
+			order: 1;
+		}
+
+		.sq-player-info {
+			order: 0;
+		}
+	}
+}
+
 .container_decks {
 	align-content: center;
 	align-items: flex-start;
+	border: 1px solid #888;
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: center;
 	padding: 0.5rem;
+}
+
+.row_current-player {
+	align-items: center;
+	bottom: 0;
+	display: flex;
+	justify-content: center;
+	left: 0;
+	position: absolute;
+	width: 100%;
 }
 </style>
