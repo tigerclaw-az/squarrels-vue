@@ -134,7 +134,6 @@ export default {
 
 .container_board {
 	border: 1px solid yellow;
-	height: 90vh;
 }
 
 .container_players {
@@ -174,11 +173,9 @@ export default {
 
 .row_current-player {
 	align-items: center;
-	bottom: 0;
 	display: flex;
 	justify-content: center;
-	left: 0;
-	position: absolute;
+	margin-top: 4rem;
 	width: 100%;
 }
 </style>
