@@ -11,20 +11,29 @@
 		</div>
 		<div class="sq-player-name">{{player.name}}</div>
 		<PlayerQuarrel :player="player"></PlayerQuarrel>
-		<div v-if="isCurrentPlayer" class="sq-player-cards">
-			<div v-if="player.message" class="sq-quarrel-message">{{player.message}}</div>
-			<div v-if="hasCards" class="cards-group hand">
+		<div class="sq-player-cards">
+			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">{{player.message}}</div>
+			<div class="cards-group hand">
 				<transition-group name="cards">
 					<Card
 						v-for="(card, index) in myCardsSorted"
+						v-if="isCurrentPlayer"
 						:key="card.id"
 						:id="card.id"
-						:class="{ mine: hasCards }"
 						:onClick="onClickCard"
 						:card-data="card"
 						card-type="hand"
 						:cardStyle="cardStyle(index)"
 						:matches="card.cardType === 'special' ? [] : findCardMatches(card.amount)"
+					></Card>
+				</transition-group>
+				<transition-group name="cards">
+					<Card
+						v-if="!isCurrentPlayer"
+						v-for="n in player.totalCards"
+						:key="n"
+						:cardStyle="cardStyle(n)"
+						card-type="hand"
 					></Card>
 				</transition-group>
 			</div>
@@ -120,13 +129,17 @@ export default {
 	},
 	methods: {
 		cardStyle: function(index) {
-			let cardsCount = this.myCards.length;
+			let cardsCount = this.isCurrentPlayer
+				? this.myCards.length
+				: this.player.totalCards;
+
 			let styles = {
 				'z-index': index + 1,
 			};
+
 			const halfCardsCount = cardsCount / 2;
 			// const rotate = 90 / cardsCount + 20;
-			const spacing = 400 / cardsCount;
+			const spacing = (this.isCurrentPlayer ? 400 : 100) / cardsCount;
 			let spacingMultiplier = index - halfCardsCount;
 
 			if (index > halfCardsCount) {
@@ -370,6 +383,15 @@ $card-width: (
 
 			.btn-card {
 				width: rem-calc($card-width-stack);
+			}
+		}
+	}
+
+	&:not(.current) {
+		.sq-player-cards {
+			.cards-group {
+				left: 25%;
+				position: absolute;
 			}
 		}
 	}
