@@ -1,23 +1,28 @@
-var config = require('../config/config'),
-	logger = config.logger(),
-	cards = require('express').Router();
+const config = require('../config/config');
+const logger = config.logger('routes:cards');
+const cards = require('express').Router();
 
 const CardModel = require('../models/CardModel').model;
 
 cards.get('/:id', function(req, res) {
-	var ids = req.params.id.split(',');
+	const ids = req.params.id.split(',');
+	let promises = [];
 
-	CardModel
-		.find()
-		.where('_id')
-		.in(ids)
-		.exec()
+	for (let id of ids) {
+		promises.push(new Promise(resolve => {
+			CardModel.findById(id).exec().then(card => resolve(card));
+		}));
+	}
+
+	Promise.all(promises)
 		.then(function(list) {
+			logger.info('cardDetails -> ', list);
+
 			if (list.length === 0) {
 				res.status(204);
 			}
 
-			res.status(200).json(list);
+			res.status(200).json(list.reverse());
 		})
 		.catch(function(err) {
 			logger.error(err);
