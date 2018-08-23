@@ -137,24 +137,6 @@ export default {
 	display: flex;
 	flex-flow: column;
 	height: 100%;
-
-	.sq-player-thumbnail {
-		order: 0;
-	}
-
-	.sq-player-info {
-		order: 1;
-	}
-
-	&.container_players-left {
-		.sq-player-thumbnail {
-			order: 1;
-		}
-
-		.sq-player-info {
-			order: 0;
-		}
-	}
 }
 
 .container_decks {
@@ -170,7 +152,7 @@ export default {
 	align-items: center;
 	display: flex;
 	justify-content: center;
-	margin-top: 8rem;
+	margin-top: 6rem;
 	width: 100%;
 }
 </style>
