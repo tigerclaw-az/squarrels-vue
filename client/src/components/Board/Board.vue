@@ -4,38 +4,26 @@
 			<BoardHeader></BoardHeader>
 		</b-container>
 		<b-container fluid class="container_board">
-			<b-row class="align-items-center justify-content-center mt-5">
-				<b-col cols="3">
-					<div class="container_players container_players-left">
-						<Player
-							v-for="(p, index) in opponents"
-							v-if="index % 2 === 0"
-							:key="p.id"
-							:player="p"
-						>
-						</Player>
+			<!-- <b-row class="container_players align-items-center justify-content-center mt-5">
+				<b-col :cols="12 / opponents.length" v-for="p in opponents" :key="p.id">
+					<Player :player="p"></Player>
+				</b-col>
+			</b-row> -->
+			<b-row class="align-items-center justify-content-center mt-4">
+				<b-col cols="4" lg="3">
+					<div class="container_players">
+						<Player v-for="p in opponents" :key="p.id" :player="p"></Player>
 					</div>
 				</b-col>
-				<b-col cols="6">
+				<b-col cols="8" lg="9">
 					<div class="container_decks">
 						<Deck v-if="decksLoaded" v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
 					</div>
-				</b-col>
-				<b-col cols="3">
-					<div class="container_players container_players-right">
-						<Player
-							v-for="(p, index) in opponents"
-							v-if="index % 2 !== 0"
-							:key="p.id"
-							:player="p"
-						>
-						</Player>
+					<div class="row_current-player">
+						<Player :player="currentPlayer"></Player>
 					</div>
 				</b-col>
 			</b-row>
-			<div class="row_current-player">
-				<Player :player="currentPlayer"></Player>
-			</div>
 			<slot name="action"></slot>
 		</b-container>
 	</div>
@@ -187,7 +175,7 @@ export default {
 	align-items: center;
 	display: flex;
 	justify-content: center;
-	margin-top: 4rem;
+	margin-top: 8rem;
 	width: 100%;
 }
 </style>
