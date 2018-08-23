@@ -265,6 +265,8 @@ module.exports = function(server, sessionParser) {
 						.exec()
 						.then(list => {
 							if (list[0]) {
+								logger.info('getMyCards -> ', list[0]);
+
 								const wsObj = {
 									namespace: 'wsPlayers',
 									action: 'getMyCards',
