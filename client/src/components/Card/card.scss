@@ -68,7 +68,7 @@ $card-images: (
 		height: 100%;
 	}
 
-	@include media-breakpoint-up(md) {
+	@include media-breakpoint-up(lg) {
 		.btn-card,
 		.card {
 			height: rem-calc(map-get($card-height, "medium"));
