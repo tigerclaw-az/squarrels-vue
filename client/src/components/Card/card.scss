@@ -91,4 +91,11 @@ $card-images: (
 	&:focus {
 		outline: none;
 	}
+
+	.icon {
+		color: theme-color("success");
+		left: -8%;
+		position: absolute;
+		top: -5px;
+	}
 }
