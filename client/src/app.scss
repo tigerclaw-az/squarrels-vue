@@ -31,16 +31,6 @@ textarea {
 
 .main {
 	-webkit-backface-visibility: hidden; // stylelint-disable-line
-
-	// animation: gradient 30s linear infinite;
-	background: linear-gradient(
-		320deg,
-		color(carnaby-tan),
-		color(cioccolato),
-		color(kenyan-copper),
-		color(carnaby-tan)
-	);
-	// background-size: 600% 600%;
 	height: 99vh;
 	transform: translateZ(0);
 }

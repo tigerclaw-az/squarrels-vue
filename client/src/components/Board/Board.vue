@@ -129,9 +129,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// prettier-ignore
+@import "~@/assets/scss/variables";
+
 #board {
+	background-blend-mode: overlay;
+	// prettier-ignore
+	background-color: color("kenyan-copper");
+	// prettier-ignore
+	background-image: url("~@/assets/images/board-bg.jpg");
+	background-size: 100%;
 	display: flex;
 	flex-flow: column;
+	object-fit: contain;
+	object-position: center;
 }
 
 .container_board {

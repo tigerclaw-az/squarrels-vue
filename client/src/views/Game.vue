@@ -142,12 +142,6 @@ export default {
 		background-size: cover;
 	}
 
-	&:not(.winter) {
-		// prettier-ignore
-		background-color: color("mine-shaft");
-		opacity: 0.9;
-	}
-
 	.winter-enter-active,
 	.winter-leave-active {
 		// position: absolute;
