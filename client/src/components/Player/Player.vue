@@ -139,7 +139,7 @@ export default {
 
 			const halfCardsCount = cardsCount / 2;
 			// const rotate = 90 / cardsCount + 20;
-			const spacing = (this.isCurrentPlayer ? 400 : 100) / cardsCount;
+			const spacing = (this.isCurrentPlayer ? 300 : 100) / cardsCount;
 			let spacingMultiplier = index - halfCardsCount;
 
 			if (index > halfCardsCount) {
@@ -277,12 +277,12 @@ export default {
 @import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
 $card-height: (
-	small: 150,
+	small: 125,
 	medium: 150,
 );
 
 $card-width: (
-	small: 100,
+	small: 80,
 	medium: 100,
 );
 
@@ -292,6 +292,7 @@ $card-width: (
 .sq-player {
 	align-content: center;
 	align-items: center;
+	color: $white;
 	display: flex;
 	flex-flow: column nowrap;
 	position: relative;
