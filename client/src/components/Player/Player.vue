@@ -115,7 +115,11 @@ export default {
 			const diff1 = _.difference(newCards, oldCards);
 			const diff2 = _.difference(oldCards, newCards);
 
-			if (!this.myCards.length || (!diff1.length && !diff2.length)) {
+			if (!this.myCards.length) {
+				this.myCardsDetails = [];
+
+				return;
+			} else if (!diff1.length && !diff2.length) {
 				return;
 			}
 
@@ -143,7 +147,7 @@ export default {
 			let spacingMultiplier = index - halfCardsCount;
 
 			if (index > halfCardsCount) {
-				spacingMultiplier = Math.abs(halfCardsCount - index);
+				// spacingMultiplier = Math.abs(halfCardsCount - index);
 				// styles.top = index * Math.abs(halfCardsCount - index) + 'px';
 			}
 
