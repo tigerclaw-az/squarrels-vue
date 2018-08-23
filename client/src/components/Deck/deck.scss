@@ -9,8 +9,9 @@ $deck-height: 8 !default;
 
 	align-items: center;
 	display: flex;
-	flex: 0 0 15%;
+	flex: 0 0 33%;
 	flex-direction: column;
+	justify-content: center;
 	margin-right: 1rem;
 	padding: 0.25rem;
 	position: relative;
@@ -23,18 +24,22 @@ $deck-height: 8 !default;
 	.deck {
 		@extend %playing-cards;
 
-		height: 100%;
-		padding-top: 0.5rem;
-		width: auto;
+		background-color: theme-color("secondary");
+		margin-top: 1rem;
+		text-align: center;
+		width: 100%;
 
 		&.empty::before {
 			content: "X";
-			font-size: 8rem;
+			font-size: rem-calc(map-get($card-width, "small"));
 		}
 
 		.cards-group {
+			align-items: center;
+			display: flex;
 			height: rem-calc($height);
-			width: rem-calc(map-get($card-width, "small"));
+			justify-content: center;
+			// width: rem-calc(map-get($card-width, "small"));
 
 			&:not(.disabled) {
 				cursor: pointer;
@@ -48,7 +53,7 @@ $deck-height: 8 !default;
 		.deck {
 			.cards-group {
 				height: rem-calc($height);
-				width: rem-calc(map-get($card-width, "medium"));
+				// width: rem-calc(map-get($card-width, "medium"));
 			}
 		}
 	}
