@@ -167,7 +167,13 @@ export default {
 
 	// Once the card is flipped we need to move it towards the 'action' deck
 	&.shown {
-		transform: translate(18vw, 35vh);
+		transform: translate(38vw, 30vh);
+	}
+
+	@include media-breakpoint-up(lg) {
+		&.shown {
+			transform: translate(30vw, 35vh);
+		}
 	}
 }
 </style>
