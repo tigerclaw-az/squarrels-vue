@@ -4,11 +4,6 @@
 			<BoardHeader></BoardHeader>
 		</b-container>
 		<b-container fluid class="container_board">
-			<!-- <b-row class="container_players align-items-center justify-content-center mt-5">
-				<b-col :cols="12 / opponents.length" v-for="p in opponents" :key="p.id">
-					<Player :player="p"></Player>
-				</b-col>
-			</b-row> -->
 			<b-row class="align-items-center justify-content-center mt-4">
 				<b-col cols="4" lg="3">
 					<div class="container_players">
