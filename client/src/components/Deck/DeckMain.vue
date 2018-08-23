@@ -28,7 +28,7 @@
 				</Card>
 			</div>
 			<span
-				v-for="(card, index) in numCards"
+				v-for="index in numCards"
 				:key="index"
 				class="card blank--"
 				:style="cardStyle(index)"
