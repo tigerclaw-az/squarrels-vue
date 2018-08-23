@@ -39,6 +39,8 @@ export default {
 		isQuarrelWinner: function() {
 			return this.$store.state.players[this.player.id].isQuarrelWinner;
 		},
+	},
+	methods: {
 		quarrelCard: function(id) {
 			return this.$store.getters['game/getQuarrelCardByPlayer'](id);
 		},
