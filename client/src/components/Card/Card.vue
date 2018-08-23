@@ -20,7 +20,9 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
+
+import _ from 'lodash';
 import Icon from 'vue-awesome/components/Icon';
 
 import api from '@/api/index';
@@ -64,7 +66,7 @@ export default {
 			myPlayer: 'players/getMyPlayer',
 		}),
 		cardClass: function() {
-			if (this.details) {
+			if (!_.isEmpty(this.details)) {
 				return `${this.details.cardType}--${this.details.name}`;
 			}
 
