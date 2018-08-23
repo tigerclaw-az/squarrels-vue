@@ -167,7 +167,7 @@ export default {
 
 	// Once the card is flipped we need to move it towards the 'action' deck
 	&.shown {
-		transform: translate(18vw, -32vh);
+		transform: translate(18vw, 35vh);
 	}
 }
 </style>
