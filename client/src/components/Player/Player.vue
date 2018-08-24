@@ -143,16 +143,10 @@ export default {
 
 			const halfCardsCount = cardsCount / 2;
 			// const rotate = 90 / cardsCount + 20;
-			const spacing = (this.isCurrentPlayer ? 300 : 100) / cardsCount;
+			const spacing = (this.isCurrentPlayer ? 160 : 100) / cardsCount;
 			let spacingMultiplier = index - halfCardsCount;
 
-			if (index > halfCardsCount) {
-				// spacingMultiplier = Math.abs(halfCardsCount - index);
-				// styles.top = index * Math.abs(halfCardsCount - index) + 'px';
-			}
-
 			styles.left = spacing * spacingMultiplier + 'px';
-			// styles.left = `${spacing * spacingMultiplier}px`;
 			// styles.transform = `rotate(${rotateBy * rotateMultiplier}deg)`;
 
 			return styles;
