@@ -31,7 +31,7 @@ $deck-height: 8 !default;
 
 		&.empty::before {
 			content: "X";
-			font-size: rem-calc(map-get($card-width, "small"));
+			font-size: rem-calc(map-get($card-width, "small") - 7);
 		}
 
 		.cards-group {
