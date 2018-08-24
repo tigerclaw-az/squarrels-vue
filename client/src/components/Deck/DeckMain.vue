@@ -6,7 +6,6 @@
 			'empty': !numCards,
 		}"
 	>
-		<div class="count">{{numCards}}</div>
 		<div v-show="!canDrawCard || isCardDrawn" class="overlay">
 			<icon name="ban" scale="7" class="icon"></icon>
 		</div>
@@ -35,6 +34,7 @@
 			>
 			</span>
 		</div>
+		<div class="count">{{numCards}}</div>
 		<div v-if="isAdmin" uib-dropdown>
 			<b-dropdown
 				id="dropdown-settings"
@@ -208,9 +208,7 @@ export default {
 	color: $black;
 	font-size: 1.25rem;
 	font-weight: $font-weight-bold;
-	left: 50%;
 	position: absolute;
-	transform: translateX(-50%);
 	z-index: 1;
 }
 
