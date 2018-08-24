@@ -1,7 +1,7 @@
 <template>
 	<div id="board">
 		<b-container fluid>
-			<BoardHeader></BoardHeader>
+			<BoardHeader v-if="isGameStarted"></BoardHeader>
 		</b-container>
 		<b-container fluid class="container_board">
 			<b-row class="align-items-center justify-content-center mt-4">
@@ -12,7 +12,7 @@
 				</b-col>
 				<b-col cols="8" lg="9">
 					<div class="container_decks">
-						<Deck v-if="decksLoaded" v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
+						<Deck v-if="isGameStarted && decksLoaded" v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
 					</div>
 					<div class="row_current-player">
 						<Player :player="currentPlayer"></Player>
@@ -42,6 +42,11 @@ export default {
 		gameId: {
 			type: String,
 			required: true,
+		},
+		isGameStarted: {
+			type: Boolean,
+			required: true,
+			default: false,
 		},
 		playerIds: {
 			type: Array,

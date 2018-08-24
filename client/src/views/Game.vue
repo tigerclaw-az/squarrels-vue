@@ -26,7 +26,13 @@
 				</div>
 			</transition>
 		</div>
-		<Board v-if="isStarted && isLoaded" :gameId="id" :deckIds="deckIds" :playerIds="playerIds">
+		<Board
+			v-if="isLoaded"
+			:deckIds="deckIds"
+			:gameId="id"
+			:isGameStarted="isStarted"
+			:playerIds="playerIds"
+		>
 			<template slot="action">
 				<CardAction v-if="actionCard"></CardAction>
 			</template>
@@ -128,6 +134,7 @@ export default {
 }
 
 .game-overlay {
+	background-color: rgba($black, 0.8);
 	height: auto !important;
 	margin: 0 auto -20px;
 	min-height: 100%;
