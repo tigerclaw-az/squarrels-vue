@@ -361,7 +361,7 @@ const actions = {
 		return true;
 	},
 
-	selectQuarrelCard({}, data) {
+	selectQuarrelCard({ dispatch }, data) {
 		let wsObj = {
 			action: 'quarrel',
 			player: data.id,
@@ -373,6 +373,8 @@ const actions = {
 		if (data.card) {
 			wsObj.card = data.card;
 		}
+
+		dispatch('updateLocalPlayer', { message: null });
 
 		this._vm.$socket.sendObj(wsObj);
 	},
@@ -391,7 +393,7 @@ const actions = {
 		}
 	},
 
-	startQuarrel({ dispatch, getters, state }, options = {}) {
+	startQuarrel({ dispatch, getters, state, rootState }, options = {}) {
 		const myPlayer = getters.getMyPlayer;
 		const players = options.players || state.ids;
 
@@ -404,16 +406,19 @@ const actions = {
 		// Find all players that have at least 1 card
 		const quarrelPlayers = _.reject(players, { totalCards: 0 });
 
-		dispatch('game/setQuarrelCount', quarrelPlayers.length, { root: true });
+		// If no players, or just 1 player, have enough cards for Quarrel
+		if (quarrelPlayers.length <= 1) {
+			dispatch('game/quarrelWinner');
+		} else {
+			dispatch('game/setQuarrelCount', quarrelPlayers.length, {
+				root: true,
+			});
 
-		if (myPlayer.cardsInHand.length) {
 			dispatch('updateLocalPlayer', {
 				id: myPlayer.id,
 				message: 'Choose a Card',
 				quarrel: true,
 			});
-		} else {
-			dispatch('selectQuarrelCard', { id: myPlayer.id });
 		}
 	},
 

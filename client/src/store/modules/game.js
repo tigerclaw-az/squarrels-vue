@@ -172,6 +172,12 @@ const actions = {
 	},
 
 	quarrelWinner({ commit, dispatch, state }) {
+		if (!state.quarrelCards.current.length) {
+			dispatch('resetAction');
+
+			return false;
+		}
+
 		const quarrelGroup = _.groupBy(state.quarrelCards.current, data => {
 			// User had no cards, so the card property will be 'null'
 			if (!data.card) {
