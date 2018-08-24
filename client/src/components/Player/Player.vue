@@ -10,8 +10,8 @@
 			<PlayerStorage :player="player"></PlayerStorage>
 		</div>
 		<div class="sq-player-name">{{player.name}}</div>
-		<PlayerQuarrel :player="player"></PlayerQuarrel>
 		<div class="sq-player-cards">
+			<PlayerQuarrel :player="player"></PlayerQuarrel>
 			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">{{player.message}}</div>
 			<div class="cards-group hand">
 				<transition-group name="cards">
@@ -143,7 +143,7 @@ export default {
 
 			const halfCardsCount = cardsCount / 2;
 			// const rotate = 90 / cardsCount + 20;
-			const spacing = (this.isCurrentPlayer ? 160 : 100) / cardsCount;
+			const spacing = (this.isCurrentPlayer ? 240 : 100) / cardsCount;
 			let spacingMultiplier = index - halfCardsCount;
 
 			styles.left = spacing * spacingMultiplier + 'px';
