@@ -105,9 +105,17 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
+// prettier-ignore
+@import "~@/assets/scss/variables";
+// prettier-ignore
+@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
+
 .deck {
 	.cards-group {
 		.card {
+			left: 15%;
+			top: 0;
+
 			@for $i from 1 through 30 {
 				$rotate: random(30) - 15;
 				$left: random(30) - 15;
@@ -142,6 +150,14 @@ export default {
 	.cards-discard-leave-to {
 		opacity: 0;
 		transform: scale(3);
+	}
+
+	@include media-breakpoint-up(lg) {
+		.cards-group {
+			.card {
+				left: 25%;
+			}
+		}
 	}
 }
 </style>
