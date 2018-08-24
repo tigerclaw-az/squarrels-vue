@@ -106,8 +106,6 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 .deck {
-	border: 2px dashed transparent;
-
 	.cards-group {
 		.card {
 			@for $i from 1 through 30 {
