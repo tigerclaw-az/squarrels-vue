@@ -325,14 +325,14 @@ const actions = {
 
 	async removeHighCard({ dispatch }, player) {
 		const cards = player.cardsInHand;
-		const highCard = this._.maxBy(cards, card => {
+		const highCard = _.maxBy(cards, card => {
 			return card.cardType === 'special' ? -1 : card.amount;
 		});
 
-		this.$log.debug('highCard ->', highCard);
+		this._vm.$log.debug('highCard ->', highCard);
 
-		if (!this._.isEmpty(highCard)) {
-			this._vm.$toasted.warn(`${player.name}: You just lost a card!`);
+		if (!_.isEmpty(highCard)) {
+			this._vm.$toasted.info('You just lost a card!');
 
 			await api.players.update(player.id, {
 				cardsInHand: _.difference(player.cardsInHand, [highCard.id]),
