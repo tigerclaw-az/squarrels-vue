@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import Card from '@/components/Card/Card.vue';
 
@@ -124,6 +124,9 @@ export default {
 		});
 	},
 	computed: {
+		...mapGetters({
+			isActivePlayer: 'players/isActivePlayer',
+		}),
 		...mapState('game', {
 			gameId: 'id',
 			card: 'actionCard',
@@ -132,7 +135,11 @@ export default {
 			decksLoaded: state => state.decks.isLoaded,
 		}),
 		isInstant: function() {
-			return this.instantAction || this.card.name === 'winter';
+			return (
+				this.isActivePlayer ||
+				this.instantAction ||
+				this.card.name === 'winter'
+			);
 		},
 	},
 };
