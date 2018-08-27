@@ -374,7 +374,7 @@ const actions = {
 			wsObj.card = data.card;
 		}
 
-		dispatch('updateLocalPlayer', { message: null });
+		dispatch('updateLocalPlayer', { id: data.id, message: null });
 
 		this._vm.$socket.sendObj(wsObj);
 	},
@@ -475,8 +475,8 @@ const actions = {
 
 	async updateLocalPlayer({ commit, state }, payload) {
 		if (!payload.id) {
-			this._vm.$toasted.warn('Did not receive "id" for player!');
-			this._vm.$log.warn('Missing "id" from payload:', payload);
+			this._vm.$toasted.info('Did not receive "id" for player!');
+			this._vm.$log.info('Missing "id" from payload:', payload);
 		}
 
 		commit('UPDATE', payload);
