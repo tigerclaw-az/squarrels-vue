@@ -53,6 +53,11 @@ export default {
 			required: true,
 		},
 	},
+	data() {
+		return {
+			decksLoaded: false,
+		};
+	},
 	watch: {
 		playerIdsInGame: function() {
 			this.$store.dispatch({
@@ -61,9 +66,14 @@ export default {
 			});
 		},
 	},
+	created: function() {
+		this.$store
+			.dispatch({ type: 'decks/load', ids: this.deckIds })
+			.then(() => {
+				this.decksLoaded = true;
+			});
+	},
 	mounted: function() {
-		this.$store.dispatch({ type: 'decks/load', ids: this.deckIds });
-
 		if (this.needMorePlayers && !this.playerExists) {
 			this.$store.dispatch({
 				type: 'game/addPlayer',
@@ -84,9 +94,6 @@ export default {
 		}),
 		needMorePlayers: function() {
 			return this.playerIdsInGame.length < config.MAX_PLAYERS;
-		},
-		decksLoaded: function() {
-			return this.decks.isLoaded;
 		},
 		playerExists: function() {
 			return this.playerIdsInGame.filter(
