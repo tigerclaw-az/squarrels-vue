@@ -64,7 +64,7 @@ export default {
 			return !this.myPlayer.isActive && this.actionCard.name === 'hoard';
 		},
 		isDisabled: function() {
-			return this.tooManyClicks || !this.canHoard;
+			return this.tooManyClicks || !this.actionCard;
 		},
 	},
 	methods: {
@@ -79,7 +79,7 @@ export default {
 			}
 
 			if (this.myPlayer.cardsInHand.length) {
-				this.$store.dispatch('players/removeHighCard');
+				this.$store.dispatch('players/removeHighCard', this.myPlayer);
 			}
 		},
 		onClick: function() {
