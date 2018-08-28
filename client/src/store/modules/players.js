@@ -384,7 +384,11 @@ const actions = {
 			wsObj.card = data.card;
 		}
 
-		dispatch('updateLocalPlayer', { id: data.id, message: null });
+		dispatch('updateLocalPlayer', {
+			id: data.id,
+			message: null,
+			quarrel: false,
+		});
 
 		this._vm.$socket.sendObj(wsObj);
 	},
