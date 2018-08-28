@@ -142,11 +142,14 @@ export default {
 	width: 100%;
 	z-index: 110;
 
-	&.winter {
-		background: url(https://media.giphy.com/media/gvKru3mU4wLFm/giphy.gif)
+	.winter {
+		background: url(https://media1.tenor.com/images/cfd482be411aab7af3e5e71c7aa324f5/tenor.gif?itemid=3316293)
 			no-repeat;
 		background-position: center;
 		background-size: cover;
+		height: 100%;
+		position: absolute;
+		width: 100%;
 	}
 
 	.winter-enter-active,
