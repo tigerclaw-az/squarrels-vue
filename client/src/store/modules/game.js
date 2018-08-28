@@ -106,6 +106,10 @@ const actions = {
 
 		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
 
+		if (!playerId) {
+			return Promise.reject('ERROR: Missing "playerId" parameter');
+		}
+
 		if (newPlayers.length) {
 			const res = await api.games.updatePlayers(gameId, newPlayers);
 
@@ -130,37 +134,36 @@ const actions = {
 	},
 
 	load({ commit, dispatch }, { id }) {
-		return api.games
-			.get(id)
-			.then(res => {
-				Vue.$log.debug('game/load', res);
-				if (res.status === 200) {
-					let gameData = res.data[0],
-						deckIds = gameData.deckIds,
-						playersInGame = gameData.playerIds;
+		return new Promise((resolve, reject) => {
+			api.games
+				.get(id)
+				.then(res => {
+					Vue.$log.debug('game/load', res);
+					if (res.status === 200) {
+						let gameData = res.data[0],
+							deckIds = gameData.deckIds,
+							playersInGame = gameData.playerIds;
 
-					commit('UPDATE', gameData);
-					commit('LOADED');
+						commit('UPDATE', gameData);
+						commit('LOADED');
 
-					// Add all players to the current state of game
-					if (playersInGame.length) {
-						dispatch('players/add', playersInGame, { root: true });
+						resolve(gameData);
+
+						// Add all players to the current state of game
+						if (playersInGame.length) {
+							dispatch('players/add', playersInGame, {
+								root: true,
+							});
+						}
+					} else {
+						router.push('/');
 					}
-
-					if (deckIds.length) {
-						dispatch(
-							'decks/load',
-							{ ids: deckIds },
-							{ root: true }
-						);
-					}
-				} else {
-					router.push('/');
-				}
-			})
-			.catch(err => {
-				this._vm.$log.error(err);
-			});
+				})
+				.catch(err => {
+					this._vm.$log.error(err);
+					reject(err);
+				});
+		});
 	},
 
 	async nextRound({ dispatch, state }) {
@@ -345,7 +348,7 @@ const actions = {
 	 *
 	 * @returns {Object} 	Promise
 	 */
-	unload({ commit, dispatch, rootState }) {
+	unload({ commit, dispatch, state, rootState }) {
 		const playerIds = state.playerIds;
 		const updatedPlayerIds = _.without(playerIds, rootState.localPlayer.id);
 
@@ -368,7 +371,7 @@ const actions = {
 			});
 	},
 
-	update({ commit }, data) {
+	update({}, data) {
 		return api.games.update(state.id, data);
 	},
 };
