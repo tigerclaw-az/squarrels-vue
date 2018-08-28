@@ -61,6 +61,8 @@ export default {
 	left: 0;
 	position: absolute;
 	top: 0;
+	transform: scale(1.25);
+	z-index: 70;
 
 	.card:not(.blank--) {
 		box-shadow: none;
