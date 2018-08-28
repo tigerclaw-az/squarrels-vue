@@ -12,13 +12,13 @@
 			v-show="numCards"
 			@click.prevent="onClick"
 		>
-			<transition-group name="cards-discard">
-				<span
+			<transition-group tag="div" class="transition" name="cards-discard">
+				<div
 					v-for="(card, index) in numCards"
 					:key="index"
-					class="card blank--"
+					class="btn-card card blank--"
 				>
-				</span>
+				</div>
 			</transition-group>
 		</div>
 	</div>
@@ -110,54 +110,40 @@ export default {
 // prettier-ignore
 @import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
-.deck {
-	.cards-group {
-		.card {
-			left: 15%;
-			top: 0;
+.card {
+	top: 0;
 
-			@for $i from 1 through 30 {
-				$rotate: random(30) - 15;
-				$left: random(30) - 15;
-				$top: random(20) - 10;
+	@for $i from 1 through 30 {
+		$rotate: random(30) - 15;
+		$left: random(30) - 15;
+		$top: random(20) - 10;
 
-				&:nth-child(#{$i}) {
-					transform: translate(#{$left}px, #{$top}px)
-						rotate(#{$rotate}deg);
-				}
-			}
+		&:nth-child(#{$i}) {
+			transform: translate(#{$left}px, #{$top}px) rotate(#{$rotate}deg);
 		}
 	}
+}
 
-	.cards-discard-enter-active,
-	.cards-discard-leave-active {
-		position: absolute;
-		transition-duration: 0.75s;
-		transition-property: opacity, transform;
-	}
+.cards-discard-enter-active,
+.cards-discard-leave-active {
+	position: absolute;
+	transition-duration: 0.75s;
+	transition-property: opacity, transform;
+}
 
-	.cards-discard-enter {
-		opacity: 0;
-		transform: scale(3);
-	}
+.cards-discard-enter {
+	opacity: 0;
+	transform: scale(3);
+}
 
-	.cards-discard-enter-to,
-	.cards-discard-leave {
-		opacity: 1;
-		transform: scale(1);
-	}
+.cards-discard-enter-to,
+.cards-discard-leave {
+	opacity: 1;
+	transform: scale(1);
+}
 
-	.cards-discard-leave-to {
-		opacity: 0;
-		transform: scale(3);
-	}
-
-	@include media-breakpoint-up(lg) {
-		.cards-group {
-			.card {
-				left: 25%;
-			}
-		}
-	}
+.cards-discard-leave-to {
+	opacity: 0;
+	transform: scale(3);
 }
 </style>

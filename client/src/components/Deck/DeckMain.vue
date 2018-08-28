@@ -16,7 +16,7 @@
 			@click.prevent="onClick"
 		>
 			<div v-show="isCardDrawn" class="card-drawn" :class="{ 'has-card': cardDrawn }" :style="cardDrawnStyle(numCards)">
-				<span class="card blank--"></span>
+				<div class="btn-card card blank-- disabled" role="button" disabled></div>
 				<Card
 					v-if="cardDrawn"
 					:id="cardDrawn.id"
@@ -26,13 +26,13 @@
 				>
 				</Card>
 			</div>
-			<span
+			<Card
 				v-for="index in numCards"
 				:key="index"
-				class="card blank--"
-				:style="cardStyle(index)"
+				:cardStyle="cardStyle(index)"
+				cardType="deck"
 			>
-			</span>
+			</Card>
 		</div>
 		<div class="count">{{numCards}}</div>
 		<div v-if="isAdmin" uib-dropdown>

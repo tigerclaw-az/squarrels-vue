@@ -44,6 +44,14 @@ $deck-height: 8 !default;
 			&:not(.disabled) {
 				cursor: pointer;
 			}
+
+			// Fixes issue with element created by <transition-group>
+			> .transition {
+				display: flex;
+				justify-content: center;
+				position: absolute;
+				top: 0;
+			}
 		}
 	}
 
