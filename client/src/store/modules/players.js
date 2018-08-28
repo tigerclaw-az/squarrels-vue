@@ -128,7 +128,7 @@ const actions = {
 		}
 	},
 
-	addCards({ getters }, data) {
+	addCards({ dispatch, getters }, data) {
 		this._vm.$log.debug('players/addCards', data, getters, this);
 
 		if (!data.cards) {
@@ -142,11 +142,13 @@ const actions = {
 
 		const playerId = data.id || getters.getMyPlayer.id;
 
-		return api.players
-			.update(playerId, {
+		return dispatch('update', {
+			id: playerId,
+			data: {
 				addCards: true,
 				cardsInHand: cardsToAdd,
-			})
+			},
+		})
 			.then(res => {
 				this._vm.$log.debug('playersApi:update()', res, this);
 			})
@@ -183,8 +185,7 @@ const actions = {
 		if (pl.id === myPlayer.id) {
 			// Add hoard cards to player cards
 			// prettier-ignore
-			api.players
-				.update(myPlayer.id, { cardsInHand })
+			dispatch('update', { id: myPlayer.id, data: { cardsInHand }})
 				.then(async () => {
 					try {
 						await dispatch(
@@ -210,10 +211,10 @@ const actions = {
 	},
 
 	async delete({}, id) {
-		const myPlayer = getters.getMyPlayer;
+		const playerId = id || getters.getMyPlayer.id;
 
 		try {
-			await api.players.delete(myPlayer.id);
+			await api.players.delete(playerId);
 		} catch (err) {
 			this._vm.$toasted.error(err);
 			throw new Error(err);
@@ -227,24 +228,28 @@ const actions = {
 		const cardIds = state[playerId].cardsInHand;
 		const cardsInHand = _.difference(cardIds, [payload.card.id]);
 
-		dispatch('updateLocalPlayer', {
-			id: playerId,
-			cardsInHand,
-			quarrel: false,
-			message: null,
-		});
+		// dispatch('updateLocalPlayer', {
+		// 	id: playerId,
+		// 	cardsInHand,
+		// 	quarrel: false,
+		// 	message: null,
+		// });
 
-		return api.players.update(playerId, {
-			cardsInHand,
+		return dispatch('update', {
+			id: playerId,
+			data: { cardsInHand, hasStoredCards: true },
 		});
 	},
 
-	async drawCard({ getters }, payload) {
+	async drawCard({ dispatch, getters }, payload) {
 		const playerId = payload.id || getters.getMyPlayer.id;
 
 		try {
-			return await api.players.update(playerId, {
-				hasDrawnCard: true,
+			return await dispatch('update', {
+				id: playerId,
+				data: {
+					hasDrawnCard: true,
+				},
 			});
 		} catch (err) {
 			this._vm.$log.error(err);
@@ -334,8 +339,13 @@ const actions = {
 		if (!_.isEmpty(highCard)) {
 			this._vm.$toasted.info('You just lost a card!');
 
-			await api.players.update(player.id, {
-				cardsInHand: _.difference(player.cardsInHand, [highCard.id]),
+			await dispatch('update', {
+				id: player.id,
+				data: {
+					cardsInHand: _.difference(player.cardsInHand, [
+						highCard.id,
+					]),
+				},
 			});
 
 			return dispatch('decks/discard', highCard, { root: true });
