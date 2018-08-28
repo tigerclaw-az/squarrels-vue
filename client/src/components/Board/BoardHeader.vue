@@ -18,7 +18,7 @@ import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
 import Icon from 'vue-awesome/components/Icon';
 
 import AdminOptions from '@/components/AdminOptions.vue';
-import GameSettings from '@/components/GameSettings.vue';
+import GameSettings from '@/components/Game/GameSettings.vue';
 
 export default {
 	name: 'BoardHeader',
