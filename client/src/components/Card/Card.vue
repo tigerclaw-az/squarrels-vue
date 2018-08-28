@@ -20,8 +20,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-
 import _ from 'lodash';
 import Icon from 'vue-awesome/components/Icon';
 
@@ -54,6 +52,9 @@ export default {
 		},
 		onClick: {
 			type: Function,
+			default: function() {
+				return false;
+			},
 		},
 	},
 	data: function() {
@@ -62,9 +63,6 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters({
-			myPlayer: 'players/getMyPlayer',
-		}),
 		cardClass: function() {
 			if (!_.isEmpty(this.details)) {
 				return `${this.details.cardType}--${this.details.name}`;
@@ -91,6 +89,9 @@ export default {
 			}
 
 			return !(this.isActivePlayer || this.myPlayer.hasDrawnCard);
+		},
+		myPlayer: function() {
+			return this.$store.getters['players/getMyPlayer'];
 		},
 	},
 	mounted: function() {
