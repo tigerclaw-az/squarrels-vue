@@ -1,5 +1,4 @@
 <template>
-	<!-- TODO: Add icons to each card for 'storage' and 'discard' -->
 	<div
 		:card-type="cardType"
 		class="btn-card"
