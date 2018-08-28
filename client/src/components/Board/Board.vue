@@ -26,7 +26,6 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex';
-import { config } from '@/config';
 
 import BoardHeader from '@/components/Board/BoardHeader.vue';
 import Deck from '@/components/Deck/Deck.vue';
@@ -58,29 +57,12 @@ export default {
 			decksLoaded: false,
 		};
 	},
-	watch: {
-		playerIdsInGame: function() {
-			this.$store.dispatch({
-				type: 'players/load',
-				ids: this.playerIdsInGame,
-			});
-		},
-	},
 	created: function() {
 		this.$store
 			.dispatch({ type: 'decks/load', ids: this.deckIds })
 			.then(() => {
 				this.decksLoaded = true;
 			});
-	},
-	mounted: function() {
-		if (this.needMorePlayers && !this.playerExists) {
-			this.$store.dispatch({
-				type: 'game/addPlayer',
-				gameId: this.gameId,
-				playerId: this.currentPlayer.id,
-			});
-		}
 	},
 	computed: {
 		...mapGetters({
@@ -92,14 +74,6 @@ export default {
 			decks: state => state.decks,
 			playerIdsInGame: state => state.game.playerIds,
 		}),
-		needMorePlayers: function() {
-			return this.playerIdsInGame.length < config.MAX_PLAYERS;
-		},
-		playerExists: function() {
-			return this.playerIdsInGame.filter(
-				pl => pl === this.currentPlayer.id
-			).length;
-		},
 		playersInGame: function() {
 			return _.filter(this.allPlayers, pl =>
 				_.includes(this.playerIdsInGame, pl.id)

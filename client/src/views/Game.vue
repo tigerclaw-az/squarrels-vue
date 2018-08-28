@@ -1,6 +1,23 @@
 <template>
 	<div id="game">
-		<div v-if="!isStarted" class="game-overlay" :class="{ winter: isWinter }">
+		<GameResults
+			v-if="isWinter"
+			:gameId="id"
+			:playerIds="playerIds"
+		>
+			<template slot="newGame">
+				<div class="container-button">
+					<b-button
+						class="btn btn-new-game"
+						variant="success"
+						@click="onClickNewGame"
+					>
+					NEW GAME
+					</b-button>
+				</div>
+			</template>
+		</GameResults>
+		<div v-if="!isStarted" class="game-overlay">
 			<div class="game-overlay--start-game" v-cloak v-if="!isLoading && !isWinter">
 				<div v-if="needPlayers" class="waiting-message">
 					Waiting for other players to join...
@@ -12,22 +29,12 @@
 					START GAME
 				</b-button>
 			</div>
-			<transition name="winter">
-				<div class="game-overlay--new-game" v-if="isWinter">
-					<div class="container-button">
-						<b-button
-							class="btn btn-new-game"
-							variant="success"
-							@click="onClickNewGame"
-						>
-						NEW GAME
-						</b-button>
-					</div>
-				</div>
+			<transition tag="div" name="winter">
+				<div class="game-overlay--new-game winter" v-if="isWinter"></div>
 			</transition>
 		</div>
 		<Board
-			v-if="isLoaded"
+			v-if="isLoaded && !isWinter"
 			:deckIds="deckIds"
 			:gameId="id"
 			:isGameStarted="isStarted"
@@ -41,13 +48,20 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
+import { config } from '@/config';
 
 import CardAction from '@/components/Card/CardAction.vue';
 import Board from '@/components/Board/Board.vue';
+import GameResults from '@/components/Game/GameResults.vue';
 
 export default {
 	name: 'Game',
+	components: {
+		Board,
+		CardAction,
+		GameResults,
+	},
 	props: {
 		id: {
 			type: String,
@@ -66,8 +80,25 @@ export default {
 			}
 		},
 	},
+	created: function() {},
 	mounted: function() {
-		this.$store.dispatch({ type: 'game/load', id: this.id });
+		this.$store
+			.dispatch({ type: 'game/load', id: this.id })
+			.then(() => {
+				return this.$store.dispatch({
+					type: 'players/load',
+					ids: this.playerIds,
+				});
+			})
+			.then(() => {
+				if (this.allowMorePlayers && !this.playerExists) {
+					this.$store.dispatch({
+						type: 'game/addPlayer',
+						gameId: this.id,
+						playerId: this.currentPlayer.id,
+					});
+				}
+			});
 
 		// Need to unload current game from player if they leave
 		window.onbeforeunload = () => {
@@ -78,6 +109,9 @@ export default {
 		this.unload();
 	},
 	computed: {
+		...mapGetters({
+			currentPlayer: 'players/getMyPlayer',
+		}),
 		...mapState('game', [
 			'actionCard',
 			'deckIds',
@@ -86,11 +120,18 @@ export default {
 			'isStarted',
 			'playerIds',
 		]),
-		isWinter: function() {
-			return this.actionCard && this.actionCard.name === 'winter';
-		},
 		needPlayers: function() {
 			return this.playerIds.length < 2;
+		},
+		allowMorePlayers: function() {
+			return this.playerIds.length < config.MAX_PLAYERS;
+		},
+		playerExists: function() {
+			return this.playerIds.filter(pl => pl === this.currentPlayer.id)
+				.length;
+		},
+		isWinter: function() {
+			return this.actionCard && this.actionCard.name === 'winter';
 		},
 	},
 	methods: {
@@ -113,14 +154,10 @@ export default {
 		},
 		unload: function() {
 			// Only unload if the current game was valid
-			if (this.id) {
+			if (this.$store.state.game.id) {
 				this.$store.dispatch({ type: 'game/unload' });
 			}
 		},
-	},
-	components: {
-		CardAction,
-		Board,
 	},
 };
 </script>
