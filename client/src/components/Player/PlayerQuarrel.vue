@@ -6,7 +6,7 @@
 			flip: showQuarrel,
 			winner: isQuarrelWinner
 		}">
-		<span class="card blank--"></span>
+		<div class="btn-card card blank-- disabled" role="button" disabled></div>
 		<Card
 			v-if="showQuarrel"
 			:card-data="quarrelCard(player.id)"
