@@ -4,7 +4,7 @@
 			<BoardHeader v-if="isGameStarted"></BoardHeader>
 		</b-container>
 		<b-container fluid class="container_board">
-			<b-row class="align-items-center justify-content-center mt-4">
+			<b-row class="align-items-center justify-content-center mt-2">
 				<b-col cols="4" lg="3">
 					<div class="container_players">
 						<Player v-for="p in opponents" :key="p.id" :player="p"></Player>
@@ -134,18 +134,12 @@ export default {
 	// prettier-ignore
 	background-image: url("~@/assets/images/board-bg.jpg");
 	background-size: 100%;
-	display: flex;
-	flex-flow: column;
 	object-fit: contain;
 	object-position: center;
-}
-
-.container_board {
-	border: 1px solid yellow;
+	padding: 0.5rem;
 }
 
 .container_players {
-	border: 1px solid green;
 	display: flex;
 	flex-flow: column;
 	height: 100%;
