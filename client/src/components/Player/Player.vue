@@ -336,7 +336,7 @@ $card-width: (
 	.sq-quarrel-message {
 		color: $white;
 		font-size: 1.25em;
-		left: 20%;
+		left: -20%;
 		position: absolute;
 
 		&::after {
@@ -392,6 +392,12 @@ $card-width: (
 				left: 25%;
 				position: absolute;
 			}
+		}
+	}
+
+	@include media-breakpoint-up(lg) {
+		.sq-quarrel-message {
+			left: 20%;
 		}
 	}
 }
