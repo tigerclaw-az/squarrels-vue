@@ -14,10 +14,9 @@
 			<PlayerQuarrel :player="player"></PlayerQuarrel>
 			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">{{player.message}}</div>
 			<div class="cards-group hand">
-				<transition-group name="cards">
+				<transition-group v-if="isCurrentPlayer" tag="div" class="transition" name="cards">
 					<Card
 						v-for="(card, index) in myCardsSorted"
-						v-if="isCurrentPlayer"
 						:key="card.id"
 						:id="card.id"
 						:onClick="onClickCard"
@@ -27,9 +26,8 @@
 						:matches="card.cardType === 'special' ? [] : findCardMatches(card.amount)"
 					></Card>
 				</transition-group>
-				<transition-group name="cards">
+				<transition-group v-if="!isCurrentPlayer" tag="div" class="transition" name="cards">
 					<Card
-						v-if="!isCurrentPlayer"
 						v-for="n in player.totalCards"
 						:key="n"
 						:cardStyle="cardStyle(n)"
@@ -275,8 +273,8 @@ export default {
 @import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
 $card-height: (
-	small: 125,
-	medium: 150,
+	small: 113,
+	medium: 138,
 );
 
 $card-width: (
@@ -358,6 +356,11 @@ $card-width: (
 			@extend %playing-cards;
 			height: 100%;
 
+			.transition {
+				position: absolute;
+				top: 0;
+			}
+
 			.cards-enter-active,
 			.cards-leave-active {
 				position: absolute;
@@ -378,10 +381,6 @@ $card-width: (
 			.cards-leave-to {
 				opacity: 0;
 				transform: translateY(3rem);
-			}
-
-			.btn-card {
-				width: rem-calc($card-width-stack);
 			}
 		}
 	}
