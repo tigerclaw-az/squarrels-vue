@@ -113,6 +113,10 @@ export default {
 	padding: 0.5rem;
 }
 
+.container_board {
+	position: relative;
+}
+
 .container_players {
 	display: flex;
 	flex-flow: column;

@@ -162,7 +162,7 @@ export default {
 	left: 40%;
 	opacity: 1;
 	position: absolute;
-	top: 0;
+	top: 25%;
 	transform: scale(2);
 	transition-duration: 0.5s;
 	transition-property: transform, opacity;
@@ -174,12 +174,12 @@ export default {
 
 	// Once the card is flipped we need to move it towards the 'action' deck
 	&.shown {
-		transform: translate(280px, 175px) scale(1);
+		transform: translate(280px, -45px) scale(1);
 	}
 
 	@include media-breakpoint-up(lg) {
 		&.shown {
-			transform: translate(480px, 180px) scale(1);
+			transform: translate(620px, -60px) scale(1);
 		}
 	}
 }
