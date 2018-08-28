@@ -47,8 +47,8 @@ export default {
 	bottom: 0;
 	color: inherit;
 	font-size: 2rem;
-	left: -10%;
 	position: absolute;
+	right: 50%;
 	z-index: 80;
 
 	.sq-player-score {

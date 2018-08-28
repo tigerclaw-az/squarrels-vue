@@ -167,7 +167,7 @@ export default {
 @import "~@/assets/scss/variables";
 
 #game {
-	position: relative;
+	height: 100%;
 }
 
 .game-overlay {

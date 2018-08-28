@@ -14,13 +14,13 @@
 					<div class="container_decks">
 						<Deck v-if="isGameStarted && decksLoaded" v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
 					</div>
-					<div class="row_current-player">
-						<Player :player="currentPlayer"></Player>
-					</div>
 				</b-col>
 			</b-row>
 			<slot name="action"></slot>
 		</b-container>
+		<div class="row_current-player">
+			<Player :player="currentPlayer"></Player>
+		</div>
 	</div>
 </template>
 
@@ -108,9 +108,16 @@ export default {
 	// prettier-ignore
 	background-image: url("~@/assets/images/board-bg.jpg");
 	background-size: 100%;
+	flex: 1 1 0;
+	height: 100%;
+	// Make sure current player has some space above it, regardless
+	// of screen height
+	min-height: 560px;
 	object-fit: contain;
 	object-position: center;
+	overflow: hidden;
 	padding: 0.5rem;
+	position: relative;
 }
 
 .container_board {
@@ -133,10 +140,10 @@ export default {
 }
 
 .row_current-player {
-	align-items: center;
+	// Put player container at very bottom of <Board> container
+	bottom: 0;
 	display: flex;
-	justify-content: center;
-	margin-top: 6rem;
+	position: absolute;
 	width: 100%;
 }
 </style>

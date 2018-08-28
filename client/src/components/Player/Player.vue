@@ -286,8 +286,6 @@ $card-width: (
 @import "~@/components/Card/card";
 
 .sq-player {
-	align-content: center;
-	align-items: center;
 	color: $white;
 	display: flex;
 	flex-flow: column nowrap;
@@ -338,7 +336,8 @@ $card-width: (
 		position: absolute;
 
 		&::after {
-			content: '->';
+			// prettier-ignore
+			content: "->";
 		}
 	}
 
@@ -357,7 +356,6 @@ $card-width: (
 			height: 100%;
 
 			.transition {
-				position: absolute;
 				top: 0;
 			}
 
@@ -380,6 +378,7 @@ $card-width: (
 
 			.cards-leave-to {
 				opacity: 0;
+				position: absolute;
 				transform: translateY(3rem);
 			}
 		}

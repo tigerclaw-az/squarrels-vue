@@ -10,6 +10,11 @@
 html,
 body {
 	height: 100%;
+	position: relative;
+}
+
+html {
+	min-height: 100%;
 }
 
 a {
@@ -27,6 +32,10 @@ textarea {
 	.v-cloak--hidden {
 		display: none;
 	}
+}
+
+#app {
+	height: 100%;
 }
 
 .main {
