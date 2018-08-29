@@ -39,7 +39,7 @@
 			<b-dropdown
 				id="dropdown-settings"
 				text="Choose Card"
-				variant="danger"
+				variant="primary"
 			>
 				<b-dropdown-item
 					v-for="(item, index) in dropdownList"
@@ -215,7 +215,7 @@ export default {
 .can-draw {
 	.cards-group {
 		// prettier-ignore
-		box-shadow: 0 0 15px 10px theme-color("success");
+		box-shadow: 0 0 15px 10px color("desert");
 	}
 }
 
@@ -227,7 +227,7 @@ export default {
 
 	.icon {
 		// prettier-ignore
-		color: theme-color("danger");
+		color: theme-color("primary");
 		display: flex;
 		height: 100%;
 		margin: 0 auto;

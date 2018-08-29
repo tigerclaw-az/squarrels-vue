@@ -54,7 +54,7 @@ export default {
 	.sq-player-score {
 		@extend %center-horizontal;
 		// prettier-ignore
-		color: color("carnaby-tan");
+		color: color("sambuca");
 		font-size: 1.25rem;
 		font-weight: $font-weight-bold;
 		line-height: 2.25;

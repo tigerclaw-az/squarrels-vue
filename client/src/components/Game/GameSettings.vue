@@ -1,5 +1,5 @@
 <template>
-	<b-dropdown id="dropdown-game-settings" variant="info">
+	<b-dropdown id="dropdown-game-settings" variant="primary">
 		<template slot="button-content">
 			<icon name="cog" class="icon icon-settings" label="Settings"></icon>
 		</template>

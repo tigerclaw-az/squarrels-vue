@@ -1,6 +1,5 @@
 <template>
 	<div id="game-results">
-		<p>TEST</p>
 		<slot name="newGame"></slot>
 	</div>
 </template>
@@ -22,8 +21,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+// prettier-ignore
+@import "~@/assets/scss/variables";
+
 #game-results {
+	align-items: center;
+	background: rgba($black, 0.5);
+	display: flex;
+	height: 80%;
+	justify-content: center;
+	margin: 0 auto;
 	position: absolute;
+	width: 80%;
 	z-index: 120;
 }
 </style>

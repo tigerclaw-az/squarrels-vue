@@ -1,0 +1,6 @@
+.btn-primary {
+	background-image: linear-gradient(to bottom, lighten(color("bronze"), 10%), color("sambuca"));
+	border-color: color("desert");
+	border-width: 2px;
+	box-shadow: 5px 5px 10px 0 rgba($black, 0.25)
+}

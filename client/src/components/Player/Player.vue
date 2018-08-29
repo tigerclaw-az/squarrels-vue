@@ -326,7 +326,7 @@ $card-width: (
 
 	&.active {
 		// prettier-ignore
-		color: color("zest");
+		color: color("desert");
 	}
 
 	.sq-quarrel-message {
