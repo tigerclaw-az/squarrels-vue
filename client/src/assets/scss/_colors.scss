@@ -27,10 +27,12 @@ $colors: (
 	alabaster: #f9f9f9,
 	armadillo-black: #3f3f38,
 	bizarre: #f2dede,
+	bronze: #48240c,
 	carnaby-tan: #632401,
 	casablanca: #f6b149,
 	cioccolato: #541c09,
 	danube: #69add4,
+	desert: #b45525,
 	dodger-blue: #3b99fc,
 	dove-grey: #666666,
 	dusty-grey: #999999,
@@ -60,6 +62,7 @@ $colors: (
 	red-light: #b50000,
 	roman: #d9534f,
 	saffron: #f2bf24,
+	sambuca: #2b150b,
 	sandy-brown: #f0ad4e,
 	/* seashell*/ /* silver*/ schoolbus: #f7d900,
 	tia-maria-orange: #c9480c,
@@ -82,7 +85,7 @@ $green: #28a745;
 $teal: #20c997;
 $cyan: #17a2b8;
 
-$primary: $blue;
+$primary: map-get($colors, "bronze");
 $secondary: $gray-600;
 $success: $green;
 $info: $cyan;
