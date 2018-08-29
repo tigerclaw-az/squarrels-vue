@@ -57,7 +57,19 @@ export default {
 			decksLoaded: false,
 		};
 	},
-	created: function() {
+	components: {
+		BoardHeader,
+		Deck,
+		Player,
+	},
+	watch: {
+		isGameStarted: function(from, to) {
+			if (to === false) {
+				this.decksLoaded = false;
+			}
+		},
+	},
+	mounted: function() {
 		this.$store
 			.dispatch({ type: 'decks/load', ids: this.deckIds })
 			.then(() => {
@@ -88,11 +100,6 @@ export default {
 	},
 	unload: function() {
 		this.$store.dispatch({ type: 'decks/unload', gameId: this.gameId });
-	},
-	components: {
-		BoardHeader,
-		Deck,
-		Player,
 	},
 };
 </script>
