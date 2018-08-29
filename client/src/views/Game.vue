@@ -1,5 +1,8 @@
 <template>
 	<div id="game">
+		<transition tag="div" name="winter">
+			<div class="game-overlay--new-game winter" v-if="isWinter"></div>
+		</transition>
 		<GameResults
 			v-if="isWinter"
 			:gameId="id"
@@ -9,10 +12,10 @@
 				<div class="container-button">
 					<b-button
 						class="btn btn-new-game"
-						variant="success"
+						variant="primary"
 						@click="onClickNewGame"
 					>
-					NEW GAME
+					NEXT ROUND
 					</b-button>
 				</div>
 			</template>
@@ -24,17 +27,14 @@
 				</div>
 				<b-button v-else
 					class="btn btn-start-game"
-					variant="success"
+					variant="primary"
 					@click="onClickStartGame">
 					START GAME
 				</b-button>
 			</div>
-			<transition tag="div" name="winter">
-				<div class="game-overlay--new-game winter" v-if="isWinter"></div>
-			</transition>
 		</div>
 		<Board
-			v-if="isLoaded && !isWinter"
+			v-if="isLoaded"
 			:deckIds="deckIds"
 			:gameId="id"
 			:isGameStarted="isStarted"
@@ -167,7 +167,44 @@ export default {
 @import "~@/assets/scss/variables";
 
 #game {
+	align-items: center;
+	display: flex;
 	height: 100%;
+	justify-content: center;
+}
+
+.winter {
+	background: url(https://media1.tenor.com/images/cfd482be411aab7af3e5e71c7aa324f5/tenor.gif?itemid=3316293)
+		no-repeat;
+	background-position: center;
+	background-size: cover;
+	height: 100%;
+	opacity: 0.75;
+	position: absolute;
+	width: 100%;
+	z-index: 100;
+}
+
+.winter-enter-active,
+.winter-leave-active {
+	// position: absolute;
+	transition-duration: 0.75s;
+	transition-property: opacity, transform;
+}
+
+.winter-enter {
+	opacity: 0;
+	transform: translateX(-100vw);
+}
+
+.winter-enter-to {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+.winter-leave-to {
+	opacity: 0;
+	transform: translateY(100vh);
 }
 
 .game-overlay {
@@ -178,38 +215,6 @@ export default {
 	position: fixed;
 	width: 100%;
 	z-index: 110;
-
-	.winter {
-		background: url(https://media1.tenor.com/images/cfd482be411aab7af3e5e71c7aa324f5/tenor.gif?itemid=3316293)
-			no-repeat;
-		background-position: center;
-		background-size: cover;
-		height: 100%;
-		position: absolute;
-		width: 100%;
-	}
-
-	.winter-enter-active,
-	.winter-leave-active {
-		// position: absolute;
-		transition-duration: 0.75s;
-		transition-property: opacity, transform;
-	}
-
-	.winter-enter {
-		opacity: 0;
-		transform: translateX(-100vw);
-	}
-
-	.winter-enter-to {
-		opacity: 1;
-		transform: translateX(0);
-	}
-
-	.winter-leave-to {
-		opacity: 0;
-		transform: translateY(100vh);
-	}
 
 	.game-overlay--new-game,
 	.game-overlay--start-game {
