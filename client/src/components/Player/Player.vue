@@ -7,43 +7,36 @@
 	}">
 		<div class="sq-player-thumbnail">
 			<img class="img-circle" src="@/assets/images/squirrel-placeholder.jpg"/>
-			<span class="sq-player-card-count">{{player.totalCards}}</span>
+			<PlayerStorage :player="player"></PlayerStorage>
 		</div>
-		<PlayerInfo :player="player"></PlayerInfo>
-		<div
-			v-if="actionCard && quarrelCard(player.id)"
-			class="sq-player-quarrel"
-			:class="{
-				flip: showQuarrel,
-				winner: isQuarrelWinner
-			}">
-			<span class="card blank--"></span>
-			<Card
-				v-if="showQuarrel"
-				:card-data="quarrelCard(player.id)"
-				card-type="quarrel"
-			></Card>
-		</div>
-		<div v-if="isCurrentPlayer" class="sq-player-cards">
-			<div v-if="hasCards" class="cards-group hand">
-				<div v-if="player.message" class="message">{{player.message}}</div>
-				<transition-group name="cards">
+		<div class="sq-player-name">{{player.name}}</div>
+		<div class="sq-player-cards">
+			<PlayerQuarrel :player="player"></PlayerQuarrel>
+			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">{{player.message}}</div>
+			<div class="cards-group hand">
+				<transition-group v-if="isCurrentPlayer" tag="div" class="transition" name="cards">
 					<Card
 						v-for="(card, index) in myCardsSorted"
 						:key="card.id"
 						:id="card.id"
-						:class="{ mine: hasCards }"
 						:onClick="onClickCard"
 						:card-data="card"
 						card-type="hand"
+						:cardStyle="cardStyle(index)"
 						:matches="card.cardType === 'special' ? [] : findCardMatches(card.amount)"
-						:position="{ left: (index * 32) + 'px' }"
-						:z-index="index"
+					></Card>
+				</transition-group>
+				<transition-group v-if="!isCurrentPlayer" tag="div" class="transition" name="cards">
+					<Card
+						v-for="n in player.totalCards"
+						:key="n"
+						:cardStyle="cardStyle(n)"
+						card-type="hand"
 					></Card>
 				</transition-group>
 			</div>
-			<div v-else-if="isGameStarted" class="empty"></div>
 		</div>
+		<player-storage-modal :player="player"></player-storage-modal>
 	</div>
 </template>
 
@@ -54,13 +47,17 @@ import _ from 'lodash';
 
 import api from '@/api/index';
 import Card from '@/components/Card/Card.vue';
-import PlayerInfo from '@/components/Player/PlayerInfo.vue';
+import PlayerQuarrel from '@/components/Player/PlayerQuarrel.vue';
+import PlayerStorage from '@/components/Player/PlayerStorage.vue';
+import PlayerStorageModal from '@/components/Player/PlayerStorageModal.vue';
 
 export default {
 	name: 'Player',
 	components: {
 		Card,
-		PlayerInfo,
+		PlayerQuarrel,
+		PlayerStorage,
+		'player-storage-modal': PlayerStorageModal,
 	},
 	props: {
 		player: {
@@ -80,7 +77,6 @@ export default {
 		...mapState({
 			actionCard: state => state.game.actionCard,
 			isGameStarted: state => state.game.isStarted,
-			showQuarrel: state => state.game.showQuarrel,
 		}),
 		hasCards: function() {
 			let cards = this.myCards;
@@ -92,9 +88,6 @@ export default {
 		},
 		isCurrentPlayer: function() {
 			return this.myPlayer.id === this.player.id;
-		},
-		isQuarrelWinner: function() {
-			return this.$store.state.players[this.player.id].isQuarrelWinner;
 		},
 		isMyTurn: function() {
 			return this.isActivePlayer && this.myPlayer.id === this.player.id;
@@ -120,7 +113,11 @@ export default {
 			const diff1 = _.difference(newCards, oldCards);
 			const diff2 = _.difference(oldCards, newCards);
 
-			if (!this.myCards.length || (!diff1.length && !diff2.length)) {
+			if (!this.myCards.length) {
+				this.myCardsDetails = [];
+
+				return;
+			} else if (!diff1.length && !diff2.length) {
 				return;
 			}
 
@@ -133,6 +130,25 @@ export default {
 		}
 	},
 	methods: {
+		cardStyle: function(index) {
+			let cardsCount = this.isCurrentPlayer
+				? this.myCards.length
+				: this.player.totalCards;
+
+			let styles = {
+				'z-index': index + 1,
+			};
+
+			const halfCardsCount = cardsCount / 2;
+			// const rotate = 90 / cardsCount + 20;
+			const spacing = (this.isCurrentPlayer ? 240 : 100) / cardsCount;
+			let spacingMultiplier = index - halfCardsCount;
+
+			styles.left = spacing * spacingMultiplier + 'px';
+			// styles.transform = `rotate(${rotateBy * rotateMultiplier}deg)`;
+
+			return styles;
+		},
 		discard: function(card) {
 			this.$log.debug(card);
 
@@ -198,8 +214,6 @@ export default {
 					});
 			}
 
-			this.$log.debug(this);
-
 			// User can't click card if action card has been drawn
 			if (this.actionCard || !this.myPlayer.hasDrawnCard) {
 				return false;
@@ -232,9 +246,6 @@ export default {
 				}
 			}
 		},
-		quarrelCard: function(id) {
-			return this.$store.getters['game/getQuarrelCardByPlayer'](id);
-		},
 		storeCards: function(cardsToStore) {
 			this.$log.debug(cardsToStore);
 
@@ -255,5 +266,137 @@ export default {
 };
 </script>
 
-<style lang="scss" src="./player.scss">
+<style lang="scss">
+// prettier-ignore
+@import "~@/assets/scss/variables";
+// prettier-ignore
+@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
+
+$card-height: (
+	small: 113,
+	medium: 138,
+);
+
+$card-width: (
+	small: 80,
+	medium: 100,
+);
+
+// prettier-ignore
+@import "~@/components/Card/card";
+
+.sq-player {
+	color: $white;
+	display: flex;
+	flex-flow: column nowrap;
+	position: relative;
+	text-align: center;
+	width: 100%;
+	z-index: 10;
+
+	.sq-player-thumbnail {
+		position: relative;
+		z-index: 60;
+
+		img {
+			width: 6.5rem;
+		}
+	}
+
+	.sq-player-name {
+		color: inherit;
+		font-size: 1.5em;
+		font-weight: $font-weight-bold;
+	}
+
+	&.current {
+		.btn-card {
+			&:not(.disabled) {
+				cursor: pointer;
+			}
+
+			&.selected,
+			&:hover {
+				.card {
+					transform: translateY(-15%);
+				}
+			}
+		}
+	}
+
+	&.active {
+		// prettier-ignore
+		color: color("desert");
+	}
+
+	.sq-quarrel-message {
+		color: $white;
+		font-size: 1.25em;
+		left: -20%;
+		position: absolute;
+
+		&::after {
+			// prettier-ignore
+			content: "->";
+		}
+	}
+
+	.sq-player-cards {
+		align-items: center;
+		display: flex;
+		height: 100%;
+		justify-content: center;
+		position: absolute;
+		top: -3.5rem;
+		width: 100%;
+		z-index: 5;
+
+		.cards-group {
+			@extend %playing-cards;
+			height: 100%;
+
+			.transition {
+				top: 0;
+			}
+
+			.cards-enter-active,
+			.cards-leave-active {
+				position: absolute;
+				transition-duration: 0.75s;
+				transition-property: opacity, transform;
+			}
+
+			.cards-enter {
+				opacity: 0;
+				transform: translateY(-3rem);
+			}
+
+			.cards-enter-to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+
+			.cards-leave-to {
+				opacity: 0;
+				position: absolute;
+				transform: translateY(3rem);
+			}
+		}
+	}
+
+	&:not(.current) {
+		.sq-player-cards {
+			.cards-group {
+				left: 25%;
+				position: absolute;
+			}
+		}
+	}
+
+	@include media-breakpoint-up(lg) {
+		.sq-quarrel-message {
+			left: 20%;
+		}
+	}
+}
 </style>

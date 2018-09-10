@@ -1,5 +1,5 @@
 <template>
-	<b-dropdown id="dropdown-admin-options" class="ml-2" variant="info" text="Option">
+	<b-dropdown id="dropdown-admin-options" class="ml-2" variant="primary" text="Option">
 		<b-dropdown-item @click="onClickAdminOption('reset-game')">Reset Game</b-dropdown-item>
 		<b-dropdown-item @click="onClickAdminOption('reset-hoard')">Reset Hoard</b-dropdown-item>
 		<b-dropdown-item @click="onClickAdminOption('reset-player-cards')">Reset Player Cards</b-dropdown-item>

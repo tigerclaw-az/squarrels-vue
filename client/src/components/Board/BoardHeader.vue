@@ -1,14 +1,12 @@
 <template>
-	<b-container fluid class="header" v-if="isGameStarted">
-		<b-row class="align-items-center">
-			<b-col class="header-item game-start">{{startDate}}</b-col>
-			<b-col class="header-item game-settings">
-				<game-settings></game-settings>
-				<admin-options v-if="isAdmin"></admin-options>
-			</b-col>
-			<b-col class="header-item game-round">ROUND: {{roundNumber}}</b-col>
-		</b-row>
-	</b-container>
+	<b-row class="header align-items-center">
+		<b-col class="header-item game-start">{{startDate}}</b-col>
+		<b-col class="header-item game-settings">
+			<game-settings></game-settings>
+			<admin-options v-if="isAdmin"></admin-options>
+		</b-col>
+		<b-col class="header-item game-round">ROUND: {{roundNumber}}</b-col>
+	</b-row>
 </template>
 
 <script>
@@ -20,7 +18,7 @@ import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
 import Icon from 'vue-awesome/components/Icon';
 
 import AdminOptions from '@/components/AdminOptions.vue';
-import GameSettings from '@/components/GameSettings.vue';
+import GameSettings from '@/components/Game/GameSettings.vue';
 
 export default {
 	name: 'BoardHeader',
@@ -30,12 +28,7 @@ export default {
 		'game-settings': GameSettings,
 		Icon,
 	},
-	props: {
-		isGameStarted: {
-			type: Boolean,
-			required: true,
-		},
-	},
+	props: {},
 	data: function() {
 		return {};
 	},

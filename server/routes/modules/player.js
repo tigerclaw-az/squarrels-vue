@@ -57,8 +57,6 @@ let playerMod = {
 			cardsDefer.resolve(null);
 		}
 
-		logger.debug(cardsDefer);
-
 		cardsDefer.promise
 			.then(cards => {
 				logger.debug('cards -> ', cards);

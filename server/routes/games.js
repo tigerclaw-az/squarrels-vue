@@ -262,14 +262,14 @@ games.get('/:id/deal', function(req, res) {
 
 			const decks = [
 				new DeckModel({
+					deckType: 'discard',
+				}),
+				new DeckModel({
 					deckType: 'main',
 					cards: _.shuffle(_.shuffle(cards)),
 				}),
 				new DeckModel({
-					deckType: 'discard',
-				}),
-				new DeckModel({
-					deckType: 'action',
+					deckType: 'hoard',
 				}),
 			];
 

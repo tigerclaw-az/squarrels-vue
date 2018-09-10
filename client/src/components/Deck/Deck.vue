@@ -1,5 +1,5 @@
 <template>
-	<div :type="deck.deckType" class="deck-container">
+	<div v-if="deck" :type="deck.deckType" class="deck-container">
 		<span class="deck-label">{{deck.deckType}}</span>
 		<keep-alive>
 			<component :is="deckComponent" :cards="deck.cards" :numCards="totalCards"></component>
@@ -24,11 +24,13 @@ export default {
 			return this.$store.state.decks[this.id];
 		},
 		deckComponent: function() {
-			const name =
-				this.deck.deckType[0].toUpperCase() +
-				this.deck.deckType.slice(1);
+			if (this.deck) {
+				const name =
+					this.deck.deckType[0].toUpperCase() +
+					this.deck.deckType.slice(1);
 
-			return () => import(`./Deck${name}.vue`);
+				return () => import(`./Deck${name}.vue`);
+			}
 		},
 		totalCards: function() {
 			return this.cards.length;

@@ -54,25 +54,28 @@ $card-images: (
 
 	.btn-card,
 	.card {
-		height: rem-calc(map-get($card-height, "small"));
 		position: absolute;
-		width: rem-calc(map-get($card-width, "small"));
+	}
+
+	.btn-card {
+		height: map-get($card-height, "small") * 1px;
+		width: map-get($card-width, "small") * 1px;
 	}
 
 	.card {
 		@include generate-cards;
+
+		background-size: contain;
 	}
 
 	[role="button"] {
 		display: block;
-		height: 100%;
 	}
 
-	@include media-breakpoint-up(md) {
-		.btn-card,
-		.card {
-			height: rem-calc(map-get($card-height, "medium"));
-			width: rem-calc(map-get($card-width, "medium"));
+	@include media-breakpoint-up(lg) {
+		.btn-card {
+			height: map-get($card-height, "medium") * 1px;
+			width: map-get($card-width, "medium") * 1px;
 		}
 	}
 }
@@ -90,5 +93,12 @@ $card-images: (
 
 	&:focus {
 		outline: none;
+	}
+
+	.icon {
+		color: theme-color("success");
+		left: -8%;
+		position: absolute;
+		top: -5px;
 	}
 }

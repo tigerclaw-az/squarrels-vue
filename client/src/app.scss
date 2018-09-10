@@ -1,5 +1,6 @@
 @import "~@/assets/scss/variables";
 @import "../node_modules/bootstrap/scss/bootstrap.scss";
+@import "~@/assets/scss/buttons";
 
 * {
 	// @include user-select(none);
@@ -10,6 +11,11 @@
 html,
 body {
 	height: 100%;
+	position: relative;
+}
+
+html {
+	min-height: 100%;
 }
 
 a {
@@ -29,18 +35,12 @@ textarea {
 	}
 }
 
+#app {
+	height: 100%;
+}
+
 .main {
 	-webkit-backface-visibility: hidden; // stylelint-disable-line
-
-	// animation: gradient 30s linear infinite;
-	background: linear-gradient(
-		320deg,
-		color(carnaby-tan),
-		color(cioccolato),
-		color(kenyan-copper),
-		color(carnaby-tan)
-	);
-	// background-size: 600% 600%;
 	height: 99vh;
 	transform: translateZ(0);
 }

@@ -1,5 +1,4 @@
 <template>
-	<!-- TODO: Add icons to each card for 'storage' and 'discard' -->
 	<div
 		:card-type="cardType"
 		class="btn-card"
@@ -20,7 +19,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import _ from 'lodash';
 import Icon from 'vue-awesome/components/Icon';
 
 import api from '@/api/index';
@@ -36,21 +35,26 @@ export default {
 			type: String,
 			required: true,
 		},
+		cardStyle: {
+			type: Object,
+			required: false,
+		},
+		id: {
+			type: String,
+			required: false,
+		},
 		matches: {
 			type: Array,
 			default: function() {
 				return [];
 			},
 		},
-		id: {
-			type: String,
-			required: false,
-		},
 		onClick: {
 			type: Function,
+			default: function() {
+				return false;
+			},
 		},
-		position: '',
-		zIndex: 0,
 	},
 	data: function() {
 		return {
@@ -58,25 +62,12 @@ export default {
 		};
 	},
 	computed: {
-		...mapGetters({
-			myPlayer: 'players/getMyPlayer',
-		}),
-		...mapState({
-			actionCard: state => state.game.actionCard,
-		}),
 		cardClass: function() {
-			if (this.details) {
-				return `${this.details.cardType || 'blank'}--${
-					this.details.name
-				}`;
-			}
-		},
-		cardStyle: function() {
-			if (['hand'].includes(this.cardType)) {
-				return { left: this.position.left, 'z-index': this.zIndex };
+			if (!_.isEmpty(this.details)) {
+				return `${this.details.cardType}--${this.details.name}`;
 			}
 
-			return {};
+			return 'blank--';
 		},
 		hasMatch: function() {
 			return this.matches.length;
@@ -98,6 +89,9 @@ export default {
 
 			return !(this.isActivePlayer || this.myPlayer.hasDrawnCard);
 		},
+		myPlayer: function() {
+			return this.$store.getters['players/getMyPlayer'];
+		},
 	},
 	mounted: function() {
 		if (this.cardData) {
@@ -113,8 +107,6 @@ export default {
 				.catch(err => {
 					this.$log.error(err);
 				});
-		} else {
-			this.$toasted.error('Unable to get card data!');
 		}
 	},
 	components: {

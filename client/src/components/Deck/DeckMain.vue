@@ -6,7 +6,6 @@
 			'empty': !numCards,
 		}"
 	>
-		<div class="count">{{numCards}}</div>
 		<div v-show="!canDrawCard || isCardDrawn" class="overlay">
 			<icon name="ban" scale="7" class="icon"></icon>
 		</div>
@@ -17,7 +16,7 @@
 			@click.prevent="onClick"
 		>
 			<div v-show="isCardDrawn" class="card-drawn" :class="{ 'has-card': cardDrawn }" :style="cardDrawnStyle(numCards)">
-				<span class="card blank--"></span>
+				<div class="btn-card card blank-- disabled" role="button" disabled></div>
 				<Card
 					v-if="cardDrawn"
 					:id="cardDrawn.id"
@@ -27,19 +26,20 @@
 				>
 				</Card>
 			</div>
-			<span
-				v-for="(card, index) in numCards"
+			<Card
+				v-for="index in numCards"
 				:key="index"
-				class="card blank--"
-				:style="cardStyle(index)"
+				:cardStyle="cardStyle(index)"
+				cardType="deck"
 			>
-			</span>
+			</Card>
 		</div>
+		<div class="count">{{numCards}}</div>
 		<div v-if="isAdmin" uib-dropdown>
 			<b-dropdown
 				id="dropdown-settings"
 				text="Choose Card"
-				variant="danger"
+				variant="primary"
 			>
 				<b-dropdown-item
 					v-for="(item, index) in dropdownList"
@@ -208,16 +208,14 @@ export default {
 	color: $black;
 	font-size: 1.25rem;
 	font-weight: $font-weight-bold;
-	left: 50%;
 	position: absolute;
-	transform: translateX(-50%);
 	z-index: 1;
 }
 
 .can-draw {
 	.cards-group {
 		// prettier-ignore
-		box-shadow: 0 0 15px 10px theme-color("success");
+		box-shadow: 0 0 15px 10px color("desert");
 	}
 }
 
@@ -229,7 +227,7 @@ export default {
 
 	.icon {
 		// prettier-ignore
-		color: theme-color("danger");
+		color: theme-color("primary");
 		display: flex;
 		height: 100%;
 		margin: 0 auto;

@@ -16,12 +16,12 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 import Card from '@/components/Card/Card.vue';
 
 export default {
-	name: 'ActionCard',
+	name: 'CardAction',
 	components: {
 		Card,
 	},
@@ -104,8 +104,6 @@ export default {
 			};
 
 			this.$nextTick(() => {
-				this.$log.debug('ActionCard.mounted', hoardDeck, hoardCards);
-
 				this.$el
 					.querySelector('.card')
 					.addEventListener('animationend', onAnimationEnd);
@@ -126,6 +124,9 @@ export default {
 		});
 	},
 	computed: {
+		...mapGetters({
+			isActivePlayer: 'players/isActivePlayer',
+		}),
 		...mapState('game', {
 			gameId: 'id',
 			card: 'actionCard',
@@ -134,7 +135,11 @@ export default {
 			decksLoaded: state => state.decks.isLoaded,
 		}),
 		isInstant: function() {
-			return this.instantAction || this.card.name === 'winter';
+			return (
+				this.isActivePlayer ||
+				this.instantAction ||
+				this.card.name === 'winter'
+			);
 		},
 	},
 };
@@ -157,7 +162,7 @@ export default {
 	left: 40%;
 	opacity: 1;
 	position: absolute;
-	top: 0;
+	top: 25%;
 	transform: scale(2);
 	transition-duration: 0.5s;
 	transition-property: transform, opacity;
@@ -169,7 +174,13 @@ export default {
 
 	// Once the card is flipped we need to move it towards the 'action' deck
 	&.shown {
-		transform: translate(18vw, -32vh);
+		transform: translate(280px, -45px) scale(1);
+	}
+
+	@include media-breakpoint-up(lg) {
+		&.shown {
+			transform: translate(620px, -60px) scale(1);
+		}
 	}
 }
 </style>

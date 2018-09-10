@@ -128,7 +128,7 @@ const actions = {
 		}
 	},
 
-	addCards({ getters }, data) {
+	addCards({ dispatch, getters }, data) {
 		this._vm.$log.debug('players/addCards', data, getters, this);
 
 		if (!data.cards) {
@@ -142,11 +142,13 @@ const actions = {
 
 		const playerId = data.id || getters.getMyPlayer.id;
 
-		return api.players
-			.update(playerId, {
+		return dispatch('update', {
+			id: playerId,
+			data: {
 				addCards: true,
 				cardsInHand: cardsToAdd,
-			})
+			},
+		})
 			.then(res => {
 				this._vm.$log.debug('playersApi:update()', res, this);
 			})
@@ -183,8 +185,7 @@ const actions = {
 		if (pl.id === myPlayer.id) {
 			// Add hoard cards to player cards
 			// prettier-ignore
-			api.players
-				.update(myPlayer.id, { cardsInHand })
+			dispatch('update', { id: myPlayer.id, data: { cardsInHand }})
 				.then(async () => {
 					try {
 						await dispatch(
@@ -210,10 +211,10 @@ const actions = {
 	},
 
 	async delete({}, id) {
-		const myPlayer = getters.getMyPlayer;
+		const playerId = id || getters.getMyPlayer.id;
 
 		try {
-			await api.players.delete(myPlayer.id);
+			await api.players.delete(playerId);
 		} catch (err) {
 			this._vm.$toasted.error(err);
 			throw new Error(err);
@@ -227,24 +228,28 @@ const actions = {
 		const cardIds = state[playerId].cardsInHand;
 		const cardsInHand = _.difference(cardIds, [payload.card.id]);
 
-		dispatch('updateLocalPlayer', {
-			id: playerId,
-			cardsInHand,
-			quarrel: false,
-			message: null,
-		});
+		// dispatch('updateLocalPlayer', {
+		// 	id: playerId,
+		// 	cardsInHand,
+		// 	quarrel: false,
+		// 	message: null,
+		// });
 
-		return api.players.update(playerId, {
-			cardsInHand,
+		return dispatch('update', {
+			id: playerId,
+			data: { cardsInHand, hasStoredCards: true },
 		});
 	},
 
-	async drawCard({ getters }, payload) {
+	async drawCard({ dispatch, getters }, payload) {
 		const playerId = payload.id || getters.getMyPlayer.id;
 
 		try {
-			return await api.players.update(playerId, {
-				hasDrawnCard: true,
+			return await dispatch('update', {
+				id: playerId,
+				data: {
+					hasDrawnCard: true,
+				},
 			});
 		} catch (err) {
 			this._vm.$log.error(err);
@@ -325,17 +330,22 @@ const actions = {
 
 	async removeHighCard({ dispatch }, player) {
 		const cards = player.cardsInHand;
-		const highCard = this._.maxBy(cards, card => {
+		const highCard = _.maxBy(cards, card => {
 			return card.cardType === 'special' ? -1 : card.amount;
 		});
 
-		this.$log.debug('highCard ->', highCard);
+		this._vm.$log.debug('highCard ->', highCard);
 
-		if (!this._.isEmpty(highCard)) {
-			this._vm.$toasted.warn(`${player.name}: You just lost a card!`);
+		if (!_.isEmpty(highCard)) {
+			this._vm.$toasted.info('You just lost a card!');
 
-			await api.players.update(player.id, {
-				cardsInHand: _.difference(player.cardsInHand, [highCard.id]),
+			await dispatch('update', {
+				id: player.id,
+				data: {
+					cardsInHand: _.difference(player.cardsInHand, [
+						highCard.id,
+					]),
+				},
 			});
 
 			return dispatch('decks/discard', highCard, { root: true });
@@ -361,7 +371,7 @@ const actions = {
 		return true;
 	},
 
-	selectQuarrelCard({}, data) {
+	selectQuarrelCard({ dispatch }, data) {
 		let wsObj = {
 			action: 'quarrel',
 			player: data.id,
@@ -373,6 +383,12 @@ const actions = {
 		if (data.card) {
 			wsObj.card = data.card;
 		}
+
+		dispatch('updateLocalPlayer', {
+			id: data.id,
+			message: null,
+			quarrel: false,
+		});
 
 		this._vm.$socket.sendObj(wsObj);
 	},
@@ -391,7 +407,7 @@ const actions = {
 		}
 	},
 
-	startQuarrel({ dispatch, getters, state }, options = {}) {
+	startQuarrel({ dispatch, getters, state, rootState }, options = {}) {
 		const myPlayer = getters.getMyPlayer;
 		const players = options.players || state.ids;
 
@@ -404,16 +420,19 @@ const actions = {
 		// Find all players that have at least 1 card
 		const quarrelPlayers = _.reject(players, { totalCards: 0 });
 
-		dispatch('game/setQuarrelCount', quarrelPlayers.length, { root: true });
+		// If no players, or just 1 player, have enough cards for Quarrel
+		if (quarrelPlayers.length <= 1) {
+			dispatch('game/quarrelWinner');
+		} else {
+			dispatch('game/setQuarrelCount', quarrelPlayers.length, {
+				root: true,
+			});
 
-		if (myPlayer.cardsInHand.length) {
 			dispatch('updateLocalPlayer', {
 				id: myPlayer.id,
 				message: 'Choose a Card',
 				quarrel: true,
 			});
-		} else {
-			dispatch('selectQuarrelCard', { id: myPlayer.id });
 		}
 	},
 
@@ -470,8 +489,8 @@ const actions = {
 
 	async updateLocalPlayer({ commit, state }, payload) {
 		if (!payload.id) {
-			this._vm.$toasted.warn('Did not receive "id" for player!');
-			this._vm.$log.warn('Missing "id" from payload:', payload);
+			this._vm.$toasted.info('Did not receive "id" for player!');
+			this._vm.$log.info('Missing "id" from payload:', payload);
 		}
 
 		commit('UPDATE', payload);
