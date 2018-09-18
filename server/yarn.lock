@@ -297,10 +297,16 @@ debug@2.6.9, debug@^2.2.0:
     ms "2.0.0"
 
 debug@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
+  version "3.2.5"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.5.tgz#c2418fbfd7a29f4d4f70ff4cea604d4b64c46407"
   dependencies:
-    ms "2.0.0"
+    ms "^2.1.1"
+
+debug@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.0.1.tgz#f9bb36d439b8d1f0dd52d8fb6b46e4ebb8c1cd5b"
+  dependencies:
+    ms "^2.1.1"
 
 decamelize@^1.0.0:
   version "1.2.0"
@@ -353,7 +359,7 @@ encodeurl@~1.0.2:
 
 es6-promise@3.2.1:
   version "3.2.1"
-  resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-3.2.1.tgz#ec56233868032909207170c39448e24449dd1fc4"
+  resolved "http://registry.npmjs.org/es6-promise/-/es6-promise-3.2.1.tgz#ec56233868032909207170c39448e24449dd1fc4"
 
 escape-html@~1.0.3:
   version "1.0.3"
@@ -619,9 +625,9 @@ lodash.get@4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
 
-lodash@^4.14.0, lodash@^4.17.4, lodash@^4.17.5:
-  version "4.17.10"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
+lodash@^4.14.0, lodash@^4.17.11, lodash@^4.17.4:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
 log4js@^3.0.5:
   version "3.0.5"
@@ -743,13 +749,13 @@ mongoose@4, mongoose@^4.11.5:
     regexp-clone "0.0.1"
     sliced "1.0.1"
 
-morgan@^1.9.0:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/morgan/-/morgan-1.9.0.tgz#d01fa6c65859b76fcf31b3cb53a3821a311d8051"
+morgan@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/morgan/-/morgan-1.9.1.tgz#0a8d16734a1d9afbc824b99df87e738e58e2da59"
   dependencies:
     basic-auth "~2.0.0"
     debug "2.6.9"
-    depd "~1.1.1"
+    depd "~1.1.2"
     on-finished "~2.3.0"
     on-headers "~1.0.1"
 
@@ -774,7 +780,7 @@ ms@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
 
-ms@2.1.1:
+ms@2.1.1, ms@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
 
