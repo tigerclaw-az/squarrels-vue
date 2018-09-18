@@ -1,26 +1,45 @@
 <template>
-	<form class="form-horizontal" name="playerForm"
-		@submit.prevent="createPlayer"
-		v-cloak>
-		<div class="form-group form-group-md row">
-			<div class="col-xs-12 col-sm-5">
-				<input class="form-control sq-input-player-name"
-						maxlength="24"
-						minlength="3"
-						name="pName"
-						placeholder="Name"
-						type="text"
-						v-model="pName"/>
-			</div>
-			<div class="col-xs-12 col-sm-7">
-				<button
-					class="btn btn-primary"
-					type="submit"
-				>Login
-				</button>
-			</div>
-		</div>
-	</form>
+	<b-modal
+		id="login"
+		v-model="showModal"
+		centered hide-footer lazy
+		size="lg"
+		title="Login"
+		@shown="focusUsername"
+	>
+		<b-container fluid>
+			<b-form @submit.prevent="createPlayer" inline>
+				<b-form-group
+					id="playerForm"
+					label="Username"
+					label-for="sq-username"
+					label-sr-only
+				>
+					<b-input-group size="lg">
+						<b-form-input
+							class="sq-input-player-name"
+							maxlength="24"
+							minlength="3"
+							name="sq-username"
+							placeholder="username"
+							ref="username"
+							type="text"
+							v-model.trim="pName"
+						>
+						</b-form-input>
+						<b-input-group-append>
+							<b-btn
+								type="submit"
+								variant="primary"
+							>
+							Login
+							</b-btn>
+						</b-input-group-append>
+					</b-input-group>
+				</b-form-group>
+			</b-form>
+		</b-container>
+	</b-modal>
 </template>
 
 <script>
@@ -29,7 +48,13 @@ export default {
 	data: function() {
 		return {
 			pName: '',
+			showModal: true,
 		};
+	},
+	mounted: function() {
+		this.$nextTick(() => {
+			this.$usernameInput = this.$refs.username;
+		});
 	},
 	methods: {
 		createPlayer: function() {
@@ -47,6 +72,9 @@ export default {
 					this.$toasted.error('Unable to create player');
 					this.$log.error(err);
 				});
+		},
+		focusUsername: function() {
+			this.$usernameInput.focus();
 		},
 	},
 };
