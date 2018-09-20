@@ -262,10 +262,10 @@ const actions = {
 
 	async resetAction({ dispatch }) {
 		try {
-			// Add current action card to the 'action' deck
+			// Add current action card to the 'discard' deck
 			await dispatch(
 				'decks/addCard',
-				{ type: 'action', cardId: state.actionCard.id },
+				{ type: 'discard', cardId: state.actionCard.id },
 				{ root: true }
 			);
 

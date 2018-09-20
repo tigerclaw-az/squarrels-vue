@@ -45,7 +45,7 @@ export default {
 				return;
 			}
 
-			const hoardDeck = this.$store.getters['decks/getByType']('discard');
+			const hoardDeck = this.$store.getters['decks/getByType']('hoard');
 			const hoardCards = hoardDeck.cards;
 
 			const onAnimationEnd = () => {
@@ -66,7 +66,7 @@ export default {
 						);
 
 						this.$store.dispatch('decks/addCard', {
-							type: 'action',
+							type: 'discard',
 							cardId,
 						});
 

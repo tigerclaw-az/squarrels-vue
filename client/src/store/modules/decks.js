@@ -10,6 +10,10 @@ const state = {
 };
 
 const getters = {
+	getById: state => id => {
+		return state[id];
+	},
+
 	getByType: state => name => {
 		return _.find(state, { deckType: name });
 	},
@@ -97,7 +101,7 @@ const actions = {
 	},
 
 	discard({ dispatch }, card) {
-		return dispatch('addCard', { type: 'discard', cardId: card.id });
+		return dispatch('addCard', { type: 'hoard', cardId: card.id });
 	},
 
 	drawCard({ commit, dispatch, getters }, options = {}) {

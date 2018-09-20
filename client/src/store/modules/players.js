@@ -165,6 +165,7 @@ const actions = {
 			return api.players
 				.create(plData)
 				.then(res => {
+					this._vm.$log.debug(res);
 					commit('LOGIN', res.data, { root: true });
 					dispatch('updateLocalPlayer', res.data);
 					resolve();
@@ -178,7 +179,7 @@ const actions = {
 
 	collectHoard({ dispatch, getters, rootGetters }, pl) {
 		const myPlayer = getters.getMyPlayer;
-		const hoardDeck = rootGetters['decks/getByType']('discard');
+		const hoardDeck = rootGetters['decks/getByType']('hoard');
 		const hoardCards = rootGetters['decks/getCardIds'](hoardDeck.id);
 		const cardsInHand = _.union(myPlayer.cardsInHand, hoardCards);
 
