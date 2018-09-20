@@ -11,7 +11,9 @@ const actions = {
 	create({ commit }, data) {
 		Vue.$log.debug(this, this._vm, data);
 		// EventBus.$emit('game:create', data.nuts);
-		this._vm.$toasted.success('New game created!');
+		this._vm.$toasted.success('New game created!', {
+			duration: 500,
+		});
 
 		commit('start/ADD_GAME', data.nuts, { root: true });
 	},
