@@ -136,11 +136,13 @@ players.post('/:id?', function(req, res) {
 			.find({ sessionId })
 			.exec()
 			.then(list => {
+				logger.info(list);
 				if (list.length) {
-					let err = `Player found with same sessionId: ${sessionId}`;
+					// let err = `Player found with same sessionId: ${sessionId}`;
 					logger.error();
-					res.status(500).json(config.apiError(err));
-					return false;
+					res.status(200).json(list[0]);
+
+					return true;
 				}
 
 				let addPlayer = () => {
