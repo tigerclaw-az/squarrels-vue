@@ -135,6 +135,7 @@ export default {
 	display: flex;
 	flex-flow: column;
 	height: 100%;
+	margin-top: 6rem;
 }
 
 .container_decks {
