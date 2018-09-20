@@ -165,7 +165,6 @@ const actions = {
 			return api.players
 				.create(plData)
 				.then(res => {
-					this._vm.$log.debug(res);
 					commit('LOGIN', res.data, { root: true });
 					dispatch('updateLocalPlayer', res.data);
 					resolve();
