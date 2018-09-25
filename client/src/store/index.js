@@ -4,21 +4,7 @@ import Vuex from 'vuex';
 Vue.use(Vuex);
 
 import api from '@/api/index';
-import decks from '@/store/modules/decks';
-import game from '@/store/modules/game';
-import players from '@/store/modules/players';
-import sound from '@/store/modules/sound';
-import start from '@/store/modules/start';
-import websocket from '@/store/modules/websocket';
-
-const modules = {
-	decks,
-	game,
-	players,
-	sound,
-	start,
-	websocket,
-};
+import modules from './modules';
 
 const state = {
 	isAdmin: false,

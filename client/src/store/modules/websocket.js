@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import router from '@/router';
 
-import wsDecks from '@/store/modules/websocket/ws-decks';
-import wsGame from '@/store/modules/websocket/ws-game';
-import wsPlayers from '@/store/modules/websocket/ws-players';
+import wsDecks from '@/store/modules/websocket/wsDecks';
+import wsGame from '@/store/modules/websocket/wsGame';
+import wsPlayers from '@/store/modules/websocket/wsPlayers';
 
 const state = {
 	socket: {
