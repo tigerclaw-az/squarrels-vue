@@ -1,5 +1,3 @@
-import Vue from 'vue';
-
 import api from '@/api/index';
 
 const state = {
@@ -49,6 +47,8 @@ const actions = {
 	loadGames({ commit }) {
 		commit('GAMES_LOAD', { wait: true });
 
+		commit('GAMES_CLEAR');
+
 		api.games
 			.get()
 			.then(res => {
@@ -84,6 +84,9 @@ const mutations = {
 	},
 	GAME_DELETE(state, payload) {
 		state.waitDeleteGame = payload;
+	},
+	GAMES_CLEAR(state) {
+		state.games = [];
 	},
 	GAMES_LOAD(state) {
 		state.waitLoadGames = false;
