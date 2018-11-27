@@ -1,14 +1,12 @@
 module.exports = {
 	extends: 'stylelint-config-recommended-scss',
-	plugins: [
-		'stylelint-order',
-	],
+	plugins: ['stylelint-order'],
 	rules: {
 		'at-rule-blacklist': ['debug'],
 		'color-hex-length': 'long',
 		'declaration-block-no-duplicate-properties': true,
 		'font-weight-notation': 'numeric',
-		indentation: 'tab',
+		'indentation': 'tab',
 		'length-zero-no-unit': true,
 		'max-nesting-depth': 6,
 		'no-descending-specificity': null,
