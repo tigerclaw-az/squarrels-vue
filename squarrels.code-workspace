@@ -5,14 +5,14 @@
 		}
 	],
 	"settings": {
-		"editor.formatOnPaste": true,
-		"editor.formatOnSave": true,
-		"eslint.workingDirectories": [
-			"./client",
-			"./server"
-		],
-		"prettier.singleQuote": true,
-		"javascript.format.enable": true,
-		"sasslint.enable": false,
+		"eslint.workingDirectories": ["./client", "./server"],
+		"editor.formatOnPaste": false,
+		"editor.formatOnSave": false,
+		"search.exclude": {
+			"**/dist": true
+		},
+		"eslint.alwaysShowStatus": true,
+		"stylelint.enable": true,
+		"prettier.eslintIntegration": true
 	}
 }
