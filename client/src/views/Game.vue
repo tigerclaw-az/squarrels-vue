@@ -1,12 +1,19 @@
 <template>
 	<div id="game">
-		<transition tag="div" name="winter">
-			<div class="game-overlay--new-game winter" v-if="isWinter"></div>
+		<transition
+			tag="div"
+			name="winter"
+		>
+			<div
+				v-if="isWinter"
+				class="game-overlay--new-game winter"
+			>
+			</div>
 		</transition>
 		<GameResults
 			v-if="isWinter"
-			:gameId="id"
-			:playerIds="playerIds"
+			:game-id="id"
+			:player-ids="playerIds"
 		>
 			<template slot="newGame">
 				<div class="container-button">
@@ -15,30 +22,42 @@
 						variant="primary"
 						@click="onClickNewGame"
 					>
-					NEXT ROUND
+						NEXT ROUND
 					</b-button>
 				</div>
 			</template>
 		</GameResults>
-		<div v-if="!isStarted" class="game-overlay">
-			<div class="game-overlay--start-game" v-cloak v-if="!isLoading && !isWinter">
-				<div v-if="needPlayers" class="waiting-message">
+		<div
+			v-if="!isStarted"
+			class="game-overlay"
+		>
+			<div
+				v-cloak
+				v-if="!isLoading && !isWinter"
+				class="game-overlay--start-game"
+			>
+				<div
+					v-if="needPlayers"
+					class="waiting-message"
+				>
 					Waiting for other players to join...
 				</div>
-				<b-button v-else
+				<b-button
+					v-else
 					class="btn btn-start-game"
 					variant="primary"
-					@click="onClickStartGame">
+					@click="onClickStartGame"
+				>
 					START GAME
 				</b-button>
 			</div>
 		</div>
 		<Board
 			v-if="isLoaded"
-			:deckIds="deckIds"
-			:gameId="id"
-			:isGameStarted="isStarted"
-			:playerIds="playerIds"
+			:deck-ids="deckIds"
+			:game-id="id"
+			:is-game-started="isStarted"
+			:player-ids="playerIds"
 		>
 			<template slot="action">
 				<CardAction v-if="actionCard"></CardAction>
@@ -73,6 +92,32 @@ export default {
 			isLoading: false,
 		};
 	},
+	computed: {
+		...mapGetters({
+			currentPlayer: 'players/getMyPlayer',
+		}),
+		...mapState('game', [
+			'actionCard',
+			'deckIds',
+			'isDealing',
+			'isLoaded',
+			'isStarted',
+			'playerIds',
+		]),
+		needPlayers: function() {
+			return this.playerIds.length < 2;
+		},
+		allowMorePlayers: function() {
+			return this.playerIds.length < config.MAX_PLAYERS;
+		},
+		playerExists: function() {
+			return this.playerIds.filter(pl => pl === this.currentPlayer.id)
+				.length;
+		},
+		isWinter: function() {
+			return this.actionCard && this.actionCard.name === 'winter';
+		},
+	},
 	watch: {
 		isStarted: function(to) {
 			if (to) {
@@ -80,7 +125,6 @@ export default {
 			}
 		},
 	},
-	created: function() {},
 	mounted: function() {
 		this.$store
 			.dispatch({ type: 'game/load', id: this.id })
@@ -107,32 +151,6 @@ export default {
 	},
 	beforeDestroy: function() {
 		this.unload();
-	},
-	computed: {
-		...mapGetters({
-			currentPlayer: 'players/getMyPlayer',
-		}),
-		...mapState('game', [
-			'actionCard',
-			'deckIds',
-			'isDealing',
-			'isLoaded',
-			'isStarted',
-			'playerIds',
-		]),
-		needPlayers: function() {
-			return this.playerIds.length < 2;
-		},
-		allowMorePlayers: function() {
-			return this.playerIds.length < config.MAX_PLAYERS;
-		},
-		playerExists: function() {
-			return this.playerIds.filter(pl => pl === this.currentPlayer.id)
-				.length;
-		},
-		isWinter: function() {
-			return this.actionCard && this.actionCard.name === 'winter';
-		},
 	},
 	methods: {
 		onClickStartGame: function(evt) {

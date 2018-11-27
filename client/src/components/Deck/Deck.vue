@@ -1,8 +1,16 @@
 <template>
-	<div v-if="deck" :type="deck.deckType" class="deck-container">
-		<span class="deck-label">{{deck.deckType}}</span>
+	<div
+		v-if="deck"
+		:type="deck.deckType"
+		class="deck-container"
+	>
+		<span class="deck-label">{{ deck.deckType }}</span>
 		<keep-alive>
-			<component :is="deckComponent" :cards="deck.cards" :numCards="totalCards"></component>
+			<component
+				:is="deckComponent"
+				:cards="deck.cards"
+				:num-cards="totalCards"
+			/>
 		</keep-alive>
 	</div>
 </template>
@@ -25,9 +33,9 @@ export default {
 		},
 		deckComponent: function() {
 			if (this.deck) {
-				const name =
-					this.deck.deckType[0].toUpperCase() +
-					this.deck.deckType.slice(1);
+				const name
+					= this.deck.deckType[0].toUpperCase()
+					+ this.deck.deckType.slice(1);
 
 				return () => import(`./Deck${name}.vue`);
 			}
@@ -40,5 +48,4 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" src='./deck.scss'>
-</style>
+<style lang="scss" src="./deck.scss"></style>

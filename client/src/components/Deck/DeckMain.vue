@@ -1,41 +1,59 @@
 <template>
 	<div
-		class="deck"
 		:class="{
 			'can-draw': canDrawCard && !isCardDrawn,
-			'empty': !numCards,
+			empty: !numCards,
 		}"
+		class="deck"
 	>
-		<div v-show="!canDrawCard || isCardDrawn" class="overlay">
-			<icon name="ban" scale="7" class="icon"></icon>
+		<div
+			v-show="!canDrawCard || isCardDrawn"
+			class="overlay"
+		>
+			<icon
+				name="ban"
+				scale="7"
+				class="icon"
+			/>
 		</div>
 		<div
-			class="cards-group"
 			:class="{ disabled: isDisabled }"
+			class="cards-group"
 			role="button"
 			@click.prevent="onClick"
 		>
-			<div v-show="isCardDrawn" class="card-drawn" :class="{ 'has-card': cardDrawn }" :style="cardDrawnStyle(numCards)">
-				<div class="btn-card card blank-- disabled" role="button" disabled></div>
+			<div
+				v-show="isCardDrawn"
+				:class="{ 'has-card': cardDrawn }"
+				:style="cardDrawnStyle(numCards)"
+				class="card-drawn"
+			>
+				<div
+					class="btn-card card blank-- disabled"
+					role="button"
+					disabled
+				>
+				</div>
 				<Card
 					v-if="cardDrawn"
+					ref="card"
 					:id="cardDrawn.id"
 					:card-data="cardDrawn"
 					card-type="deck"
-					ref="card"
-				>
-				</Card>
+				></Card>
 			</div>
 			<Card
 				v-for="index in numCards"
 				:key="index"
-				:cardStyle="cardStyle(index)"
-				cardType="deck"
-			>
-			</Card>
+				:card-style="cardStyle(index)"
+				card-type="deck"
+			/>
 		</div>
-		<div class="count">{{numCards}}</div>
-		<div v-if="isAdmin" uib-dropdown>
+		<div class="count">{{ numCards }}</div>
+		<div
+			v-if="isAdmin"
+			uib-dropdown
+		>
 			<b-dropdown
 				id="dropdown-settings"
 				text="Choose Card"
@@ -47,9 +65,9 @@
 					:data-id="item.id"
 					:data-type="item.cardType"
 					:data-name="item.name"
-					@click="onClickDrawCard(item)"
+					@click="onClickDrawCard(item);"
 				>
-				{{item.name}}
+					{{ item.name }}
 				</b-dropdown-item>
 			</b-dropdown>
 		</div>
@@ -64,6 +82,10 @@ import Card from '@/components/Card/Card.vue';
 
 export default {
 	name: 'DeckMain',
+	components: {
+		Card,
+		icon: Icon,
+	},
 	props: {
 		cards: {
 			type: Array,
@@ -80,15 +102,6 @@ export default {
 			cardDrawn: null,
 		};
 	},
-	created: function() {
-		this.$nextTick(() => {
-			this.$cardDrawnEl = this.$el.querySelector('.card-drawn');
-			this.$cardDrawnEl.addEventListener(
-				'animationend',
-				this.onCardDrawnAnimationEnd
-			);
-		});
-	},
 	computed: {
 		...mapGetters({
 			canDrawCard: 'players/canDrawCard',
@@ -104,6 +117,15 @@ export default {
 		isDisabled: function() {
 			return !this.canDrawCard;
 		},
+	},
+	created: function() {
+		this.$nextTick(() => {
+			this.$cardDrawnEl = this.$el.querySelector('.card-drawn');
+			this.$cardDrawnEl.addEventListener(
+				'animationend',
+				this.onCardDrawnAnimationEnd
+			);
+		});
 	},
 	methods: {
 		cardDrawnStyle: function(val) {
@@ -182,7 +204,7 @@ export default {
 				});
 		},
 		moveCard: function() {
-			let left = parseInt(this.$cardDrawnEl.style.left);
+			const left = parseInt(this.$cardDrawnEl.style.left);
 
 			this.$cardDrawnEl.style.left = left - 2.5 + 'px';
 
@@ -190,10 +212,6 @@ export default {
 				window.requestAnimationFrame(this.moveCard);
 			}
 		},
-	},
-	components: {
-		Card,
-		icon: Icon,
 	},
 };
 </script>

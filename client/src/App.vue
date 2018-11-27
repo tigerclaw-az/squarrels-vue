@@ -1,8 +1,10 @@
 <template>
-	<div id="app" v-cloak>
+	<div
+		v-cloak
+		id="app"
+	>
 		<router-view/>
 	</div>
 </template>
 
-<style lang="scss" src="./app.scss">
-</style>
+<style lang="scss" src="./app.scss"></style>

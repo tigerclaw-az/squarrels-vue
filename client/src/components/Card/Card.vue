@@ -1,19 +1,23 @@
 <template>
 	<div
 		:card-type="cardType"
-		class="btn-card"
 		:class="{
 			disabled: isDisabled,
 		}"
-		role="button"
 		:style="cardStyle"
-		@click="!isDisabled && onClick(details, matches, $event)"
+		class="btn-card"
+		role="button"
+		@click="!isDisabled && onClick(details, matches, $event);"
 	>
 		<span
-			class="card"
 			:class="cardClass"
+			class="card"
 		>
-			<icon v-if="hasMatch" name="sun" class="icon"></icon>
+			<icon
+				v-if="hasMatch"
+				name="sun"
+				class="icon"
+			/>
 		</span>
 	</div>
 </template>
@@ -26,10 +30,16 @@ import api from '@/api/index';
 
 export default {
 	name: 'Card',
+	components: {
+		icon: Icon,
+	},
 	props: {
 		cardData: {
 			type: Object,
 			required: false,
+			default: () => {
+				return {};
+			},
 		},
 		cardType: {
 			type: String,
@@ -38,10 +48,14 @@ export default {
 		cardStyle: {
 			type: Object,
 			required: false,
+			default: () => {
+				return {};
+			},
 		},
 		id: {
 			type: String,
 			required: false,
+			default: '',
 		},
 		matches: {
 			type: Array,
@@ -109,11 +123,7 @@ export default {
 				});
 		}
 	},
-	components: {
-		icon: Icon,
-	},
 };
 </script>
 
-<style lang="scss" scoped src="./card.scss">
-</style>
+<style lang="scss" scoped src="./card.scss"></style>

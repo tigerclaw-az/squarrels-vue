@@ -1,10 +1,21 @@
 <template>
-	<b-dropdown id="dropdown-game-settings" variant="primary">
+	<b-dropdown
+		id="dropdown-game-settings"
+		variant="primary"
+	>
 		<template slot="button-content">
-			<icon name="cog" class="icon icon-settings" label="Settings"></icon>
+			<icon
+				name="cog"
+				class="icon icon-settings"
+				label="Settings"
+			/>
 		</template>
-		<b-dropdown-item @click="onClickSetting('toggleSound')">
-			<icon :name="getIcon('sound')" class="icon icon-sound" label="Sound"></icon>
+		<b-dropdown-item @click="onClickSetting('toggleSound');">
+			<icon
+				:name="getIcon('sound')"
+				class="icon icon-sound"
+				label="Sound"
+			/>
 			<span v-if="sound.isEnabled">Sounds Off</span>
 			<span v-else>Sounds On</span>
 		</b-dropdown-item>
@@ -18,7 +29,11 @@ import Icon from 'vue-awesome/components/Icon';
 import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
 
 export default {
-	name: 'game-settings',
+	name: 'GameSettings',
+	components: {
+		'b-dropdown': bDropdown,
+		'icon': Icon,
+	},
 	computed: {
 		...mapState({
 			// This is required for nested modules
@@ -45,12 +60,6 @@ export default {
 			}
 		},
 	},
-	components: {
-		'b-dropdown': bDropdown,
-		icon: Icon,
-	},
+
 };
 </script>
-
-<style lang="scss">
-</style>

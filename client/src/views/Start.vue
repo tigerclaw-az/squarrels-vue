@@ -2,14 +2,15 @@
 	<div id="start">
 		<div class="winter">
 			<div class="welcome-message">
-				<h2>Welcome {{player.name}}!</h2>
+				<h2>Welcome {{ player.name }}!</h2>
 				<p v-if="!hasGames">Start by pressing "New Game" to create a game</p>
 				<p v-else>Choose a game from the list, or start a "New Game"</p>
 			</div>
 			<div
 				v-if="!isConnected"
-				class="alert alert-danger error" role="alert"
 				v-cloak
+				class="alert alert-danger error"
+				role="alert"
 			>
 				Taking a nap. Be back later.
 			</div>
@@ -27,26 +28,46 @@
 					:striped="true"
 					sort-by.sync="createdAt"
 				>
-					<template slot="join" slot-scope="data">
-						<router-link :to="{ name: 'game', params: { id: data.item.id }}" class="btn btn-primary btn-join-game">
-							JOIN
-						</router-link>
+					<template
+						slot="join"
+						slot-scope="data"
+					>
+						<router-link
+							:to="{ name: 'game', params: { id: data.item.id } }"
+							class="btn btn-primary btn-join-game"
+						>JOIN</router-link>
 					</template>
-					<template slot="delete" slot-scope="data">
-						<button class="btn btn-danger" @click="deleteGame(data.item.id)">
-							<icon name="trash" class="icon icon-delete"></icon>
+					<template
+						slot="delete"
+						slot-scope="data"
+					>
+						<button
+							class="btn btn-danger"
+							@click="deleteGame(data.item.id);"
+						>
+							<icon
+								name="trash"
+								class="icon icon-delete"
+							/>
 						</button>
 					</template>
 				</b-table>
-					<!-- <li v-for="(value, gameId) in games" :key="gameId">
+				<!--
+					<li v-for="(value, gameId) in games" :key="gameId">
 						<router-link :to="{ name: 'game', params: { id: gameId }}"
 							class="btn btn-primary btn-join-game"
 							v-cloak>
 							JOIN {{gameId}}
 						</router-link>
-					</li> -->
+					</li>
+        -->
 			</div>
-			<button class="btn btn-primary btn-new-game" @click="createGame">NEW GAME</button>
+			<button
+				class="btn btn-primary btn-new-game"
+				@click="createGame"
+			>
+				NEW GAME
+			</button>
 		</div>
 	</div>
 </template>
@@ -112,25 +133,6 @@ export default {
 			],
 		};
 	},
-	watch: {
-		/**
-		 * Watch for the websocket connection and perform necessary functions
-		 * whenever the websocket reconnects
-		 * @param  {Boolean}  newConn Updated value of isConnected
-		 * @param  {Boolean}  oldConn Old value of isConnected
-		 *
-		 * @returns {void}
-		 */
-		isConnected(newConn, oldConn) {
-			this.$log.debug('watch.isConnected', oldConn, newConn);
-			if (newConn) {
-				this.loadGames();
-			}
-		},
-	},
-	mounted: function() {
-		this.loadGames();
-	},
 	computed: {
 		...mapGetters({
 			isConnected: 'isConnected',
@@ -145,6 +147,27 @@ export default {
 		hasGames: function() {
 			return !_.isEmpty(this.games);
 		},
+	},
+	watch: {
+
+		/**
+		 * Watch for the websocket connection and perform necessary functions
+		 * whenever the websocket reconnects
+		 * @param  {Boolean}  newConn Updated value of isConnected
+		 * @param  {Boolean}  oldConn Old value of isConnected
+		 *
+		 * @returns {void}
+		 */
+		isConnected(newConn, oldConn) {
+			this.$log.debug('watch.isConnected', oldConn, newConn);
+
+			if (newConn) {
+				this.loadGames();
+			}
+		},
+	},
+	mounted: function() {
+		this.loadGames();
 	},
 	methods: {
 		createGame: function() {

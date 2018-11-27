@@ -1,5 +1,12 @@
 <template>
-	<b-modal :id="modalId" centered hide-footer lazy size="lg" title="Cards Stored for Winter">
+	<b-modal
+		:id="modalId"
+		centered
+		hide-footer
+		lazy
+		size="lg"
+		title="Cards Stored for Winter"
+	>
 		<div
 			v-for="card in player.cardsInStorage"
 			:key="card"
@@ -10,7 +17,7 @@
 				:key="index"
 				:id="card"
 				card-type="storage"
-			></Card>
+			/>
 		</div>
 	</b-modal>
 </template>
@@ -22,7 +29,11 @@ import bModal from 'bootstrap-vue/es/components/modal/modal';
 import Card from '@/components/Card/Card.vue';
 
 export default {
-	name: 'player-storage-modal',
+	name: 'PlayerStorageModal',
+	components: {
+		'b-modal': bModal,
+		Card,
+	},
 	props: {
 		player: {
 			type: Object,
@@ -36,10 +47,6 @@ export default {
 		numCardsToDisplay() {
 			return _.range(0, 3);
 		},
-	},
-	components: {
-		'b-modal': bModal,
-		Card,
 	},
 };
 </script>

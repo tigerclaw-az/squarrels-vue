@@ -2,29 +2,33 @@
 	<b-modal
 		id="login"
 		v-model="showModal"
-		centered hide-footer lazy
+		centered
+		hide-footer
+		lazy
 		size="lg"
 		title="Login"
 		@shown="focusUsername"
 	>
 		<b-container fluid>
-			<b-form @submit.prevent="createPlayer" inline>
+			<b-form
+				inline
+				@submit.prevent="createPlayer"
+			>
 				<b-form-group
 					id="playerForm"
 					label="Username"
-					label-for="sq-username"
-					label-sr-only
+					label-for="sq-username" label-sr-only
 				>
 					<b-input-group size="lg">
 						<b-form-input
+							ref="username"
+							v-model.trim="pName"
 							class="sq-input-player-name"
 							maxlength="24"
 							minlength="3"
 							name="sq-username"
 							placeholder="username"
-							ref="username"
 							type="text"
-							v-model.trim="pName"
 						>
 						</b-form-input>
 						<b-input-group-append>
@@ -32,7 +36,7 @@
 								type="submit"
 								variant="primary"
 							>
-							Login
+								Login
 							</b-btn>
 						</b-input-group-append>
 					</b-input-group>
@@ -79,6 +83,3 @@ export default {
 	},
 };
 </script>
-
-<style lang="scss" scoped>
-</style>

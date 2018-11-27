@@ -1,14 +1,20 @@
 <template>
 	<!-- <div class="sq-player-storage"> -->
-		<a
-			class="sq-player-storage"
-			href="#"
-			title="View or Store Nuts"
-			@click.prevent="onClickStorage"
-		>
-			<icon name="tree" scale="4" class="icon icon-storage"></icon>
-			<span class="sq-player-score">{{player.score}}</span>
-		</a>
+	<a
+		class="sq-player-storage"
+		href="#"
+		title="View or Store Nuts"
+		@click.prevent="onClickStorage"
+	>
+		<icon
+			name="tree"
+			scale="4"
+			class="icon icon-storage"
+		/>
+		<span class="sq-player-score">
+			{{ player.score }}
+		</span>
+	</a>
 	<!-- </div> -->
 </template>
 
@@ -17,6 +23,9 @@ import Icon from 'vue-awesome/components/Icon';
 
 export default {
 	name: 'PlayerStorage',
+	components: {
+		Icon,
+	},
 	props: {
 		player: {
 			type: Object,
@@ -30,9 +39,6 @@ export default {
 				`player-storage-modal-${this.player.id}`
 			);
 		},
-	},
-	components: {
-		Icon,
 	},
 };
 </script>

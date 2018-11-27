@@ -1,18 +1,22 @@
 <template>
 	<div
-		class="deck"
 		:class="{
-			'empty': !numCards,
+			empty: !numCards,
 		}"
+		class="deck"
 	>
 		<div
-			class="cards-group"
-			:class="{ disabled: isDisabled }"
-			role="button"
 			v-show="numCards"
+			:class="{ disabled: isDisabled }"
+			class="cards-group"
+			role="button"
 			@click.prevent="onClick"
 		>
-			<transition-group tag="div" class="transition" name="cards-hoard">
+			<transition-group
+				tag="div"
+				class="transition"
+				name="cards-hoard"
+			>
 				<div
 					v-for="(card, index) in numCards"
 					:key="index"
@@ -45,9 +49,6 @@ export default {
 			tooManyClicks: false,
 		};
 	},
-	mounted: function() {
-		// this.$store.dispatch('decks/load', this.id);
-	},
 	computed: {
 		...mapGetters({
 			canDrawCard: 'players/canDrawCard',
@@ -67,6 +68,9 @@ export default {
 			return this.tooManyClicks || !this.actionCard;
 		},
 	},
+	mounted: function() {
+		// this.$store.dispatch('decks/load', this.id);
+	},
 	methods: {
 		collectHoard: function() {
 			if (this.canHoard) {
@@ -85,18 +89,16 @@ export default {
 		onClick: function() {
 			if (this.actionCard) {
 				this.collectHoard();
+			} else if (this.maxClicks >= 0) {
+				this.$toasted.info(
+					`STOP THAT! Only ${this.maxClicks} clicks LEFT!`
+				);
+				this.maxClicks--;
 			} else {
-				if (this.maxClicks >= 0) {
-					this.$toasted.info(
-						`STOP THAT! Only ${this.maxClicks} clicks LEFT!`
-					);
-					this.maxClicks--;
-				} else {
-					this.$toasted.error(
-						'You have been banned from collecting the Hoard!'
-					);
-					this.tooManyClicks = true;
-				}
+				this.$toasted.error(
+					'You have been banned from collecting the Hoard!'
+				);
+				this.tooManyClicks = true;
 			}
 		},
 	},

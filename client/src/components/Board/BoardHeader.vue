@@ -1,11 +1,15 @@
 <template>
 	<b-row class="header align-items-center">
-		<b-col class="header-item game-start">{{startDate}}</b-col>
+		<b-col class="header-item game-start">
+			{{ startDate }}
+		</b-col>
 		<b-col class="header-item game-settings">
 			<game-settings></game-settings>
 			<admin-options v-if="isAdmin"></admin-options>
 		</b-col>
-		<b-col class="header-item game-round">ROUND: {{roundNumber}}</b-col>
+		<b-col class="header-item game-round">
+			ROUND: {{ roundNumber }}
+		</b-col>
 	</b-row>
 </template>
 

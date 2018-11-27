@@ -3,16 +3,36 @@
 		<b-container fluid>
 			<BoardHeader v-if="isGameStarted"></BoardHeader>
 		</b-container>
-		<b-container fluid class="container_board">
+		<b-container
+			fluid
+			class="container_board"
+		>
 			<b-row class="align-items-center justify-content-center mt-2">
-				<b-col cols="4" lg="3">
+				<b-col
+					cols="4"
+					lg="3"
+				>
 					<div class="container_players">
-						<Player v-for="p in opponents" :key="p.id" :player="p"></Player>
+						<Player
+							v-for="p in opponents"
+							:key="p.id"
+							:player="p"
+						/>
 					</div>
 				</b-col>
-				<b-col cols="8" lg="9">
-					<div class="container_decks">
-						<Deck v-if="isGameStarted && decksLoaded" v-for="deckId in deckIds" :key="deckId" :id="deckId"></Deck>
+				<b-col
+					cols="8"
+					lg="9"
+				>
+					<div
+						v-if="isGameStarted && decksLoaded"
+						class="container_decks"
+					>
+						<Deck
+							v-for="deckId in deckIds"
+							:key="deckId"
+							:id="deckId"
+						/>
 					</div>
 				</b-col>
 			</b-row>
@@ -33,6 +53,11 @@ import Player from '@/components/Player/Player.vue';
 
 export default {
 	name: 'Board',
+	components: {
+		BoardHeader,
+		Deck,
+		Player,
+	},
 	props: {
 		deckIds: {
 			type: Array,
@@ -57,25 +82,6 @@ export default {
 			decksLoaded: false,
 		};
 	},
-	components: {
-		BoardHeader,
-		Deck,
-		Player,
-	},
-	watch: {
-		isGameStarted: function(from, to) {
-			if (to === false) {
-				this.decksLoaded = false;
-			}
-		},
-	},
-	mounted: function() {
-		this.$store
-			.dispatch({ type: 'decks/load', ids: this.deckIds })
-			.then(() => {
-				this.decksLoaded = true;
-			});
-	},
 	computed: {
 		...mapGetters({
 			currentPlayer: 'players/getMyPlayer',
@@ -97,6 +103,20 @@ export default {
 				pl => pl.id !== this.currentPlayer.id
 			);
 		},
+	},
+	watch: {
+		isGameStarted: function(from, to) {
+			if (to === false) {
+				this.decksLoaded = false;
+			}
+		},
+	},
+	mounted: function() {
+		this.$store
+			.dispatch({ type: 'decks/load', ids: this.deckIds })
+			.then(() => {
+				this.decksLoaded = true;
+			});
 	},
 	unload: function() {
 		this.$store.dispatch({ type: 'decks/unload', gameId: this.gameId });

@@ -1,16 +1,20 @@
 <template>
 	<div
-		class="deck"
 		:class="{
-			'empty': !numCards,
+			empty: !numCards,
 		}"
+		class="deck"
 	>
 		<div
+			v-show="numCards"
 			class="cards-group disabled"
 			role="button"
-			v-show="numCards"
 		>
-			<transition-group tag="div" class="transition" name="cards-discard">
+			<transition-group
+				tag="div"
+				class="transition"
+				name="cards-discard"
+			>
 				<div
 					v-for="(card, index) in cards"
 					:key="index"

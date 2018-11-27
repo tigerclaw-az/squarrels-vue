@@ -1,17 +1,17 @@
 <template>
-	<div v-if="decksReady"
+	<div
+		v-if="decksReady"
 		id="action-card"
-		class="action-card--wrapper"
 		:class="[{ shown: hideCard, instant: isInstant }, card.name]"
+		class="action-card--wrapper"
 	>
 		<span class="card blank--"></span>
 		<Card
+			ref="card"
 			:id="card.id"
 			:card-data="card"
 			card-type="action"
-			ref="card"
-		>
-		</Card>
+		/>
 	</div>
 </template>
 
@@ -31,6 +31,25 @@ export default {
 			hideCard: false,
 			instantAction: false,
 		};
+	},
+	computed: {
+		...mapGetters({
+			isActivePlayer: 'players/isActivePlayer',
+		}),
+		...mapState('game', {
+			gameId: 'id',
+			card: 'actionCard',
+		}),
+		...mapState({
+			decksLoaded: state => state.decks.isLoaded,
+		}),
+		isInstant: function() {
+			return (
+				this.isActivePlayer
+				|| this.instantAction
+				|| this.card.name === 'winter'
+			);
+		},
 	},
 	watch: {
 		decksLoaded: function(to, from) {
@@ -79,6 +98,7 @@ export default {
 							});
 							this.$store.dispatch('game/resetAction');
 						}
+
 						break;
 
 					case 'quarrel':
@@ -122,25 +142,6 @@ export default {
 				this.decksReady = true;
 			}
 		});
-	},
-	computed: {
-		...mapGetters({
-			isActivePlayer: 'players/isActivePlayer',
-		}),
-		...mapState('game', {
-			gameId: 'id',
-			card: 'actionCard',
-		}),
-		...mapState({
-			decksLoaded: state => state.decks.isLoaded,
-		}),
-		isInstant: function() {
-			return (
-				this.isActivePlayer ||
-				this.instantAction ||
-				this.card.name === 'winter'
-			);
-		},
 	},
 };
 </script>

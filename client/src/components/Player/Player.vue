@@ -1,38 +1,62 @@
 <template>
-	<div class="sq-player"
-	:class="{
-		active: isActivePlayer,
-		current: isCurrentPlayer,
-		'my-turn': isMyTurn,
-	}">
+	<div
+		:class="{
+			active: isActivePlayer,
+			current: isCurrentPlayer,
+			'my-turn': isMyTurn,
+		}"
+		class="sq-player"
+	>
 		<div class="sq-player-thumbnail">
-			<img class="img-circle" src="@/assets/images/squirrel-placeholder.jpg"/>
-			<PlayerStorage :player="player"></PlayerStorage>
+			<img
+				class="img-circle"
+				src="@/assets/images/squirrel-placeholder.jpg"
+			>
+			<PlayerStorage :player="player" />
 		</div>
-		<div class="sq-player-name">{{player.name}}</div>
+		<div class="sq-player-name">{{ player.name }}</div>
 		<div class="sq-player-cards">
-			<PlayerQuarrel :player="player"></PlayerQuarrel>
-			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">{{player.message}}</div>
+			<PlayerQuarrel :player="player" />
+			<div
+				v-if="isCurrentPlayer && player.message"
+				class="sq-quarrel-message"
+			>
+				{{ player.message }}
+			</div>
 			<div class="cards-group hand">
-				<transition-group v-if="isCurrentPlayer" tag="div" class="transition" name="cards">
+				<transition-group
+					v-if="isCurrentPlayer"
+					tag="div"
+					class="transition"
+					name="cards"
+				>
 					<Card
 						v-for="(card, index) in myCardsSorted"
 						:key="card.id"
 						:id="card.id"
-						:onClick="onClickCard"
+						:on-click="onClickCard"
 						:card-data="card"
+						:card-style="cardStyle(index)"
+						:matches="
+							card.cardType === 'special'
+								? []
+								: findCardMatches(card.amount)
+						"
 						card-type="hand"
-						:cardStyle="cardStyle(index)"
-						:matches="card.cardType === 'special' ? [] : findCardMatches(card.amount)"
-					></Card>
+					/>
 				</transition-group>
-				<transition-group v-if="!isCurrentPlayer" tag="div" class="transition" name="cards">
+				<transition-group
+					v-if="!isCurrentPlayer"
+					tag="div"
+					class="transition"
+					name="cards"
+				>
 					<Card
 						v-for="n in player.totalCards"
 						:key="n"
-						:cardStyle="cardStyle(n)"
+						:card-style="cardStyle(n)"
 						card-type="hand"
-					></Card>
+					/>
 				</transition-group>
 			</div>
 		</div>
@@ -79,7 +103,7 @@ export default {
 			isGameStarted: state => state.game.isStarted,
 		}),
 		hasCards: function() {
-			let cards = this.myCards;
+			const cards = this.myCards;
 
 			return cards && cards.length;
 		},
@@ -131,18 +155,18 @@ export default {
 	},
 	methods: {
 		cardStyle: function(index) {
-			let cardsCount = this.isCurrentPlayer
+			const cardsCount = this.isCurrentPlayer
 				? this.myCards.length
 				: this.player.totalCards;
 
-			let styles = {
+			const styles = {
 				'z-index': index + 1,
 			};
 
 			const halfCardsCount = cardsCount / 2;
 			// const rotate = 90 / cardsCount + 20;
 			const spacing = (this.isCurrentPlayer ? 240 : 100) / cardsCount;
-			let spacingMultiplier = index - halfCardsCount;
+			const spacingMultiplier = index - halfCardsCount;
 
 			styles.left = spacing * spacingMultiplier + 'px';
 			// styles.transform = `rotate(${rotateBy * rotateMultiplier}deg)`;
@@ -154,8 +178,8 @@ export default {
 
 			this.$store.dispatch('sound/play', 'discard');
 
-			let deckUpdate = this.$store.dispatch('decks/discard', card);
-			let playerUpdate = this.$store.dispatch('players/discard', {
+			const deckUpdate = this.$store.dispatch('decks/discard', card);
+			const playerUpdate = this.$store.dispatch('players/discard', {
 				card,
 			});
 
@@ -221,8 +245,8 @@ export default {
 
 			if (this.myPlayer.isActive) {
 				if (
-					card.cardType === 'special' &&
-					this.myPlayer.totalCards > 1
+					card.cardType === 'special'
+					&& this.myPlayer.totalCards > 1
 				) {
 					this.$toasted.error(
 						'You cannot discard this card unless it is your ONLY card.'

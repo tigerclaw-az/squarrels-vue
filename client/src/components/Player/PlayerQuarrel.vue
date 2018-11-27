@@ -1,17 +1,23 @@
 <template>
 	<div
 		v-if="actionCard && quarrelCard(player.id)"
-		class="sq-player-quarrel"
 		:class="{
 			flip: showQuarrel,
-			winner: isQuarrelWinner
-		}">
-		<div class="btn-card card blank-- disabled" role="button" disabled></div>
+			winner: isQuarrelWinner,
+		}"
+		class="sq-player-quarrel"
+	>
+		<div
+			class="btn-card card blank-- disabled"
+			role="button"
+			disabled
+		>
+		</div>
 		<Card
 			v-if="showQuarrel"
 			:card-data="quarrelCard(player.id)"
 			card-type="quarrel"
-		></Card>
+		/>
 	</div>
 </template>
 
@@ -22,14 +28,14 @@ import Card from '@/components/Card/Card.vue';
 
 export default {
 	name: 'PlayerQuarrel',
+	components: {
+		Card,
+	},
 	props: {
 		player: {
 			type: Object,
 			required: true,
 		},
-	},
-	components: {
-		Card,
 	},
 	computed: {
 		...mapState({
