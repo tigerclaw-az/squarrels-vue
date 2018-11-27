@@ -19,6 +19,9 @@
 			<span v-if="sound.isEnabled">Sounds Off</span>
 			<span v-else>Sounds On</span>
 		</b-dropdown-item>
+		<b-dropdown-item>
+			<router-link to="/">Leave Game</router-link>
+		</b-dropdown-item>
 	</b-dropdown>
 </template>
 
