@@ -10,8 +10,8 @@ requireModule.keys().forEach(fileName => {
 	const moduleName = fileName.replace(/(\.\/|\.js)/g, '');
 
 	modules[moduleName] = {
-		namespaced: true,
-		...requireModule(fileName),
+		namespaced: moduleName === 'websocket' ? false : true,
+		...requireModule(fileName).default,
 	};
 });
 
