@@ -100,7 +100,7 @@ module.exports = {
 		'no-new': 0,
 		'no-octal-escape': 0,
 		'no-octal': 0,
-		'no-param-reassign': [2, { props: false }],
+		'no-param-reassign': [0],
 		'no-process-env': 0,
 		'no-proto': 0,
 		'no-redeclare': [2, { builtinGlobals: true }],
@@ -109,7 +109,6 @@ module.exports = {
 		'no-script-url': 2,
 		'no-self-compare': 2,
 		'no-sequences': 2,
-		'no-tabs': 0,
 		'no-throw-literal': 2,
 		'no-unused-expressions': 0,
 		'no-useless-call': 0,
@@ -298,7 +297,7 @@ module.exports = {
 		// https://github.com/vuejs/eslint-plugin-vue/blob/master/docs/rules/html-indent.md
 		'vue/html-indent': [
 			'error',
-			4,
+			'tab',
 			{
 				attribute: 1,
 				closeBracket: 0,
