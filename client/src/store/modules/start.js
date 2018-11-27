@@ -18,7 +18,7 @@ const actions = {
 		api.games
 			.create()
 			.then(res => {
-				let game = res.data;
+				const game = res.data;
 
 				this._vm.$log.debug('start/createGame', this, game);
 
@@ -53,13 +53,13 @@ const actions = {
 			.get()
 			.then(res => {
 				if (res.status === 200) {
-					let gamesData = res.data;
+					const gamesData = res.data;
 
 					this._vm.$log.debug('start/loadGames', gamesData);
 
 					commit('GAMES_LOAD', { wait: false });
 
-					for (let game of gamesData) {
+					for (const game of gamesData) {
 						commit('ADD_GAME', game);
 					}
 				}

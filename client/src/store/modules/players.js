@@ -20,10 +20,10 @@ const getters = {
 
 		if (myPlayer.id && myPlayer.cardsInHand) {
 			return (
-				myPlayer.isActive &&
-				!rootGetters['game/isActionCard']() &&
-				!myPlayer.hasStoredCards &&
-				(myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard)
+				myPlayer.isActive
+				&& !rootGetters['game/isActionCard']()
+				&& !myPlayer.hasStoredCards
+				&& (myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard)
 			);
 		}
 
@@ -41,12 +41,12 @@ const getters = {
 	},
 
 	getByProp: state => (prop, value, options = {}) => {
-		let index = options.index || false;
-		let all = options.all || false;
+		const index = options.index || false;
+		const all = options.all || false;
 
 		Vue.$log.debug('get()', prop, value, index);
 
-		let method = index ? 'findIndex' : all ? 'filter' : 'find';
+		const method = index ? 'findIndex' : all ? 'filter' : 'find';
 
 		if (prop) {
 			if (value) {
@@ -66,7 +66,7 @@ const getters = {
 	getMyPlayer: (state, getters, rootState) => {
 		Vue.$log.debug('getMyPlayer()', state, rootState);
 
-		for (let id in state) {
+		for (const id in state) {
 			if (id === rootState.localPlayer.id) {
 				return state[id];
 			}
@@ -159,7 +159,7 @@ const actions = {
 	},
 
 	create({ commit, dispatch }, plObj) {
-		let plData = Object.assign({}, plDefault, plObj);
+		const plData = Object.assign({}, plDefault, plObj);
 
 		return new Promise((resolve, reject) => {
 			return api.players
@@ -185,8 +185,8 @@ const actions = {
 		if (pl.id === myPlayer.id) {
 			// Add hoard cards to player cards
 			// prettier-ignore
-			dispatch('update', { id: myPlayer.id, data: { cardsInHand }})
-				.then(async () => {
+			dispatch('update', { id: myPlayer.id, data: { cardsInHand } })
+				.then(async() => {
 					try {
 						await dispatch(
 							'decks/updateById',
@@ -272,6 +272,7 @@ const actions = {
 				.get(ids.join(','))
 				.then(res => {
 					this._vm.$log.debug('api/players/get', res);
+
 					if (res.status === 200) {
 						res.data.forEach(plData => {
 							dispatch('updateLocalPlayer', plData);
@@ -372,7 +373,7 @@ const actions = {
 	},
 
 	selectQuarrelCard({ dispatch }, data) {
-		let wsObj = {
+		const wsObj = {
 			action: 'quarrel',
 			player: data.id,
 		};
@@ -543,7 +544,7 @@ const mutations = {
 				state.ids.push(playerId);
 			}
 
-			for (let prop in payload) {
+			for (const prop in payload) {
 				Vue.set(state[playerId], prop, payload[prop]);
 			}
 		}

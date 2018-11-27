@@ -24,7 +24,7 @@ const actions = {
 	},
 
 	checkLogin({ commit, state }) {
-		return new Promise(async (resolve, reject) => {
+		return new Promise(async(resolve, reject) => {
 			const player = await Vue.$storage.getItem('player');
 			const localPlayer = state.localPlayer;
 
@@ -45,7 +45,7 @@ const actions = {
 								return false;
 							}
 
-							let pl = res.data[0];
+							const pl = res.data[0];
 
 							commit('LOGIN', pl);
 							resolve(pl);

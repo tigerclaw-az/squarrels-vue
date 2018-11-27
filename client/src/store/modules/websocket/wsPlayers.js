@@ -27,8 +27,8 @@ const actions = {
 	getMyCards({ commit }, data) {
 		this._vm.$log.debug('wsPlayers/getMyCards', data);
 
-		let id = data.nuts.id;
-		let cardsInHand = data.nuts.cardsInHand;
+		const id = data.nuts.id;
+		const cardsInHand = data.nuts.cardsInHand;
 
 		commit('players/UPDATE_CARDS', { id, cardsInHand }, { root: true });
 	},
@@ -43,6 +43,7 @@ const actions = {
 
 	update({ dispatch }, data) {
 		this._vm.$log.debug('wsPlayers/update', data);
+
 		if (!_.isEmpty(data.nuts)) {
 			dispatch('players/updateLocalPlayer', data.nuts, { root: true });
 		}

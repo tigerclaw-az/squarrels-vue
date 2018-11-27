@@ -8,7 +8,7 @@ import Start from '@/views/Start.vue';
 
 Vue.use(VueRouter);
 
-let router = new VueRouter({
+const router = new VueRouter({
 	routes: [
 		{
 			path: '/',
@@ -37,6 +37,7 @@ router.beforeEach((to, from, next) => {
 		.then(pl => {
 			pl.isCurrent = true;
 			store.dispatch('players/update', pl);
+
 			if (to.path === '/login') {
 				next('/');
 			} else {
@@ -45,6 +46,7 @@ router.beforeEach((to, from, next) => {
 		})
 		.catch(err => {
 			Vue.$log.error(err);
+
 			if (to.path !== '/login') {
 				next('/login');
 			} else {

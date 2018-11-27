@@ -55,7 +55,7 @@ const actions = {
 		return new Promise((resolve, reject) => {
 			// Watch for each time a card was drawn and updated for
 			// a given player, then continue to draw until they have MAX_CARDS
-			let unsubscribe = store.subscribe((mutation, state) => {
+			const unsubscribe = store.subscribe((mutation, state) => {
 				this._vm.$log.debug(
 					'decks/dealCards.subscribe',
 					mutation,
@@ -65,8 +65,8 @@ const actions = {
 
 				if (mutation.type === 'players/DRAW_CARD') {
 					if (
-						state.players[playerId].cardsDrawnCount ===
-						config.MAX_CARDS
+						state.players[playerId].cardsDrawnCount
+						=== config.MAX_CARDS
 					) {
 						unsubscribe();
 
@@ -111,15 +111,15 @@ const actions = {
 
 		dispatch('sound/play', 'draw-card', { root: true });
 
-		let cardsFromDeck = {
+		const cardsFromDeck = {
 			ids: getters.getCardIds(mainDeck.id),
 			toDraw: options.numOnly
 				? _.filter(mainDeck.cards, { cardType: 'number' })
 				: mainDeck.cards,
 		};
 
-		let cardDrawn =
-			options.adminCard || _.sampleSize(cardsFromDeck.toDraw)[0];
+		const cardDrawn
+			= options.adminCard || _.sampleSize(cardsFromDeck.toDraw)[0];
 
 		this._vm.$log.debug('cardsFromDeck -> ', cardsFromDeck);
 		this._vm.$log.debug('cardDrawn -> ', cardDrawn);
@@ -172,7 +172,7 @@ const actions = {
 					this._vm.$log.debug('decks/load', res);
 
 					if (res.status === 200) {
-						let decks = res.data;
+						const decks = res.data;
 
 						decks.forEach(deck => {
 							commit('UPDATE', deck);
@@ -238,7 +238,7 @@ const mutations = {
 	INIT(state) {
 		Vue.set(state, 'isLoaded', false);
 
-		for (let prop in state) {
+		for (const prop in state) {
 			if (typeof state[prop] === 'object') {
 				Vue.delete(state, prop);
 			}
@@ -250,7 +250,7 @@ const mutations = {
 	},
 
 	UPDATE(state, payload) {
-		let deckId = payload.id;
+		const deckId = payload.id;
 
 		this._vm.$log.debug('mutation::decks/update', state, payload);
 

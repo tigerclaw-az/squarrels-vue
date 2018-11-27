@@ -52,7 +52,7 @@ const getters = {
 	isActionCard: state => (name = '') => {
 		Vue.$log.debug('isActionCard->', state, name);
 
-		let action = state.actionCard;
+		const action = state.actionCard;
 
 		if (!name) {
 			return action !== null;
@@ -73,7 +73,7 @@ const actions = {
 		Vue.$log.debug('game/actionCard->', actionCard, state);
 
 		try {
-			let res = await api.games.actionCard(state.id, actionCard.id);
+			const res = await api.games.actionCard(state.id, actionCard.id);
 
 			Vue.$log.debug('gameUpdate:actionCard -> ', res);
 
@@ -102,7 +102,7 @@ const actions = {
 		}
 	},
 	async addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
-		let newPlayers = _.union(playerId, [...state.playerIds, playerId]);
+		const newPlayers = _.union(playerId, [...state.playerIds, playerId]);
 
 		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
 
@@ -139,8 +139,9 @@ const actions = {
 				.get(id)
 				.then(res => {
 					Vue.$log.debug('game/load', res);
+
 					if (res.status === 200) {
-						let gameData = res.data[0],
+						const gameData = res.data[0],
 							deckIds = gameData.deckIds,
 							playersInGame = gameData.playerIds;
 
@@ -197,7 +198,7 @@ const actions = {
 		commit('UPDATE', { showQuarrel: true });
 
 		if (winners.length === 1) {
-			let cards = _.map(state.quarrelCards.saved, obj => {
+			const cards = _.map(state.quarrelCards.saved, obj => {
 				return obj.card;
 			});
 
@@ -276,7 +277,7 @@ const actions = {
 	},
 
 	start({ commit, dispatch, rootGetters, state }) {
-		let dealPromises = [];
+		const dealPromises = [];
 
 		this._vm.$log.debug('game/start', state);
 
@@ -296,7 +297,7 @@ const actions = {
 				// Loop through each player and deal cards
 				// Each deal will be saved as a Promise so we can wait
 				// for all players to be dealt cards before starting game
-				for (let playerId of state.playerIds) {
+				for (const playerId of state.playerIds) {
 					dealPromises.push(
 						// prettier-ignore
 						dispatch(
@@ -354,7 +355,7 @@ const actions = {
 
 		return api.games
 			.updatePlayers(state.id, updatedPlayerIds)
-			.then(async () => {
+			.then(async() => {
 				await dispatch(
 					'players/updateGame',
 					{
@@ -382,7 +383,7 @@ const mutations = {
 	},
 
 	INIT(state) {
-		for (let prop in initialState) {
+		for (const prop in initialState) {
 			Vue.set(state, prop, initialState[prop]);
 		}
 
@@ -403,18 +404,19 @@ const mutations = {
 		Vue.$log.debug('mutation::game/update', state, payload);
 
 		if (payload) {
-			for (let prop in payload) {
+			for (const prop in payload) {
 				if (state.hasOwnProperty(prop)) {
 					Vue.set(state, prop, payload[prop]);
+
 					if (prop === 'playerIds' && prevPlayerCount > 0) {
 						const newPlayerCount = payload[prop].length;
 						const countDiff = newPlayerCount - prevPlayerCount;
 
 						if (countDiff !== 0) {
-							let msg =
-								'Player ' +
-								(countDiff > 0 ? 'joined' : 'left') +
-								'!';
+							const msg
+								= 'Player '
+								+ (countDiff > 0 ? 'joined' : 'left')
+								+ '!';
 
 							this._vm.$toasted.info(msg, { duration: 500 });
 						}

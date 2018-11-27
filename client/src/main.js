@@ -61,19 +61,19 @@ Vue.filter('limit', function(value, amount) {
 	});
 });
 
-const vm = new Vue({
+const app = new Vue({
+	components: {},
 	mounted: function() {
 		this.$log.debug(this);
 		store.dispatch('init');
 	},
-	components: {},
 	...App,
 	router,
 	store,
 }).$mount('#app');
 
-window.sqVue = vm;
+window.sqVue = app;
 
 window.onbeforeunload = function() {
-	vm.$disconnect();
+	app.$disconnect();
 };

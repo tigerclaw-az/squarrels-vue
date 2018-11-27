@@ -25,8 +25,8 @@ const actions = {
 	},
 
 	update({ commit }, data) {
-		let curRoute = router.currentRoute;
-		let nuts = data.nuts;
+		const curRoute = router.currentRoute;
+		const nuts = data.nuts;
 
 		this._vm.$log.debug('wsGame/update', data);
 
