@@ -1,15 +1,15 @@
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 
 const state = {};
 
 const getters = {};
 
 const actions = {
-	actioncard_winter({}) {
+	actioncard_winter({ dispatch }) {
 		dispatch('game/end');
 	},
 	update({ commit }, data) {
-		if (data.nuts && !_.isEmpty(data.nuts)) {
+		if (data.nuts && !isEmpty(data.nuts)) {
 			commit('decks/UPDATE', data.nuts, { root: true });
 		}
 	},

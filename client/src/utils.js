@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { times } from 'lodash';
 
 export default {
 	decode(str) {
@@ -14,7 +14,7 @@ export default {
 	},
 
 	getRandomStr(num) {
-		return _.times(num, () => {
+		return times(num, () => {
 			return String.fromCharCode(this.getRandom(96, 122));
 		})
 			.join('')

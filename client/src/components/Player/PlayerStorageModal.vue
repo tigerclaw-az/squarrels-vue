@@ -23,13 +23,13 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { range } from 'lodash';
 import bModal from 'bootstrap-vue/es/components/modal/modal';
 
 import Card from '@/components/Card/Card.vue';
 
 export default {
-	name: 'PlayerStorageModal',
+	name: 'player-storage-modal',
 	components: {
 		'b-modal': bModal,
 		Card,
@@ -45,7 +45,7 @@ export default {
 			return `player-storage-modal-${this.player.id}`;
 		},
 		numCardsToDisplay() {
-			return _.range(0, 3);
+			return range(0, 3);
 		},
 	},
 };

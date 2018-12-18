@@ -6,7 +6,7 @@
 
 <script>
 export default {
-	name: 'GameResults',
+	name: 'game-results',
 	props: {
 		gameId: {
 			type: String,

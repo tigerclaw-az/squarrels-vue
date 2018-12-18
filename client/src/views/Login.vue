@@ -17,7 +17,8 @@
 				<b-form-group
 					id="playerForm"
 					label="Username"
-					label-for="sq-username" label-sr-only
+					label-for="sq-username"
+					label-sr-only
 				>
 					<b-input-group size="lg">
 						<b-form-input
@@ -48,7 +49,7 @@
 
 <script>
 export default {
-	name: 'Login',
+	name: 'login',
 	data: function() {
 		return {
 			pName: '',

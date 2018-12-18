@@ -30,7 +30,7 @@
 
 <script>
 export default {
-	name: 'AdminOptions',
+	name: 'admin-options',
 	methods: {
 		onClickAdminOption: function(name) {
 			this.$log.debug(name);

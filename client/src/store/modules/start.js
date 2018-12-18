@@ -1,3 +1,4 @@
+import { filter } from 'lodash';
 import api from '@/api/index';
 
 const state = {
@@ -77,7 +78,7 @@ const mutations = {
 	},
 	// Comes from websocket/wsGame (ws-game.js)
 	DELETE_GAME(state, id) {
-		state.games = _.filter(state.games, g => g.id !== id);
+		state.games = filter(state.games, g => g.id !== id);
 	},
 	GAME_CREATE(state, payload) {
 		state.waitCreateGame = payload.wait;

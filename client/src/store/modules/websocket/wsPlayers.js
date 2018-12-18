@@ -1,3 +1,5 @@
+import { isEmpty } from 'lodash';
+
 const state = {};
 
 const getters = {};
@@ -20,6 +22,7 @@ const actions = {
 		dispatch('game/addQuarrelCard', quarrelData, { root: true });
 	},
 
+	// eslint-disable-next-line
 	create({}, data) {
 		this._vm.$log.debug(data);
 	},
@@ -33,10 +36,12 @@ const actions = {
 		commit('players/UPDATE_CARDS', { id, cardsInHand }, { root: true });
 	},
 
+	// eslint-disable-next-line
 	reset({}, data) {
 		this._vm.$log.debug('ws-players:reset', data);
 	},
 
+	// eslint-disable-next-line
 	showMessage({}, data) {
 		this._vm.$toasted.error(data.nuts);
 	},
@@ -44,7 +49,7 @@ const actions = {
 	update({ dispatch }, data) {
 		this._vm.$log.debug('wsPlayers/update', data);
 
-		if (!_.isEmpty(data.nuts)) {
+		if (!isEmpty(data.nuts)) {
 			dispatch('players/updateLocalPlayer', data.nuts, { root: true });
 		}
 	},

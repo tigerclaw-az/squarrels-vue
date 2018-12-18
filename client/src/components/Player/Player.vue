@@ -67,7 +67,7 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
 
-import _ from 'lodash';
+import { difference, filter, groupBy, sampleSize } from 'lodash';
 
 import api from '@/api/index';
 import Card from '@/components/Card/Card.vue';
@@ -76,7 +76,7 @@ import PlayerStorage from '@/components/Player/PlayerStorage.vue';
 import PlayerStorageModal from '@/components/Player/PlayerStorageModal.vue';
 
 export default {
-	name: 'Player',
+	name: 'player',
 	components: {
 		Card,
 		PlayerQuarrel,
@@ -120,7 +120,7 @@ export default {
 			return this.myPlayer.cardsInHand;
 		},
 		myCardsSorted: function() {
-			// return _.sortBy(this.myCardsDetails, ['amount']);
+			// return sortBy(this.myCardsDetails, ['amount']);
 			return this.myCardsDetails;
 		},
 	},
@@ -134,8 +134,8 @@ export default {
 			}
 		},
 		myCards: function(newCards, oldCards) {
-			const diff1 = _.difference(newCards, oldCards);
-			const diff2 = _.difference(oldCards, newCards);
+			const diff1 = difference(newCards, oldCards);
+			const diff2 = difference(oldCards, newCards);
 
 			if (!this.myCards.length) {
 				this.myCardsDetails = [];
@@ -195,10 +195,10 @@ export default {
 				});
 		},
 		findCardMatches: function(amount) {
-			const groups = _.groupBy(this.myCardsDetails, c => c.amount);
+			const groups = groupBy(this.myCardsDetails, c => c.amount);
 
 			if (groups[5] && groups[5].length) {
-				groups[5] = _.filter(groups[5], c => c.cardType !== 'special');
+				groups[5] = filter(groups[5], c => c.cardType !== 'special');
 			}
 
 			if (groups[amount].length >= 3) {
@@ -264,7 +264,7 @@ export default {
 				// If the card selected has at least 3 matching cards
 				// then we are storing the cards for end of game
 				if (cardsToStore.length >= 3) {
-					cardsToStore = _.sampleSize(cardsToStore, 3);
+					cardsToStore = sampleSize(cardsToStore, 3);
 
 					return this.storeCards(cardsToStore);
 				}

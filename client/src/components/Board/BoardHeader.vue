@@ -25,7 +25,7 @@ import AdminOptions from '@/components/AdminOptions.vue';
 import GameSettings from '@/components/Game/GameSettings.vue';
 
 export default {
-	name: 'BoardHeader',
+	name: 'board-header',
 	components: {
 		'admin-options': AdminOptions,
 		'b-dropdown': bDropdown,

@@ -81,7 +81,7 @@ import Icon from 'vue-awesome/components/Icon';
 import Card from '@/components/Card/Card.vue';
 
 export default {
-	name: 'DeckMain',
+	name: 'deck-main',
 	components: {
 		Card,
 		icon: Icon,

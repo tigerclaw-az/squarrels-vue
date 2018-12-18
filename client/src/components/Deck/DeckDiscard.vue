@@ -16,8 +16,8 @@
 				name="cards-discard"
 			>
 				<div
-					v-for="(card, index) in cards"
-					:key="index"
+					v-for="card in cards"
+					:key="card.id"
 					:class="`action--${card.name}`"
 					class="btn-card card"
 				>
@@ -29,7 +29,7 @@
 
 <script>
 export default {
-	name: 'DeckDiscard',
+	name: 'deck-discard',
 	props: {
 		cards: {
 			type: Array,

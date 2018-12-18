@@ -21,7 +21,7 @@ import { mapGetters, mapState } from 'vuex';
 import Card from '@/components/Card/Card.vue';
 
 export default {
-	name: 'CardAction',
+	name: 'card-action',
 	components: {
 		Card,
 	},

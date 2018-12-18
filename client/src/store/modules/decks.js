@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import _ from 'lodash';
+import { concat, find, filter, pull, reject, sampleSize } from 'lodash';
 
 import api from '@/api/index';
 import store from '@/store/index';
@@ -15,7 +15,7 @@ const getters = {
 	},
 
 	getByType: state => name => {
-		return _.find(state, { deckType: name });
+		return find(state, { deckType: name });
 	},
 
 	getCardIds: state => deckId => {
@@ -36,7 +36,7 @@ const actions = {
 		this._vm.$log.debug(payload, deck, cardsInDeck);
 
 		return api.decks.update(deck.id, {
-			cards: _.concat(cardsInDeck, payload.cardId),
+			cards: concat(cardsInDeck, payload.cardId),
 		});
 	},
 
@@ -114,24 +114,24 @@ const actions = {
 		const cardsFromDeck = {
 			ids: getters.getCardIds(mainDeck.id),
 			toDraw: options.numOnly
-				? _.filter(mainDeck.cards, { cardType: 'number' })
+				? filter(mainDeck.cards, { cardType: 'number' })
 				: mainDeck.cards,
 		};
 
 		const cardDrawn
-			= options.adminCard || _.sampleSize(cardsFromDeck.toDraw)[0];
+			= options.adminCard || sampleSize(cardsFromDeck.toDraw)[0];
 
 		this._vm.$log.debug('cardsFromDeck -> ', cardsFromDeck);
 		this._vm.$log.debug('cardDrawn -> ', cardDrawn);
 
 		// Removes cardDrawn.id from cardsFromDeck.ids
-		_.pull(cardsFromDeck.ids, cardDrawn.id);
+		pull(cardsFromDeck.ids, cardDrawn.id);
 
 		// Need to update the cards in main deck so that the next
 		// player doesn't draw the same card (async)
 		commit('UPDATE_CARDS', {
 			id: mainDeck.id,
-			cards: _.reject(mainDeck.cards, c => cardDrawn.id === c.id),
+			cards: reject(mainDeck.cards, c => cardDrawn.id === c.id),
 		});
 
 		// Need to update the cards drawn by the player so that
@@ -192,6 +192,7 @@ const actions = {
 		});
 	},
 
+	// eslint-disable-next-line
 	remove({}, deckIds) {
 		return api.decks.delete(deckIds.join(','));
 	},
@@ -202,6 +203,7 @@ const actions = {
 		return Promise.resolve();
 	},
 
+	// eslint-disable-next-line
 	updateById({}, payload) {
 		if (!payload.id) {
 			throw new Error('Missing required "id" property.');

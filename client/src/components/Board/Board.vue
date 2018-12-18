@@ -46,13 +46,14 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex';
+import { filter, includes } from 'lodash';
 
 import BoardHeader from '@/components/Board/BoardHeader.vue';
 import Deck from '@/components/Deck/Deck.vue';
 import Player from '@/components/Player/Player.vue';
 
 export default {
-	name: 'Board',
+	name: 'board',
 	components: {
 		BoardHeader,
 		Deck,
@@ -93,12 +94,12 @@ export default {
 			playerIdsInGame: state => state.game.playerIds,
 		}),
 		playersInGame: function() {
-			return _.filter(this.allPlayers, pl =>
-				_.includes(this.playerIdsInGame, pl.id)
+			return filter(this.allPlayers, pl =>
+				includes(this.playerIdsInGame, pl.id)
 			);
 		},
 		opponents: function() {
-			return _.filter(
+			return filter(
 				this.playersInGame,
 				pl => pl.id !== this.currentPlayer.id
 			);

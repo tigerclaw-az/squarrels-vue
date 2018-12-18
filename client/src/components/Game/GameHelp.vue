@@ -86,7 +86,7 @@
 import bModal from 'bootstrap-vue/es/components/modal/modal';
 
 export default {
-	name: 'GameHelp',
+	name: 'game-help',
 	components: {
 		'b-modal': bModal,
 	},

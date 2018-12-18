@@ -27,7 +27,7 @@ import { mapState } from 'vuex';
 import Card from '@/components/Card/Card.vue';
 
 export default {
-	name: 'PlayerQuarrel',
+	name: 'player-quarrel',
 	components: {
 		Card,
 	},

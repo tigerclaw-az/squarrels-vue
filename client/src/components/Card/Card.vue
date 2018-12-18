@@ -23,13 +23,13 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import Icon from 'vue-awesome/components/Icon';
 
 import api from '@/api/index';
 
 export default {
-	name: 'Card',
+	name: 'card',
 	components: {
 		icon: Icon,
 	},
@@ -77,7 +77,7 @@ export default {
 	},
 	computed: {
 		cardClass: function() {
-			if (!_.isEmpty(this.details)) {
+			if (!isEmpty(this.details)) {
 				return `${this.details.cardType}--${this.details.name}`;
 			}
 

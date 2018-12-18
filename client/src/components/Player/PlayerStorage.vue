@@ -22,7 +22,7 @@
 import Icon from 'vue-awesome/components/Icon';
 
 export default {
-	name: 'PlayerStorage',
+	name: 'player-storage',
 	components: {
 		Icon,
 	},

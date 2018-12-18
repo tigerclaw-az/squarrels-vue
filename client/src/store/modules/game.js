@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import router from '@/router';
 
-import _ from 'lodash';
+import { concat, groupBy, keys, map, max, union, without } from 'lodash';
 
 import api from '@/api/index';
 
@@ -37,7 +37,7 @@ const getters = {
 			playerId
 		);
 
-		const quarrelObj = _.find(state.quarrelCards.current, obj => {
+		const quarrelObj = find(state.quarrelCards.current, obj => {
 			return obj.playerId === playerId;
 		});
 
@@ -85,8 +85,8 @@ const actions = {
 	addQuarrelCard({ commit, dispatch, state }, card) {
 		this._vm.$log.debug(card);
 
-		const newCards = _.concat(state.quarrelCards.current, card);
-		const savedCards = _.concat(state.quarrelCards.saved, card);
+		const newCards = concat(state.quarrelCards.current, card);
+		const savedCards = concat(state.quarrelCards.saved, card);
 		const quarrelCards = {
 			current: newCards,
 			saved: savedCards,
@@ -102,7 +102,7 @@ const actions = {
 		}
 	},
 	async addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
-		const newPlayers = _.union(playerId, [...state.playerIds, playerId]);
+		const newPlayers = union(playerId, [...state.playerIds, playerId]);
 
 		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
 
@@ -182,7 +182,7 @@ const actions = {
 			return false;
 		}
 
-		const quarrelGroup = _.groupBy(state.quarrelCards.current, data => {
+		const quarrelGroup = groupBy(state.quarrelCards.current, data => {
 			// User had no cards, so the card property will be 'null'
 			if (!data.card) {
 				return -1;
@@ -190,7 +190,7 @@ const actions = {
 
 			return data.card.name === 'golden' ? 6 : data.card.amount;
 		});
-		const winningCard = _.max(_.keys(quarrelGroup));
+		const winningCard = max(keys(quarrelGroup));
 		const winners = quarrelGroup[winningCard];
 
 		this._vm.$log.debug(quarrelGroup, winners);
@@ -198,7 +198,7 @@ const actions = {
 		commit('UPDATE', { showQuarrel: true });
 
 		if (winners.length === 1) {
-			const cards = _.map(state.quarrelCards.saved, obj => {
+			const cards = map(state.quarrelCards.saved, obj => {
 				return obj.card;
 			});
 
@@ -234,7 +234,7 @@ const actions = {
 				}, 1000);
 			}, 3500);
 		} else {
-			const players = _.map(winners, obj => obj.playerId);
+			const players = map(winners, obj => obj.playerId);
 
 			setTimeout(() => {
 				// Reset current quarrelCards
@@ -351,7 +351,7 @@ const actions = {
 	 */
 	unload({ commit, dispatch, state, rootState }) {
 		const playerIds = state.playerIds;
-		const updatedPlayerIds = _.without(playerIds, rootState.localPlayer.id);
+		const updatedPlayerIds = without(playerIds, rootState.localPlayer.id);
 
 		return api.games
 			.updatePlayers(state.id, updatedPlayerIds)
@@ -372,6 +372,7 @@ const actions = {
 			});
 	},
 
+	// eslint-disable-next-line
 	update({}, data) {
 		return api.games.update(state.id, data);
 	},

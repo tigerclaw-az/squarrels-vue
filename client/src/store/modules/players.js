@@ -1,6 +1,15 @@
 import Vue from 'vue';
 import utils from '@/utils';
-import _ from 'lodash';
+import {
+	concat,
+	difference,
+	filter, find, findIndex, flatten, flow,
+	includes, isEmpty, isString,
+	map, maxBy,
+	reject,
+	sample,
+	union,
+} from 'lodash';
 
 import api from '@/api/index';
 
@@ -46,18 +55,24 @@ const getters = {
 
 		Vue.$log.debug('get()', prop, value, index);
 
-		const method = index ? 'findIndex' : all ? 'filter' : 'find';
+		let method = find;
+
+		if (index) {
+			method = findIndex;
+		} else if (all) {
+			method = filter;
+		}
 
 		if (prop) {
 			if (value) {
-				return _[method](state, function(o) {
+				return method(state, function(o) {
 					return o[prop] === value;
 				});
 			}
 
 			// If a 'value' wasn't given, then we're just looking for the player
 			// where the supplied 'prop' is !null/undefined
-			return _[method](state, prop);
+			return method(state, prop);
 		}
 
 		return state;
@@ -80,7 +95,7 @@ const getters = {
 
 		if (activeIndex === -1) {
 			// Get random player from list of player IDs
-			return _.sample(state.ids);
+			return sample(state.ids);
 		} else if (activeIndex === state.ids.length - 1) {
 			// Reset active player to first player
 			activeIndex = 0;
@@ -135,10 +150,14 @@ const actions = {
 			throw new Error('Parameter "cards" cannot be empty!');
 		}
 
-		const cardsToAdd = _(data.cards)
-			.flatten([data.cards])
-			.map(card => card.id)
-			.value();
+		// const cardsToAdd = _(data.cards)
+		// 	.flatten([data.cards])
+		// 	.map(card => card.id)
+		// 	.value();
+		const cardsToAdd = flow(
+			map(card => card.id),
+			flatten,
+		)(data.cards);
 
 		const playerId = data.id || getters.getMyPlayer.id;
 
@@ -180,7 +199,7 @@ const actions = {
 		const myPlayer = getters.getMyPlayer;
 		const hoardDeck = rootGetters['decks/getByType']('hoard');
 		const hoardCards = rootGetters['decks/getCardIds'](hoardDeck.id);
-		const cardsInHand = _.union(myPlayer.cardsInHand, hoardCards);
+		const cardsInHand = union(myPlayer.cardsInHand, hoardCards);
 
 		if (pl.id === myPlayer.id) {
 			// Add hoard cards to player cards
@@ -210,6 +229,7 @@ const actions = {
 		}
 	},
 
+	// eslint-disable-next-line
 	async delete({}, id) {
 		const playerId = id || getters.getMyPlayer.id;
 
@@ -226,7 +246,7 @@ const actions = {
 
 		const playerId = getters.getMyPlayer.id;
 		const cardIds = state[playerId].cardsInHand;
-		const cardsInHand = _.difference(cardIds, [payload.card.id]);
+		const cardsInHand = difference(cardIds, [payload.card.id]);
 
 		// dispatch('updateLocalPlayer', {
 		// 	id: playerId,
@@ -331,19 +351,19 @@ const actions = {
 
 	async removeHighCard({ dispatch }, player) {
 		const cards = player.cardsInHand;
-		const highCard = _.maxBy(cards, card => {
+		const highCard = maxBy(cards, card => {
 			return card.cardType === 'special' ? -1 : card.amount;
 		});
 
 		this._vm.$log.debug('highCard ->', highCard);
 
-		if (!_.isEmpty(highCard)) {
+		if (!isEmpty(highCard)) {
 			this._vm.$toasted.info('You just lost a card!');
 
 			await dispatch('update', {
 				id: player.id,
 				data: {
-					cardsInHand: _.difference(player.cardsInHand, [
+					cardsInHand: difference(player.cardsInHand, [
 						highCard.id,
 					]),
 				},
@@ -408,18 +428,18 @@ const actions = {
 		}
 	},
 
-	startQuarrel({ dispatch, getters, state, rootState }, options = {}) {
+	startQuarrel({ dispatch, getters, state }, options = {}) {
 		const myPlayer = getters.getMyPlayer;
 		const players = options.players || state.ids;
 
 		this._vm.$log.debug(players, myPlayer);
 
-		if (!_.includes(players, myPlayer.id)) {
+		if (!includes(players, myPlayer.id)) {
 			return;
 		}
 
 		// Find all players that have at least 1 card
-		const quarrelPlayers = _.reject(players, { totalCards: 0 });
+		const quarrelPlayers = reject(players, { totalCards: 0 });
 
 		// If no players, or just 1 player, have enough cards for Quarrel
 		if (quarrelPlayers.length <= 1) {
@@ -443,11 +463,11 @@ const actions = {
 		const currentPlayer = getters.getMyPlayer;
 		const cardsInStorage = currentPlayer.cardsInStorage;
 		const cardsToStore = payload.cards;
-		const cardsToStoreIds = _.map(cardsToStore, c => c.id);
+		const cardsToStoreIds = map(cardsToStore, c => c.id);
 
 		const plData = {
-			cardsInHand: _.difference(payload.cardsInHand, cardsToStoreIds),
-			cardsInStorage: _.concat(cardsInStorage, cardsToStoreIds[0]),
+			cardsInHand: difference(payload.cardsInHand, cardsToStoreIds),
+			cardsInStorage: concat(cardsInStorage, cardsToStoreIds[0]),
 			hasStoredCards: true,
 			score: currentPlayer.score + cardsToStore[0].amount,
 		};
@@ -462,10 +482,11 @@ const actions = {
 		});
 	},
 
+	// eslint-disable-next-line
 	update({}, payload) {
 		this._vm.$log.debug('players/update', payload);
 
-		if (!_.isString(payload.id)) {
+		if (!isString(payload.id)) {
 			throw new Error('"payload.id" MUST be a string');
 		}
 
@@ -538,7 +559,7 @@ const mutations = {
 
 		this._vm.$log.debug('mutation::players/UPDATE', state, payload);
 
-		if (_.isString(playerId)) {
+		if (isString(playerId)) {
 			if (!state[playerId]) {
 				Vue.set(state, playerId, {});
 				state.ids.push(playerId);

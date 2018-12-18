@@ -32,7 +32,7 @@ import Icon from 'vue-awesome/components/Icon';
 import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
 
 export default {
-	name: 'GameSettings',
+	name: 'game-settings',
 	components: {
 		'b-dropdown': bDropdown,
 		'icon': Icon,

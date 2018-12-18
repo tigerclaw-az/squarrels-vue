@@ -74,14 +74,14 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import moment from 'moment';
 
 import Icon from 'vue-awesome/components/Icon';
 import bTable from 'bootstrap-vue/es/components/table/table';
 
 export default {
-	name: 'Start',
+	name: 'start',
 	components: {
 		'b-table': bTable,
 		Icon,
@@ -145,7 +145,7 @@ export default {
 			'waitLoadGames',
 		]),
 		hasGames: function() {
-			return !_.isEmpty(this.games);
+			return !isEmpty(this.games);
 		},
 	},
 	watch: {

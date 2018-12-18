@@ -75,7 +75,7 @@ import Board from '@/components/Board/Board.vue';
 import GameResults from '@/components/Game/GameResults.vue';
 
 export default {
-	name: 'Game',
+	name: 'game',
 	components: {
 		Board,
 		CardAction,

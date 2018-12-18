@@ -18,8 +18,8 @@
 				name="cards-hoard"
 			>
 				<div
-					v-for="(card, index) in numCards"
-					:key="index"
+					v-for="card in numCards"
+					:key="card"
 					class="btn-card card blank--"
 				>
 				</div>
@@ -32,7 +32,7 @@
 import { mapGetters, mapState } from 'vuex';
 
 export default {
-	name: 'DeckHoard',
+	name: 'deck-hoard',
 	props: {
 		cards: {
 			type: Array,
