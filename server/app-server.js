@@ -7,7 +7,7 @@ const path = require('path');
 const session = require('express-session');
 const MongodbSession = require('connect-mongodb-session')(session);
 
-let app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -44,7 +44,7 @@ const sessionStore = new MongodbSession({
 	collection: 'sessions',
 	databaseName: 'squarrels_sessions',
 	secret: SECRET,
-	uri: `mongodb://${process.env.SERVER}/squarrels_sessions`
+	uri: `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/squarrels_sessions`,
 });
 
 sessionStore.on('error', err => {
@@ -56,13 +56,13 @@ const sessionParser = session({
 		httpOnly: true,
 		maxAge: 1000 * 60 * 60 * 24 * 90, // 3 months
 		sameSite: 'lax',
-		secure: false
+		secure: false,
 	},
 	name: 'squarrels',
 	secret: SECRET,
 	store: sessionStore,
 	resave: true,
-	saveUninitialized: true
+	saveUninitialized: true,
 });
 
 app.use(sessionParser);
@@ -93,7 +93,7 @@ const routes = {
 	cards: require('./routes/cards'),
 	decks: require('./routes/decks'),
 	games: require('./routes/games'),
-	players: require('./routes/players')
+	players: require('./routes/players'),
 };
 
 // app.use('/api/', routes);
@@ -104,7 +104,7 @@ app.use('/api/players', routes.players);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-	var err = new Error(`Not Found: ${req.url}`);
+	const err = new Error(`Not Found: ${req.url}`);
 
 	err.status = 404;
 	next(err);
@@ -121,7 +121,7 @@ if (app.get('env') === 'development') {
 		res.status(err.status || 500);
 		res.render('error', {
 			message: err.message,
-			error: err
+			error: err,
 		});
 	});
 }
@@ -132,12 +132,12 @@ app.use(function(err, req, res) {
 	res.status(err.status || 500);
 	res.render('error', {
 		message: err.message,
-		error: {}
+		error: {},
 	});
 });
 
 module.exports = {
 	app,
 	sessionParser,
-	sessionStore
+	sessionStore,
 };
