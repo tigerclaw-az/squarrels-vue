@@ -56,7 +56,7 @@ module.exports = {
 		'dot-notation': 2,
 		'dot-location': [2, 'property'],
 		'eqeqeq': [2, 'smart'],
-		'guard-for-in': 2,
+		'guard-for-in': 0,
 		'no-alert': 2,
 		'no-caller': 0,
 		'no-div-regex': 0,
@@ -308,6 +308,8 @@ module.exports = {
 		'vue/html-quotes': [2, 'double'],
 		'vue/html-self-closing': 0,
 		'vue/order-in-components': 2,
+		// https://github.com/vuejs/eslint-plugin-vue/blob/master/docs/rules/name-property-casing.md
+		'vue/name-property-casing': [1, 'kebab-case'],
 		// https://github.com/vuejs/eslint-plugin-vue/blob/master/docs/rules/no-parsing-error.md
 		'vue/no-parsing-error': [
 			2,
