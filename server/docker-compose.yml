@@ -1,0 +1,20 @@
+version: "3"
+services:
+  squarrels:
+    container_name: squarrels_api
+    environment:
+      - MONGODB_HOST=mongo
+    restart: always
+    build: .
+    ports:
+      - "3000:3000"
+      - "3100:3100"
+    depends_on:
+      - mongo
+  mongo:
+    container_name: squarrels_db
+    image: mongo
+    volumes:
+      - ./data:/data/db
+    ports:
+      - "27017:27017"
