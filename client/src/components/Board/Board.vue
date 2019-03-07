@@ -30,8 +30,8 @@
 					>
 						<Deck
 							v-for="deckId in deckIds"
-							:key="deckId"
 							:id="deckId"
+							:key="deckId"
 						/>
 					</div>
 				</b-col>
@@ -109,6 +109,8 @@ export default {
 		isGameStarted: function(from, to) {
 			if (to === false) {
 				this.decksLoaded = false;
+			} else {
+				this.decksLoaded = true;
 			}
 		},
 	},
