@@ -20,7 +20,9 @@
 			<span v-else>Sounds On</span>
 		</b-dropdown-item>
 		<b-dropdown-item>
-			<router-link to="/">Leave Game</router-link>
+			<router-link to="/">
+				Leave Game
+			</router-link>
 		</b-dropdown-item>
 	</b-dropdown>
 </template>
@@ -29,12 +31,12 @@
 import { mapState } from 'vuex';
 
 import Icon from 'vue-awesome/components/Icon';
-import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
+import { BDropdown } from 'bootstrap-vue';
 
 export default {
 	name: 'game-settings',
 	components: {
-		'b-dropdown': bDropdown,
+		'b-dropdown': BDropdown,
 		'icon': Icon,
 	},
 	computed: {

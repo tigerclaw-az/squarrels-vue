@@ -83,12 +83,12 @@
 </template>
 
 <script>
-import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { BModal } from 'bootstrap-vue';
 
 export default {
 	name: 'game-help',
 	components: {
-		'b-modal': bModal,
+		'b-modal': BModal,
 	},
 };
 </script>

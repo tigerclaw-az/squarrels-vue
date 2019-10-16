@@ -14,8 +14,8 @@
 		>
 			<Card
 				v-for="index in numCardsToDisplay"
-				:key="index"
 				:id="card"
+				:key="index"
 				card-type="storage"
 			/>
 		</div>
@@ -24,14 +24,14 @@
 
 <script>
 import { range } from 'lodash';
-import bModal from 'bootstrap-vue/es/components/modal/modal';
+import { BModal } from 'bootstrap-vue';
 
 import Card from '@/components/Card/Card.vue';
 
 export default {
 	name: 'player-storage-modal',
 	components: {
-		'b-modal': bModal,
+		'b-modal': BModal,
 		Card,
 	},
 	props: {

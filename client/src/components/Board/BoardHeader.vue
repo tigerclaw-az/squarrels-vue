@@ -17,7 +17,7 @@
 import { mapState } from 'vuex';
 import moment from 'moment';
 
-import bDropdown from 'bootstrap-vue/es/components/dropdown/dropdown';
+import { BDropdown } from 'bootstrap-vue';
 
 import Icon from 'vue-awesome/components/Icon';
 
@@ -28,7 +28,7 @@ export default {
 	name: 'board-header',
 	components: {
 		'admin-options': AdminOptions,
-		'b-dropdown': bDropdown,
+		'b-dropdown': BDropdown,
 		'game-settings': GameSettings,
 		Icon,
 	},

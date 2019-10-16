@@ -3,8 +3,12 @@
 		<div class="winter">
 			<div class="welcome-message">
 				<h2>Welcome {{ player.name }}!</h2>
-				<p v-if="!hasGames">Start by pressing "New Game" to create a game</p>
-				<p v-else>Choose a game from the list, or start a "New Game"</p>
+				<p v-if="!hasGames">
+					Start by pressing "New Game" to create a game
+				</p>
+				<p v-else>
+					Choose a game from the list, or start a "New Game"
+				</p>
 			</div>
 			<div
 				v-if="!isConnected"
@@ -35,7 +39,9 @@
 						<router-link
 							:to="{ name: 'game', params: { id: data.item.id } }"
 							class="btn btn-primary btn-join-game"
-						>JOIN</router-link>
+						>
+							JOIN
+						</router-link>
 					</template>
 					<template
 						slot="delete"
@@ -78,12 +84,12 @@ import { isEmpty } from 'lodash';
 import moment from 'moment';
 
 import Icon from 'vue-awesome/components/Icon';
-import bTable from 'bootstrap-vue/es/components/table/table';
+import { BTable } from 'bootstrap-vue';
 
 export default {
 	name: 'start',
 	components: {
-		'b-table': bTable,
+		'b-table': BTable,
 		Icon,
 	},
 	data: function() {
