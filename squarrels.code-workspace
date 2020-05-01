@@ -16,6 +16,7 @@
 		},
 		"eslint.alwaysShowStatus": true,
 		"stylelint.enable": true,
-		"prettier.eslintIntegration": true
+		"prettier.eslintIntegration": true,
+		"prettier.printWidth": 110
 	}
 }
