@@ -10,18 +10,10 @@
 					Choose a game from the list, or start a "New Game"
 				</p>
 			</div>
-			<div
-				v-if="!isConnected"
-				v-cloak
-				class="alert alert-danger error"
-				role="alert"
-			>
+			<div v-if="!isConnected" v-cloak class="alert alert-danger error" role="alert">
 				Taking a nap. Be back later.
 			</div>
-			<div
-				v-else
-				class="games-list w-75"
-			>
+			<div v-else class="games-list w-75">
 				<b-table
 					v-if="hasGames"
 					:bordered="true"
@@ -32,10 +24,7 @@
 					:striped="true"
 					sort-by.sync="createdAt"
 				>
-					<template
-						slot="join"
-						slot-scope="data"
-					>
+					<template v-slot:cell(join)="data">
 						<router-link
 							:to="{ name: 'game', params: { id: data.item.id } }"
 							class="btn btn-primary btn-join-game"
@@ -43,35 +32,14 @@
 							JOIN
 						</router-link>
 					</template>
-					<template
-						slot="delete"
-						slot-scope="data"
-					>
-						<button
-							class="btn btn-danger"
-							@click="deleteGame(data.item.id);"
-						>
-							<icon
-								name="trash"
-								class="icon icon-delete"
-							/>
+					<template v-slot:cell(delete)="data">
+						<button class="btn btn-danger" @click="deleteGame(data.item.id)">
+							<icon name="trash" class="icon icon-delete" />
 						</button>
 					</template>
 				</b-table>
-				<!--
-					<li v-for="(value, gameId) in games" :key="gameId">
-						<router-link :to="{ name: 'game', params: { id: gameId }}"
-							class="btn btn-primary btn-join-game"
-							v-cloak>
-							JOIN {{gameId}}
-						</router-link>
-					</li>
-        -->
 			</div>
-			<button
-				class="btn btn-primary btn-new-game"
-				@click="createGame"
-			>
+			<button class="btn btn-primary btn-new-game" @click="createGame">
 				NEW GAME
 			</button>
 		</div>
@@ -144,18 +112,12 @@ export default {
 			isConnected: 'isConnected',
 			player: 'players/getMyPlayer',
 		}),
-		...mapState('start', [
-			'games',
-			'waitCreateGame',
-			'waitDeleteGame',
-			'waitLoadGames',
-		]),
+		...mapState('start', ['games', 'waitCreateGame', 'waitDeleteGame', 'waitLoadGames']),
 		hasGames: function() {
 			return !isEmpty(this.games);
 		},
 	},
 	watch: {
-
 		/**
 		 * Watch for the websocket connection and perform necessary functions
 		 * whenever the websocket reconnects
