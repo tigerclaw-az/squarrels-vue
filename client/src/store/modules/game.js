@@ -31,11 +31,7 @@ const state = Object.assign({}, initialState);
 
 const getters = {
 	getQuarrelCardByPlayer: state => playerId => {
-		Vue.$log.debug(
-			'quarrelCardByPlayer->',
-			state.quarrelCards.current,
-			playerId
-		);
+		Vue.$log.debug('quarrelCardByPlayer->', state.quarrelCards.current, playerId);
 
 		const quarrelObj = find(state.quarrelCards.current, obj => {
 			return obj.playerId === playerId;
@@ -142,7 +138,7 @@ const actions = {
 
 					if (res.status === 200) {
 						const gameData = res.data[0],
-							deckIds = gameData.deckIds,
+							// deckIds = gameData.deckIds,
 							playersInGame = gameData.playerIds;
 
 						commit('UPDATE', gameData);
@@ -224,11 +220,7 @@ const actions = {
 						quarrelCards: { current: [], saved: [] },
 					});
 
-					dispatch(
-						'players/resetQuarrelWinner',
-						{ id: winner },
-						{ root: true }
-					);
+					dispatch('players/resetQuarrelWinner', { id: winner }, { root: true });
 
 					dispatch('resetAction');
 				}, 1000);
@@ -287,11 +279,7 @@ const actions = {
 			.dealCards(state.id, state.playerIds)
 			.then(() => {
 				// Load all deck data into the store
-				return dispatch(
-					'decks/load',
-					{ ids: state.deckIds },
-					{ root: true }
-				);
+				return dispatch('decks/load', { ids: state.deckIds }, { root: true });
 			})
 			.then(() => {
 				// Loop through each player and deal cards
@@ -414,10 +402,7 @@ const mutations = {
 						const countDiff = newPlayerCount - prevPlayerCount;
 
 						if (countDiff !== 0) {
-							const msg
-								= 'Player '
-								+ (countDiff > 0 ? 'joined' : 'left')
-								+ '!';
+							const msg = 'Player ' + (countDiff > 0 ? 'joined' : 'left') + '!';
 
 							this._vm.$toasted.info(msg, { duration: 500 });
 						}

@@ -10,10 +10,7 @@
 		@shown="focusUsername"
 	>
 		<b-container fluid>
-			<b-form
-				inline
-				@submit.prevent="createPlayer"
-			>
+			<b-form inline @submit.prevent="createPlayer">
 				<b-form-group
 					id="playerForm"
 					label="Username"
@@ -33,10 +30,7 @@
 						>
 						</b-form-input>
 						<b-input-group-append>
-							<b-btn
-								type="submit"
-								variant="primary"
-							>
+							<b-btn type="submit" variant="primary">
 								Login
 							</b-btn>
 						</b-input-group-append>

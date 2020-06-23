@@ -7,17 +7,10 @@
 		:style="cardStyle"
 		class="btn-card"
 		role="button"
-		@click="!isDisabled && onClick(details, matches, $event);"
+		@click="!isDisabled && onClick(details, matches, $event)"
 	>
-		<span
-			:class="cardClass"
-			class="card"
-		>
-			<icon
-				v-if="hasMatch"
-				name="sun"
-				class="icon"
-			/>
+		<span :class="cardClass" class="card">
+			<icon v-if="hasMatch" name="sun" class="icon" />
 		</span>
 	</div>
 </template>
@@ -87,10 +80,7 @@ export default {
 			return this.matches.length;
 		},
 		isActivePlayer: function() {
-			const activePlayer = this.$store.getters['players/getByProp'](
-				'isActive',
-				true
-			);
+			const activePlayer = this.$store.getters['players/getByProp']('isActive', true);
 
 			return activePlayer && activePlayer.id === this.myPlayer.id;
 		},

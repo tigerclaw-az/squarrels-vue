@@ -7,11 +7,7 @@
 		size="lg"
 		title="Cards Stored for Winter"
 	>
-		<div
-			v-for="card in player.cardsInStorage"
-			:key="card"
-			class="cards-group"
-		>
+		<div v-for="card in player.cardsInStorage" :key="card" class="cards-group">
 			<Card
 				v-for="index in numCardsToDisplay"
 				:id="card"
@@ -79,8 +75,7 @@ export default {
 				$translate: $translate + 2;
 
 				&:nth-child(#{$i}) {
-					transform: rotate(#{$rotate}deg)
-						translateX(#{$translate}rem);
+					transform: rotate(#{$rotate}deg) translateX(#{$translate}rem);
 				}
 			}
 		}

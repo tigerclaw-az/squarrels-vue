@@ -1,45 +1,20 @@
 <template>
 	<div id="game">
-		<transition
-			tag="div"
-			name="winter"
-		>
-			<div
-				v-if="isWinter"
-				class="game-overlay--new-game winter"
-			>
-			</div>
+		<transition tag="div" name="winter">
+			<div v-if="isWinter" class="game-overlay--new-game winter"></div>
 		</transition>
-		<GameResults
-			v-if="isWinter"
-			:game-id="id"
-			:player-ids="playerIds"
-		>
+		<GameResults v-if="isWinter" :game-id="id" :player-ids="playerIds">
 			<template slot="newGame">
 				<div class="container-button">
-					<b-button
-						class="btn btn-new-game"
-						variant="primary"
-						@click="onClickNewGame"
-					>
+					<b-button class="btn btn-new-game" variant="primary" @click="onClickNewGame">
 						NEXT ROUND
 					</b-button>
 				</div>
 			</template>
 		</GameResults>
-		<div
-			v-if="!isStarted"
-			class="game-overlay"
-		>
-			<div
-				v-cloak
-				v-if="!isLoading && !isWinter"
-				class="game-overlay--start-game"
-			>
-				<div
-					v-if="needPlayers"
-					class="waiting-message"
-				>
+		<div v-if="!isStarted" class="game-overlay">
+			<div v-cloak v-if="!isLoading && !isWinter" class="game-overlay--start-game">
+				<div v-if="needPlayers" class="waiting-message">
 					Waiting for other players to join...
 				</div>
 				<b-button
@@ -111,8 +86,7 @@ export default {
 			return this.playerIds.length < config.MAX_PLAYERS;
 		},
 		playerExists: function() {
-			return this.playerIds.filter(pl => pl === this.currentPlayer.id)
-				.length;
+			return this.playerIds.filter(pl => pl === this.currentPlayer.id).length;
 		},
 		isWinter: function() {
 			return this.actionCard && this.actionCard.name === 'winter';

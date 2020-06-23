@@ -1,26 +1,20 @@
 <template>
 	<div
 		:class="{
-			active: isActivePlayer,
-			current: isCurrentPlayer,
+			'active': isActivePlayer,
+			'current': isCurrentPlayer,
 			'my-turn': isMyTurn,
 		}"
 		class="sq-player"
 	>
 		<div class="sq-player-thumbnail">
-			<img
-				class="img-circle"
-				src="@/assets/images/squirrel-placeholder.jpg"
-			>
+			<img class="img-circle" src="@/assets/images/squirrel-placeholder.jpg" />
 			<PlayerStorage :player="player" />
 		</div>
 		<div class="sq-player-name">{{ player.name }}</div>
 		<div class="sq-player-cards">
 			<PlayerQuarrel :player="player" />
-			<div
-				v-if="isCurrentPlayer && player.message"
-				class="sq-quarrel-message"
-			>
+			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">
 				{{ player.message }}
 			</div>
 			<div class="cards-group hand">
@@ -32,16 +26,12 @@
 				>
 					<Card
 						v-for="(card, index) in myCardsSorted"
-						:key="card.id"
 						:id="card.id"
+						:key="card.id"
 						:on-click="onClickCard"
 						:card-data="card"
 						:card-style="cardStyle(index)"
-						:matches="
-							card.cardType === 'special'
-								? []
-								: findCardMatches(card.amount)
-						"
+						:matches="card.cardType === 'special' ? [] : findCardMatches(card.amount)"
 						card-type="hand"
 					/>
 				</transition-group>
@@ -189,9 +179,7 @@ export default {
 				})
 				.catch(err => {
 					this.$log.error(err);
-					this.$toasted.error(
-						`ERROR: Unable to discard card: ${card.name}`
-					);
+					this.$toasted.error(`ERROR: Unable to discard card: ${card.name}`);
 				});
 		},
 		findCardMatches: function(amount) {
@@ -244,10 +232,7 @@ export default {
 			}
 
 			if (this.myPlayer.isActive) {
-				if (
-					card.cardType === 'special'
-					&& this.myPlayer.totalCards > 1
-				) {
+				if (card.cardType === 'special' && this.myPlayer.totalCards > 1) {
 					this.$toasted.error(
 						'You cannot discard this card unless it is your ONLY card.'
 					);

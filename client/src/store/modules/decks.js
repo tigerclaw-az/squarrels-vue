@@ -64,16 +64,12 @@ const actions = {
 				);
 
 				if (mutation.type === 'players/DRAW_CARD') {
-					if (
-						state.players[playerId].cardsDrawnCount
-						=== config.MAX_CARDS
-					) {
+					if (state.players[playerId].cardsDrawnCount === config.MAX_CARDS) {
 						unsubscribe();
 
 						api.players
 							.update(playerId, {
-								cardsInHand:
-									state.players[playerId].cardsDrawnIds,
+								cardsInHand: state.players[playerId].cardsDrawnIds,
 							})
 							.then(() => {
 								resolve({
@@ -118,8 +114,7 @@ const actions = {
 				: mainDeck.cards,
 		};
 
-		const cardDrawn
-			= options.adminCard || sampleSize(cardsFromDeck.toDraw)[0];
+		const cardDrawn = options.adminCard || sampleSize(cardsFromDeck.toDraw)[0];
 
 		this._vm.$log.debug('cardsFromDeck -> ', cardsFromDeck);
 		this._vm.$log.debug('cardDrawn -> ', cardDrawn);
@@ -150,9 +145,7 @@ const actions = {
 		}
 
 		return new Promise(resolve => {
-			api.decks
-				.update(mainDeck.id, { cards: cardsFromDeck.ids })
-				.then(() => {
+			api.decks.update(mainDeck.id, { cards: cardsFromDeck.ids }).then(() => {
 					resolve(cardDrawn);
 				});
 		});

@@ -6,12 +6,7 @@
 		class="action-card--wrapper"
 	>
 		<span class="card blank--"></span>
-		<Card
-			ref="card"
-			:id="card.id"
-			:card-data="card"
-			card-type="action"
-		/>
+		<Card :id="card.id" ref="card" :card-data="card" card-type="action" />
 	</div>
 </template>
 
@@ -44,11 +39,7 @@ export default {
 			decksLoaded: state => state.decks.isLoaded,
 		}),
 		isInstant: function() {
-			return (
-				this.isActivePlayer
-				|| this.instantAction
-				|| this.card.name === 'winter'
-			);
+			return this.isActivePlayer || this.instantAction || this.card.name === 'winter';
 		},
 	},
 	watch: {
@@ -124,9 +115,7 @@ export default {
 			};
 
 			this.$nextTick(() => {
-				this.$el
-					.querySelector('.card')
-					.addEventListener('animationend', onAnimationEnd);
+				this.$el.querySelector('.card').addEventListener('animationend', onAnimationEnd);
 			});
 
 			if (!hoardCards.length) {

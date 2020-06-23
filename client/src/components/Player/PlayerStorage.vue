@@ -6,11 +6,7 @@
 		title="View or Store Nuts"
 		@click.prevent="onClickStorage"
 	>
-		<icon
-			name="tree"
-			scale="4"
-			class="icon icon-storage"
-		/>
+		<icon name="tree" scale="4" class="icon icon-storage" />
 		<span class="sq-player-score">
 			{{ player.score }}
 		</span>
@@ -34,10 +30,7 @@ export default {
 	},
 	methods: {
 		onClickStorage: function() {
-			this.$root.$emit(
-				'bv::show::modal',
-				`player-storage-modal-${this.player.id}`
-			);
+			this.$root.$emit('bv::show::modal', `player-storage-modal-${this.player.id}`);
 		},
 	},
 };

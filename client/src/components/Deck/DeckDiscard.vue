@@ -5,23 +5,14 @@
 		}"
 		class="deck"
 	>
-		<div
-			v-show="numCards"
-			class="cards-group disabled"
-			role="button"
-		>
-			<transition-group
-				tag="div"
-				class="transition"
-				name="cards-discard"
-			>
+		<div v-show="numCards" class="cards-group disabled" role="button">
+			<transition-group tag="div" class="transition" name="cards-discard">
 				<div
 					v-for="card in cards"
 					:key="card.id"
 					:class="`action--${card.name}`"
 					class="btn-card card"
-				>
-				</div>
+				></div>
 			</transition-group>
 		</div>
 	</div>

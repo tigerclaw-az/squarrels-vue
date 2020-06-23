@@ -6,7 +6,7 @@ module.exports = {
 		'color-hex-length': 'long',
 		'declaration-block-no-duplicate-properties': true,
 		'font-weight-notation': 'numeric',
-		'indentation': 'tab',
+		"indentation": 'tab',
 		'length-zero-no-unit': true,
 		'max-nesting-depth': 6,
 		'no-descending-specificity': null,

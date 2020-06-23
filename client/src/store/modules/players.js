@@ -3,9 +3,16 @@ import utils from '@/utils';
 import {
 	concat,
 	difference,
-	filter, find, findIndex, flatten, flow,
-	includes, isEmpty, isString,
-	map, maxBy,
+	filter,
+	find,
+	findIndex,
+	flatten,
+	flow,
+	includes,
+	isEmpty,
+	isString,
+	map,
+	maxBy,
 	reject,
 	sample,
 	union,
@@ -29,17 +36,17 @@ const getters = {
 
 		if (myPlayer.id && myPlayer.cardsInHand) {
 			return (
-				myPlayer.isActive
-				&& !rootGetters['game/isActionCard']()
-				&& !myPlayer.hasStoredCards
-				&& (myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard)
+				myPlayer.isActive &&
+				!rootGetters['game/isActionCard']() &&
+				!myPlayer.hasStoredCards &&
+				(myPlayer.cardsInHand.length < 7 || !myPlayer.hasDrawnCard)
 			);
 		}
 
 		return false;
 	},
 
-	canDiscardCard: (state, getter) => {
+	canDiscardCard: (_, getter) => {
 		const myPlayer = getter.getMyPlayer;
 
 		return myPlayer.isActive && myPlayer.hasDrawnCard;
@@ -307,17 +314,10 @@ const actions = {
 
 	nextPlayer({ dispatch, getters }) {
 		const activePlayer = getters.getByProp('isActive', true);
-		const activePlayerIndex = activePlayer
-			? state.ids.indexOf(activePlayer.id)
-			: -1;
+		const activePlayerIndex = activePlayer ? state.ids.indexOf(activePlayer.id) : -1;
 		const nextPlayerId = getters.getNextPlayer(activePlayerIndex);
 
-		this._vm.$log.debug(
-			'nextPlayer()',
-			activePlayer,
-			activePlayerIndex,
-			nextPlayerId
-		);
+		this._vm.$log.debug('nextPlayer()', activePlayer, activePlayerIndex, nextPlayerId);
 
 		if (activePlayerIndex !== -1) {
 			dispatch('update', {
@@ -363,9 +363,7 @@ const actions = {
 			await dispatch('update', {
 				id: player.id,
 				data: {
-					cardsInHand: difference(player.cardsInHand, [
-						highCard.id,
-					]),
+					cardsInHand: difference(player.cardsInHand, [highCard.id]),
 				},
 			});
 

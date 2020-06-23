@@ -2,19 +2,12 @@
 	<div
 		:class="{
 			'can-draw': canDrawCard && !isCardDrawn,
-			empty: !numCards,
+			'empty': !numCards,
 		}"
 		class="deck"
 	>
-		<div
-			v-show="!canDrawCard || isCardDrawn"
-			class="overlay"
-		>
-			<icon
-				name="ban"
-				scale="7"
-				class="icon"
-			/>
+		<div v-show="!canDrawCard || isCardDrawn" class="overlay">
+			<icon name="ban" scale="7" class="icon" />
 		</div>
 		<div
 			:class="{ disabled: isDisabled }"
@@ -28,16 +21,11 @@
 				:style="cardDrawnStyle(numCards)"
 				class="card-drawn"
 			>
-				<div
-					class="btn-card card blank-- disabled"
-					role="button"
-					disabled
-				>
-				</div>
+				<div class="btn-card card blank-- disabled" role="button" disabled></div>
 				<Card
 					v-if="cardDrawn"
-					ref="card"
 					:id="cardDrawn.id"
+					ref="card"
 					:card-data="cardDrawn"
 					card-type="deck"
 				></Card>
@@ -50,22 +38,15 @@
 			/>
 		</div>
 		<div class="count">{{ numCards }}</div>
-		<div
-			v-if="isAdmin"
-			uib-dropdown
-		>
-			<b-dropdown
-				id="dropdown-settings"
-				text="Choose Card"
-				variant="primary"
-			>
+		<div v-if="isAdmin" uib-dropdown>
+			<b-dropdown id="dropdown-settings" text="Choose Card" variant="primary">
 				<b-dropdown-item
 					v-for="(item, index) in dropdownList"
 					:key="index"
 					:data-id="item.id"
 					:data-type="item.cardType"
 					:data-name="item.name"
-					@click="onClickDrawCard(item);"
+					@click="onClickDrawCard(item)"
 				>
 					{{ item.name }}
 				</b-dropdown-item>
@@ -121,10 +102,7 @@ export default {
 	created: function() {
 		this.$nextTick(() => {
 			this.$cardDrawnEl = this.$el.querySelector('.card-drawn');
-			this.$cardDrawnEl.addEventListener(
-				'animationend',
-				this.onCardDrawnAnimationEnd
-			);
+			this.$cardDrawnEl.addEventListener('animationend', this.onCardDrawnAnimationEnd);
 		});
 	},
 	methods: {

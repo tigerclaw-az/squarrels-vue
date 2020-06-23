@@ -7,9 +7,7 @@
 			<game-settings></game-settings>
 			<admin-options v-if="isAdmin"></admin-options>
 		</b-col>
-		<b-col class="header-item game-round">
-			ROUND: {{ roundNumber }}
-		</b-col>
+		<b-col class="header-item game-round"> ROUND: {{ roundNumber }} </b-col>
 	</b-row>
 </template>
 
@@ -17,9 +15,9 @@
 import { mapState } from 'vuex';
 import moment from 'moment';
 
-import { BDropdown } from 'bootstrap-vue';
+// import { BDropdown } from 'bootstrap-vue';
 
-import Icon from 'vue-awesome/components/Icon';
+// import Icon from 'vue-awesome/components/Icon';
 
 import AdminOptions from '@/components/AdminOptions.vue';
 import GameSettings from '@/components/Game/GameSettings.vue';
@@ -28,9 +26,9 @@ export default {
 	name: 'board-header',
 	components: {
 		'admin-options': AdminOptions,
-		'b-dropdown': BDropdown,
+		// 'b-dropdown': BDropdown,
 		'game-settings': GameSettings,
-		Icon,
+		// Icon,
 	},
 	props: {},
 	data: function() {

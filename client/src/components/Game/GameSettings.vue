@@ -1,21 +1,10 @@
 <template>
-	<b-dropdown
-		id="dropdown-game-settings"
-		variant="primary"
-	>
+	<b-dropdown id="dropdown-game-settings" variant="primary">
 		<template slot="button-content">
-			<icon
-				name="cog"
-				class="icon icon-settings"
-				label="Settings"
-			/>
+			<icon name="cog" class="icon icon-settings" label="Settings" />
 		</template>
-		<b-dropdown-item @click="onClickSetting('toggleSound');">
-			<icon
-				:name="getIcon('sound')"
-				class="icon icon-sound"
-				label="Sound"
-			/>
+		<b-dropdown-item @click="onClickSetting('toggleSound')">
+			<icon :name="getIcon('sound')" class="icon icon-sound" label="Sound" />
 			<span v-if="sound.isEnabled">Sounds Off</span>
 			<span v-else>Sounds On</span>
 		</b-dropdown-item>
@@ -65,6 +54,5 @@ export default {
 			}
 		},
 	},
-
 };
 </script>

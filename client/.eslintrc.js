@@ -191,7 +191,7 @@ module.exports = {
 		'object-curly-spacing': [1, 'always', {}],
 		'one-var': 0,
 		'operator-assignment': [2, 'always'],
-		'operator-linebreak': [1, 'before'],
+		'operator-linebreak': [0, 'before'],
 		'padded-blocks': [2, 'never'],
 		'padding-line-between-statements': [
 			1,
@@ -241,11 +241,11 @@ module.exports = {
 				next: 'directive',
 			},
 		],
-		'quote-props': [2, 'consistent-as-needed'],
-		'quotes': [2, 'single', { avoidEscape: true }],
+		'quote-props': [2, 'consistent'],
+		"quotes": [2, 'single', { avoidEscape: true }],
 		'id-match': 0,
 		'semi-spacing': [2, { after: true }],
-		'semi': 2,
+		"semi": 2,
 		'sort-vars': 0,
 		'space-after-keywords': 0,
 		'space-before-blocks': [2, 'always'],
@@ -289,6 +289,16 @@ module.exports = {
 			},
 		],
 		'newline-per-chained-call': 2,
+
+		/** Prettier eslint overrides */
+		'prettier/prettier': ['warn', {
+			printWidth: 90,
+			singleQuote: true,
+			trailingComma: 'es5',
+			tabWidth: 2,
+			useTabs: true,
+			quoteProps: 'consistent',
+		}],
 
 		/**
 		 * Vue.js ESLint Overrides from vue/recommended

@@ -3,36 +3,16 @@
 		<b-container fluid>
 			<BoardHeader v-if="isGameStarted"></BoardHeader>
 		</b-container>
-		<b-container
-			fluid
-			class="container_board"
-		>
+		<b-container fluid class="container_board">
 			<b-row class="align-items-center justify-content-center mt-2">
-				<b-col
-					cols="4"
-					lg="3"
-				>
+				<b-col cols="4" lg="3">
 					<div class="container_players">
-						<Player
-							v-for="p in opponents"
-							:key="p.id"
-							:player="p"
-						/>
+						<Player v-for="p in opponents" :key="p.id" :player="p" />
 					</div>
 				</b-col>
-				<b-col
-					cols="8"
-					lg="9"
-				>
-					<div
-						v-if="isGameStarted && decksLoaded"
-						class="container_decks"
-					>
-						<Deck
-							v-for="deckId in deckIds"
-							:id="deckId"
-							:key="deckId"
-						/>
+				<b-col cols="8" lg="9">
+					<div v-if="isGameStarted && decksLoaded" class="container_decks">
+						<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
 					</div>
 				</b-col>
 			</b-row>
@@ -94,15 +74,10 @@ export default {
 			playerIdsInGame: state => state.game.playerIds,
 		}),
 		playersInGame: function() {
-			return filter(this.allPlayers, pl =>
-				includes(this.playerIdsInGame, pl.id)
-			);
+			return filter(this.allPlayers, pl => includes(this.playerIdsInGame, pl.id));
 		},
 		opponents: function() {
-			return filter(
-				this.playersInGame,
-				pl => pl.id !== this.currentPlayer.id
-			);
+			return filter(this.playersInGame, pl => pl.id !== this.currentPlayer.id);
 		},
 	},
 	watch: {
@@ -115,11 +90,9 @@ export default {
 		},
 	},
 	mounted: function() {
-		this.$store
-			.dispatch({ type: 'decks/load', ids: this.deckIds })
-			.then(() => {
-				this.decksLoaded = true;
-			});
+		this.$store.dispatch({ type: 'decks/load', ids: this.deckIds }).then(() => {
+			this.decksLoaded = true;
+		});
 	},
 	unload: function() {
 		this.$store.dispatch({ type: 'decks/unload', gameId: this.gameId });

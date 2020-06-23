@@ -12,17 +12,8 @@
 			role="button"
 			@click.prevent="onClick"
 		>
-			<transition-group
-				tag="div"
-				class="transition"
-				name="cards-hoard"
-			>
-				<div
-					v-for="card in numCards"
-					:key="card"
-					class="btn-card card blank--"
-				>
-				</div>
+			<transition-group tag="div" class="transition" name="cards-hoard">
+				<div v-for="card in numCards" :key="card" class="btn-card card blank--"></div>
 			</transition-group>
 		</div>
 	</div>
@@ -90,14 +81,10 @@ export default {
 			if (this.actionCard) {
 				this.collectHoard();
 			} else if (this.maxClicks >= 0) {
-				this.$toasted.info(
-					`STOP THAT! Only ${this.maxClicks} clicks LEFT!`
-				);
+				this.$toasted.info(`STOP THAT! Only ${this.maxClicks} clicks LEFT!`);
 				this.maxClicks--;
 			} else {
-				this.$toasted.error(
-					'You have been banned from collecting the Hoard!'
-				);
+				this.$toasted.error('You have been banned from collecting the Hoard!');
 				this.tooManyClicks = true;
 			}
 		},
