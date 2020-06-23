@@ -1,5 +1,6 @@
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
+const mongoose = require('mongoose');
+
+const	Schema = mongoose.Schema,
 	Game = require('./GameModel'),
 	PlayerSchema = new Schema(
 		{

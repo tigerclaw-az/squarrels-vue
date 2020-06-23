@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 require('dotenv').config();
+const config = require('../config/config');
+const logger = config.logger('www');
 
 /**
  * Module dependencies.
@@ -8,10 +10,8 @@ const appServe = require('../app-server');
 const app = appServe.app;
 const sessionParser = appServe.sessionParser;
 const sessionStore = appServe.sessionStore;
-const config = require('../config/config');
 const debug = require('debug')('squarrels:server');
 const http = require('http');
-const logger = config.logger('www');
 // Get port from environment and store in Express.
 const port = normalizePort(process.env.PORT || '3000');
 
@@ -20,8 +20,9 @@ app.set('port', port);
 /**
  * Create HTTP server & websocket connection.
  */
-let server = http.createServer(app);
+const server = http.createServer(app);
 // global.wss = new WebSocket.Server({ path: '/squarrels', port: 1337, server });
+
 require('../websocket')(server, sessionParser, sessionStore);
 
 /**
@@ -36,7 +37,7 @@ server.on('listening', onListening);
  */
 
 function normalizePort(val) {
-	var port = parseInt(val, 10);
+	const port = parseInt(val, 10);
 
 	if (isNaN(port)) {
 		// named pipe
@@ -60,7 +61,7 @@ function onError(error) {
 		throw error;
 	}
 
-	let bind = (typeof port === 'string' ? 'Pipe ' : 'Port ') + port;
+	const bind = (typeof port === 'string' ? 'Pipe ' : 'Port ') + port;
 
 	// handle specific listen errors with friendly messages
 	switch (error.code) {

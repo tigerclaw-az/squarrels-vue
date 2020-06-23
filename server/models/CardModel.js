@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const config = require('../config/config');
 
-var Schema = mongoose.Schema,
+const Schema = mongoose.Schema,
 	CardSchema = new Schema(
 		{
 			name: {

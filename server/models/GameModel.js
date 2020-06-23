@@ -1,37 +1,38 @@
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
+const mongoose = require('mongoose');
+
+const	Schema = mongoose.Schema,
 	Deck = require('./DeckModel'),
 	Player = require('./PlayerModel'),
 	GameSchema = new Schema({
 		actionCard: {
 			type: Schema.Types.ObjectId,
 			ref: 'Card',
-			default: null
+			default: null,
 		},
 		roundNumber: {
 			type: Number,
-			default: 1
+			default: 1,
 		},
 		playerIds: {
 			type: [Schema.Types.ObjectId],
-			ref: Player.model
+			ref: Player.model,
 		},
 		deckIds: {
 			type: [Schema.Types.ObjectId],
-			ref: Deck.model
+			ref: Deck.model,
 		},
 		isStarted: {
 			type: Boolean,
-			default: false
+			default: false,
 		}
 	}, {
 		collection: 'games',
 		timestamps: true,
 		toObject: {
-			virtuals: true
+			virtuals: true,
 		},
 		toJSON: {
-			virtuals: true
+			virtuals: true,
 		}
 	});
 
