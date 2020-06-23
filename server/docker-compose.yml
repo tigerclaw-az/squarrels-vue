@@ -6,7 +6,6 @@ services:
       - "squarrels:172.18.0.3"
     environment:
       WAIT_HOSTS: mongo:27017
-    restart: always
     build: .
     ports:
       - "3000:3000"
