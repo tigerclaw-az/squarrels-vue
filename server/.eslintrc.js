@@ -6,11 +6,10 @@ module.exports = {
 		node: true,
 	},
 	extends: ['eslint:recommended'],
-	plugins: ['babel'],
+	// plugins: ['babel'],
 	parserOptions: {
 		ecmaVersion: 8,
 		parser: 'babel-eslint',
-		sourceType: 'module',
 	},
 	globals: {
 		browser: true,
@@ -20,6 +19,7 @@ module.exports = {
 		'block-scoped-var': 2,
 		'class-methods-use-this': [2],
 		'comma-dangle': [2, 'always-multiline'],
+		'no-console': true,
 		'no-debugger': process.env.NODE_ENV !== 'production' ? 0 : 2,
 		'no-dupe-args': 2,
 		'no-dupe-keys': 2,
