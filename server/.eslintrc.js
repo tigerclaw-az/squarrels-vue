@@ -6,20 +6,17 @@ module.exports = {
 		node: true,
 	},
 	extends: ['eslint:recommended'],
-	// plugins: ['babel'],
+	plugins: ['babel'],
 	parserOptions: {
 		ecmaVersion: 8,
 		parser: 'babel-eslint',
-	},
-	globals: {
-		browser: true,
 	},
 	// See https://eslint.org/docs/rules/#possible-errors for rules enabled with eslint:recommended
 	rules: {
 		'block-scoped-var': 2,
 		'class-methods-use-this': [2],
 		'comma-dangle': [2, 'always-multiline'],
-		'no-console': true,
+		'no-console': 0,
 		'no-debugger': process.env.NODE_ENV !== 'production' ? 0 : 2,
 		'no-dupe-args': 2,
 		'no-dupe-keys': 2,
@@ -122,7 +119,7 @@ module.exports = {
 		'vars-on-top': 2,
 		'wrap-iife': [2, 'inside'],
 		yoda: [2, 'never', { exceptRange: true }],
-		strict: [2, 'global'],
+		strict: [0, 'global'],
 		'init-declarations': 0,
 		'no-catch-shadow': 2,
 		'no-delete-var': 2,
