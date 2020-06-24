@@ -5,6 +5,8 @@ const express = require('express');
 const logger = config.logger();
 const path = require('path');
 const session = require('express-session');
+// const mongoose = require('./config/mongoose');
+const mongoose = require('mongoose');
 const MongodbSession = require('connect-mongodb-session')(session);
 
 const app = express();
@@ -20,8 +22,8 @@ app.set('trust proxy', 1);
 app.use(bodyParser.json({ limit: '75mb' }));
 app.use(bodyParser.urlencoded({ limit: '75mb', extended: true }));
 
-app.use(express.static(path.join(__dirname, '../client/public')));
-app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(path.join(__dirname, './public')));
+// app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // -----------
 // CORS
@@ -67,14 +69,20 @@ const sessionParser = session({
 
 app.use(sessionParser);
 
-require('./config/mongoose')()
+// const mongooseSeed = require('mongoose-seed-db');
+const MongooseSeed = require('./lib/MongooseSeed');
+const mongooseSeed = new MongooseSeed({
+	Promise: require('q').Promise,
+	logger,
+});
+
+mongooseSeed.connect(`mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/squarrels`)
 	.then(function() {
-		const mongooseSeed = require('mongoose-seed-db'),
-			populateOpts = { populateExisting: false };
+		const populateOpts = { populateExisting: false };
 
 		logger.info('mongodb connection successful');
 
-		mongooseSeed.loadModels(path.join(__dirname, '/models/seeds'));
+		mongooseSeed.loadModels(path.join(__dirname, '/models'));
 		mongooseSeed
 			.populate(path.join(__dirname, '/config/seeds'), populateOpts)
 			.catch(err => {

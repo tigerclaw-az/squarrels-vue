@@ -1,12 +1,13 @@
 module.exports = function(server, sessionParser) {
 	const _ = require('lodash');
-	const config = require('./config/config');
+	const config = require('../config/config');
 	const logger = config.logger('websocket');
-	const gameMod = require('./routes/modules/game');
-	const playerMod = require('./routes/modules/player');
+	const mongoose = require('mongoose');
+	const gameMod = require('../routes/modules/game');
+	const playerMod = require('../routes/modules/player');
 	const Q = require('q');
 	const WebSocket = require('ws');
-	const Player = require('./models/PlayerModel').model;
+	const PlayerModel = mongoose.model('Player');
 
 	// Create new WebSocket server instance
 	const wss = new WebSocket.Server({
@@ -260,7 +261,7 @@ module.exports = function(server, sessionParser) {
 					break;
 
 				case 'getMyCards':
-					Player.find(query)
+					PlayerModel.find(query)
 						.select('+sessionId +cardsInHand')
 						.exec()
 						.then(list => {
