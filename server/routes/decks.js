@@ -1,8 +1,9 @@
-var config = require('../config/config'),
-	logger = config.logger('routes:decks'),
-	decks = require('express').Router();
+var config = require('../config/config');
+const logger = config.logger('routes:decks');
 
-const DeckModel = require('../models/DeckModel').model;
+const decks = require('express').Router();
+
+const DeckModel = require('../models/DeckModel');
 
 decks.get('/:id', function(req, res) {
 	const ids = req.params.id.split(',');

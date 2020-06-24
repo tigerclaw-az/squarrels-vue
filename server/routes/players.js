@@ -5,7 +5,7 @@ const validator = require('validator');
 const players = express.Router();
 const playerMod = require('./modules/player');
 
-const Player = require('../models/PlayerModel').model;
+const Player = require('../models/PlayerModel');
 
 players.delete('/:id?', function(req, res) {
 	if (req.params.id) {

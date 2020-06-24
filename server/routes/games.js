@@ -5,9 +5,8 @@ const games = require('express').Router();
 const gameMod = require('./modules/game');
 const playerMod = require('./modules/player');
 
-const DeckModel = require('../models/DeckModel').model;
-const GameModel = require('../models/GameModel').model;
-// const PlayerModel = require('../models/PlayerModel').model;
+const DeckModel = require('../models/DeckModel');
+const GameModel = require('../models/GameModel');
 
 const resetGame = async function (gameData, options) {
 	logger.debug('resetGame:gameData -> ', gameData);
@@ -248,8 +247,8 @@ games.post('/:id/reset', function(req, res) {
 games.get('/:id/deal', function(req, res) {
 	const gameId = req.params.id;
 	const sessionId = req.sessionID;
-	const CardModel = require('../models/CardModel').model;
-	const DeckModel = require('../models/DeckModel').model;
+	const CardModel = require('../models/CardModel');
+	const DeckModel = require('../models/DeckModel');
 
 	logger.debug('deal -> ', req.body);
 

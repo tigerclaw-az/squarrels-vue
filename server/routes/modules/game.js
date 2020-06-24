@@ -1,5 +1,5 @@
 var Q = require('q'),
-	Game = require('../../models/GameModel.js').model;
+	Game = require('../../models/GameModel.js');
 
 let gameMod = {
 	update: (id, data, sid) => {

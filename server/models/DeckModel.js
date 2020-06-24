@@ -1,32 +1,4 @@
 const mongoose = require('mongoose');
+const DeckSchema = require('../config/schemas/DeckSchema');
 
-const	Schema = mongoose.Schema,
-	DeckSchema = new Schema(
-		{
-			deckType: {
-				type: String,
-				required: true,
-			},
-			cards: [
-				{
-					type: Schema.Types.ObjectId,
-					ref: 'Card',
-				},
-			],
-		},
-		{
-			collection: 'decks',
-			timestamps: true,
-			toObject: {
-				virtuals: true,
-			},
-			toJSON: {
-				virtuals: true,
-			},
-		}
-	);
-
-module.exports = {
-	schema: DeckSchema,
-	model: mongoose.model('Deck', DeckSchema),
-};
+module.exports = mongoose.model('Deck', DeckSchema);

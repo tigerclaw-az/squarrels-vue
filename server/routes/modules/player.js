@@ -2,7 +2,7 @@ const _ = require('lodash');
 const config = require('../../config/config');
 const logger = config.logger('routes:modules:player');
 const Q = require('q');
-const Player = require('../../models/PlayerModel.js').model;
+const Player = require('../../models/PlayerModel.js');
 
 const initPlayer = {
 	'$set': { cardsInHand: [], cardsInStorage: [] },
