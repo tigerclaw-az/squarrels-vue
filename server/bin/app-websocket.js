@@ -1,4 +1,4 @@
-module.exports = function(server, sessionParser) {
+module.exports = function(server) {
 	const _ = require('lodash');
 	const config = require('../config/config');
 	const logger = config.logger('websocket');
@@ -7,21 +7,12 @@ module.exports = function(server, sessionParser) {
 	const playerMod = require('../routes/modules/player');
 	const Q = require('q');
 	const WebSocket = require('ws');
+
 	const PlayerModel = mongoose.model('Player');
 
-	// Create new WebSocket server instance
-	const wss = new WebSocket.Server({
-		verifyClient: function(info, done) {
-			logger.debug('Parsing session from reequest...');
-			sessionParser(info.req, {}, () => {
-				done(info.req.sessionID);
-			});
-		},
-		server,
-	});
-
-	let hoardPlayer = null,
-		CLIENTS = {};
+	const wss = require('../lib/websocketServer')(server);
+	const CLIENTS = {};
+	let hoardPlayer = null;
 
 	const resetActionCard = (id, sid) => {
 		// Remove the 'actionCard' from the game, which will trigger a
@@ -62,7 +53,7 @@ module.exports = function(server, sessionParser) {
 		};
 
 		const onMessage = message => {
-			let data = JSON.parse(message),
+			const data = JSON.parse(message),
 				query = {
 					sessionId: sid,
 				};
@@ -79,7 +70,7 @@ module.exports = function(server, sessionParser) {
 							playerToUpdate = {};
 
 						_.forEach(players, pl => {
-							let card = _.sampleSize(pl.cardsInHand)[0];
+							const card = _.sampleSize(pl.cardsInHand)[0];
 
 							if (!pl.isActive) {
 								logger.debug('card -> ', card);
@@ -161,7 +152,7 @@ module.exports = function(server, sessionParser) {
 				},
 
 				quarrel: () => {
-					let wsObj = {
+					const wsObj = {
 						action: `actioncard_${data.action}`,
 						playerId: data.player || null,
 						namespace: 'wsPlayers',
@@ -176,9 +167,9 @@ module.exports = function(server, sessionParser) {
 
 				whirlwind: () => {
 					playerMod.get({ gameId: data.gameId }).then(players => {
-						let cardIds = [],
-							startPlayer = 0,
-							updatePromises = [];
+						let cardIds = [];
+						let startPlayer = 0;
+						const updatePromises = [];
 
 						const dealCards = () => {
 							const playersOrder = _.union(
@@ -225,7 +216,7 @@ module.exports = function(server, sessionParser) {
 						logger.debug('players -> ', players);
 
 						_.forEach(players, (pl, index) => {
-							let plCards = pl.cardsInHand.slice(); // Copy array
+							const plCards = pl.cardsInHand.slice(); // Copy array
 
 							cardIds = _.union(cardIds, plCards);
 

@@ -35,7 +35,8 @@ let config = {
 		return mylog;
 	},
 
-	playerImage: 'assets/images/squirrel-placeholder.jpg'
+	mongodbUri: `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}`,
+	playerImage: 'assets/images/squirrel-placeholder.jpg',
 };
 
 log.configure({

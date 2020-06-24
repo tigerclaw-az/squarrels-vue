@@ -1,5 +1,5 @@
 require('dotenv').config();
-const config = require('./config/config');
+const config = require('../config/config');
 const logger = config.logger('nodemon');
 const nodemon = require('nodemon');
 
@@ -13,7 +13,5 @@ nodemon({ script: './bin/www' })
 		process.exit(1);
 	})
 	.on('exit', () => {
-		logger.error('script exit');
-		nodemon.emit('quit');
-		process.exit(1);
+		logger.warn('script exit');
 	});

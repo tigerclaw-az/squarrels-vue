@@ -1,42 +1,48 @@
 #!/usr/bin/env node
+
 require('dotenv').config();
 const config = require('../config/config');
 const logger = config.logger('www');
+const path = require('path');
+
+const mongooseSeed = require('../lib/MongooseSeed')({
+	Promise: require('q').Promise,
+	logger,
+});
+
+mongooseSeed
+	.connect(`${config.mongodbUri}/squarrels`)
+	.then(function() {
+		const populateOpts = { populateExisting: false };
+
+		logger.info('mongodb connection successful');
+
+		mongooseSeed.loadModels(path.join(__dirname, '../models'));
+		mongooseSeed
+			.populate(path.join(__dirname, '../config/seeds'), populateOpts)
+			.catch(err => {
+				logger.error(err);
+			});
+	})
+	.catch(function(err) {
+		logger.error('mongodb connection error', err);
+		process.exit(1);
+	});
 
 /**
  * Module dependencies.
  */
-const appServe = require('../app-server');
-const app = appServe.app;
-const sessionParser = appServe.sessionParser;
-const sessionStore = appServe.sessionStore;
+const appServe = require('./app-server');
 const debug = require('debug')('squarrels:server');
 const http = require('http');
-// Get port from environment and store in Express.
-const port = normalizePort(process.env.PORT || '3000');
-
-app.set('port', port);
-
-/**
- * Create HTTP server & websocket connection.
- */
-const server = http.createServer(app);
-// global.wss = new WebSocket.Server({ path: '/squarrels', port: 1337, server });
-
-require('./websocket')(server, sessionParser, sessionStore);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-server.listen(port, process.env.SERVER);
-server.on('error', onError);
-server.on('listening', onListening);
 
 /**
  * Normalize a port into a number, string, or false.
+ *
+ * @param {number|string} val Value to be normalized
+ * @returns {number|string|boolean} Value to be used for the port
  */
-
-function normalizePort(val) {
+const normalizePort = function(val) {
 	const port = parseInt(val, 10);
 
 	if (isNaN(port)) {
@@ -50,7 +56,27 @@ function normalizePort(val) {
 	}
 
 	return false;
-}
+};
+
+// Get port from environment and store in Express.
+const port = normalizePort(process.env.PORT || '3000');
+
+appServe.set('port', port);
+
+/**
+ * Create HTTP server & websocket connection.
+ */
+const server = http.createServer(appServe);
+// global.wss = new WebSocket.Server({ path: '/squarrels', port: 1337, server });
+
+require('./app-websocket')(server);
+
+/*
+ * Listen on provided port, on all network interfaces.
+ */
+server.listen(port, process.env.SERVER);
+server.on('error', onError);
+server.on('listening', onListening);
 
 /**
  * Event listener for HTTP server "error" event.
@@ -66,12 +92,12 @@ function onError(error) {
 	// handle specific listen errors with friendly messages
 	switch (error.code) {
 		case 'EACCES':
-			logger.error(bind + ' requires elevated privileges');
+			logger.error(`${bind} requires elevated privileges`);
 			process.exit(1);
 			break;
 
 		case 'EADDRINUSE':
-			logger.error(bind + ' is already in use');
+			logger.error(`${bind} is already in use`);
 			process.exit(1);
 			break;
 
