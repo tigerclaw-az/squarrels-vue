@@ -1,4 +1,4 @@
-var config = require('../config/config');
+const config = require('../config/config');
 const logger = config.logger('routes:decks');
 
 const decks = require('express').Router();
@@ -7,7 +7,7 @@ const DeckModel = require('../models/DeckModel');
 
 decks.get('/:id', function(req, res) {
 	const ids = req.params.id.split(',');
-	let deckQuery = DeckModel.find()
+	const deckQuery = DeckModel.find()
 		.where('_id')
 		.in(ids);
 

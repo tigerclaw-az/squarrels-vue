@@ -1,6 +1,6 @@
 const express = require('express');
 const config = require('../config/config');
-const logger = config.logger();
+const logger = config.logger('routes:players');
 const validator = require('validator');
 const players = express.Router();
 const playerMod = require('./modules/player');
@@ -37,6 +37,7 @@ players.get('/:id?', function(req, res) {
 	let playerQuery = Player.find();
 
 	logger.debug('sessionId -> ', sessionId);
+	logger.debug('ids -> ', ids);
 
 	if (ids.length) {
 		playerQuery = playerQuery.where('_id').in(ids);
@@ -44,7 +45,9 @@ players.get('/:id?', function(req, res) {
 
 	playerQuery
 		.exec()
-		.then(function(list) {
+		.then(list => {
+			logger.info('list->', list);
+
 			if (list.length === 0) {
 				res.status(204);
 			}
@@ -83,12 +86,12 @@ players.post('/:id?', function(req, res) {
 	const sessionId = req.sessionID;
 	const playerId = req.params.id;
 
-	let validatePlayer = pl => {
+	const validatePlayer = pl => {
 		if (pl.name) {
 			pl.name = validator.stripLow(validator.escape(pl.name));
 
 			if (pl.name.length > 24) {
-				let err = `The name you provided (${
+				const err = `The name you provided (${
 					pl.name
 				}) is longer than 24 chars!`;
 
@@ -109,7 +112,7 @@ players.post('/:id?', function(req, res) {
 	}
 
 	if (playerId) {
-		let plData = validatePlayer(req.body);
+		const plData = validatePlayer(req.body);
 
 		if (typeof plData !== 'object') {
 			res.status(500).json(config.apiError(plData));
@@ -120,7 +123,7 @@ players.post('/:id?', function(req, res) {
 		playerMod
 			.update(playerId, plData, sessionId)
 			.then(doc => {
-				let statusCode = doc ? 200 : 204,
+				const statusCode = doc ? 200 : 204,
 					data = doc ? doc : [];
 
 				res.status(statusCode).json(data);
@@ -133,10 +136,11 @@ players.post('/:id?', function(req, res) {
 		// Add new player, if the player with current session doesn't already exist
 		// prettier-ignore
 		Player
-			.find({ sessionId })
+			.findOne({ sessionId })
 			.exec()
 			.then(list => {
 				logger.info(list);
+
 				if (list.length) {
 					// let err = `Player found with same sessionId: ${sessionId}`;
 					logger.error();
@@ -145,11 +149,11 @@ players.post('/:id?', function(req, res) {
 					return true;
 				}
 
-				let addPlayer = () => {
+				const addPlayer = () => {
 					const playerDefaults = {
 						sessionId,
 						name: config.getRandomStr(8),
-						img: config.playerImage
+						img: config.playerImage,
 					};
 					let pData = Object.assign({}, playerDefaults, req.body);
 
@@ -159,7 +163,7 @@ players.post('/:id?', function(req, res) {
 						return false;
 					}
 
-					let playerModel = new Player(pData);
+					const playerModel = new Player(pData);
 
 					playerModel
 						.save()
@@ -182,7 +186,9 @@ players.post('/:id?', function(req, res) {
 						});
 				};
 
-				addPlayer();
+				if (!addPlayer()) {
+					throw new Error('Error validating player');
+				}
 			})
 			.catch(err => {
 				logger.error(err);

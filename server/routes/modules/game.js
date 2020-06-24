@@ -1,9 +1,9 @@
-var Q = require('q'),
-	Game = require('../../models/GameModel.js');
+const Q = require('q');
+const Game = require('../../models/GameModel.js');
 
-let gameMod = {
+const gameMod = {
 	update: (id, data, sid) => {
-		let gameId = { _id: id },
+		const gameId = { _id: id },
 			options = { new: true },
 			defer = Q.defer();
 

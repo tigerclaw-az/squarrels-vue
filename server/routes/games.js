@@ -5,12 +5,13 @@ const games = require('express').Router();
 const gameMod = require('./modules/game');
 const playerMod = require('./modules/player');
 
+const CardModel = require('../models/CardModel');
 const DeckModel = require('../models/DeckModel');
 const GameModel = require('../models/GameModel');
 
-const resetGame = async function (gameData, options) {
+const resetGame = async function(gameData, options) {
 	logger.debug('resetGame:gameData -> ', gameData);
-	logger.debug('resetGame:options -> ', options);
+	logger.debug('resetGame:option -> ', options);
 
 	const init = {
 		actionCard: null,
@@ -18,7 +19,7 @@ const resetGame = async function (gameData, options) {
 		isLoaded: false,
 		isStarted: false,
 		roundNumber: 1,
-		'$set': { deckIds: [] },
+		$set: { deckIds: [] },
 	};
 
 	const gameId = gameData.id;
@@ -86,7 +87,7 @@ const resetGame = async function (gameData, options) {
 };
 
 games.delete('/:id', function(req, res) {
-	let id = req.params.id,
+	const id = req.params.id,
 		sessionId = req.sessionID;
 
 	logger.debug('games:delete -> ', id);
@@ -119,7 +120,7 @@ games.delete('/:id', function(req, res) {
 			// prettier-ignore
 			GameModel
 				.remove({ _id: game.id })
-				.then(function () {
+				.then(function() {
 					/* eslint-disable no-undef */
 					wss.broadcast(
 						{
@@ -133,7 +134,7 @@ games.delete('/:id', function(req, res) {
 
 					res.sendStatus(200);
 				})
-				.catch(function (err) {
+				.catch(function(err) {
 					logger.error(err);
 					res.status(500).json(config.apiError(err));
 				});
@@ -149,7 +150,7 @@ games.delete('/:id', function(req, res) {
 });
 
 games.get('/:id?', function(req, res) {
-	let id = req.params.id || '',
+	const id = req.params.id || '',
 		query = id ? { _id: id } : {};
 
 	// prettier-ignore
@@ -177,7 +178,7 @@ games.get('/:id?', function(req, res) {
 games.post('/', function(req, res) {
 	const sessionId = req.sessionID;
 
-	let game = new GameModel();
+	const game = new GameModel();
 
 	logger.debug('create -> ', req.body);
 
@@ -201,7 +202,7 @@ games.post('/', function(req, res) {
 });
 
 games.post('/:id', function(req, res) {
-	let gameId = req.params.id,
+	const gameId = req.params.id,
 		sessionId = req.sessionID;
 
 	logger.debug('update -> ', req.body);
@@ -209,7 +210,7 @@ games.post('/:id', function(req, res) {
 	gameMod
 		.update(gameId, req.body, sessionId)
 		.then(doc => {
-			let statusCode = doc ? 200 : 204;
+			const statusCode = doc ? 200 : 204;
 
 			res.status(statusCode).json(doc);
 		})
@@ -247,8 +248,6 @@ games.post('/:id/reset', function(req, res) {
 games.get('/:id/deal', function(req, res) {
 	const gameId = req.params.id;
 	const sessionId = req.sessionID;
-	const CardModel = require('../models/CardModel');
-	const DeckModel = require('../models/DeckModel');
 
 	logger.debug('deal -> ', req.body);
 
@@ -257,7 +256,7 @@ games.get('/:id/deal', function(req, res) {
 		.find({})
 		.exec()
 		.then(cards => {
-			let deckPromises = [];
+			const deckPromises = [];
 
 			const decks = [
 				new DeckModel({
@@ -280,14 +279,14 @@ games.get('/:id/deal', function(req, res) {
 			// prettier-ignore
 			Promise.all(deckPromises)
 				.then(decksCreated => {
-					let gameData = {
-						deckIds: _.map(decksCreated, deck => deck.id)
+					const gameData = {
+						deckIds: _.map(decksCreated, deck => deck.id),
 					};
 
 					gameMod
 						.update(gameId, gameData, sessionId)
 						.then(doc => {
-							let statusCode = doc ? 200 : 204;
+							const statusCode = doc ? 200 : 204;
 
 							/* eslint-disable no-undef */
 							wss.broadcast(
@@ -325,7 +324,7 @@ games.get('/:id/start', function(req, res) {
 	gameMod
 		.update(gameId, gameData, sessionId)
 		.then(doc => {
-			let statusCode = doc ? 200 : 204;
+			const statusCode = doc ? 200 : 204;
 
 			/* eslint-disable no-undef */
 			wss.broadcast(

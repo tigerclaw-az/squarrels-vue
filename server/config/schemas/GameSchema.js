@@ -22,7 +22,7 @@ module.exports = new Schema({
 	isStarted: {
 		type: Boolean,
 		default: false,
-	}
+	},
 }, {
 	collection: 'games',
 	timestamps: true,
@@ -31,5 +31,5 @@ module.exports = new Schema({
 	},
 	toJSON: {
 		virtuals: true,
-	}
+	},
 });

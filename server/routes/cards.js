@@ -7,11 +7,12 @@ const CardModel = require('../models/CardModel');
 
 cards.get('/:id', function(req, res) {
 	const ids = req.params.id.split(',');
-	let promises = [];
+	const promises = [];
 
-	for (let id of ids) {
+	for (const id of ids) {
 		promises.push(new Promise(resolve => {
-			CardModel.findById(id).exec().then(card => resolve(card));
+			CardModel.findById(id).exec()
+				.then(card => resolve(card));
 		}));
 	}
 

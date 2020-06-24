@@ -5,14 +5,14 @@ const Q = require('q');
 const Player = require('../../models/PlayerModel.js');
 
 const initPlayer = {
-	'$set': { cardsInHand: [], cardsInStorage: [] },
+	$set: { cardsInHand: [], cardsInStorage: [] },
 	hasDrawnCard: false,
 	hasStoredCards: false,
 	isActive: false,
 	totalCards: 0,
 };
 
-let playerMod = {
+const playerMod = {
 	get: (data = {}) => {
 		// prettier-ignore
 		return Player
@@ -33,7 +33,7 @@ let playerMod = {
 		return playerMod.update(id, newGameData, sid);
 	},
 	update: (id, data, sid) => {
-		let playerId = { _id: id },
+		const playerId = { _id: id },
 			options = { new: true },
 			cardsDefer = Q.defer(),
 			defer = Q.defer();
@@ -75,7 +75,7 @@ let playerMod = {
 				Player
 					.findOneAndUpdate(playerId, data, options)
 					.then(doc => {
-						let wsData = {
+						const wsData = {
 							namespace: 'wsPlayers',
 							action: 'update',
 							nuts: doc,

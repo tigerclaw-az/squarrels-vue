@@ -1,7 +1,18 @@
-var _ = require('lodash'),
-	log = require('log4js');
+const _ = require('lodash');
+const log = require('log4js');
 
-let config = {
+log.configure({
+	appenders: {
+		console: { type: 'console' },
+	},
+	categories: {
+		"default": { appenders: ['console'], level: process.env.LOGLEVEL },
+		"websocket": { appenders: ['console'], level: 'DEBUG' },
+		'routes:decks': { appenders: ['console'], level: 'WARN' },
+	},
+});
+
+const config = {
 	/* eslint quotes: "off" */
 	apiError: function(err) {
 		if (!err) {
@@ -9,7 +20,7 @@ let config = {
 		}
 
 		return {
-			error: err
+			error: err,
 		};
 	},
 
@@ -18,15 +29,16 @@ let config = {
 	},
 
 	getRandomStr(num) {
-		var self = this;
+		const self = this;
 
 		return _.times(num, function() {
 			return String.fromCharCode(self.getRandom(96, 122));
-		}).join('').replace(/`/g, ' ');
+		}).join('')
+			.replace(/`/g, ' ');
 	},
 
 	logger(name, options) {
-		let mylog = log.getLogger(name || 'app');
+		const mylog = log.getLogger(name || 'app');
 
 		if (options) {
 			return log.connectLogger(mylog, options);
@@ -38,16 +50,5 @@ let config = {
 	mongodbUri: `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}`,
 	playerImage: 'assets/images/squirrel-placeholder.jpg',
 };
-
-log.configure({
-	appenders: {
-		console: { type: 'console' }
-	},
-	categories: {
-		default: { appenders: ['console'], level: process.env.LOGLEVEL },
-		websocket: { appenders: ['console'], level: 'WARN' },
-		'routes:decks': { appenders: ['console'], level: 'WARN' },
-	}
-});
 
 module.exports = config;
