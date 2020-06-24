@@ -3,14 +3,9 @@ const config = require('../config/config');
 const cors = require('cors');
 const express = require('express');
 const logger = config.logger();
-const path = require('path');
 const appSession = require('../lib/app-session');
 
 const app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
 
 app.set('trust proxy', 1);
 
@@ -18,8 +13,6 @@ app.set('trust proxy', 1);
 
 app.use(bodyParser.json({ limit: '75mb' }));
 app.use(bodyParser.urlencoded({ limit: '75mb', extended: true }));
-
-app.use(express.static(path.join(__dirname, './public')));
 
 // -----------
 // CORS
@@ -44,7 +37,6 @@ const routes = {
 	players: require('../routes/players'),
 };
 
-// app.use('/api/', routes);
 app.use('/api/cards', routes.cards);
 app.use('/api/decks', routes.decks);
 app.use('/api/games', routes.games);

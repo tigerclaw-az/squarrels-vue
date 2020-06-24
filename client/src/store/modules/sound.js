@@ -14,7 +14,7 @@ const SOUND_EFFECTS = {
 const audio = {};
 
 for (const effect in SOUND_EFFECTS) {
-	audio[effect] = new Audio(SOUNDS_PATH + SOUND_EFFECTS[effect]);
+	audio[effect] = new Audio(`${SOUNDS_PATH}${SOUND_EFFECTS[effect]}`);
 }
 
 const state = {

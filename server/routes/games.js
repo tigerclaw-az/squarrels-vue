@@ -283,10 +283,14 @@ games.get('/:id/deal', function(req, res) {
 						deckIds: _.map(decksCreated, deck => deck.id),
 					};
 
+					this.info('gameData -> ', gameData);
+
 					gameMod
 						.update(gameId, gameData, sessionId)
 						.then(doc => {
 							const statusCode = doc ? 200 : 204;
+
+							this.info('gameMod:update -> ', doc);
 
 							/* eslint-disable no-undef */
 							wss.broadcast(

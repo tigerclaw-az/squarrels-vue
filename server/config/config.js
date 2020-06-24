@@ -7,7 +7,7 @@ log.configure({
 	},
 	categories: {
 		"default": { appenders: ['console'], level: process.env.LOGLEVEL },
-		"websocket": { appenders: ['console'], level: 'DEBUG' },
+		"websocket": { appenders: ['console'], level: 'INFO' },
 		'routes:decks': { appenders: ['console'], level: 'WARN' },
 	},
 });

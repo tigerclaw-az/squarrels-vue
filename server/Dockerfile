@@ -9,12 +9,11 @@ WORKDIR /app
 RUN npm install
 
 COPY .env nodemon.json ./
-COPY bin/ bin/
+COPY bin/* bin/
 COPY config/ config/
 COPY lib/ lib/
 COPY models/ models/
 COPY routes/ routes/
-COPY views/ views/
 COPY public/ public/
 
 EXPOSE 3000
