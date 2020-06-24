@@ -146,8 +146,8 @@ const actions = {
 
 		return new Promise(resolve => {
 			api.decks.update(mainDeck.id, { cards: cardsFromDeck.ids }).then(() => {
-					resolve(cardDrawn);
-				});
+				resolve(cardDrawn);
+			});
 		});
 	},
 
@@ -186,7 +186,7 @@ const actions = {
 	},
 
 	// eslint-disable-next-line
-	remove({}, deckIds) {
+	remove({ }, deckIds) {
 		return api.decks.delete(deckIds.join(','));
 	},
 
@@ -197,7 +197,7 @@ const actions = {
 	},
 
 	// eslint-disable-next-line
-	updateById({}, payload) {
+	updateById({ }, payload) {
 		if (!payload.id) {
 			throw new Error('Missing required "id" property.');
 		}
