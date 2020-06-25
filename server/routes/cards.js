@@ -18,7 +18,7 @@ cards.get('/:id', function(req, res) {
 
 	Promise.all(promises)
 		.then(function(list) {
-			logger.info('cardDetails -> ', list);
+			logger.debug('cardDetails -> ', list);
 
 			if (list.length === 0) {
 				res.status(204);

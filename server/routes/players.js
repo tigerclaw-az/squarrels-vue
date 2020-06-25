@@ -46,7 +46,7 @@ players.get('/:id?', function(req, res) {
 	playerQuery
 		.exec()
 		.then(list => {
-			logger.info('list->', list);
+			logger.debug('player -> ', list);
 
 			if (list.length === 0) {
 				res.status(204);
