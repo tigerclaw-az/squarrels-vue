@@ -98,9 +98,9 @@ export default {
 		},
 	},
 	mounted: function() {
-		if (this.cardData) {
+		if (!isEmpty(this.cardData)) {
 			this.details = this.cardData;
-		} else if (this.id && !this.cardData) {
+		} else if (this.id) {
 			api.cards
 				.get(this.id)
 				.then(res => {
