@@ -16,8 +16,8 @@ COPY models/ models/
 COPY routes/ routes/
 COPY public/ public/
 
-EXPOSE 3000
+ENV PORT 3100
 EXPOSE 3100
 
 RUN ls -la
-CMD /wait && npm run start
+CMD /wait && node bin/server.js
