@@ -11,6 +11,9 @@ module.exports = {
 		ecmaVersion: 8,
 		parser: 'babel-eslint',
 	},
+	global: {
+		wss: true,
+	},
 	// See https://eslint.org/docs/rules/#possible-errors for rules enabled with eslint:recommended
 	rules: {
 		'block-scoped-var': 2,
