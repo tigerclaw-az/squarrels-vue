@@ -7,10 +7,6 @@ const appSession = require('../lib/app-session');
 
 const app = express();
 
-app.set('trust proxy', 1);
-
-// app.use(log4js.connectLogger(log4js.getLogger('http'), { level: 'auto' }));
-
 app.use(bodyParser.json({ limit: '75mb' }));
 app.use(bodyParser.urlencoded({ limit: '75mb', extended: true }));
 
@@ -56,7 +52,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
 	app.use(function(err, req, res) {
-		logger.log('Server is listening on port ' + app.get('port'));
+		logger.info(`Server is listening on port ${app.get('port')}`);
 
 		res.status(err.status || 500);
 		res.render('error', {
