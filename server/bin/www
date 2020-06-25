@@ -11,18 +11,20 @@ const mongooseSeed = require('../lib/MongooseSeed')({
 });
 
 mongooseSeed
-	.connect(`${config.mongodbUri}/squarrels`)
-	.then(function() {
+	.connect(`${config.mongodbUri}/squarrels`, { useNewUrlParser: true })
+	.then(async () => {
 		const populateOpts = { populateExisting: false };
 
-		logger.info('mongodb connection successful');
-
 		mongooseSeed.loadModels(path.join(__dirname, '../models'));
-		mongooseSeed
-			.populate(path.join(__dirname, '../config/seeds'), populateOpts)
-			.catch(err => {
-				logger.error(err);
-			});
+		if (process.env.CLEAR_MODELS === true) {
+			await mongooseSeed.clearAll();
+		}
+
+		try {
+			await mongooseSeed.populate(path.join(__dirname, '../config/seeds'), populateOpts);
+		} catch(err) {
+			logger.error(err);
+		}
 	})
 	.catch(function(err) {
 		logger.error('mongodb connection error', err);
@@ -33,7 +35,6 @@ mongooseSeed
  * Module dependencies.
  */
 const appServe = require('./app-server');
-const debug = require('debug')('squarrels:server');
 const http = require('http');
 
 /**
@@ -59,15 +60,20 @@ const normalizePort = function(val) {
 };
 
 // Get port from environment and store in Express.
-const port = normalizePort(process.env.PORT || '3000');
-
+const port = normalizePort(process.env.PORT || '4200');
+appServe.set('trust proxy', 1);
 appServe.set('port', port);
 
 /**
  * Create HTTP server & websocket connection.
  */
 const server = http.createServer(appServe);
-// global.wss = new WebSocket.Server({ path: '/squarrels', port: 1337, server });
+server.on('close', (res) => {
+	logger.warn(`Connection closed - ${res}`);
+});
+server.on('connect', onConnect);
+server.on('error', onError);
+server.on('listening', onListening);
 
 require('./app-websocket')(server);
 
@@ -75,13 +81,12 @@ require('./app-websocket')(server);
  * Listen on provided port, on all network interfaces.
  */
 server.listen(port, process.env.SERVER);
-server.on('error', onError);
-server.on('listening', onListening);
 
-/**
- * Event listener for HTTP server "error" event.
- */
+function onConnect() {
+	logger.info(`Connected to ${process.env.SERVER}:${port}!`);
+}
 
+// Event listener for HTTP server "error" event.
 function onError(error) {
 	if (error.syscall !== 'listen') {
 		throw error;
@@ -114,5 +119,5 @@ function onListening() {
 	const addr = server.address();
 	const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
 
-	debug('Listening on ' + bind);
+	logger.info(`Listening on ${bind}`);
 }
