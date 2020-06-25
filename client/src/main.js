@@ -13,10 +13,10 @@ import VueLogger from 'vuejs-logger';
 // import Storage from 'vue-web-storage';
 import localForage from 'localforage';
 import VueWS from 'vue-native-websocket';
-import App from './App.vue';
+import App from '@/App.vue';
 
-import router from './router';
-import store from './store/index';
+import router from '@/routes';
+import store from '@/store/index';
 
 import {
 	toast as toastConfig,

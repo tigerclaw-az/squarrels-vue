@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import router from '@/router';
+import router from '@/routes';
 
 import { concat, groupBy, keys, map, max, union, without } from 'lodash';
 
@@ -343,7 +343,7 @@ const actions = {
 
 		return api.games
 			.updatePlayers(state.id, updatedPlayerIds)
-			.then(async() => {
+			.then(async() => { // eslint-disable-line
 				await dispatch(
 					'players/updateGame',
 					{

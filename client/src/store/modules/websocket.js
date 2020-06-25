@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import router from '@/router';
+import router from '@/routes';
 
 import wsDecks from '@/store/modules/websocket/wsDecks';
 import wsGame from '@/store/modules/websocket/wsGame';
