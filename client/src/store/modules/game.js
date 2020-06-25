@@ -368,7 +368,7 @@ const actions = {
 
 const mutations = {
 	LOADED(state) {
-		Vue.set(state, 'isLoaded', true);
+		state.isLoaded = true;
 	},
 
 	INIT(state) {
@@ -395,7 +395,11 @@ const mutations = {
 		if (payload) {
 			for (const prop in payload) {
 				if (state.hasOwnProperty(prop)) {
-					Vue.set(state, prop, payload[prop]);
+					if (Array.isArray(state[prop])) {
+						state[prop] = [...payload[prop]];
+					} else {
+						Vue.set(state, prop, payload[prop]);
+					}
 
 					if (prop === 'playerIds' && prevPlayerCount > 0) {
 						const newPlayerCount = payload[prop].length;

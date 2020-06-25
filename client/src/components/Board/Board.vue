@@ -11,7 +11,7 @@
 					</div>
 				</b-col>
 				<b-col cols="8" lg="9">
-					<div v-if="isGameStarted && decksLoaded" class="container_decks">
+					<div v-if="isGameStarted" class="container_decks">
 						<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
 					</div>
 				</b-col>
@@ -78,15 +78,6 @@ export default {
 		},
 		opponents: function() {
 			return filter(this.playersInGame, pl => pl.id !== this.currentPlayer.id);
-		},
-	},
-	watch: {
-		isGameStarted: function(from, to) {
-			if (to === false) {
-				this.decksLoaded = false;
-			} else {
-				this.decksLoaded = true;
-			}
 		},
 	},
 	mounted: function() {
