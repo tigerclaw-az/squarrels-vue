@@ -6,8 +6,9 @@ const read = require('fs-readdir-recursive');
 
 class MongooseSeed {
 	constructor(opts = {}) {
+		mongoose.set('debug', opts.debug || process.env.DEBUG_MONGO || false);
+		mongoose.set('useUnifiedTopology', true);
 		mongoose.Promise = opts.Promise || global.Promise;
-		mongoose.set('debug', process.env.DEBUG_MONGO || false);
 		this.logger = opts.logger || null;
 	}
 
@@ -15,7 +16,7 @@ class MongooseSeed {
 		return new Promise((resolve, reject) => {
 			mongoose.connect(db, options).then(() => {
 				if (this.logger) {
-					this.logger.info(`Connected to: ${db}`);
+					this.logger.info(`mongodb connected: ${db}`);
 				}
 
 				resolve();
@@ -69,7 +70,7 @@ class MongooseSeed {
 			for (const collection of this.data) {
 				const Model = mongoose.model(collection.model);
 
-				const documents = await Model.count({});
+				const documents = await Model.countDocuments({});
 
 				if (options.populateExisting || (!options.populateExisting && !documents)) {
 					if (this.logger) {
