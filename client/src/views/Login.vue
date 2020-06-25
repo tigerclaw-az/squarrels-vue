@@ -50,11 +50,6 @@ export default {
 			showModal: true,
 		};
 	},
-	mounted: function() {
-		this.$nextTick(() => {
-			this.$usernameInput = this.$refs.username;
-		});
-	},
 	methods: {
 		createPlayer: function() {
 			this.$log.debug(this.pName);
@@ -73,7 +68,8 @@ export default {
 				});
 		},
 		focusUsername: function() {
-			this.$usernameInput.focus();
+			// this.$usernameInput.focus();
+			this.$refs.username.focus();
 		},
 	},
 };
