@@ -12,12 +12,10 @@ const gameMod = {
 			.findByIdAndUpdate(gameId, data, options)
 			.populate('actionCard')
 			.then(doc => {
-				/* eslint-disable no-undef */
 				wss.broadcast(
 					{ namespace: 'wsGame', action: 'update', nuts: doc },
 					sid
 				);
-				/* eslint-disable no-undef */
 
 				defer.resolve(doc);
 			})

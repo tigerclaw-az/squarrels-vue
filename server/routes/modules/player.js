@@ -81,9 +81,7 @@ const playerMod = {
 							nuts: doc,
 						};
 
-						/* eslint-disable no-undef */
 						wss.broadcast(wsData, sid);
-						/* eslint-enable no-undef */
 
 						defer.resolve(doc);
 					})

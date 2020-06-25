@@ -105,7 +105,6 @@ games.delete('/:id', function(req, res) {
 
 			_.forEach(playerIds, id => {
 				playerMod.reset(id).then(doc => {
-					/* eslint-disable no-undef */
 					wss.broadcast(
 						{
 							namespace: 'wsPlayers',
@@ -121,7 +120,6 @@ games.delete('/:id', function(req, res) {
 			GameModel
 				.remove({ _id: game.id })
 				.then(function() {
-					/* eslint-disable no-undef */
 					wss.broadcast(
 						{
 							namespace: 'wsGame',
@@ -130,7 +128,6 @@ games.delete('/:id', function(req, res) {
 						},
 						sessionId
 					);
-					/* eslint-enable no-undef */
 
 					res.sendStatus(200);
 				})
@@ -186,12 +183,10 @@ games.post('/', function(req, res) {
 	GameModel
 		.create(game)
 		.then(gameDoc => {
-			/* eslint-disable no-undef */
 			wss.broadcast(
 				{ namespace: 'wsGame', action: 'create', nuts: gameDoc },
 				sessionId,
 			);
-			/* eslint-enable no-undef */
 
 			res.status(201).json(game);
 		})
@@ -292,7 +287,6 @@ games.get('/:id/deal', function(req, res) {
 
 							logger.debug('gameMod:update -> ', doc);
 
-							/* eslint-disable no-undef */
 							wss.broadcast(
 								{
 									namespace: 'wsGame',
@@ -301,7 +295,6 @@ games.get('/:id/deal', function(req, res) {
 								},
 								sessionId,
 							);
-							/* eslint-enable no-undef */
 
 							res.status(statusCode).json(doc);
 						})
@@ -330,7 +323,6 @@ games.get('/:id/start', function(req, res) {
 		.then(doc => {
 			const statusCode = doc ? 200 : 204;
 
-			/* eslint-disable no-undef */
 			wss.broadcast(
 				{
 					namespace: 'wsGame',
@@ -339,7 +331,6 @@ games.get('/:id/start', function(req, res) {
 				},
 				sessionId
 			);
-			/* eslint-enable no-undef */
 
 			res.status(statusCode).json(doc);
 		})

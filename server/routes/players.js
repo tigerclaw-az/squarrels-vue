@@ -170,13 +170,11 @@ players.post('/:id?', function(req, res) {
 						.then(() => {
 							logger.debug('Player.save()', playerModel);
 
-							/* eslint-disable no-undef */
 							wss.broadcast(
 								{ namespace: 'wsPlayers', action: 'create', nuts: playerModel },
 								req.session.id,
 								false
 							);
-							/* eslint-enable no-undef */
 
 							return Promise.resolve(playerModel);
 						})
