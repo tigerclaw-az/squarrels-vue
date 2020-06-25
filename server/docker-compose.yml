@@ -1,6 +1,6 @@
 version: "3.8"
 services:
-  squarrels:
+  api:
     container_name: squarrels_api
     extra_hosts:
       - ${SERVER}:172.18.0.3
@@ -8,8 +8,7 @@ services:
       WAIT_HOSTS: $MONGODB_HOST:${MONGODB_PORT}
     build: .
     ports:
-      - "3000:3000"
-      - "3100:3100"
+      - "${PORT}:${PORT}"
     depends_on:
       - mongo
     volumes:
