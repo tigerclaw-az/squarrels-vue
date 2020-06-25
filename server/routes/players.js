@@ -141,10 +141,10 @@ players.post('/:id?', function(req, res) {
 			.then(list => {
 				logger.info(list);
 
-				if (list.length) {
+				if (list) {
 					// let err = `Player found with same sessionId: ${sessionId}`;
 					logger.error();
-					res.status(200).json(list[0]);
+					res.status(200).json(list);
 
 					return true;
 				}
@@ -160,12 +160,12 @@ players.post('/:id?', function(req, res) {
 					pData = validatePlayer(pData);
 
 					if (!pData) {
-						return false;
+						return Promise.reject('Player data could not be validated!');
 					}
 
 					const playerModel = new Player(pData);
 
-					playerModel
+					return playerModel
 						.save()
 						.then(() => {
 							logger.debug('Player.save()', playerModel);
@@ -178,17 +178,21 @@ players.post('/:id?', function(req, res) {
 							);
 							/* eslint-enable no-undef */
 
-							res.status(201).json(playerModel);
+							return Promise.resolve(playerModel);
 						})
 						.catch(err => {
-							logger.error(err);
-							res.status(500).json(config.apiError(err));
+							Promise.reject(err);
 						});
 				};
 
-				if (!addPlayer()) {
-					throw new Error('Error validating player');
-				}
+				addPlayer()
+					.then(player => {
+						res.status(201).json(player);
+					})
+					.catch(err => {
+						logger.error(err);
+						res.status(500).json(config.apiError(err));
+					})
 			})
 			.catch(err => {
 				logger.error(err);
