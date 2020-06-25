@@ -68,7 +68,6 @@ export default {
 				});
 		},
 		focusUsername: function() {
-			// this.$usernameInput.focus();
 			this.$refs.username.focus();
 		},
 	},
