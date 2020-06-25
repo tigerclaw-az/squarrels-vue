@@ -95,7 +95,7 @@ export default {
 		hasCards: function() {
 			const cards = this.myCards;
 
-			return cards && cards.length;
+			return cards && cards.length ? true : false;
 		},
 		isActivePlayer: function() {
 			return this.player.isActive;
@@ -327,7 +327,7 @@ $card-width: (
 			&.selected,
 			&:hover {
 				.card {
-					transform: translateY(-15%);
+					transform: translateY(-15%) scale(2);
 				}
 			}
 		}

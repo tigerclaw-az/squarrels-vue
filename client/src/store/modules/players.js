@@ -532,6 +532,8 @@ const actions = {
 
 const mutations = {
 	DRAW_CARD(state, payload) {
+		const myCards = state[payload.id].cardsDrawnIds;
+
 		this._vm.$log.debug('players/DRAW_CARD', payload, state);
 
 		if (!state[payload.id].hasOwnProperty('cardsDrawnCount')) {
@@ -542,8 +544,10 @@ const mutations = {
 			Vue.set(state[payload.id], 'cardsDrawnIds', []);
 		}
 
-		state[payload.id].cardsDrawnIds.push(payload.cardDrawnId);
+		myCards.push(payload.cardDrawnId);
 		state[payload.id].cardsDrawnCount += 1;
+
+		state[payload.id].cardsDrawnIds = [...myCards];
 
 		this._vm.$log.debug(
 			'cardsDrawn',
@@ -554,14 +558,17 @@ const mutations = {
 
 	UPDATE(state, payload) {
 		const playerId = payload.id;
+		const ids = state.ids;
 
 		this._vm.$log.debug('mutation::players/UPDATE', state, payload);
 
 		if (isString(playerId)) {
 			if (!state[playerId]) {
 				Vue.set(state, playerId, {});
-				state.ids.push(playerId);
+				ids.push(playerId);
 			}
+
+			state.ids = [...ids];
 
 			for (const prop in payload) {
 				Vue.set(state[playerId], prop, payload[prop]);
@@ -573,7 +580,7 @@ const mutations = {
 		const id = payload.id;
 		const cards = payload.cardsInHand;
 
-		Vue.set(state[id], 'cardsInHand', cards);
+		Vue.set(state[id], 'cardsInHand', [...cards]);
 	},
 };
 
