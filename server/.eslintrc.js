@@ -2,7 +2,6 @@ module.exports = {
 	env: {
 		amd: true,
 		browser: true,
-		es6: true,
 		node: true,
 	},
 	extends: ['eslint:recommended'],
@@ -13,6 +12,7 @@ module.exports = {
 		sourceType: 'module',
 	},
 	globals: {
+		Promise: true,
 		wss: true,
 	},
 	// See https://eslint.org/docs/rules/#possible-errors for rules enabled with eslint:recommended
