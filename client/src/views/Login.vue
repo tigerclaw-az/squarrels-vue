@@ -1,22 +1,16 @@
 <template>
-	<b-modal
-		id="login"
-		v-model="showModal"
-		centered
-		hide-footer
-		lazy
-		size="lg"
-		title="Login"
-		@shown="focusUsername"
-	>
-		<b-container fluid>
-			<b-form inline @submit.prevent="createPlayer">
-				<b-form-group
-					id="playerForm"
-					label="Username"
-					label-for="sq-username"
-					label-sr-only
-				>
+	<b-container fluid>
+		<b-row>
+			<div
+				v-if="!isConnected"
+				v-cloak
+				class="alert alert-danger error"
+				role="alert"
+			>
+				Taking a nap. Be back later.
+			</div>
+			<b-form v-else inline @submit.prevent="createPlayer">
+				<b-form-group id="playerForm" label="Username" label-for="sq-username" label-sr-only>
 					<b-input-group size="lg">
 						<b-form-input
 							ref="username"
@@ -27,21 +21,32 @@
 							name="sq-username"
 							placeholder="username"
 							type="text"
-						>
-						</b-form-input>
+						></b-form-input>
 						<b-input-group-append>
-							<b-btn type="submit" variant="primary">
-								Login
-							</b-btn>
+							<b-btn type="submit" variant="primary">Login</b-btn>
 						</b-input-group-append>
 					</b-input-group>
 				</b-form-group>
 			</b-form>
-		</b-container>
-	</b-modal>
+		</b-row>
+	</b-container>
+
+	<!-- <b-modal
+		id="login"
+		v-model="showModal"
+		centered
+		hide-footer
+		lazy
+		size="lg"
+		title="Login"
+		@shown="focusUsername"
+	>
+	</b-modal>-->
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+
 export default {
 	name: 'login',
 	data: function() {
@@ -49,6 +54,11 @@ export default {
 			pName: '',
 			showModal: true,
 		};
+	},
+	computed: {
+		...mapGetters({
+			isConnected: 'isConnected',
+		}),
 	},
 	methods: {
 		createPlayer: function() {
