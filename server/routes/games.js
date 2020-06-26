@@ -147,8 +147,8 @@ games.delete('/:id', function(req, res) {
 });
 
 games.get('/:id?', function(req, res) {
-	const id = req.params.id || '',
-		query = id ? { _id: id } : {};
+	const id = req.params.id || '';
+	const query = id ? { _id: id } : {};
 
 	// prettier-ignore
 	GameModel

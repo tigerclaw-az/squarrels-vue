@@ -11,7 +11,9 @@ cards.get('/:id', function(req, res) {
 
 	for (const id of ids) {
 		promises.push(new Promise(resolve => {
-			CardModel.findById(id).exec()
+			CardModel
+				.findById(id)
+				.exec()
 				.then(card => resolve(card));
 		}));
 	}
