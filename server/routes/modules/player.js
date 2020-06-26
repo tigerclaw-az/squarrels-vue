@@ -2,7 +2,6 @@ const _ = require('lodash');
 const config = require('../../config/config');
 const logger = config.logger('routes:modules:player');
 const Q = require('q');
-const Player = require('../../models/PlayerModel.js');
 
 const initPlayer = {
 	$set: { cardsInHand: [], cardsInStorage: [] },
@@ -12,18 +11,24 @@ const initPlayer = {
 	totalCards: 0,
 };
 
-module.exports = {
-	get: (data = {}) => {
-		// prettier-ignore
-		return Player
+class Player {
+	constructor() {
+		this.playerModel = require('../../models/PlayerModel.js');
+	}
+
+	// prettier-ignore
+	getState(data = {}) {
+		return this.playerModel
 			.find(data)
 			.select('+cardsInHand')
 			.exec();
-	},
-	newRound: (id, sid) => {
+	}
+
+	newRound(id, sid) {
 		return this.update(id, initPlayer, sid);
-	},
-	reset: (id, sid) => {
+	}
+
+	reset(id, sid) {
 		const newGameData = Object.assign({}, initPlayer, {
 			score: 0,
 		});
@@ -31,19 +36,20 @@ module.exports = {
 		logger.debug('newGameData -> ', newGameData);
 
 		return this.update(id, newGameData, sid);
-	},
-	update: (id, data, sid) => {
-		const playerId = { _id: id },
-			options = { new: true },
-			cardsDefer = Q.defer(),
-			defer = Q.defer();
+	}
+
+	update(id, data, sid) {
+		const playerId = { _id: id };
+		const options = { new: true };
+		const cardsDefer = Q.defer();
+		const defer = Q.defer();
 
 		if (data.cardsInHand) {
 			if (data.addCards) {
 				// Get existing cards from player and merge them with the given cards
 				// prettier-ignore
 				this
-					.get(playerId)
+					.getState(playerId)
 					.then(pl => {
 						logger.debug('pl -> ', pl);
 						cardsDefer.resolve(
@@ -72,7 +78,7 @@ module.exports = {
 				}
 
 				// prettier-ignore
-				Player
+				this.playerModel
 					.findOneAndUpdate(playerId, data, options)
 					.then(doc => {
 						const wsData = {
@@ -95,5 +101,7 @@ module.exports = {
 			});
 
 		return defer.promise;
-	},
-};
+	}
+}
+
+module.exports = new Player();
