@@ -536,11 +536,11 @@ const mutations = {
 
 		this._vm.$log.debug('players/DRAW_CARD', payload, state);
 
-		if (!state[payload.id].hasOwnProperty('cardsDrawnCount')) {
+		if (!Object.prototype.hasOwnProperty.call(state[payload.id], 'cardsDrawnCount')) {
 			Vue.set(state[payload.id], 'cardsDrawnCount', 0);
 		}
 
-		if (!state[payload.id].hasOwnProperty('cardsDrawnIds')) {
+		if (!Object.prototype.hasOwnProperty.call(state[payload.id], 'cardsDrawnIds')) {
 			Vue.set(state[payload.id], 'cardsDrawnIds', []);
 		}
 

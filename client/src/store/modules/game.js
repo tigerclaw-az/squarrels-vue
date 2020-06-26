@@ -120,7 +120,7 @@ const actions = {
 					id: playerId,
 					gameId,
 				},
-				{ root: true }
+				{ root: true },
 			);
 
 			return Promise.resolve(gameData);
@@ -210,7 +210,7 @@ const actions = {
 						id: winner,
 						cards,
 					},
-					{ root: true }
+					{ root: true },
 				);
 
 				// Wait some time after winner has been set before resetting
@@ -259,7 +259,7 @@ const actions = {
 			await dispatch(
 				'decks/addCard',
 				{ type: 'discard', cardId: state.actionCard.id },
-				{ root: true }
+				{ root: true },
 			);
 
 			return await api.games.actionCard(state.id, null);
@@ -296,7 +296,7 @@ const actions = {
 							'decks/dealCards',
 							playerId,
 							{ root: true },
-						)
+						),
 					);
 				}
 
@@ -350,7 +350,7 @@ const actions = {
 						id: rootState.localPlayer.id,
 						gameId: null,
 					},
-					{ root: true }
+					{ root: true },
 				);
 
 				commit('INIT');
@@ -394,7 +394,7 @@ const mutations = {
 
 		if (payload) {
 			for (const prop in payload) {
-				if (state.hasOwnProperty(prop)) {
+				if (Object.prototype.hasOwnProperty.call(state, prop)) {
 					if (Array.isArray(state[prop])) {
 						state[prop] = [...payload[prop]];
 					} else {

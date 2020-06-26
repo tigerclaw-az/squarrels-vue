@@ -72,7 +72,7 @@ export default {
 						this.$store.dispatch(
 							'players/actionCard',
 							{ name: cardName, gameId: this.gameId },
-							{ root: true }
+							{ root: true },
 						);
 
 						this.$store.dispatch('decks/addCard', {

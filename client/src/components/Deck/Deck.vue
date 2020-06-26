@@ -26,7 +26,7 @@ export default {
 		deckComponent: function() {
 			if (this.deck) {
 				const name = `${this.deck.deckType[0].toUpperCase()}${this.deck.deckType.slice(
-					1
+					1,
 				)}`;
 
 				return () => import(`./Deck${name}.vue`);

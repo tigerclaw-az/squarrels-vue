@@ -234,7 +234,7 @@ export default {
 			if (this.myPlayer.isActive) {
 				if (card.cardType === 'special' && this.myPlayer.totalCards > 1) {
 					this.$toasted.error(
-						'You cannot discard this card unless it is your ONLY card.'
+						'You cannot discard this card unless it is your ONLY card.',
 					);
 
 					return false;

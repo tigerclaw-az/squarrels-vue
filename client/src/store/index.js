@@ -23,42 +23,39 @@ const actions = {
 		});
 	},
 
-	checkLogin({ commit, state }) {
-		return new Promise(async(resolve, reject) => {
-			const player = await Vue.$storage.getItem('player');
-			const localPlayer = state.localPlayer;
+	async checkLogin({ commit, state }) {
+		const player = await Vue.$storage.getItem('player');
+		const localPlayer = state.localPlayer;
 
-			this._vm.$log.debug('checkLogin', player, localPlayer);
+		this._vm.$log.debug('checkLogin', player, localPlayer);
 
-			if (player) {
-				if (localPlayer.id) {
-					commit('LOGIN', player);
-					resolve(localPlayer);
-				} else {
-					api.players
-						.get(player.id)
-						.then(async res => {
-							if (res.status !== 200) {
-								await Vue.$storage.removeItem('player');
-								reject('USER NOT FOUND');
+		if (!player) {
+			throw new Error('User not logged in');
+		}
 
-								return false;
-							}
+		if (localPlayer.id) {
+			commit('LOGIN', player);
 
-							const pl = res.data[0];
+			return localPlayer;
+		}
 
-							commit('LOGIN', pl);
-							resolve(pl);
-						})
-						.catch(err => {
-							this._vm.$toasted.error(err);
-							reject('Unable to find player', err);
-						});
-				}
-			} else {
-				reject('User not logged in');
+		try {
+			const res = await api.players.get(player.id);
+
+			if (res.status !== 200) {
+				await Vue.$storage.removeItem('player');
+				throw new Error('USER NOT FOUND');
 			}
-		});
+
+			const pl = res.data[0];
+
+			commit('LOGIN', pl);
+
+			return pl;
+		} catch (err) {
+			this._vm.$toasted.error(err);
+			throw new Error('Unable to find player', err);
+		}
 	},
 };
 

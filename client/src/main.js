@@ -37,7 +37,7 @@ Vue.use(VueLogger, loggerConfig);
 Vue.use(
 	VueWS,
 	`ws://${process.env.VUE_APP_SERVER}`,
-	Object.assign({}, wsConfig, { store })
+	Object.assign({}, wsConfig, { store }),
 );
 
 const storageConfig = Object.freeze({

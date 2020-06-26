@@ -69,7 +69,7 @@ const actions = {
 					'decks/dealCards.subscribe',
 					mutation,
 					state.players[playerId].cardsDrawnCount,
-					state
+					state,
 				);
 
 				if (mutation.type === 'players/DRAW_CARD') {
@@ -148,7 +148,7 @@ const actions = {
 					id: options.playerId,
 					cardDrawnId: cardDrawn.id,
 				},
-				{ root: true }
+				{ root: true },
 			);
 
 			return Promise.resolve(cardDrawn);
