@@ -4,11 +4,11 @@ module.exports = function(server) {
 	const logger = config.logger('websocket');
 	const mongoose = require('mongoose');
 	const gameMod = require('../routes/modules/game');
-	const playerMod = require('../routes/modules/player');
+	const player = require('../routes/modules/player');
 	const Q = require('q');
 	const WebSocket = require('ws');
 
-	const PlayerModel = mongoose.model('Player');
+	const playerModel = mongoose.model('Player');
 
 	const wss = require('../lib/websocketServer')(server);
 	const CLIENTS = {};
@@ -84,7 +84,7 @@ module.exports = function(server) {
 										cardsInHand: pl.cardsInHand,
 									};
 
-									playerMod
+									player
 										.update(pl.id, plData, sid)
 										.then(() => {})
 										.catch(() => {});
@@ -103,13 +103,13 @@ module.exports = function(server) {
 							cardsInHand: cards,
 						};
 
-						playerMod
+						player
 							.update(playerToUpdate.id, plData, sid)
 							.then(() => {})
 							.catch(() => {});
 					};
 
-					playerMod
+					player
 						.get({ gameId: data.gameId })
 						.then(stealCards)
 						.catch(err => {
@@ -166,7 +166,9 @@ module.exports = function(server) {
 				},
 
 				whirlwind: () => {
-					playerMod.get({ gameId: data.gameId }).then(players => {
+					player
+						.getState({ gameId: data.gameId })
+						.then(players => {
 						let cardIds = [];
 						let startPlayer = 0;
 						const updatePromises = [];
@@ -201,7 +203,7 @@ module.exports = function(server) {
 
 								logger.debug('playerData -> ', playerData);
 
-								playerMod.update(
+									player.update(
 									player.id,
 									playerData,
 									sid
@@ -223,7 +225,7 @@ module.exports = function(server) {
 							// Remove cards from player's hand
 							pl.cardsInHand = [];
 							updatePromises.push(
-								playerMod.update(
+									player.update(
 									pl.id,
 									{ cardsInHand: [] },
 									sid
@@ -252,7 +254,8 @@ module.exports = function(server) {
 					break;
 
 				case 'getMyCards':
-					PlayerModel.find(query)
+					playerModel
+						.find(query)
 						.select('+sessionId +cardsInHand')
 						.exec()
 						.then(list => {
