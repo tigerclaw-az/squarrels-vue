@@ -9,8 +9,8 @@ export default class GamesApi extends BaseApi {
 		return this.update(id, { actionCard: value });
 	}
 
-	dealCards(id) {
-		return this.http.get(`/${id}/deal`);
+	shuffleDecks(id) {
+		return this.http.get(`/${id}/shuffle-decks`);
 	}
 
 	nextRound(id) {

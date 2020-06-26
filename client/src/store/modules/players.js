@@ -217,13 +217,13 @@ const actions = {
 						await dispatch(
 							'decks/updateById',
 							{ id: hoardDeck.id, data: { cards: [] } },
-							{ root: true }
+							{ root: true },
 						);
 
 						dispatch(
 							'game/resetAction',
 							{},
-							{ root: true }
+							{ root: true },
 						);
 					} catch (err) {
 						this._vm.$toasted.error(err);
@@ -371,8 +371,8 @@ const actions = {
 		}
 	},
 
-	resetCardsDrawn({ dispatch }, data) {
-		dispatch('updateLocalPlayer', {
+	async resetCardsDrawn({ dispatch }, data) {
+		await dispatch('updateLocalPlayer', {
 			id: data.id,
 			cardsDrawnCount: 0,
 			cardsDrawnIds: [],
@@ -547,12 +547,12 @@ const mutations = {
 		myCards.push(payload.cardDrawnId);
 		state[payload.id].cardsDrawnCount += 1;
 
-		state[payload.id].cardsDrawnIds = [...myCards];
+		Vue.set(state[payload.id], 'cardsDrawnIds', [...myCards]);
 
 		this._vm.$log.debug(
 			'cardsDrawn',
 			state[payload.id].cardsDrawnIds,
-			state[payload.id].cardsDrawnCount
+			state[payload.id].cardsDrawnCount,
 		);
 	},
 

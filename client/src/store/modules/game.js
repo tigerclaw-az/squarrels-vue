@@ -268,7 +268,7 @@ const actions = {
 		}
 	},
 
-	start({ commit, dispatch, rootGetters, state }) {
+	start({ commit, dispatch, state, rootState }) {
 		const dealPromises = [];
 
 		this._vm.$log.debug('game/start', state);
@@ -276,9 +276,13 @@ const actions = {
 		commit('START_DEAL');
 
 		return api.games
-			.dealCards(state.id, state.playerIds)
+			.shuffleDecks(state.id, state.playerIds)
 			.then(() => {
 				// Load all deck data into the store
+				while (rootState.decks.isLoaded === false) {
+					this._vm.$log.warn('Decks not loaded yet...');
+				}
+
 				return dispatch('decks/load', { ids: state.deckIds }, { root: true });
 			})
 			.then(() => {
@@ -291,7 +295,7 @@ const actions = {
 						dispatch(
 							'decks/dealCards',
 							playerId,
-							{ root: true }
+							{ root: true },
 						)
 					);
 				}
@@ -299,24 +303,20 @@ const actions = {
 				// prettier-ignore
 				Promise.all(dealPromises)
 					.then(() => {
-						const mainDeck = rootGetters['decks/getByType']('main');
-
-						this._vm.$log.debug('dealPromises -> ', mainDeck);
-
-						// After all cards have been dealt, set the starting player
-						api.decks
-							.update(mainDeck.id, { cards: rootGetters['decks/getCardIds'](mainDeck.id) })
+						dispatch('decks/cardsDealt', null, { root: true })
 							.then(() => {
 								// All players and decks have been updated, game can start
 								commit('END_DEAL');
-								api.games.start(state.id);
-								dispatch('players/nextPlayer', null, { root: true });
+								api.games.start(state.id)
+									.then(() => {
+										dispatch('players/nextPlayer', null, { root: true });
+									});
 							});
 					})
 					.catch(err => {
 						this._vm.$log.error(err);
 						this._vm.$toasted.error(
-							`Problem dealing cards: ${err}`
+							`Problem dealing cards: ${err}`,
 						);
 					});
 			})

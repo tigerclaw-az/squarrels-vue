@@ -240,11 +240,9 @@ games.post('/:id/reset', function(req, res) {
 		});
 });
 
-games.get('/:id/deal', function(req, res) {
+games.get('/:id/shuffle-decks', function(req, res) {
 	const gameId = req.params.id;
 	const sessionId = req.sessionID;
-
-	logger.debug('deal -> ', req.body);
 
 	// prettier-ignore
 	CardModel

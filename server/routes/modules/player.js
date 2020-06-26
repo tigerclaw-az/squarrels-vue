@@ -12,7 +12,7 @@ const initPlayer = {
 	totalCards: 0,
 };
 
-const playerMod = {
+module.exports = {
 	get: (data = {}) => {
 		// prettier-ignore
 		return Player
@@ -21,7 +21,7 @@ const playerMod = {
 			.exec();
 	},
 	newRound: (id, sid) => {
-		return playerMod.update(id, initPlayer, sid);
+		return this.update(id, initPlayer, sid);
 	},
 	reset: (id, sid) => {
 		const newGameData = Object.assign({}, initPlayer, {
@@ -30,7 +30,7 @@ const playerMod = {
 
 		logger.debug('newGameData -> ', newGameData);
 
-		return playerMod.update(id, newGameData, sid);
+		return this.update(id, newGameData, sid);
 	},
 	update: (id, data, sid) => {
 		const playerId = { _id: id },
@@ -42,7 +42,7 @@ const playerMod = {
 			if (data.addCards) {
 				// Get existing cards from player and merge them with the given cards
 				// prettier-ignore
-				playerMod
+				this
 					.get(playerId)
 					.then(pl => {
 						logger.debug('pl -> ', pl);
@@ -97,5 +97,3 @@ const playerMod = {
 		return defer.promise;
 	},
 };
-
-module.exports = playerMod;

@@ -40,7 +40,16 @@ const actions = {
 		});
 	},
 
-	dealCards({ dispatch, getters }, playerId) {
+	cardsDealt({ getters }) {
+		const mainDeck = getters.getByType('main');
+
+		this._vm.$log.debug('dealPromises -> ', mainDeck);
+
+		// After all cards have been dealt, set the starting player
+		return api.decks.update(mainDeck.id, { cards: getters.getCardIds(mainDeck.id) });
+	},
+
+	async dealCards({ dispatch, getters }, playerId) {
 		const drawCardOptions = { numOnly: true, isDeal: true, playerId };
 		const mainDeck = getters.getByType('main');
 
@@ -48,7 +57,7 @@ const actions = {
 
 		// Need to reset cardsDrawn* properties so they can be
 		// used again with new deal later
-		dispatch('players/resetCardsDrawn', { id: playerId }, { root: true });
+		await dispatch('players/resetCardsDrawn', { id: playerId }, { root: true });
 
 		dispatch('sound/play', 'cards-shuffle', { root: true });
 
@@ -85,7 +94,8 @@ const actions = {
 				}
 			});
 
-			// Start drawing cards
+			// Trigger initial 'players/DRAW_CARD' mutation, which will trigger the .subscribe() above
+			// and continue drawing cards for given user until they have MAX_CARDS
 			dispatch('drawCard', drawCardOptions)
 				.then(cardId => {
 					this._vm.$log.debug('card drawn -> ', cardId);
@@ -253,13 +263,15 @@ const mutations = {
 			Vue.set(state, deckId, {});
 		}
 
-		Vue.set(state, deckId, payload);
+		for (const prop in payload) {
+			Vue.set(state[deckId], prop, payload[prop]);
+		}
 	},
 
 	UPDATE_CARDS(state, payload) {
 		this._vm.$log.debug('decks/UPDATE_CARDS', payload);
 
-		Vue.set(state[payload.id], 'cards', payload.cards);
+		Vue.set(state[payload.id], 'cards', [...payload.cards]);
 		// Vue.set(state, 'cardsDrawnIds', payload.cardDrawnId);
 	},
 };

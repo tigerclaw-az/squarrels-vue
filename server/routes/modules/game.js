@@ -1,7 +1,9 @@
+const config = require('../../config/config');
+const logger = config.logger();
 const Q = require('q');
 const Game = require('../../models/GameModel.js');
 
-const gameMod = {
+module.exports = {
 	update: (id, data, sid) => {
 		const gameId = { _id: id },
 			options = { new: true },
@@ -27,5 +29,3 @@ const gameMod = {
 		return defer.promise;
 	},
 };
-
-module.exports = gameMod;
