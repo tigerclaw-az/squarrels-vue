@@ -4,6 +4,7 @@ import store from '@/store/index';
 
 import Game from '@/views/Game.vue';
 import Login from '@/views/Login.vue';
+import Offline from '@/views/Offline.vue';
 import Start from '@/views/Start.vue';
 
 Vue.use(VueRouter);
@@ -14,6 +15,11 @@ const router = new VueRouter({
 			path: '/',
 			name: 'start',
 			component: Start,
+		},
+		{
+			path: '/offline',
+			name: 'offline',
+			component: Offline,
 		},
 		{
 			path: '/login',
@@ -31,6 +37,12 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
 	Vue.$log.debug('router.beforeEach', store, to, from);
+
+	Vue.$log.info(router.currentRoute);
+
+	if (to.name === 'offline' || router.currentRoute.name === 'offline') {
+		return next();
+	}
 
 	store
 		.dispatch('checkLogin')

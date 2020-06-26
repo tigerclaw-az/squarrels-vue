@@ -1,15 +1,7 @@
 <template>
 	<b-container fluid>
 		<b-row>
-			<div
-				v-if="!isConnected"
-				v-cloak
-				class="alert alert-danger error"
-				role="alert"
-			>
-				Taking a nap. Be back later.
-			</div>
-			<b-form v-else inline @submit.prevent="createPlayer">
+			<b-form inline @submit.prevent="createPlayer">
 				<b-form-group
 					id="playerForm"
 					label="Username"
@@ -50,8 +42,6 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-
 export default {
 	name: 'login',
 	data: function() {
@@ -60,11 +50,7 @@ export default {
 			showModal: true,
 		};
 	},
-	computed: {
-		...mapGetters({
-			isConnected: 'isConnected',
-		}),
-	},
+
 	methods: {
 		createPlayer: function() {
 			this.$log.debug(this.pName);

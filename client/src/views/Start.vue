@@ -10,15 +10,7 @@
 					Choose a game from the list, or start a "New Game"
 				</p>
 			</div>
-			<div
-				v-if="!isConnected"
-				v-cloak
-				class="alert alert-danger error"
-				role="alert"
-			>
-				Taking a nap. Be back later.
-			</div>
-			<div v-else class="games-list w-75">
+			<div class="games-list w-75">
 				<b-table
 					v-if="hasGames"
 					:bordered="true"
@@ -114,7 +106,6 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			isConnected: 'isConnected',
 			player: 'players/getMyPlayer',
 		}),
 		...mapState('start', [
@@ -125,23 +116,6 @@ export default {
 		]),
 		hasGames: function() {
 			return !isEmpty(this.games);
-		},
-	},
-	watch: {
-		/**
-		 * Watch for the websocket connection and perform necessary functions
-		 * whenever the websocket reconnects
-		 * @param  {Boolean}  newConn Updated value of isConnected
-		 * @param  {Boolean}  oldConn Old value of isConnected
-		 *
-		 * @returns {void}
-		 */
-		isConnected(newConn, oldConn) {
-			this.$log.debug('watch.isConnected', oldConn, newConn);
-
-			if (newConn) {
-				this.loadGames();
-			}
 		},
 	},
 	created: function() {

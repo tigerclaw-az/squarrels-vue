@@ -29,17 +29,18 @@ const mutations = {
 	SOCKET_ONCLOSE(state, event) {
 		Vue.$log.info(state, event);
 
-		if (
-			router.currentRoute.path !== '/' &&
-			router.currentRoute.path !== '/login'
-		) {
-			router.push('/');
+		if (router.currentRoute.path !== '/offline') {
+			router.push('/offline');
 		}
 
 		state.socket.isConnected = false;
 	},
 	SOCKET_ONERROR(state, event) {
 		Vue.$log.error(state, event);
+
+		if (router.currentRoute.path !== '/offline') {
+			router.push('/offline');
+		}
 	},
 	SOCKET_ONMESSAGE(state, message) {
 		Vue.$log.debug(state, message);
@@ -47,7 +48,6 @@ const mutations = {
 	},
 	// mutations for reconnect methods
 	SOCKET_RECONNECT(state, count) {
-		state.socket.isConnected = true;
 		Vue.$log.info(state, count);
 	},
 	// mutations for reconnect methods
