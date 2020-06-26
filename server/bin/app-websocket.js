@@ -169,78 +169,78 @@ module.exports = function(server) {
 					player
 						.getState({ gameId: data.gameId })
 						.then(players => {
-						let cardIds = [];
-						let startPlayer = 0;
-						const updatePromises = [];
+							let cardIds = [];
+							let startPlayer = 0;
+							const updatePromises = [];
 
-						const dealCards = () => {
-							const playersOrder = _.union(
-								players.slice(startPlayer),
-								players.slice(0, startPlayer)
-							);
-
-							logger.debug('cardIds (before) -> ', cardIds);
-
-							cardIds = _(cardIds)
-								.flatten()
-								.shuffle()
-								.value();
-
-							logger.debug('cardIds (after) -> ', cardIds);
-
-							const pIt = playerIt(playersOrder);
-
-							_.forEach(cardIds, cardId => {
-								const player = pIt.next();
-
-								player.cardsInHand.push(cardId);
-							});
-
-							_.forEach(playersOrder, player => {
-								const playerData = {
-									cardsInHand: player.cardsInHand,
-								};
-
-								logger.debug('playerData -> ', playerData);
-
-									player.update(
-									player.id,
-									playerData,
-									sid
+							const dealCards = () => {
+								const playersOrder = _.union(
+									players.slice(startPlayer),
+									players.slice(0, startPlayer)
 								);
+
+								logger.debug('cardIds (before) -> ', cardIds);
+
+								cardIds = _(cardIds)
+									.flatten()
+									.shuffle()
+									.value();
+
+								logger.debug('cardIds (after) -> ', cardIds);
+
+								const pIt = playerIt(playersOrder);
+
+								_.forEach(cardIds, cardId => {
+									const player = pIt.next();
+
+									player.cardsInHand.push(cardId);
+								});
+
+								_.forEach(playersOrder, player => {
+									const playerData = {
+										cardsInHand: player.cardsInHand,
+									};
+
+									logger.debug('playerData -> ', playerData);
+
+									player.update(
+										player.id,
+										playerData,
+										sid
+									);
+								});
+
+								setTimeout(() => {
+									resetActionCard(data.gameId, sid);
+								}, 1500);
+							};
+
+							logger.debug('players -> ', players);
+
+							_.forEach(players, (pl, index) => {
+								const plCards = pl.cardsInHand.slice(); // Copy array
+
+								cardIds = _.union(cardIds, plCards);
+
+								// Remove cards from player's hand
+								pl.cardsInHand = [];
+								updatePromises.push(
+									player.update(
+										pl.id,
+										{ cardsInHand: [] },
+										sid
+									)
+								);
+
+								if (pl.isActive) {
+									startPlayer = index;
+								}
 							});
 
-							setTimeout(() => {
-								resetActionCard(data.gameId, sid);
-							}, 1500);
-						};
-
-						logger.debug('players -> ', players);
-
-						_.forEach(players, (pl, index) => {
-							const plCards = pl.cardsInHand.slice(); // Copy array
-
-							cardIds = _.union(cardIds, plCards);
-
-							// Remove cards from player's hand
-							pl.cardsInHand = [];
-							updatePromises.push(
-									player.update(
-									pl.id,
-									{ cardsInHand: [] },
-									sid
-								)
-							);
-
-							if (pl.isActive) {
-								startPlayer = index;
-							}
+							Q.all(updatePromises).then(() => {
+								setTimeout(dealCards, 1500);
+							});
 						});
-
-						Q.all(updatePromises).then(() => {
-							setTimeout(dealCards, 1500);
-						});
-					});
 				},
 			};
 
@@ -257,6 +257,10 @@ module.exports = function(server) {
 					playerModel
 						.find(query)
 						.select('+sessionId +cardsInHand')
+						.populate({
+							path: 'cardsInHand',
+							model: 'Card',
+						})
 						.exec()
 						.then(list => {
 							if (list[0]) {

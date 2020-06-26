@@ -252,7 +252,7 @@ const actions = {
 		this._vm.$log.debug(state, payload);
 
 		const playerId = getters.getMyPlayer.id;
-		const cardIds = state[playerId].cardsInHand;
+		const cardIds = state[playerId].cardsInHand.map(card => card._id);
 		const cardsInHand = difference(cardIds, [payload.card.id]);
 
 		// dispatch('updateLocalPlayer', {
@@ -261,6 +261,8 @@ const actions = {
 		// 	quarrel: false,
 		// 	message: null,
 		// });
+
+		this._vm.$log.debug(cardsInHand);
 
 		return dispatch('update', {
 			id: playerId,
@@ -314,10 +316,17 @@ const actions = {
 
 	nextPlayer({ dispatch, getters }) {
 		const activePlayer = getters.getByProp('isActive', true);
-		const activePlayerIndex = activePlayer ? state.ids.indexOf(activePlayer.id) : -1;
+		const activePlayerIndex = activePlayer
+			? state.ids.indexOf(activePlayer.id)
+			: -1;
 		const nextPlayerId = getters.getNextPlayer(activePlayerIndex);
 
-		this._vm.$log.debug('nextPlayer()', activePlayer, activePlayerIndex, nextPlayerId);
+		this._vm.$log.debug(
+			'nextPlayer()',
+			activePlayer,
+			activePlayerIndex,
+			nextPlayerId,
+		);
 
 		if (activePlayerIndex !== -1) {
 			dispatch('update', {
@@ -536,11 +545,18 @@ const mutations = {
 
 		this._vm.$log.debug('players/DRAW_CARD', payload, state);
 
-		if (!Object.prototype.hasOwnProperty.call(state[payload.id], 'cardsDrawnCount')) {
+		if (
+			!Object.prototype.hasOwnProperty.call(
+				state[payload.id],
+				'cardsDrawnCount',
+			)
+		) {
 			Vue.set(state[payload.id], 'cardsDrawnCount', 0);
 		}
 
-		if (!Object.prototype.hasOwnProperty.call(state[payload.id], 'cardsDrawnIds')) {
+		if (
+			!Object.prototype.hasOwnProperty.call(state[payload.id], 'cardsDrawnIds')
+		) {
 			Vue.set(state[payload.id], 'cardsDrawnIds', []);
 		}
 

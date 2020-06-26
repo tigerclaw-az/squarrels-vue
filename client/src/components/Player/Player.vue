@@ -25,13 +25,15 @@
 					name="cards"
 				>
 					<Card
-						v-for="(card, index) in myCardsSorted"
+						v-for="(card, index) in myCards"
 						:id="card.id"
 						:key="card.id"
 						:on-click="onClickCard"
 						:card-data="card"
 						:card-style="cardStyle(index)"
-						:matches="card.cardType === 'special' ? [] : findCardMatches(card.amount)"
+						:matches="
+							card.cardType === 'special' ? [] : findCardMatches(card.amount)
+						"
 						card-type="hand"
 					/>
 				</transition-group>
@@ -57,9 +59,8 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
 
-import { difference, filter, groupBy, sampleSize } from 'lodash';
+import { filter, groupBy, sampleSize } from 'lodash';
 
-import api from '@/api/index';
 import Card from '@/components/Card/Card.vue';
 import PlayerQuarrel from '@/components/Player/PlayerQuarrel.vue';
 import PlayerStorage from '@/components/Player/PlayerStorage.vue';
@@ -81,7 +82,7 @@ export default {
 	},
 	data: function() {
 		return {
-			myCardsDetails: [],
+			// myCardsDetails: [],
 		};
 	},
 	computed: {
@@ -109,10 +110,10 @@ export default {
 		myCards: function() {
 			return this.myPlayer.cardsInHand;
 		},
-		myCardsSorted: function() {
-			// return sortBy(this.myCardsDetails, ['amount']);
-			return this.myCardsDetails;
-		},
+		// myCardsSorted: function() {
+		// 	// return sortBy(this.myCardsDetails, ['amount']);
+		// 	return this.myCardsDetails;
+		// },
 	},
 	watch: {
 		isMyTurn: function(to, from) {
@@ -123,26 +124,26 @@ export default {
 				this.$store.dispatch('sound/play', 'active-player');
 			}
 		},
-		myCards: function(newCards, oldCards) {
-			const diff1 = difference(newCards, oldCards);
-			const diff2 = difference(oldCards, newCards);
+		// myCards: function(newCards, oldCards) {
+		// 	const diff1 = difference(newCards, oldCards);
+		// 	const diff2 = difference(oldCards, newCards);
 
-			if (!this.myCards.length) {
-				this.myCardsDetails = [];
+		// 	if (!this.myCards.length) {
+		// 		this.myCardsDetails = [];
 
-				return;
-			} else if (!diff1.length && !diff2.length) {
-				return;
-			}
+		// 		return;
+		// 	} else if (!diff1.length && !diff2.length) {
+		// 		return;
+		// 	}
 
-			this.getCardDetails();
-		},
+		// 	this.getCardDetails();
+		// },
 	},
-	beforeMount: function() {
-		if (this.myCards && this.myCards.length) {
-			this.getCardDetails();
-		}
-	},
+	// beforeMount: function() {
+	// 	if (this.myCards && this.myCards.length) {
+	// 		this.getCardDetails();
+	// 	}
+	// },
 	methods: {
 		cardStyle: function(index) {
 			const cardsCount = this.isCurrentPlayer
@@ -183,7 +184,7 @@ export default {
 				});
 		},
 		findCardMatches: function(amount) {
-			const groups = groupBy(this.myCardsDetails, c => c.amount);
+			const groups = groupBy(this.myCards, c => c.amount);
 
 			if (groups[5] && groups[5].length) {
 				groups[5] = filter(groups[5], c => c.cardType !== 'special');
@@ -195,18 +196,18 @@ export default {
 
 			return [];
 		},
-		getCardDetails: function() {
-			api.cards
-				.get(this.myCards.join(','))
-				.then(res => {
-					if (res.status === 200) {
-						this.myCardsDetails = res.data;
-					}
-				})
-				.catch(err => {
-					this.$log.error('myCards->get', err);
-				});
-		},
+		// getCardDetails: function() {
+		// 	api.cards
+		// 		.get(this.myCards.join(','))
+		// 		.then(res => {
+		// 			if (res.status === 200) {
+		// 				this.myCards = res.data;
+		// 			}
+		// 		})
+		// 		.catch(err => {
+		// 			this.$log.error('myCards->get', err);
+		// 		});
+		// },
 		onClickCard: function(card, cardsToStore, evt) {
 			this.$log.debug(card, cardsToStore, evt);
 
