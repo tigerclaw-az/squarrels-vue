@@ -10,8 +10,9 @@ module.exports = {
 	parserOptions: {
 		ecmaVersion: 8,
 		parser: 'babel-eslint',
+		sourceType: 'module',
 	},
-	global: {
+	globals: {
 		wss: true,
 	},
 	// See https://eslint.org/docs/rules/#possible-errors for rules enabled with eslint:recommended
