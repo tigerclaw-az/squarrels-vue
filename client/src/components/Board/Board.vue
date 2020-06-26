@@ -74,7 +74,9 @@ export default {
 			playerIdsInGame: state => state.game.playerIds,
 		}),
 		playersInGame: function() {
-			return filter(this.allPlayers, pl => includes(this.playerIdsInGame, pl.id));
+			return filter(this.allPlayers, pl =>
+				includes(this.playerIdsInGame, pl.id),
+			);
 		},
 		opponents: function() {
 			return filter(this.playersInGame, pl => pl.id !== this.currentPlayer.id);

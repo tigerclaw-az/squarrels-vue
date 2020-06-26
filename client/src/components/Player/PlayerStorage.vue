@@ -30,7 +30,10 @@ export default {
 	},
 	methods: {
 		onClickStorage: function() {
-			this.$root.$emit('bv::show::modal', `player-storage-modal-${this.player.id}`);
+			this.$root.$emit(
+				'bv::show::modal',
+				`player-storage-modal-${this.player.id}`,
+			);
 		},
 	},
 };

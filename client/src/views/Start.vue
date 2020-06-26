@@ -10,7 +10,12 @@
 					Choose a game from the list, or start a "New Game"
 				</p>
 			</div>
-			<div v-if="!isConnected" v-cloak class="alert alert-danger error" role="alert">
+			<div
+				v-if="!isConnected"
+				v-cloak
+				class="alert alert-danger error"
+				role="alert"
+			>
 				Taking a nap. Be back later.
 			</div>
 			<div v-else class="games-list w-75">
@@ -112,7 +117,12 @@ export default {
 			isConnected: 'isConnected',
 			player: 'players/getMyPlayer',
 		}),
-		...mapState('start', ['games', 'waitCreateGame', 'waitDeleteGame', 'waitLoadGames']),
+		...mapState('start', [
+			'games',
+			'waitCreateGame',
+			'waitDeleteGame',
+			'waitLoadGames',
+		]),
 		hasGames: function() {
 			return !isEmpty(this.games);
 		},

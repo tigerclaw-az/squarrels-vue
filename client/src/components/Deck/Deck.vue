@@ -2,7 +2,11 @@
 	<div v-if="deck" :type="deck.deckType" class="deck-container">
 		<span class="deck-label">{{ deck.deckType }}</span>
 		<keep-alive>
-			<component :is="deckComponent" :cards="deck.cards" :num-cards="totalCards" />
+			<component
+				:is="deckComponent"
+				:cards="deck.cards"
+				:num-cards="totalCards"
+			/>
 		</keep-alive>
 	</div>
 </template>

@@ -39,7 +39,9 @@ export default {
 			decksLoaded: state => state.decks.isLoaded,
 		}),
 		isInstant: function() {
-			return this.isActivePlayer || this.instantAction || this.card.name === 'winter';
+			return (
+				this.isActivePlayer || this.instantAction || this.card.name === 'winter'
+			);
 		},
 	},
 	watch: {
@@ -115,7 +117,9 @@ export default {
 			};
 
 			this.$nextTick(() => {
-				this.$el.querySelector('.card').addEventListener('animationend', onAnimationEnd);
+				this.$el
+					.querySelector('.card')
+					.addEventListener('animationend', onAnimationEnd);
 			});
 
 			if (!hoardCards.length) {

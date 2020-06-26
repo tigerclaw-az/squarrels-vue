@@ -8,7 +8,11 @@
 		class="sq-player-quarrel"
 	>
 		<div class="btn-card card blank-- disabled" role="button" disabled></div>
-		<Card v-if="showQuarrel" :card-data="quarrelCard(player.id)" card-type="quarrel" />
+		<Card
+			v-if="showQuarrel"
+			:card-data="quarrelCard(player.id)"
+			card-type="quarrel"
+		/>
 	</div>
 </template>
 

@@ -46,7 +46,9 @@ const actions = {
 		this._vm.$log.debug('dealPromises -> ', mainDeck);
 
 		// After all cards have been dealt, set the starting player
-		return api.decks.update(mainDeck.id, { cards: getters.getCardIds(mainDeck.id) });
+		return api.decks.update(mainDeck.id, {
+			cards: getters.getCardIds(mainDeck.id),
+		});
 	},
 
 	async dealCards({ dispatch, getters }, playerId) {

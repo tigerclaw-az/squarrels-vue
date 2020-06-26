@@ -21,7 +21,11 @@
 				:style="cardDrawnStyle(numCards)"
 				class="card-drawn"
 			>
-				<div class="btn-card card blank-- disabled" role="button" disabled></div>
+				<div
+					class="btn-card card blank-- disabled"
+					role="button"
+					disabled
+				></div>
 				<Card
 					v-if="cardDrawn"
 					:id="cardDrawn.id"
@@ -102,7 +106,10 @@ export default {
 	created: function() {
 		this.$nextTick(() => {
 			this.$cardDrawnEl = this.$el.querySelector('.card-drawn');
-			this.$cardDrawnEl.addEventListener('animationend', this.onCardDrawnAnimationEnd);
+			this.$cardDrawnEl.addEventListener(
+				'animationend',
+				this.onCardDrawnAnimationEnd,
+			);
 		});
 	},
 	methods: {

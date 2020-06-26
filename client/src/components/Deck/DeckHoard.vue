@@ -13,7 +13,11 @@
 			@click.prevent="onClick"
 		>
 			<transition-group tag="div" class="transition" name="cards-hoard">
-				<div v-for="card in numCards" :key="card" class="btn-card card blank--"></div>
+				<div
+					v-for="card in numCards"
+					:key="card"
+					class="btn-card card blank--"
+				></div>
 			</transition-group>
 		</div>
 	</div>

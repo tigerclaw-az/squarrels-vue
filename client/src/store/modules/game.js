@@ -31,7 +31,11 @@ const state = Object.assign({}, initialState);
 
 const getters = {
 	getQuarrelCardByPlayer: state => playerId => {
-		Vue.$log.debug('quarrelCardByPlayer->', state.quarrelCards.current, playerId);
+		Vue.$log.debug(
+			'quarrelCardByPlayer->',
+			state.quarrelCards.current,
+			playerId,
+		);
 
 		const quarrelObj = find(state.quarrelCards.current, obj => {
 			return obj.playerId === playerId;
@@ -220,7 +224,11 @@ const actions = {
 						quarrelCards: { current: [], saved: [] },
 					});
 
-					dispatch('players/resetQuarrelWinner', { id: winner }, { root: true });
+					dispatch(
+						'players/resetQuarrelWinner',
+						{ id: winner },
+						{ root: true },
+					);
 
 					dispatch('resetAction');
 				}, 1000);

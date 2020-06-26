@@ -80,7 +80,10 @@ export default {
 			return this.matches.length;
 		},
 		isActivePlayer: function() {
-			const activePlayer = this.$store.getters['players/getByProp']('isActive', true);
+			const activePlayer = this.$store.getters['players/getByProp'](
+				'isActive',
+				true,
+			);
 
 			return activePlayer && activePlayer.id === this.myPlayer.id;
 		},

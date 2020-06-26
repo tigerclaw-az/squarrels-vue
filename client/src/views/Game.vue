@@ -6,14 +6,22 @@
 		<GameResults v-if="isWinter" :game-id="id" :player-ids="playerIds">
 			<template slot="newGame">
 				<div class="container-button">
-					<b-button class="btn btn-new-game" variant="primary" @click="onClickNewGame">
+					<b-button
+						class="btn btn-new-game"
+						variant="primary"
+						@click="onClickNewGame"
+					>
 						NEXT ROUND
 					</b-button>
 				</div>
 			</template>
 		</GameResults>
 		<div v-if="!isStarted" class="game-overlay">
-			<div v-cloak v-if="!isLoading && !isWinter" class="game-overlay--start-game">
+			<div
+				v-cloak
+				v-if="!isLoading && !isWinter"
+				class="game-overlay--start-game"
+			>
 				<div v-if="needPlayers" class="waiting-message">
 					Waiting for other players to join...
 				</div>

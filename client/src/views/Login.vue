@@ -10,7 +10,12 @@
 				Taking a nap. Be back later.
 			</div>
 			<b-form v-else inline @submit.prevent="createPlayer">
-				<b-form-group id="playerForm" label="Username" label-for="sq-username" label-sr-only>
+				<b-form-group
+					id="playerForm"
+					label="Username"
+					label-for="sq-username"
+					label-sr-only
+				>
 					<b-input-group size="lg">
 						<b-form-input
 							ref="username"
