@@ -10,7 +10,7 @@ nodemon({ script: './bin/www' })
 	.on('crash', err => {
 		logger.error('script crashed', err);
 		nodemon.emit('quit');
-		process.exit(1);
+		// process.exit(1);
 	})
 	.on('exit', () => {
 		logger.warn('script exit');
