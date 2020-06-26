@@ -28,7 +28,14 @@ const mutations = {
 	},
 	SOCKET_ONCLOSE(state, event) {
 		Vue.$log.info(state, event);
-		router.push('/');
+
+		if (
+			router.currentRoute.path !== '/' &&
+			router.currentRoute.path !== '/login'
+		) {
+			router.push('/');
+		}
+
 		state.socket.isConnected = false;
 	},
 	SOCKET_ONERROR(state, event) {

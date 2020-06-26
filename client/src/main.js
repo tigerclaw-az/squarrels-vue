@@ -34,11 +34,10 @@ Vue.use(Toasted, {
 });
 
 Vue.use(VueLogger, loggerConfig);
-Vue.use(
-	VueWS,
-	`ws://${process.env.VUE_APP_SERVER}`,
-	Object.assign({}, wsConfig, { store }),
-);
+Vue.use(VueWS, `ws://${process.env.VUE_APP_SERVER}`, {
+	...wsConfig,
+	store,
+});
 
 const storageConfig = Object.freeze({
 	driver: localForage.INDEXEDDB,

@@ -44,9 +44,7 @@ router.beforeEach((to, from, next) => {
 				next();
 			}
 		})
-		.catch(err => {
-			Vue.$log.warn(err);
-
+		.catch(() => {
 			if (to.path !== '/login') {
 				next('/login');
 			} else {
