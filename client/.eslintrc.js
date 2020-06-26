@@ -24,7 +24,7 @@ module.exports = {
 			{
 				arrays: 'always-multiline',
 				exports: 'always-multiline',
-				functions: 'never',
+				functions: 'always-multiline',
 				imports: 'always-multiline',
 				objects: 'always-multiline',
 			},
@@ -306,7 +306,7 @@ module.exports = {
 			{
 				printWidth: 90,
 				singleQuote: true,
-				trailingComma: 'es5',
+				trailingComma: 'all',
 				tabWidth: 2,
 				useTabs: true,
 				quoteProps: 'consistent',
