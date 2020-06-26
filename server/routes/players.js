@@ -33,7 +33,7 @@ players.delete('/:id?', function(req, res) {
 
 players.get('/:id?', function(req, res) {
 	const sessionId = req.sessionID;
-	const ids = req.params.id.split(',');
+	const ids = req.params.id ? req.params.id.split(',') : [];
 	let playerQuery = Player.find();
 
 	logger.debug('sessionId -> ', sessionId);
@@ -190,7 +190,7 @@ players.post('/:id?', function(req, res) {
 					.catch(err => {
 						logger.error(err);
 						res.status(500).json(config.apiError(err));
-					})
+					});
 			})
 			.catch(err => {
 				logger.error(err);
