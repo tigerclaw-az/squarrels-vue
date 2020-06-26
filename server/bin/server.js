@@ -7,8 +7,8 @@ nodemon({ script: './bin/www' })
 	.on('start', function() {
 		logger.info('nodemon start');
 	})
-	.on('crash', () => {
-		logger.error('script crashed');
+	.on('crash', err => {
+		logger.error('script crashed', err);
 		nodemon.emit('quit');
 		process.exit(1);
 	})
