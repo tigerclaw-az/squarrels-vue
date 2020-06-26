@@ -260,6 +260,7 @@ module.exports = function(server) {
 						.populate({
 							path: 'cardsInHand',
 							model: 'Card',
+							options: { sort: '-amount' },
 						})
 						.exec()
 						.then(list => {
