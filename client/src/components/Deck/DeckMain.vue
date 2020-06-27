@@ -2,30 +2,23 @@
 	<div
 		:class="{
 			'can-draw': canDrawCard && !isCardDrawn,
+			'disabled': isDisabled,
 			'empty': !numCards,
 		}"
 		class="deck"
+		@click="onClick"
 	>
 		<div v-show="!canDrawCard || isCardDrawn" class="overlay">
 			<icon name="ban" scale="7" class="icon" />
 		</div>
-		<div
-			:class="{ disabled: isDisabled }"
-			class="cards-group"
-			role="button"
-			@click.prevent="onClick"
-		>
+		<div class="cards-group">
 			<div
 				v-show="isCardDrawn"
 				:class="{ 'has-card': cardDrawn }"
 				:style="cardDrawnStyle(numCards)"
 				class="card-drawn"
 			>
-				<div
-					class="btn-card card blank-- disabled"
-					role="button"
-					disabled
-				></div>
+				<div class="btn-card card blank--"></div>
 				<Card
 					v-if="cardDrawn"
 					:id="cardDrawn.id"

@@ -1,14 +1,14 @@
 <template>
-	<b-row class="header align-items-center">
-		<b-col class="header-item game-start">
+	<div class="header align-items-center">
+		<span class="header-item game-start">
 			{{ startDate }}
-		</b-col>
-		<b-col class="header-item game-settings">
+		</span>
+		<span class="header-item game-settings">
 			<game-settings></game-settings>
 			<admin-options v-if="isAdmin"></admin-options>
-		</b-col>
-		<b-col class="header-item game-round"> ROUND: {{ roundNumber }} </b-col>
-	</b-row>
+		</span>
+		<span class="header-item game-round"> ROUND: {{ roundNumber }} </span>
+	</div>
 </template>
 
 <script>
@@ -71,7 +71,11 @@ export default {
 
 	background-size: 40px 160px, 60px 29px, 27px 27px;
 	color: $white;
+	display: inline-flex;
 	padding: 0.5rem 1rem;
+	position: absolute;
+	text-align: right;
+	width: auto;
 
 	.header-item {
 		&.game-settings {

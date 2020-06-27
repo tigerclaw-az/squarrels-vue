@@ -29,6 +29,10 @@ $deck-height: 8 !default;
 		text-align: center;
 		width: 100%;
 
+		&:not(.disabled) {
+			cursor: pointer;
+		}
+
 		&.empty::before {
 			content: "X";
 			font-size: rem-calc(map-get($card-width, "small") - 7);
@@ -40,10 +44,6 @@ $deck-height: 8 !default;
 			height: rem-calc($height);
 			justify-content: center;
 			// width: rem-calc(map-get($card-width, "small"));
-
-			&:not(.disabled) {
-				cursor: pointer;
-			}
 
 			// Fixes issue with element created by <transition-group>
 			> .transition {

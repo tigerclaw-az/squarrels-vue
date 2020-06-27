@@ -1,26 +1,15 @@
 <template>
 	<div id="board">
-		<b-container fluid>
-			<BoardHeader></BoardHeader>
-		</b-container>
+		<BoardHeader></BoardHeader>
 		<b-container fluid class="container_board">
-			<b-row class="align-items-center justify-content-center mt-2">
-				<b-col cols="4" lg="3">
-					<div class="container_players">
-						<Player v-for="p in opponents" :key="p.id" :player="p" />
-					</div>
-				</b-col>
-				<b-col cols="8" lg="9">
-					<div class="container_decks">
-						<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
-					</div>
-				</b-col>
-			</b-row>
+			<div class="container_players">
+				<Player v-for="p in playersInGame" :key="p.id" :player="p" />
+			</div>
+			<div class="container_decks">
+				<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
+			</div>
 			<slot name="action"></slot>
 		</b-container>
-		<div class="row_current-player">
-			<Player :player="currentPlayer"></Player>
-		</div>
 	</div>
 </template>
 
@@ -100,35 +89,44 @@ export default {
 	object-fit: contain;
 	object-position: center;
 	overflow: hidden;
-	padding: 0.5rem;
 	position: relative;
 }
 
 .container_board {
+	align-content: center;
+	display: flex;
+	height: 100%;
+	justify-content: center;
 	position: relative;
 }
 
 .container_players {
+	align-items: flex-start;
 	display: flex;
-	flex-flow: column;
 	height: 100%;
-	margin-top: 6rem;
+	position: absolute;
+	width: 100%;
+	// display: flex;
+	// flex-flow: column;
+	// height: 100%;
+	// margin-top: 6rem;
 }
 
 .container_decks {
 	align-content: center;
-	align-items: flex-start;
+	// align-items: flex-start;
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: center;
 	padding: 0.5rem;
+	min-width: 30rem;
 }
 
 .row_current-player {
 	// Put player container at very bottom of <Board> container
 	bottom: 0;
 	display: flex;
-	position: absolute;
+	// position: absolute;
 	width: 100%;
 }
 </style>

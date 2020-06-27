@@ -260,7 +260,7 @@ $card-width: (
 
 .sq-player {
 	color: $white;
-	display: flex;
+	display: inline-flex;
 	flex-flow: column nowrap;
 	position: relative;
 	text-align: center;
@@ -283,6 +283,8 @@ $card-width: (
 	}
 
 	&.current {
+		align-self: flex-end;
+		order: 4;
 		.btn-card {
 			&:not(.disabled) {
 				cursor: pointer;

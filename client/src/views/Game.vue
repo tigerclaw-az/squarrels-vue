@@ -36,7 +36,7 @@
 			</div>
 		</div>
 		<Board
-			v-if="isStarted && deckIds.length"
+			v-else-if="deckIds.length"
 			:deck-ids="deckIds"
 			:game-id="id"
 			:player-ids="playerIds"
