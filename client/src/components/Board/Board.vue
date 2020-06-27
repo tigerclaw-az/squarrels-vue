@@ -1,7 +1,7 @@
 <template>
 	<div id="board">
 		<b-container fluid>
-			<BoardHeader v-if="isGameStarted"></BoardHeader>
+			<BoardHeader></BoardHeader>
 		</b-container>
 		<b-container fluid class="container_board">
 			<b-row class="align-items-center justify-content-center mt-2">
@@ -11,7 +11,7 @@
 					</div>
 				</b-col>
 				<b-col cols="8" lg="9">
-					<div v-if="isGameStarted" class="container_decks">
+					<div class="container_decks">
 						<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
 					</div>
 				</b-col>
@@ -48,20 +48,13 @@ export default {
 			type: String,
 			required: true,
 		},
-		isGameStarted: {
-			type: Boolean,
-			required: true,
-			default: false,
-		},
 		playerIds: {
 			type: Array,
 			required: true,
 		},
 	},
 	data() {
-		return {
-			decksLoaded: false,
-		};
+		return {};
 	},
 	computed: {
 		...mapGetters({
@@ -81,11 +74,6 @@ export default {
 		opponents: function() {
 			return filter(this.playersInGame, pl => pl.id !== this.currentPlayer.id);
 		},
-	},
-	mounted: function() {
-		this.$store.dispatch({ type: 'decks/load', ids: this.deckIds }).then(() => {
-			this.decksLoaded = true;
-		});
 	},
 	unload: function() {
 		this.$store.dispatch({ type: 'decks/unload', gameId: this.gameId });

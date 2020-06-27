@@ -26,7 +26,7 @@
 					Waiting for other players to join...
 				</div>
 				<b-button
-					v-else
+					v-else-if="!isDealing"
 					class="btn btn-start-game"
 					variant="primary"
 					@click="onClickStartGame"
@@ -36,10 +36,9 @@
 			</div>
 		</div>
 		<Board
-			v-if="isLoaded"
+			v-if="isStarted && deckIds.length"
 			:deck-ids="deckIds"
 			:game-id="id"
-			:is-game-started="isStarted"
 			:player-ids="playerIds"
 		>
 			<template slot="action">
@@ -104,6 +103,11 @@ export default {
 		isStarted: function(to) {
 			if (to) {
 				this.isLoading = false;
+				this.$store.dispatch(
+					'decks/load',
+					{ ids: this.deckIds },
+					{ root: true },
+				);
 			}
 		},
 	},
@@ -135,10 +139,20 @@ export default {
 		this.unload();
 	},
 	methods: {
-		onClickStartGame: function(evt) {
+		onClickStartGame: async function(evt) {
 			this.$log.debug('onClickStartGame', evt);
 			this.isLoading = true;
-			this.$store.dispatch({ type: 'game/start' });
+
+			try {
+				await this.$store.dispatch({ type: 'game/start' });
+			} catch (err) {
+				this.$log.error(err);
+				this.$toasted.error(err.message);
+				await this.$store.dispatch('game/update', {
+					isDealing: false,
+					isStarted: false,
+				});
+			}
 		},
 		onClickNewGame: async function(evt) {
 			this.$log.debug('onClickNewGame', evt);

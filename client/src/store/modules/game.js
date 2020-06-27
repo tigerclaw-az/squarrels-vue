@@ -276,24 +276,30 @@ const actions = {
 		}
 	},
 
-	start({ commit, dispatch, state, rootState }) {
+	async start({ dispatch, state }) {
 		const dealPromises = [];
 
 		this._vm.$log.debug('game/start', state);
 
-		commit('START_DEAL');
+		await api.games.update(state.id, { isDealing: true });
 
-		return api.games
+		await api.games
+			// Returns after all decks have been initialized
 			.shuffleDecks(state.id, state.playerIds)
-			.then(() => {
-				// Load all deck data into the store
-				while (rootState.decks.isLoaded === false) {
-					this._vm.$log.warn('Decks not loaded yet...');
+			.then(async res => {
+				this._vm.$log.debug('game/shuffleDecks -> ', res);
+				const gameData = res.data;
+
+				try {
+					await dispatch(
+						'decks/load',
+						{ ids: gameData.deckIds },
+						{ root: true },
+					);
+				} catch (err) {
+					throw new Error(err);
 				}
 
-				return dispatch('decks/load', { ids: state.deckIds }, { root: true });
-			})
-			.then(() => {
 				// Loop through each player and deal cards
 				// Each deal will be saved as a Promise so we can wait
 				// for all players to be dealt cards before starting game
@@ -312,24 +318,19 @@ const actions = {
 				Promise.all(dealPromises)
 					.then(() => {
 						dispatch('decks/cardsDealt', null, { root: true })
-							.then(() => {
+							.then(async() => {
 								// All players and decks have been updated, game can start
-								commit('END_DEAL');
-								api.games.start(state.id)
-									.then(() => {
-										dispatch('players/nextPlayer', null, { root: true });
-									});
+								await api.games.update(state.id, { isDealing: false });
+								await api.games.start(state.id);
+								dispatch('players/nextPlayer', null, { root: true });
 							});
 					})
 					.catch(err => {
-						this._vm.$log.error(err);
-						this._vm.$toasted.error(
-							`Problem dealing cards: ${err}`,
-						);
+						throw new Error(err);
 					});
 			})
 			.catch(err => {
-				this._vm.$log.error(err);
+				throw new Error(err);
 			});
 	},
 
@@ -385,14 +386,6 @@ const mutations = {
 		}
 
 		Vue.set(state, 'isLoaded', false);
-	},
-
-	END_DEAL(state) {
-		state.isDealing = false;
-	},
-
-	START_DEAL(state) {
-		state.isDealing = true;
 	},
 
 	UPDATE(state, payload) {
