@@ -146,6 +146,11 @@ export default {
 .action-card--wrapper {
 	@extend %playing-cards;
 
+	.btn-card,
+	.card {
+		position: relative;
+	}
+
 	@include flip-card {
 		&.action--whirlwind {
 			animation-duration: 2.5s;
@@ -153,10 +158,10 @@ export default {
 		}
 	}
 
-	left: 40%;
+	left: 25%;
 	opacity: 1;
 	position: absolute;
-	top: 25%;
+	top: 40%;
 	transform: scale(2);
 	transition-duration: 0.5s;
 	transition-property: transform, opacity;

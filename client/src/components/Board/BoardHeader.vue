@@ -76,6 +76,7 @@ export default {
 	position: absolute;
 	text-align: right;
 	width: auto;
+	z-index: 999;
 
 	.header-item {
 		&.game-settings {

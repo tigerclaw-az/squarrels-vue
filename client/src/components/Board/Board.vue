@@ -7,8 +7,8 @@
 			</div>
 			<div class="container_decks">
 				<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
+				<slot name="action"></slot>
 			</div>
-			<slot name="action"></slot>
 		</b-container>
 	</div>
 </template>
@@ -114,12 +114,13 @@ export default {
 
 .container_decks {
 	align-content: center;
-	// align-items: flex-start;
 	display: flex;
 	flex-flow: row nowrap;
 	justify-content: center;
 	padding: 0.5rem;
+	position: relative;
 	min-width: 30rem;
+	z-index: 99;
 }
 
 .row_current-player {
