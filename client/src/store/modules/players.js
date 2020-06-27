@@ -470,10 +470,11 @@ const actions = {
 		const currentPlayer = getters.getMyPlayer;
 		const cardsInStorage = currentPlayer.cardsInStorage;
 		const cardsToStore = payload.cards;
-		const cardsToStoreIds = map(cardsToStore, c => c.id);
+		const cardsToStoreIds = cardsToStore.map(card => card.id);
+		const playerCardsIds = currentPlayer.cardsInHand.map(card => card.id);
 
 		const plData = {
-			cardsInHand: difference(payload.cardsInHand, cardsToStoreIds),
+			cardsInHand: difference(playerCardsIds, cardsToStoreIds),
 			cardsInStorage: concat(cardsInStorage, cardsToStoreIds[0]),
 			hasStoredCards: true,
 			score: currentPlayer.score + cardsToStore[0].amount,
