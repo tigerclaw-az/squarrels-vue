@@ -81,9 +81,7 @@ export default {
 		},
 	},
 	data: function() {
-		return {
-			// myCardsDetails: [],
-		};
+		return {};
 	},
 	computed: {
 		...mapGetters({
@@ -110,10 +108,6 @@ export default {
 		myCards: function() {
 			return this.myPlayer.cardsInHand;
 		},
-		// myCardsSorted: function() {
-		// 	// return sortBy(this.myCardsDetails, ['amount']);
-		// 	return this.myCardsDetails;
-		// },
 	},
 	watch: {
 		isMyTurn: function(to, from) {
@@ -124,26 +118,7 @@ export default {
 				this.$store.dispatch('sound/play', 'active-player');
 			}
 		},
-		// myCards: function(newCards, oldCards) {
-		// 	const diff1 = difference(newCards, oldCards);
-		// 	const diff2 = difference(oldCards, newCards);
-
-		// 	if (!this.myCards.length) {
-		// 		this.myCardsDetails = [];
-
-		// 		return;
-		// 	} else if (!diff1.length && !diff2.length) {
-		// 		return;
-		// 	}
-
-		// 	this.getCardDetails();
-		// },
 	},
-	// beforeMount: function() {
-	// 	if (this.myCards && this.myCards.length) {
-	// 		this.getCardDetails();
-	// 	}
-	// },
 	methods: {
 		cardStyle: function(index) {
 			const cardsCount = this.isCurrentPlayer
@@ -196,18 +171,6 @@ export default {
 
 			return [];
 		},
-		// getCardDetails: function() {
-		// 	api.cards
-		// 		.get(this.myCards.join(','))
-		// 		.then(res => {
-		// 			if (res.status === 200) {
-		// 				this.myCards = res.data;
-		// 			}
-		// 		})
-		// 		.catch(err => {
-		// 			this.$log.error('myCards->get', err);
-		// 		});
-		// },
 		onClickCard: function(card, cardsToStore, evt) {
 			this.$log.debug(card, cardsToStore, evt);
 
