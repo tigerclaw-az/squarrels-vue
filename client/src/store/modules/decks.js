@@ -166,7 +166,7 @@ const actions = {
 	load({ commit }, { ids }) {
 		this._vm.$log.debug('decks/load', ids);
 
-		if (!ids.length) {
+		if (!ids || !ids.length) {
 			return Promise.reject('ERROR: No ids provided for "decks/load"');
 		}
 
@@ -174,8 +174,6 @@ const actions = {
 			api.decks
 				.get(ids.join(','))
 				.then(res => {
-					this._vm.$log.debug('decks/load', res);
-
 					if (res.status === 200) {
 						const decks = res.data;
 

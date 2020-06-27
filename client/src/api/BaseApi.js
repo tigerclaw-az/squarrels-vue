@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { isString } from 'lodash';
 
 export default class BaseApi {
 	constructor(path) {
@@ -18,8 +19,8 @@ export default class BaseApi {
 	}
 
 	delete(id) {
-		if (!id) {
-			return Promise.reject('Missing "id" parameter');
+		if (!id || !isString(id)) {
+			return Promise.reject('Missing or invalid "id" parameter');
 		}
 
 		return this.http.delete(`/${id}`);
@@ -30,16 +31,16 @@ export default class BaseApi {
 	}
 
 	reset(id) {
-		if (!id) {
-			return Promise.reject('Missing "id" parameter');
+		if (!id || !isString(id)) {
+			return Promise.reject('Missing or invalid "id" parameter');
 		}
 
 		return this.http.post(`/${id}/reset`);
 	}
 
 	update(id, data) {
-		if (!id) {
-			return Promise.reject('Missing "id" parameter');
+		if (!id || !isString(id)) {
+			return Promise.reject('Missing or invalid "id" parameter');
 		}
 
 		return this.http.post(`/${id}`, data);
