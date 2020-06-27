@@ -110,7 +110,7 @@ module.exports = function(server) {
 					};
 
 					player
-						.get({ gameId: data.gameId })
+						.getState({ gameId: data.gameId })
 						.then(stealCards)
 						.catch(err => {
 							logger.error(err);
