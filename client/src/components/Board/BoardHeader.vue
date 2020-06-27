@@ -50,7 +50,7 @@ export default {
 // prettier-ignore
 @import "~@/assets/scss/variables";
 
-.header /deep/ {
+.header ::v-deep {
 	// prettier-ignore
 	background-image: linear-gradient(
 		94deg,

@@ -246,7 +246,7 @@ export default {
 	}
 }
 
-.dropdown /deep/ {
+.dropdown ::v-deep {
 	margin-top: 1rem;
 
 	.dropdown-menu {
