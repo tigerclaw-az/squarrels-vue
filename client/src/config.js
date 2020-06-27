@@ -1,5 +1,5 @@
 export const config = Object.freeze({
-	MAX_PLAYERS: 6,
+	MAX_PLAYERS: 4,
 	MAX_CARDS: 7,
 });
 
