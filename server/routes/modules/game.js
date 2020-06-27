@@ -1,16 +1,14 @@
 const config = require('../../config/config');
 const logger = config.logger();
-const Q = require('q');
 const Game = require('../../models/GameModel.js');
 
 module.exports = {
 	update: (id, data, sid) => {
-		const gameId = { _id: id },
-			options = { new: true },
-			defer = Q.defer();
+		const gameId = { _id: id };
+		const options = { new: true };
 
 		// prettier-ignore
-		Game
+		return Game
 			.findByIdAndUpdate(gameId, data, options)
 			.populate('actionCard')
 			.then(doc => {
@@ -19,13 +17,12 @@ module.exports = {
 					sid
 				);
 
-				defer.resolve(doc);
+				return Promise.resolve(doc);
 			})
 			.catch(err => {
 				logger.error(err);
-				defer.reject(err);
-			});
 
-		return defer.promise;
+				return Promise.reject(err);
+			});
 	},
 };
