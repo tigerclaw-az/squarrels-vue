@@ -153,15 +153,13 @@ export default {
 
 	@include flip-card {
 		&.action--whirlwind {
-			animation-duration: 2.5s;
+			animation-duration: 2s;
 			animation-name: action-whirlwind;
 		}
 	}
 
-	left: 25%;
 	opacity: 1;
 	position: absolute;
-	top: 40%;
 	transform: scale(2);
 	transition-duration: 0.5s;
 	transition-property: transform, opacity;
@@ -173,12 +171,12 @@ export default {
 
 	// Once the card is flipped we need to move it towards the 'action' deck
 	&.shown {
-		transform: translate(280px, -45px) scale(1);
+		transform: translate(80px, 0) scale(1);
 	}
 
 	@include media-breakpoint-up(lg) {
 		&.shown {
-			transform: translate(620px, -60px) scale(1);
+			transform: translate(80px, 0) scale(1);
 		}
 	}
 }
