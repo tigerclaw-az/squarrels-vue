@@ -188,7 +188,7 @@ const actions = {
 		const plData = Object.assign({}, plDefault, plObj);
 
 		return new Promise((resolve, reject) => {
-			return api.players
+			api.players
 				.create(plData)
 				.then(res => {
 					commit('LOGIN', res.data, { root: true });
@@ -293,24 +293,26 @@ const actions = {
 	 *
 	 * @return {Object} Promise
 	 */
-	load({ dispatch }, { ids }) {
+	async load({ dispatch }, { ids }) {
 		this._vm.$log.debug('players/load', ids);
 
-		if (ids.length) {
-			return api.players
-				.get(ids.join(','))
-				.then(res => {
-					this._vm.$log.debug('api/players/get', res);
+		if (!ids.length) {
+			throw new Error('Need at least one player to be loaded!');
+		}
 
-					if (res.status === 200) {
-						res.data.forEach(plData => {
-							dispatch('updateLocalPlayer', plData);
-						});
-					}
-				})
-				.catch(err => {
-					this._vm.$log.error(err);
+		try {
+			const res = await api.players.get(ids.join(','));
+
+			this._vm.$log.debug('api/players/get', res);
+
+			if (res.status === 200) {
+				res.data.forEach(plData => {
+					dispatch('updateLocalPlayer', plData);
 				});
+			}
+		} catch (err) {
+			this._vm.$log.error(err);
+			throw new Error(err);
 		}
 	},
 
@@ -388,18 +390,19 @@ const actions = {
 		});
 	},
 
-	async resetQuarrelWinner({ dispatch }, payload) {
+	resetQuarrelWinner({ dispatch }, payload) {
 		Vue.$log.debug(payload);
 
-		await dispatch('update', {
+		return dispatch('update', {
 			id: payload.id,
-			isQuarrelWinner: false,
+			data: {
+				isQuarrelWinner: false,
+				hasDrawnCard: false,
+			},
 		});
-
-		return true;
 	},
 
-	selectQuarrelCard({ dispatch }, data) {
+	async selectQuarrelCard({ dispatch }, data) {
 		const wsObj = {
 			action: 'quarrel',
 			player: data.id,
@@ -412,7 +415,7 @@ const actions = {
 			wsObj.card = data.card;
 		}
 
-		dispatch('updateLocalPlayer', {
+		await dispatch('updateLocalPlayer', {
 			id: data.id,
 			message: null,
 			quarrel: false,
@@ -421,8 +424,8 @@ const actions = {
 		this._vm.$socket.sendObj(wsObj);
 	},
 
-	setQuarrelWinner({ dispatch, getters }, payload) {
-		dispatch('updateLocalPlayer', {
+	async setQuarrelWinner({ dispatch, getters }, payload) {
+		await dispatch('updateLocalPlayer', {
 			id: payload.id,
 			isQuarrelWinner: true,
 		});
@@ -431,7 +434,7 @@ const actions = {
 		if (payload.id === getters.getMyPlayer.id) {
 			setTimeout(() => {
 				dispatch('addCards', payload);
-			}, 1250);
+			}, 1000);
 		}
 	},
 

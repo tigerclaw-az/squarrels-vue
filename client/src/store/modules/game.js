@@ -207,7 +207,7 @@ const actions = {
 			this._vm.$log.debug('cards -> ', cards);
 
 			// Wait until cards are shown to display winner
-			setTimeout(() => {
+			setTimeout(async() => {
 				dispatch(
 					'players/setQuarrelWinner',
 					{
@@ -218,20 +218,18 @@ const actions = {
 				);
 
 				// Wait some time after winner has been set before resetting
-				setTimeout(() => {
-					commit('UPDATE', {
-						showQuarrel: false,
-						quarrelCards: { current: [], saved: [] },
-					});
+				commit('UPDATE', {
+					showQuarrel: false,
+					quarrelCards: { current: [], saved: [] },
+				});
 
-					dispatch(
-						'players/resetQuarrelWinner',
-						{ id: winner },
-						{ root: true },
-					);
+				await dispatch('resetAction');
 
-					dispatch('resetAction');
-				}, 1000);
+				await dispatch(
+					'players/resetQuarrelWinner',
+					{ id: winner },
+					{ root: true },
+				);
 			}, 3500);
 		} else {
 			const players = map(winners, obj => obj.playerId);
@@ -273,6 +271,7 @@ const actions = {
 			return await api.games.actionCard(state.id, null);
 		} catch (err) {
 			this._vm.$toasted.error(err);
+			throw new Error(err);
 		}
 	},
 
