@@ -3,14 +3,14 @@ const config = require('../config/config');
 const logger = config.logger('routes:players');
 const validator = require('validator');
 const players = express.Router();
-const playerMod = require('./modules/player');
 
-const Player = require('../models/PlayerModel');
+const player = require('./modules/player');
+const playerModel = require('../models/PlayerModel');
 
 players.delete('/:id?', function(req, res) {
 	if (req.params.id) {
 		// Remove single player
-		Player.findByIdAndRemove(req.params.id)
+		playerModel.findByIdAndRemove(req.params.id)
 			.then(function() {
 				res.sendStatus(200);
 			})
@@ -20,7 +20,7 @@ players.delete('/:id?', function(req, res) {
 			});
 	} else {
 		// Remove ALL players
-		Player.remove()
+		playerModel.remove()
 			.then(function() {
 				res.status(200).json();
 			})
@@ -34,7 +34,7 @@ players.delete('/:id?', function(req, res) {
 players.get('/:id?', function(req, res) {
 	const sessionId = req.sessionID;
 	const ids = req.params.id ? req.params.id.split(',') : [];
-	let playerQuery = Player.find();
+	let playerQuery = playerModel.find();
 
 	logger.debug('sessionId -> ', sessionId);
 	logger.debug('ids -> ', ids);
@@ -56,7 +56,7 @@ players.get('/:id?', function(req, res) {
 
 			/* ****IN CASE WE DO THIS LATER****
 			const playerId = list[0].id;
-			const localPlayer = Player
+			const localPlayer = playerModel
 									.find({ _id: playerId, sessionId })
 									.select('+sessionId +cardsInHand');
 
@@ -120,7 +120,7 @@ players.post('/:id?', function(req, res) {
 			return false;
 		}
 
-		playerMod
+		player
 			.update(playerId, plData, sessionId)
 			.then(doc => {
 				const statusCode = doc ? 200 : 204,
@@ -135,14 +135,13 @@ players.post('/:id?', function(req, res) {
 	} else {
 		// Add new player, if the player with current session doesn't already exist
 		// prettier-ignore
-		Player
+		playerModel
 			.findOne({ sessionId })
 			.exec()
 			.then(list => {
 				logger.info(list);
 
 				if (list) {
-					// let err = `Player found with same sessionId: ${sessionId}`;
 					logger.error();
 					res.status(200).json(list);
 
@@ -160,26 +159,24 @@ players.post('/:id?', function(req, res) {
 					pData = validatePlayer(pData);
 
 					if (!pData) {
-						return Promise.reject('Player data could not be validated!');
+						return Promise.reject('playerModel data could not be validated!');
 					}
 
-					const playerModel = new Player(pData);
-
-					return playerModel
+					return new playerModel(pData)
 						.save()
-						.then(() => {
-							logger.debug('Player.save()', playerModel);
+						.then(doc => {
+							logger.debug('playerModel.save()', doc);
 
 							wss.broadcast(
-								{ namespace: 'wsPlayers', action: 'create', nuts: playerModel },
+								{ namespace: 'wsPlayers', action: 'create', nuts: doc },
 								req.session.id,
 								false
 							);
 
-							return Promise.resolve(playerModel);
+							return Promise.resolve(doc);
 						})
 						.catch(err => {
-							Promise.reject(err);
+							return Promise.reject(err);
 						});
 				};
 
