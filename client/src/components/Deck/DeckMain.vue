@@ -210,7 +210,9 @@ export default {
 
 .overlay {
 	height: 100%;
+	left: -25px;
 	position: absolute;
+	top: -50px;
 	width: 100%;
 	z-index: 5;
 
