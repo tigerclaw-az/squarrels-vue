@@ -229,7 +229,7 @@ export default {
 	z-index: 99;
 
 	&.has-card {
-		@include flip-card($flip-speed: 1s, $flip-delay: 1s);
+		@include flip-card($flip-speed: 1s, $flip-delay: 0.5s);
 	}
 }
 
