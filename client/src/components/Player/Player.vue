@@ -168,11 +168,11 @@ export default {
 
 			return [];
 		},
-		onClickCard: function(card, cardsToStore, evt) {
+		onClickCard: async function(card, cardsToStore, evt) {
 			this.$log.debug(card, cardsToStore, evt);
 
 			if (this.myPlayer.quarrel) {
-				this.$store.dispatch('players/selectQuarrelCard', {
+				await this.$store.dispatch('players/selectQuarrelCard', {
 					id: this.myPlayer.id,
 					card,
 				});
@@ -180,6 +180,7 @@ export default {
 				this.$store
 					.dispatch('players/discard', {
 						card,
+						isQuarrel: true,
 					})
 					.catch(err => {
 						this.$log.error(err);
@@ -287,8 +288,6 @@ $card-width: (
 	.sq-quarrel-message {
 		color: $white;
 		font-size: 1.25em;
-		left: -20%;
-		position: absolute;
 
 		&::after {
 			content: '->';

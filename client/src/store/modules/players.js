@@ -264,9 +264,15 @@ const actions = {
 
 		this._vm.$log.debug(cardsInHand);
 
+		const data = { cardsInHand };
+
+		if (!payload.isQuarrel) {
+			data.hasStoredCards = true;
+		}
+
 		return dispatch('update', {
 			id: playerId,
-			data: { cardsInHand, hasStoredCards: true },
+			data,
 		});
 	},
 
@@ -305,11 +311,17 @@ const actions = {
 
 			this._vm.$log.debug('api/players/get', res);
 
-			if (res.status === 200) {
-				res.data.forEach(plData => {
-					dispatch('updateLocalPlayer', plData);
-				});
+			if (res.status !== 200) {
+				throw new Error(res.error);
 			}
+
+			const playersUpdated = [];
+
+			res.data.forEach(plData => {
+				playersUpdated.push(dispatch('updateLocalPlayer', plData));
+			});
+
+			return Promise.all(playersUpdated);
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
