@@ -45,7 +45,9 @@ export default {
 		$top: random(20) - 10;
 
 		&:nth-child(#{$i}) {
-			transform: translate(#{$left}px, #{$top}px) rotate(#{$rotate}deg);
+			transform: rotate(#{$rotate}deg);
+			left: #{$left}px;
+			top: #{$top}px;
 		}
 	}
 }

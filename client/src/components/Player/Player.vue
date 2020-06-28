@@ -7,11 +7,11 @@
 		}"
 		class="sq-player"
 	>
-		<div class="sq-player-thumbnail">
+		<div class="sq-player-avatar">
 			<img class="img-circle" src="@/assets/images/squirrel-placeholder.jpg" />
 			<PlayerStorage :player="player" />
+			<div class="sq-player-name">{{ player.name }}</div>
 		</div>
-		<div class="sq-player-name">{{ player.name }}</div>
 		<div class="sq-player-cards">
 			<PlayerQuarrel :player="player" />
 			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">
@@ -129,13 +129,10 @@ export default {
 				'z-index': index + 1,
 			};
 
-			const halfCardsCount = cardsCount / 2;
-			// const rotate = 90 / cardsCount + 20;
 			const spacing = (this.isCurrentPlayer ? 240 : 100) / cardsCount;
-			const spacingMultiplier = index - halfCardsCount;
+			const spacingMultiplier = index;
 
 			styles.left = spacing * spacingMultiplier + 'px';
-			// styles.transform = `rotate(${rotateBy * rotateMultiplier}deg)`;
 
 			return styles;
 		},
@@ -260,48 +257,31 @@ $card-width: (
 
 .sq-player {
 	color: $white;
-	display: inline-flex;
-	flex-flow: column nowrap;
+	display: flex;
+	flex-flow: row nowrap;
+	margin-top: 1rem;
+	min-height: 160px;
 	position: relative;
 	text-align: center;
 	width: 100%;
-	z-index: 10;
 
-	.sq-player-thumbnail {
+	.sq-player-avatar {
+		align-items: flex-end;
+		align-self: flex-end;
+		display: flex;
 		position: relative;
+		width: 6.5rem;
 		z-index: 60;
 
 		img {
-			width: 6.5rem;
+			width: 100%;
 		}
-	}
 
-	.sq-player-name {
-		color: inherit;
-		font-size: 1.5em;
-		font-weight: $font-weight-bold;
-	}
-
-	&.current {
-		align-self: flex-end;
-		order: 4;
-		.btn-card {
-			&:not(.disabled) {
-				cursor: pointer;
-			}
-
-			&.selected,
-			&:hover {
-				.card {
-					transform: translateY(-15%) scale(2);
-				}
-			}
+		.sq-player-name {
+			color: inherit;
+			font-size: 1.5em;
+			font-weight: $font-weight-bold;
 		}
-	}
-
-	&.active {
-		// prettier-ignore
-		color: color("desert");
 	}
 
 	.sq-quarrel-message {
@@ -311,27 +291,36 @@ $card-width: (
 		position: absolute;
 
 		&::after {
-			// prettier-ignore
-			content: "->";
+			content: '->';
 		}
 	}
 
 	.sq-player-cards {
-		align-items: center;
-		display: flex;
 		height: 100%;
-		justify-content: center;
-		position: absolute;
-		top: -3.5rem;
+		order: 1;
+		transform: translateX(-125px);
 		width: 100%;
-		z-index: 5;
 
 		.cards-group {
 			@extend %playing-cards;
-			height: 100%;
 
-			.transition {
+			align-items: center;
+			display: flex;
+			height: 100%;
+			justify-content: center;
+			width: 100%;
+
+			.btn-card,
+			.card {
 				top: 0;
+			}
+
+			/* Card drawn animation into player hand */
+			.transition {
+				display: flex;
+				justify-content: center;
+				top: 0;
+				width: 100%;
 			}
 
 			.cards-enter-active,
@@ -359,13 +348,35 @@ $card-width: (
 		}
 	}
 
-	&:not(.current) {
-		.sq-player-cards {
-			.cards-group {
-				left: 25%;
-				position: absolute;
+	&.current {
+		order: 5;
+
+		&:hover {
+			.sq-player-cards {
+				z-index: 1000;
 			}
 		}
+
+		.sq-player-cards {
+			.cards-group {
+				.btn-card {
+					&:not(.disabled) {
+						cursor: pointer;
+					}
+
+					&.selected,
+					&:hover {
+						.card {
+							transform: translateY(-15%) scale(2);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	&.active {
+		color: color('desert');
 	}
 
 	@include media-breakpoint-up(lg) {

@@ -9,11 +9,9 @@ $deck-height: 8 !default;
 
 	align-items: center;
 	display: flex;
-	flex: 0 0 33%;
+	flex: 0 0 40%;
 	flex-direction: column;
-	justify-content: center;
 	margin-right: 1rem;
-	padding: 0.25rem;
 	position: relative;
 
 	.deck-label {
@@ -24,7 +22,6 @@ $deck-height: 8 !default;
 	.deck {
 		@extend %playing-cards;
 
-		background-color: theme-color("secondary");
 		margin-top: 1rem;
 		text-align: center;
 		width: 100%;
@@ -33,9 +30,14 @@ $deck-height: 8 !default;
 			cursor: pointer;
 		}
 
-		&.empty::before {
-			content: "X";
-			font-size: rem-calc(map-get($card-width, "small") - 7);
+		&.empty {
+			border: 2px dashed map-get($colors, "red");
+			height: rem-calc(map-get($card-height, "medium"));
+
+			&::before {
+				content: "";
+				font-size: rem-calc(map-get($card-width, "small") - 7);
+			}
 		}
 
 		.cards-group {
@@ -43,13 +45,12 @@ $deck-height: 8 !default;
 			display: flex;
 			height: rem-calc($height);
 			justify-content: center;
-			// width: rem-calc(map-get($card-width, "small"));
 
 			// Fixes issue with element created by <transition-group>
 			> .transition {
 				display: flex;
 				justify-content: center;
-				position: absolute;
+				// position: absolute;
 				top: 0;
 			}
 		}

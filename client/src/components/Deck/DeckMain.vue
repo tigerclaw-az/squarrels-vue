@@ -208,13 +208,6 @@ export default {
 	z-index: 1;
 }
 
-.can-draw {
-	.cards-group {
-		// prettier-ignore
-		box-shadow: 0 0 15px 10px color("desert");
-	}
-}
-
 .overlay {
 	height: 100%;
 	position: absolute;

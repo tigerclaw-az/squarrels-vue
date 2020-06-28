@@ -69,7 +69,7 @@ $card-images: (
 	}
 
 	[role="button"] {
-		display: block;
+		display: inline-flex;
 	}
 
 	@include media-breakpoint-up(lg) {

@@ -1,8 +1,5 @@
 <template>
-	<div class="header align-items-center">
-		<span class="header-item game-start">
-			{{ startDate }}
-		</span>
+	<div class="header">
 		<span class="header-item game-settings">
 			<game-settings></game-settings>
 			<admin-options v-if="isAdmin"></admin-options>
@@ -14,10 +11,6 @@
 <script>
 import { mapState } from 'vuex';
 import moment from 'moment';
-
-// import { BDropdown } from 'bootstrap-vue';
-
-// import Icon from 'vue-awesome/components/Icon';
 
 import AdminOptions from '@/components/AdminOptions.vue';
 import GameSettings from '@/components/Game/GameSettings.vue';
@@ -51,6 +44,7 @@ export default {
 @import "~@/assets/scss/variables";
 
 .header ::v-deep {
+	align-self: flex-end;
 	// prettier-ignore
 	background-image: linear-gradient(
 		94deg,
@@ -61,8 +55,8 @@ export default {
 		rgba(81, 27, 5, 0.59) 74%,
 		rgba(93, 33, 4, 0.2) 83%,
 		rgba(115, 43, 3, 0.5) 100%
-	),	// prettier-ignore
-	linear-gradient(90deg, color("cioccolato") 50%, transparent 50%), // prettier-ignore
+	),
+	linear-gradient(90deg, color('cioccolato') 50%, transparent 50%), // prettier-ignore
 	linear-gradient(
 		90deg,
 		color("red-beech") 50%,

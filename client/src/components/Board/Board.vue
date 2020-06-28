@@ -1,7 +1,7 @@
 <template>
 	<div id="board">
 		<BoardHeader></BoardHeader>
-		<b-container fluid class="container_board">
+		<div class="container_board">
 			<div class="container_players">
 				<Player v-for="p in playersInGame" :key="p.id" :player="p" />
 			</div>
@@ -9,7 +9,7 @@
 				<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
 				<slot name="action"></slot>
 			</div>
-		</b-container>
+		</div>
 	</div>
 </template>
 
@@ -81,11 +81,10 @@ export default {
 	// prettier-ignore
 	background-image: url("~@/assets/images/board-bg.jpg");
 	background-size: 100%;
+	display: flex;
 	flex: 1 1 0;
+	flex-direction: column;
 	height: 100%;
-	// Make sure current player has some space above it, regardless
-	// of screen height
-	min-height: 560px;
 	object-fit: contain;
 	object-position: center;
 	overflow: hidden;
@@ -93,8 +92,9 @@ export default {
 }
 
 .container_board {
-	align-content: center;
+	align-items: center;
 	display: flex;
+	flex-direction: row;
 	height: 100%;
 	justify-content: center;
 	position: relative;
@@ -104,30 +104,17 @@ export default {
 	align-items: flex-start;
 	display: flex;
 	height: 100%;
-	position: absolute;
-	width: 100%;
-	// display: flex;
-	// flex-flow: column;
-	// height: 100%;
-	// margin-top: 6rem;
+	padding-left: 1rem;
+	min-width: 50%;
+	flex-flow: column;
 }
 
 .container_decks {
-	align-content: center;
 	display: flex;
-	flex-flow: row nowrap;
+	flex-flow: row wrap;
 	justify-content: center;
-	padding: 0.5rem;
 	position: relative;
-	min-width: 30rem;
+	min-width: 425px;
 	z-index: 99;
-}
-
-.row_current-player {
-	// Put player container at very bottom of <Board> container
-	bottom: 0;
-	display: flex;
-	// position: absolute;
-	width: 100%;
 }
 </style>
