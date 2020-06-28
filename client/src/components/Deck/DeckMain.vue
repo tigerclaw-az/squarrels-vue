@@ -34,7 +34,6 @@
 				card-type="deck"
 			/>
 		</div>
-		<div class="count">{{ numCards }}</div>
 		<div v-if="isAdmin" uib-dropdown>
 			<b-dropdown id="dropdown-settings" text="Choose Card" variant="primary">
 				<b-dropdown-item
