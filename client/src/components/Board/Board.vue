@@ -96,21 +96,21 @@ export default {
 	display: flex;
 	flex-direction: row;
 	height: 100%;
-	justify-content: center;
 	position: relative;
 }
 
 .container_players {
 	align-items: flex-start;
 	display: flex;
+	flex: 1 0 50%;
 	height: 100%;
 	padding-left: 1rem;
-	min-width: 50%;
 	flex-flow: column;
 }
 
 .container_decks {
 	display: flex;
+	flex: 0 1 100%;
 	flex-flow: row wrap;
 	justify-content: center;
 	position: relative;

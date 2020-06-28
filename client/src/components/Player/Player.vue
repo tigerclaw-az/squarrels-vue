@@ -298,7 +298,7 @@ $card-width: (
 	.sq-player-cards {
 		height: 100%;
 		order: 1;
-		transform: translateX(-125px);
+		transform: translateX(-75px);
 		width: 100%;
 
 		.cards-group {
@@ -350,12 +350,6 @@ $card-width: (
 
 	&.current {
 		order: 5;
-
-		&:hover {
-			.sq-player-cards {
-				z-index: 1000;
-			}
-		}
 
 		.sq-player-cards {
 			.cards-group {
