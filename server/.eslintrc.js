@@ -83,7 +83,6 @@ module.exports = {
 			},
 		],
 		'no-implied-eval': 0,
-		'babel/no-invalid-this': 1,
 		'no-iterator': 0,
 		'no-labels': 2,
 		'no-lone-blocks': 0,
