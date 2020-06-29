@@ -20,6 +20,7 @@ sessionStore.on('error', err => {
 	logger.error('sessionStore ERROR -> ', err);
 });
 
+// sessionParser
 module.exports = session({
 	cookie: {
 		httpOnly: true,

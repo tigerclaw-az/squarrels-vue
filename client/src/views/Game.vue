@@ -114,11 +114,13 @@ export default {
 	mounted: function() {
 		this.$store
 			.dispatch({ type: 'game/load', id: this.id })
-			.then(() => {
-				return this.$store.dispatch({
-					type: 'players/load',
-					ids: this.playerIds,
-				});
+			.then(data => {
+				if (data.playerIds.length) {
+					return this.$store.dispatch({
+						type: 'players/load',
+						ids: data.playerIds,
+					});
+				}
 			})
 			.then(() => {
 				if (this.allowMorePlayers && !this.playerExists) {

@@ -137,7 +137,7 @@ const actions = {
 		return new Promise((resolve, reject) => {
 			api.games
 				.get(id)
-				.then(res => {
+				.then(async res => {
 					Vue.$log.debug('game/load', res);
 
 					if (res.status === 200) {
@@ -145,17 +145,17 @@ const actions = {
 							// deckIds = gameData.deckIds,
 							playersInGame = gameData.playerIds;
 
+						// Add all players to the current state of game
+						if (playersInGame.length) {
+							await dispatch('players/add', playersInGame, {
+								root: true,
+							});
+						}
+
 						commit('UPDATE', gameData);
 						commit('LOADED');
 
 						resolve(gameData);
-
-						// Add all players to the current state of game
-						if (playersInGame.length) {
-							dispatch('players/add', playersInGame, {
-								root: true,
-							});
-						}
 					} else {
 						router.push('/');
 					}

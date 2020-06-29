@@ -1,18 +1,19 @@
+const _ = require('lodash');
+const config = require('../config/config');
+const logger = config.logger('websocket');
+const mongoose = require('mongoose');
+const gameMod = require('../routes/modules/game');
+const player = require('../routes/modules/player');
+const Q = require('q');
+const WebSocket = require('ws');
+
+const playerModel = mongoose.model('Player');
+
+const CLIENTS = {};
+let hoardPlayer = null;
+
 module.exports = function(server) {
-	const _ = require('lodash');
-	const config = require('../config/config');
-	const logger = config.logger('websocket');
-	const mongoose = require('mongoose');
-	const gameMod = require('../routes/modules/game');
-	const player = require('../routes/modules/player');
-	const Q = require('q');
-	const WebSocket = require('ws');
-
-	const playerModel = mongoose.model('Player');
-
 	const wss = require('../lib/websocketServer')(server);
-	const CLIENTS = {};
-	let hoardPlayer = null;
 
 	const resetActionCard = (id, sid) => {
 		// Remove the 'actionCard' from the game, which will trigger a

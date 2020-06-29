@@ -133,21 +133,23 @@ const actions = {
 			});
 		}
 	},
-	add({ dispatch }, plArr) {
+	async add({ dispatch }, plArr) {
 		this._vm.$log.debug('add()', plArr);
 
-		if (plArr.length) {
-			return api.players
-				.get(plArr.join(','))
-				.then(res => {
-					if (res.status === 200) {
-						dispatch('updateLocalPlayer', res.data[0]);
-					}
-				})
-				.catch(err => {
-					this._vm.$log.error(err);
-				});
+		// if (plArr.length) {
+		try {
+			const res = await api.players.get(plArr.join(','));
+
+			if (res.status === 200) {
+				return dispatch('updateLocalPlayer', res.data[0]);
+			}
+
+			throw new Error(res.error);
+		} catch (err) {
+			this._vm.$log.error(err);
+			throw new Error(err);
 		}
+		// }
 	},
 
 	addCards({ dispatch, getters }, data) {
