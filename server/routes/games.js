@@ -5,9 +5,9 @@ const games = require('express').Router();
 const gameMod = require('./modules/game');
 const playerMod = require('./modules/player');
 
-const cardModel = require('../models/card');
-const deckModel = require('../models/deck');
-const gameModel = require('../models/game');
+const CardModel = require('../models/card');
+const DeckModel = require('../models/deck');
+const GameModel = require('../models/game');
 
 const resetGame = async function(gameData, options) {
 	logger.debug('resetGame:gameData -> ', gameData);
@@ -26,7 +26,7 @@ const resetGame = async function(gameData, options) {
 	const sessionId = gameData.sessionId;
 
 	try {
-		const game = await gameModel.findById(gameId).exec();
+		const game = await GameModel.findById(gameId).exec();
 
 		logger.debug('game -> ', game);
 
@@ -36,7 +36,7 @@ const resetGame = async function(gameData, options) {
 		logger.debug('decks -> ', deckIds);
 		logger.debug('players -> ', playerIds);
 
-		await deckModel.deleteMany({ _id: { $in: deckIds } });
+		await DeckModel.deleteMany({ _id: { $in: deckIds } });
 
 		_.forEach(playerIds, id => {
 			// prettier-ignore
@@ -93,7 +93,7 @@ games.delete('/:id', function(req, res) {
 	logger.debug('games:delete -> ', id);
 
 	// prettier-ignore
-	gameModel
+	GameModel
 		.findById(id)
 		.exec()
 		.then(game => {
@@ -117,7 +117,7 @@ games.delete('/:id', function(req, res) {
 			});
 
 			// prettier-ignore
-			gameModel
+			GameModel
 				.remove({ _id: game.id })
 				.then(function() {
 					wss.broadcast(
@@ -137,7 +137,7 @@ games.delete('/:id', function(req, res) {
 				});
 
 			// prettier-ignore
-			deckModel
+			DeckModel
 				.deleteMany({ _id: { $in: deckIds } })
 				.catch(err => {
 					logger.error(err);
@@ -151,7 +151,7 @@ games.get('/:id?', function(req, res) {
 	const query = id ? { _id: id } : {};
 
 	// prettier-ignore
-	gameModel
+	GameModel
 		.find(query)
 		.populate('actionCard')
 		.exec()
@@ -175,12 +175,12 @@ games.get('/:id?', function(req, res) {
 games.post('/', function(req, res) {
 	const sessionId = req.sessionID;
 
-	const game = new gameModel();
+	const game = new GameModel();
 
 	logger.debug('create -> ', req.body);
 
 	// prettier-ignore
-	gameModel
+	GameModel
 		.create(game)
 		.then(gameDoc => {
 			wss.broadcast(
@@ -245,28 +245,28 @@ games.get('/:id/shuffle-decks', function(req, res) {
 	const sessionId = req.sessionID;
 
 	// prettier-ignore
-	cardModel
+	CardModel
 		.find({})
 		.exec()
 		.then(cards => {
 			const deckPromises = [];
 
 			const decks = [
-				new deckModel({
+				new DeckModel({
 					deckType: 'discard',
 				}),
-				new deckModel({
+				new DeckModel({
 					deckType: 'main',
 					cards: _.shuffle(_.shuffle(cards)),
 				}),
-				new deckModel({
+				new DeckModel({
 					deckType: 'hoard',
 				}),
 			];
 
 			decks.forEach(deck => {
 				// Create all decks, and store promises to be used later
-				deckPromises.push(deckModel.create(deck));
+				deckPromises.push(DeckModel.create(deck));
 			});
 
 			// prettier-ignore

@@ -1,6 +1,7 @@
 const config = require('../../config/config');
 const logger = config.logger();
-const gameModel = require('../../models/game');
+
+const GameModel = require('../../models/game');
 
 module.exports = {
 	update: (id, data, sid) => {
@@ -8,7 +9,7 @@ module.exports = {
 		const options = { new: true };
 
 		// prettier-ignore
-		return gameModel
+		return GameModel
 			.findByIdAndUpdate(gameId, data, options)
 			.populate('actionCard')
 			.then(doc => {
@@ -31,9 +32,10 @@ module.exports = {
 	 * message back to each client that the actionCard was removed
 	 *
 	 * @param {string} id ID of the game
+	 * @param {string} sid Player sessionID
 	 * @returns {Promise} mongoose Promise then/catch
 	 */
-	resetActionCard(id) {
-		return gameModel.update(id, { actionCard: null }, this.sid);
+	resetActionCard(id, sid) {
+		return GameModel.findByIdAndUpdate(id, { actionCard: null }, sid);
 	},
 };

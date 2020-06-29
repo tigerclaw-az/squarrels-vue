@@ -5,12 +5,12 @@ const validator = require('validator');
 const players = express.Router();
 
 const player = require('./modules/player');
-const playerModel = require('../models/player');
+const PlayerModel = require('../models/player');
 
 players.delete('/:id?', function(req, res) {
 	if (req.params.id) {
 		// Remove single player
-		playerModel.findByIdAndRemove(req.params.id)
+		PlayerModel.findByIdAndRemove(req.params.id)
 			.then(function() {
 				res.sendStatus(200);
 			})
@@ -20,7 +20,7 @@ players.delete('/:id?', function(req, res) {
 			});
 	} else {
 		// Remove ALL players
-		playerModel.remove()
+		PlayerModel.remove()
 			.then(function() {
 				res.status(200).json();
 			})
@@ -34,7 +34,7 @@ players.delete('/:id?', function(req, res) {
 players.get('/:id?', function(req, res) {
 	const sessionId = req.sessionID;
 	const ids = req.params.id ? req.params.id.split(',') : [];
-	let playerQuery = playerModel.find();
+	let playerQuery = PlayerModel.find();
 
 	logger.debug('sessionId -> ', sessionId);
 	logger.debug('ids -> ', ids);
@@ -56,7 +56,7 @@ players.get('/:id?', function(req, res) {
 
 			/* ****IN CASE WE DO THIS LATER****
 			const playerId = list[0].id;
-			const localPlayer = playerModel
+			const localPlayer = PlayerModel
 									.find({ _id: playerId, sessionId })
 									.select('+sessionId +cardsInHand');
 
@@ -135,7 +135,7 @@ players.post('/:id?', function(req, res) {
 	} else {
 		// Add new player, if the player with current session doesn't already exist
 		// prettier-ignore
-		playerModel
+		PlayerModel
 			.findOne({ sessionId })
 			.exec()
 			.then(list => {
@@ -159,13 +159,13 @@ players.post('/:id?', function(req, res) {
 					pData = validatePlayer(pData);
 
 					if (!pData) {
-						return Promise.reject('playerModel data could not be validated!');
+						return Promise.reject('PlayerModel data could not be validated!');
 					}
 
-					return new playerModel(pData)
+					return new PlayerModel(pData)
 						.save()
 						.then(doc => {
-							logger.debug('playerModel.save()', doc);
+							logger.debug('PlayerModel.save()', doc);
 
 							wss.broadcast(
 								{ namespace: 'wsPlayers', action: 'create', nuts: doc },

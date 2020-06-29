@@ -13,12 +13,12 @@ const initPlayer = {
 
 class Player {
 	constructor() {
-		this.playerModel = require('../../models/player.js');
+		this.PlayerModel = require('../../models/player.js');
 	}
 
 	// prettier-ignore
 	getState(data = {}) {
-		return this.playerModel
+		return this.PlayerModel
 			.find(data)
 			.select('+cardsInHand')
 			.exec();
@@ -78,7 +78,7 @@ class Player {
 				}
 
 				// prettier-ignore
-				this.playerModel
+				this.PlayerModel
 					.findOneAndUpdate(playerId, data, options)
 					.then(doc => {
 						const wsData = {
