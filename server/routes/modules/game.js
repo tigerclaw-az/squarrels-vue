@@ -25,4 +25,15 @@ module.exports = {
 				return Promise.reject(err);
 			});
 	},
+
+	/**
+	 * Remove the 'actionCard' from the game, which will trigger a
+	 * message back to each client that the actionCard was removed
+	 *
+	 * @param {string} id ID of the game
+	 * @returns {Promise} mongoose Promise then/catch
+	 */
+	resetActionCard(id) {
+		return gameModel.update(id, { actionCard: null }, this.sid);
+	},
 };
