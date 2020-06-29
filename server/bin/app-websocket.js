@@ -7,13 +7,13 @@ module.exports = function(server) {
 	const appWSS = new WebsocketServer(server);
 	const wss = appWSS.wss;
 
-	const GameActions = require('../lib/GameActions');
+	const PlayerActions = require('../lib/PlayerActions');
 
 	const onConnection = (ws, req) => {
 		logger.info('connection state -> ', ws.readyState);
 
 		const sid = req.sessionID;
-		const actions = new GameActions(wss, ws, sid);
+		const actions = new PlayerActions(wss, ws, sid);
 
 		const onMessage = message => {
 			const data = JSON.parse(message);

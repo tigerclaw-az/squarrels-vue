@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const pull = require('lodash/pull');
 const sampleSize = require('lodash/sampleSize');
-const Q = require('q');
 const mongoose = require('mongoose');
 
 const config = require('../config/config');
@@ -12,7 +11,7 @@ const game = require('../routes/modules/game');
 
 const playerModel = mongoose.model('Player');
 
-class GameActions {
+class PlayerActions {
 	constructor(wss, ws, sid) {
 		this.wss = wss;
 		this.ws = ws;
@@ -23,15 +22,6 @@ class GameActions {
 		this.playerSession = {
 			sessionId: sid,
 		};
-	}
-
-	resetActionCard(id) {
-		// Remove the 'actionCard' from the game, which will trigger a
-		// message back to each client that the actionCard was removed
-		game
-			.update(id, { actionCard: null }, this.sid)
-			.then(() => {})
-			.catch(() => {});
 	}
 
 	send(data, options = { all: true }) {
@@ -122,7 +112,7 @@ class GameActions {
 			.getState({ gameId: data.gameId })
 			.then(stealCards)
 			.then(() => {
-				this.resetActionCard(data.gameId, this.sid);
+				return game.resetActionCard(data.gameId, this.sid);
 			})
 			.catch(err => {
 				logger.error(err);
@@ -143,7 +133,7 @@ class GameActions {
 				});
 				this.hoardPlayer = null;
 
-				// resetActionCard();
+				// game.resetActionCard();
 			}, 250);
 		} else {
 			this.send({
@@ -226,7 +216,10 @@ class GameActions {
 					});
 
 					setTimeout(() => {
-						this.resetActionCard(data.gameId, this.sid);
+						game.resetActionCard(data.gameId, this.sid)
+							.catch(err => {
+								logger.error(`ERROR: Unable to reset action card -> ${err}`);
+							});
 					}, 1500);
 				};
 
@@ -252,11 +245,11 @@ class GameActions {
 					}
 				});
 
-				Q.all(updatePromises).then(() => {
-					setTimeout(dealCards, 1500);
+				Promise.all(updatePromises).then(() => {
+					setTimeout(dealCards, 1000);
 				});
 			});
 	}
 }
 
-module.exports = GameActions;
+module.exports = PlayerActions;
