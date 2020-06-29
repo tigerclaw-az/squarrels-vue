@@ -195,7 +195,7 @@ const actions = {
 				.then(res => {
 					commit('LOGIN', res.data, { root: true });
 					dispatch('updateLocalPlayer', res.data);
-					resolve();
+					resolve(res.data);
 				})
 				.catch(err => {
 					this._vm.$log.error(err);
@@ -535,6 +535,8 @@ const actions = {
 	},
 
 	async updateLocalPlayer({ commit, state }, payload) {
+		this._vm.$log.debug('players/updateLocalPlayer', state, payload);
+
 		if (!payload.id) {
 			this._vm.$toasted.info('Did not receive "id" for player!');
 			this._vm.$log.info('Missing "id" from payload:', payload);
@@ -548,7 +550,7 @@ const actions = {
 
 		this._vm.$log.debug('playerMatch?', playerId, localPlayerId);
 
-		if (playerId === localPlayerId) {
+		if (state[playerId] && playerId === localPlayerId) {
 			await Vue.$storage.setItem('player', state[playerId]);
 			// Send async websocket request for 'whoami' to update
 			// cardsInHand for local player
@@ -611,8 +613,14 @@ const mutations = {
 	},
 
 	UPDATE_CARDS(state, payload) {
+		this._vm.$log.debug('mutation::players/UPDATE_CARDS', state, payload);
+
 		const id = payload.id;
 		const cards = payload.cardsInHand;
+
+		// if (!state[id].cardsInHand) {
+		// 	Vue.set(state[id], 'cardsInHand', []);
+		// }
 
 		Vue.set(state[id], 'cardsInHand', [...cards]);
 	},
