@@ -4,12 +4,27 @@ const sampleSize = require('lodash/sampleSize');
 const mongoose = require('mongoose');
 
 const config = require('../config/config');
-const logger = config.logger('websocket');
+const logger = config.logger('PlayerActions');
 
 const player = require('../routes/modules/player');
 const game = require('../routes/modules/game');
 
 const playerModel = mongoose.model('Player');
+
+// Custom iterator to iterate through players in specific order
+const playerIt = pl => {
+	let index = 0;
+
+	return {
+		next: () => {
+			if (index >= pl.length) {
+				index = 0;
+			}
+
+			return pl[index++];
+		},
+	};
+};
 
 class PlayerActions {
 	constructor(wss, ws, sid) {
@@ -25,6 +40,8 @@ class PlayerActions {
 	}
 
 	send(data, options = { all: true }) {
+		logger.debug(data, options);
+
 		const wsData = {
 			namespace: this.namespace,
 			...data,
@@ -65,6 +82,8 @@ class PlayerActions {
 	}
 
 	ambush(data) {
+		logger.debug(data);
+
 		const stealCards = players => {
 			let cards = [];
 			let playerToUpdate = {};
@@ -120,6 +139,8 @@ class PlayerActions {
 	}
 
 	hoard(data) {
+		logger.debug(data);
+
 		delete data.player.cardsInHand;
 
 		if (!this.hoardPlayer) {
@@ -144,6 +165,8 @@ class PlayerActions {
 	}
 
 	quarrel(data) {
+		logger.debug(data);
+
 		const nuts = {
 			playerId: data.player || null,
 		};
@@ -156,20 +179,7 @@ class PlayerActions {
 	}
 
 	whirlwind(data) {
-		// Custom iterator to iterate through players in specific order
-		const playerIt = pl => {
-			let index = 0;
-
-			return {
-				next: () => {
-					if (index >= pl.length) {
-						index = 0;
-					}
-
-					return pl[index++];
-				},
-			};
-		};
+		logger.debug(data);
 
 		player
 			.getState({ gameId: data.gameId })
