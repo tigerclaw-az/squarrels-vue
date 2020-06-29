@@ -2,13 +2,17 @@ module.exports = {
 	env: {
 		amd: true,
 		browser: true,
+		es6: true,
 		node: true,
 	},
 	extends: ['eslint:recommended'],
-	plugins: ['babel'],
+	// plugins: ['babel'],
 	parserOptions: {
-		ecmaVersion: 8,
-		parser: 'babel-eslint',
+		ecmaVersion: 7,
+		'ecmaFeatures': {
+			'experimentalObjectRestSpread': true
+		},
+		// parser: 'babel-eslint',
 		sourceType: 'module',
 	},
 	globals: {
