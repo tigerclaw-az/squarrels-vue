@@ -3,77 +3,52 @@ const config = require('../config/config');
 const logger = config.logger('websocket');
 const mongoose = require('mongoose');
 const Q = require('q');
-const WebSocket = require('ws');
 
 const WebsocketServer = require('../lib/websocketServer');
 const gameMod = require('../routes/modules/game');
 const player = require('../routes/modules/player');
 const playerModel = mongoose.model('Player');
 
-const CLIENTS = {};
 let hoardPlayer = null;
+
+const resetActionCard = (id, sid) => {
+	// Remove the 'actionCard' from the game, which will trigger a
+	// message back to each client that the actionCard was removed
+	gameMod
+		.update(id, { actionCard: null }, sid)
+		.then(() => {})
+		.catch(() => {});
+};
 
 module.exports = function(server) {
 	const appWSS = new WebsocketServer(server);
 	const wss = appWSS.wss;
 
-	const resetActionCard = (id, sid) => {
-		// Remove the 'actionCard' from the game, which will trigger a
-		// message back to each client that the actionCard was removed
-		gameMod
-			.update(id, { actionCard: null }, sid)
-			.then(() => {})
-			.catch(() => {});
-	};
+	const onConnection = (ws, req) => {
+		logger.info('connection state -> ', ws.readyState);
 
-	wss.broadcast = (data, sid, all = true) => {
-		logger.debug('broadcast() -> ', data, sid, all);
-
-		wss.clients.forEach(client => {
-			if (client.readyState === WebSocket.OPEN) {
-				if (all || client !== CLIENTS[sid]) {
-					client.send(JSON.stringify(data));
-				}
-			}
-		});
-	};
-
-	wss.on('connection', (ws, req) => {
 		const sid = req.sessionID;
 
-		const playerIt = pl => {
-			let index = 0;
-
-			return {
-				next: () => {
-					if (index >= pl.length) {
-						index = 0;
-					}
-
-					return pl[index++];
-				},
-			};
-		};
-
 		const onMessage = message => {
-			const data = JSON.parse(message),
-				query = {
-					sessionId: sid,
-				};
+			const data = JSON.parse(message);
+			const query = {
+				sessionId: sid,
+			};
 
 			// Process WebSocket message
 			logger.debug('Message received: ', data);
 			logger.debug(`websocket:onmessage:${data.action} -> `, query);
 
+			// NEEDS ACCESS to 'wss' and 'ws'
 			const actions = {
 				ambush: () => {
 					const stealCards = players => {
-						let cards = [],
-							plData = {},
-							playerToUpdate = {};
+						let cards = [];
+						let playerToUpdate = {};
 
 						_.forEach(players, pl => {
 							const card = _.sampleSize(pl.cardsInHand)[0];
+							let opponent = {};
 
 							if (!pl.isActive) {
 								logger.debug('card -> ', card);
@@ -83,12 +58,12 @@ module.exports = function(server) {
 									_.pull(pl.cardsInHand, card);
 									cards.push(card);
 
-									plData = {
+									opponent = {
 										cardsInHand: pl.cardsInHand,
 									};
 
 									player
-										.update(pl.id, plData, sid)
+										.update(pl.id, opponent, sid)
 										.then(() => {})
 										.catch(() => {});
 								}
@@ -102,24 +77,22 @@ module.exports = function(server) {
 							}
 						});
 
-						plData = {
+						const plData = {
 							cardsInHand: cards,
 						};
 
-						player
-							.update(playerToUpdate.id, plData, sid)
-							.then(() => {})
-							.catch(() => {});
+						return player.update(playerToUpdate.id, plData, sid);
 					};
 
 					player
 						.getState({ gameId: data.gameId })
 						.then(stealCards)
+						.then(() => {
+							resetActionCard(data.gameId, sid);
+						})
 						.catch(err => {
 							logger.error(err);
 						});
-
-					resetActionCard(data.gameId, sid);
 				},
 
 				hoard: () => {
@@ -169,6 +142,21 @@ module.exports = function(server) {
 				},
 
 				whirlwind: () => {
+					// Custom iterator to iterate through players in specific order
+					const playerIt = pl => {
+						let index = 0;
+
+						return {
+							next: () => {
+								if (index >= pl.length) {
+									index = 0;
+								}
+
+								return pl[index++];
+							},
+						};
+					};
+
 					player
 						.getState({ gameId: data.gameId })
 						.then(players => {
@@ -292,28 +280,14 @@ module.exports = function(server) {
 			}
 		};
 
-		logger.info('Connection accepted:', sid);
-		logger.info('Clients Connected: %s', wss.clients.size);
-
-		// Save sessionID against the map of clients so we can reference later
-		CLIENTS[sid] = ws;
-
-		// ws.send(JSON.stringify({ action: 'connect', type: 'global' }));
+		appWSS.connected(ws, sid);
 
 		// This is the most important callback for us, we'll handle
 		// all messages from users here.
 		ws.on('message', onMessage);
+	};
 
-		ws.on('error', err => {
-			logger.error(err);
-		});
-
-		ws.on('close', connection => {
-			// close user connection
-			logger.warn('Connection Closed:', connection);
-			hoardPlayer = null;
-		});
-	});
+	wss.on('connection', onConnection);
 
 	global.wss = wss;
 
