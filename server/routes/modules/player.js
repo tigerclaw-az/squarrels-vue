@@ -13,7 +13,7 @@ const initPlayer = {
 
 class Player {
 	constructor() {
-		this.playerModel = require('../../models/PlayerModel.js');
+		this.playerModel = require('../../models/player.js');
 	}
 
 	// prettier-ignore

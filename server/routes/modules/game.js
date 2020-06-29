@@ -1,6 +1,6 @@
 const config = require('../../config/config');
 const logger = config.logger();
-const Game = require('../../models/GameModel.js');
+const gameModel = require('../../models/game');
 
 module.exports = {
 	update: (id, data, sid) => {
@@ -8,7 +8,7 @@ module.exports = {
 		const options = { new: true };
 
 		// prettier-ignore
-		return Game
+		return gameModel
 			.findByIdAndUpdate(gameId, data, options)
 			.populate('actionCard')
 			.then(doc => {

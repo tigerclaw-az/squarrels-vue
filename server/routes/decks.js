@@ -3,11 +3,11 @@ const logger = config.logger('routes:decks');
 
 const decks = require('express').Router();
 
-const DeckModel = require('../models/DeckModel');
+const deckModel = require('../models/deck');
 
 decks.get('/:id', function(req, res) {
 	const ids = req.params.id.split(',');
-	const deckQuery = DeckModel.find()
+	const deckQuery = deckModel.find()
 		.where('_id')
 		.in(ids);
 
@@ -40,7 +40,7 @@ decks.post('/:id', function(req, res) {
 	logger.debug('decks/:id', deck, req.body);
 
 	// prettier-ignore
-	DeckModel
+	deckModel
 		.findOneAndUpdate(deck, req.body, options)
 		.populate('cards')
 		.then(function(doc) {

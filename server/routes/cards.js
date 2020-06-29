@@ -3,7 +3,7 @@ const logger = config.logger('routes:cards');
 
 const cards = require('express').Router();
 
-const CardModel = require('../models/CardModel');
+const cardModel = require('../models/card');
 
 cards.get('/:id', function(req, res) {
 	const ids = req.params.id.split(',');
@@ -11,7 +11,7 @@ cards.get('/:id', function(req, res) {
 
 	for (const id of ids) {
 		promises.push(new Promise(resolve => {
-			CardModel
+			cardModel
 				.findById(id)
 				.exec()
 				.then(card => resolve(card));
