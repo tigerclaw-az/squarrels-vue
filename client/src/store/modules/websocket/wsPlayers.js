@@ -15,8 +15,7 @@ const actions = {
 		this._vm.$log.debug(data);
 
 		const quarrelData = {
-			playerId: data.playerId,
-			card: data.card || null,
+			...data.nuts,
 		};
 
 		dispatch('game/addQuarrelCard', quarrelData, { root: true });
