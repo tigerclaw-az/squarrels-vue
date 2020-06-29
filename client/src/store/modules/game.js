@@ -102,13 +102,13 @@ const actions = {
 		}
 	},
 	async addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
-		const newPlayers = union(playerId, [...state.playerIds, playerId]);
-
-		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
-
 		if (!playerId) {
 			return Promise.reject('ERROR: Missing "playerId" parameter');
 		}
+
+		const newPlayers = union(playerId, [...state.playerIds, playerId]);
+
+		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
 
 		if (newPlayers.length) {
 			const res = await api.games.updatePlayers(gameId, newPlayers);
