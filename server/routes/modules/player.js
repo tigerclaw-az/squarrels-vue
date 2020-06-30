@@ -2,6 +2,7 @@ const _ = require('lodash');
 const config = require('../../config/config');
 const logger = config.logger('routes:modules:player');
 const Q = require('q');
+const { isEmpty } = require('lodash');
 
 const initPlayer = {
 	$set: { cardsInHand: [], cardsInStorage: [] },
@@ -44,7 +45,7 @@ class Player {
 		const cardsDefer = Q.defer();
 		const defer = Q.defer();
 
-		if (data.cardsInHand) {
+		if (!isEmpty(data.cardsInHand)) {
 			if (data.addCards) {
 				// Get existing cards from player and merge them with the given cards
 				// prettier-ignore
@@ -60,14 +61,14 @@ class Player {
 				cardsDefer.resolve(data.cardsInHand);
 			}
 		} else {
-			cardsDefer.resolve(null);
+			cardsDefer.resolve([]);
 		}
 
 		cardsDefer.promise
 			.then(cards => {
 				logger.debug('cards -> ', cards);
 
-				if (cards) {
+				if (!isEmpty(cards)) {
 					data.cardsInHand = cards;
 					data.totalCards = cards.length;
 
