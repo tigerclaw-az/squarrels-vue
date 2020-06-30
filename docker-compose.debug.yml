@@ -5,18 +5,20 @@ services:
     extra_hosts:
       - ${SERVER}:172.18.0.3
     environment:
+      NODE_ENV: development
       WAIT_HOSTS: $MONGODB_HOST:${MONGODB_PORT}
-    build: .
+    build: ./server
     ports:
       - "${PORT}:${PORT}"
+      - 9229:9229
     depends_on:
       - mongo
     volumes:
-      - ./:/app
+      - ./server:/app
   mongo:
     container_name: squarrels_db
     image: mongo:4.2
     volumes:
-      - ./data:/data/db
+      - ./server/data:/data/db
     ports:
       - "${MONGODB_PORT}:${MONGODB_PORT}"
