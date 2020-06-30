@@ -35,7 +35,7 @@ decks.post('/:id', function(req, res) {
 
 	const deckId = req.params.id;
 	const deck = { _id: deckId };
-	const options = { new: true, returnNewDocument: true };
+	const options = { new: true };
 
 	logger.debug('decks/:id', deck, req.body);
 
@@ -55,7 +55,7 @@ decks.post('/:id', function(req, res) {
 				res.status(204).json([]);
 			}
 		})
-		.catch(function(err) {
+		.catch(err => {
 			logger.error(err);
 			res.status(500).json(config.apiError(err));
 		});
