@@ -1,6 +1,5 @@
 <template>
 	<div
-		v-if="decksReady"
 		id="action-card"
 		:class="[{ shown: hideCard, instant: isInstant }, card.name]"
 		class="action-card--wrapper"
@@ -22,7 +21,6 @@ export default {
 	},
 	data: function() {
 		return {
-			decksReady: false,
 			hideCard: false,
 			instantAction: false,
 		};
@@ -35,106 +33,87 @@ export default {
 			gameId: 'id',
 			card: 'actionCard',
 		}),
-		...mapState({
-			decksLoaded: state => state.decks.isLoaded,
-		}),
+		hoardCards() {
+			return this.hoardDeck.cards;
+		},
+		hoardDeck() {
+			return this.$store.getters['decks/getByType']('hoard');
+		},
 		isInstant: function() {
 			return (
 				this.isActivePlayer || this.instantAction || this.card.name === 'winter'
 			);
 		},
 	},
-	watch: {
-		decksLoaded: function(to, from) {
-			this.$log.debug('decksLoaded', to, from);
-
-			if (to) {
-				this.decksReady = true;
-			}
-		},
-		decksReady: function(to) {
-			if (!to) {
-				return;
-			}
-
-			const hoardDeck = this.$store.getters['decks/getByType']('hoard');
-			const hoardCards = hoardDeck.cards;
-
-			const onAnimationEnd = () => {
-				const cardId = this.card.id;
-				const cardName = this.card.name;
-
-				this.hideCard = true;
-
-				this.$store.dispatch('sound/play', `action-card--${cardName}`);
-
-				switch (cardName) {
-					case 'ambush':
-					case 'whirlwind':
-						this.$store.dispatch(
-							'players/actionCard',
-							{ name: cardName, gameId: this.gameId },
-							{ root: true },
-						);
-
-						this.$store.dispatch('decks/addCard', {
-							type: 'discard',
-							cardId,
-						});
-
-						break;
-
-					case 'hoard':
-						if (!hoardCards.length) {
-							this.$toasted.success('No cards to Hoard', {
-								duration: 250,
-							});
-							this.$store.dispatch('game/resetAction');
-						}
-
-						break;
-
-					case 'quarrel':
-						this.$store.dispatch('players/startQuarrel');
-						break;
-
-					case 'winter':
-						this.$store.dispatch('decks/addCard', {
-							type: 'action',
-							cardId,
-						});
-
-						this.$store.dispatch('game/update', {
-							isStarted: false,
-						});
-
-						break;
-
-					default:
-						this.$store.dispatch('game/resetAction');
-						break;
-				}
-			};
-
-			this.$nextTick(() => {
-				this.$el
-					.querySelector('.card')
-					.addEventListener('animationend', onAnimationEnd);
-			});
-
-			if (!hoardCards.length) {
-				this.instantAction = true;
-			}
-		},
-	},
 	mounted: function() {
 		this.$store.dispatch('sound/play', 'action-card');
 
 		this.$nextTick(() => {
-			if (this.decksLoaded) {
-				this.decksReady = true;
-			}
+			this.$el
+				.querySelector('.card')
+				.addEventListener('animationend', this.onAnimationEnd.bind(this));
 		});
+
+		if (!this.hoardCards.length) {
+			this.instantAction = true;
+		}
+	},
+	methods: {
+		onAnimationEnd() {
+			const cardId = this.card.id;
+			const cardName = this.card.name;
+
+			this.hideCard = true;
+
+			this.$store.dispatch('sound/play', `action-card--${cardName}`);
+
+			switch (cardName) {
+				case 'ambush':
+				case 'whirlwind':
+					this.$store.dispatch(
+						'players/actionCard',
+						{ name: cardName, gameId: this.gameId },
+						{ root: true },
+					);
+
+					this.$store.dispatch('decks/addCard', {
+						type: 'discard',
+						cardId,
+					});
+
+					break;
+
+				case 'hoard':
+					if (!this.hoardCards.length) {
+						this.$toasted.success('No cards to Hoard', {
+							duration: 250,
+						});
+						this.$store.dispatch('game/resetAction');
+					}
+
+					break;
+
+				case 'quarrel':
+					this.$store.dispatch('players/startQuarrel');
+					break;
+
+				case 'winter':
+					this.$store.dispatch('decks/addCard', {
+						type: 'action',
+						cardId,
+					});
+
+					this.$store.dispatch('game/update', {
+						isStarted: false,
+					});
+
+					break;
+
+				default:
+					this.$store.dispatch('game/resetAction');
+					break;
+			}
+		},
 	},
 };
 </script>

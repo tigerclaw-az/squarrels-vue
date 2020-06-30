@@ -36,7 +36,7 @@
 			</div>
 		</div>
 		<Board
-			v-else-if="deckIds.length"
+			v-else-if="deckIds.length && decksLoaded"
 			:deck-ids="deckIds"
 			:game-id="id"
 			:player-ids="playerIds"
@@ -86,6 +86,9 @@ export default {
 			'isStarted',
 			'playerIds',
 		]),
+		decksLoaded() {
+			return this.$store.state.decks.isLoaded;
+		},
 		needPlayers: function() {
 			return this.playerIds.length < 2;
 		},
@@ -103,11 +106,11 @@ export default {
 		isStarted: function(to) {
 			if (to) {
 				this.isLoading = false;
-				this.$store.dispatch(
-					'decks/load',
-					{ ids: this.deckIds },
-					{ root: true },
-				);
+				this.$store
+					.dispatch('decks/load', { ids: this.deckIds }, { root: true })
+					.then(() => {
+						// this.decksLoaded = true;
+					});
 			}
 		},
 	},
