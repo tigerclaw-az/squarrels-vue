@@ -1,12 +1,22 @@
 const config = require('../../config/config');
-const logger = config.logger();
+const logger = config.logger('modules:game');
 
+const DeckModel = require('../../models/deck');
 const GameModel = require('../../models/game');
+
+const player = require('./player');
+const { isEmpty } = require('lodash');
 
 module.exports = {
 	update: (id, data, sid) => {
+		logger.debug(id, data, sid);
+
 		const gameId = { _id: id };
 		const options = { new: true };
+
+		if (isEmpty(data) || typeof data !== 'object') {
+			return Promise.reject('ERROR: Invalid "data" to update game!');
+		}
 
 		// prettier-ignore
 		return GameModel
@@ -36,6 +46,91 @@ module.exports = {
 	 * @returns {Promise} mongoose Promise then/catch
 	 */
 	resetActionCard(id, sid) {
+		if (!id) {
+			throw new Error('Missing game "id" to reset action card!');
+		}
+
+		if (!sid) {
+			throw new Error('Missing sessionId value to reset action card!');
+		}
+
 		return GameModel.findByIdAndUpdate(id, { actionCard: null }, sid);
+	},
+
+	async resetGame(gameData, options) {
+		logger.debug('resetGame:gameData -> ', gameData);
+		logger.debug('resetGame:option -> ', options);
+
+		const init = {
+			actionCard: null,
+			isDealing: false,
+			isLoaded: false,
+			isStarted: false,
+			roundNumber: 1,
+			$set: { deckIds: [] },
+		};
+
+		const gameId = gameData.id;
+		const sessionId = gameData.sessionId;
+
+		try {
+			const game = await GameModel.findById(gameId).exec();
+
+			logger.debug('game -> ', game);
+
+			const deckIds = game.deckIds;
+			const playerIds = game.playerIds;
+
+			logger.debug('decks -> ', deckIds);
+			logger.debug('players -> ', playerIds);
+
+			await DeckModel.deleteMany({ _id: { $in: deckIds } });
+
+			playerIds.forEach(id => {
+				// prettier-ignore
+				player[options.isNewRound ? 'newRound' : 'reset'](id, sessionId)
+					.then(doc => {
+						logger.debug('player reset -> ', doc);
+						wss.broadcast(
+							{
+								namespace: 'wsPlayers',
+								action: 'update',
+								nuts: doc,
+							},
+							sessionId
+						);
+					})
+					.catch(err => {
+						logger.error(err);
+					});
+			});
+
+			return new Promise((resolve, reject) => {
+				// Set roundNumber to correct value
+				if (options.isNewRound) {
+					init.roundNumber = game.roundNumber + 1;
+				}
+
+				logger.debug('game init -> ', init);
+
+				return GameModel.update(gameId, init, sessionId)
+					.then(doc => {
+						logger.debug('game reset -> ', doc);
+
+						wss.broadcast(
+							{ namespace: 'wsGame', action: 'update', nuts: doc },
+							sessionId
+						);
+
+						resolve(doc);
+					})
+					.catch(err => {
+						logger.error(err);
+						reject(err);
+					});
+			});
+		} catch (err) {
+			Promise.reject(err);
+		}
 	},
 };
