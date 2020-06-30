@@ -5,16 +5,22 @@ const mongoose = require('mongoose');
 const read = require('fs-readdir-recursive');
 
 class MongooseSeed {
-	constructor(opts = {}) {
-		mongoose.set('debug', opts.debug || process.env.MONGOOSE_DEBUG || false);
-		mongoose.set('useUnifiedTopology', true);
-		mongoose.Promise = opts.Promise || global.Promise;
-		this.logger = opts.logger || null;
+	constructor(seedOptions = {}, dbOptions = {}) {
+		this.options = {
+			debug: process.env.MONGOOSE_DEBUG || false,
+			useFindAndModify: false,
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+			...dbOptions,
+		};
+
+		mongoose.Promise = seedOptions.Promise || global.Promise;
+		this.logger = seedOptions.logger || null;
 	}
 
-	connect(db, options) {
+	connect(db) {
 		return new Promise((resolve, reject) => {
-			mongoose.connect(db, options).then(() => {
+			mongoose.connect(db, this.options).then(() => {
 				if (this.logger) {
 					this.logger.info(`mongodb connected: ${db}`);
 				}
