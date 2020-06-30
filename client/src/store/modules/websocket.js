@@ -8,6 +8,7 @@ import wsPlayers from '@/store/modules/websocket/wsPlayers';
 const state = {
 	socket: {
 		isConnected: false,
+		isOpen: false,
 		message: '',
 		reconnectError: false,
 	},
@@ -25,6 +26,7 @@ const mutations = {
 	SOCKET_ONOPEN(state, event) {
 		Vue.$log.info(state, event);
 		state.socket.isConnected = true;
+		state.socket.isOpen = true;
 	},
 	SOCKET_ONCLOSE(state, event) {
 		Vue.$log.info(state, event);
@@ -34,9 +36,13 @@ const mutations = {
 		}
 
 		state.socket.isConnected = false;
+		state.socket.isOpen = false;
 	},
 	SOCKET_ONERROR(state, event) {
-		Vue.$log.error(state, event);
+		if (state.socket.isOpen) {
+			// Only display error if the error wasn't from socket close
+			Vue.$log.error(state, event);
+		}
 
 		if (router.currentRoute.path !== '/offline') {
 			router.push('/offline');
