@@ -18,7 +18,7 @@ class Player {
 	}
 
 	// prettier-ignore
-	getState(data = {}) {
+	findPlayersWithCards(data = {}) {
 		return this.PlayerModel
 			.find(data)
 			.select('+cardsInHand')
@@ -50,7 +50,7 @@ class Player {
 				// Get existing cards from player and merge them with the given cards
 				// prettier-ignore
 				this
-					.getState(playerId)
+					.findPlayersWithCards(playerId)
 					.then(pl => {
 						logger.debug('pl -> ', pl);
 						cardsDefer.resolve(

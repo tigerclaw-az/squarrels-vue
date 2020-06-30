@@ -147,6 +147,7 @@ games.post('/:id/next-round', function(req, res) {
 			res.status(200).json(doc);
 		})
 		.catch(err => {
+			logger.error(err);
 			res.status(500).json(config.apiError(err));
 		});
 });
@@ -155,11 +156,15 @@ games.post('/:id/reset', function(req, res) {
 	const gameId = req.params.id;
 	const sessionId = req.sessionID;
 
+	logger.debug('/reset', gameId, sessionId);
+
 	game.resetGame({ id: gameId, sessionId }, { isNewRound: false })
 		.then(doc => {
+			logger.debug('resetGame -> ', doc);
 			res.status(200).json(doc);
 		})
 		.catch(err => {
+			logger.error(err);
 			res.status(500).json(config.apiError(err));
 		});
 });

@@ -58,8 +58,8 @@ module.exports = {
 	},
 
 	async resetGame(gameData, options) {
-		logger.debug('resetGame:gameData -> ', gameData);
-		logger.debug('resetGame:option -> ', options);
+		logger.debug('gameData -> ', gameData);
+		logger.debug('option -> ', options);
 
 		const init = {
 			actionCard: null,
@@ -67,70 +67,74 @@ module.exports = {
 			isLoaded: false,
 			isStarted: false,
 			roundNumber: 1,
-			$set: { deckIds: [] },
+			// $set: { deckIds: [] },
 		};
 
 		const gameId = gameData.id;
 		const sessionId = gameData.sessionId;
 
+		const game = await GameModel.findById(gameId).exec();
+
+		logger.debug('game -> ', game);
+
+		const deckIds = [...game.deckIds];
+		const playerIds = [...game.playerIds];
+
+		logger.debug('decks -> ', deckIds);
+		logger.debug('players -> ', playerIds);
+
+		game.deckIds = [];
+
 		try {
-			const game = await GameModel.findById(gameId).exec();
-
-			logger.debug('game -> ', game);
-
-			const deckIds = game.deckIds;
-			const playerIds = game.playerIds;
-
-			logger.debug('decks -> ', deckIds);
-			logger.debug('players -> ', playerIds);
-
 			await DeckModel.deleteMany({ _id: { $in: deckIds } });
-
-			playerIds.forEach(id => {
-				// prettier-ignore
-				player[options.isNewRound ? 'newRound' : 'reset'](id, sessionId)
-					.then(doc => {
-						logger.debug('player reset -> ', doc);
-						wss.broadcast(
-							{
-								namespace: 'wsPlayers',
-								action: 'update',
-								nuts: doc,
-							},
-							sessionId
-						);
-					})
-					.catch(err => {
-						logger.error(err);
-					});
-			});
-
-			return new Promise((resolve, reject) => {
-				// Set roundNumber to correct value
-				if (options.isNewRound) {
-					init.roundNumber = game.roundNumber + 1;
-				}
-
-				logger.debug('game init -> ', init);
-
-				return GameModel.update(gameId, init, sessionId)
-					.then(doc => {
-						logger.debug('game reset -> ', doc);
-
-						wss.broadcast(
-							{ namespace: 'wsGame', action: 'update', nuts: doc },
-							sessionId
-						);
-
-						resolve(doc);
-					})
-					.catch(err => {
-						logger.error(err);
-						reject(err);
-					});
-			});
 		} catch (err) {
-			Promise.reject(err);
+			throw new Error(err);
+		}
+
+		playerIds.forEach(id => {
+			// prettier-ignore
+			player[options.isNewRound ? 'newRound' : 'reset'](id, sessionId)
+				.then(doc => {
+					logger.debug('player reset -> ', doc);
+					wss.broadcast(
+						{
+							namespace: 'wsPlayers',
+							action: 'update',
+							nuts: doc,
+						},
+						sessionId
+					);
+				})
+				.catch(err => {
+					logger.error(err);
+				});
+		});
+
+		// Set roundNumber to correct value
+		if (options.isNewRound) {
+			init.roundNumber = game.roundNumber + 1;
+		}
+
+		logger.debug('game init -> ', init);
+
+		try {
+			// eslint-disable-next-line
+			for (const prop in init) {
+				game[prop] = init[prop];
+			}
+
+			logger.debug('game reset -> ', game);
+			game.save();
+
+			wss.broadcast(
+				{ namespace: 'wsGame', action: 'update', nuts: game },
+				sessionId
+			);
+
+			return game;
+		} catch (err) {
+			logger.error(err);
+			throw new Error(err);
 		}
 	},
 };
