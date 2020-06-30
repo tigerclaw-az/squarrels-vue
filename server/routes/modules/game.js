@@ -42,19 +42,14 @@ module.exports = {
 	 * message back to each client that the actionCard was removed
 	 *
 	 * @param {string} id ID of the game
-	 * @param {string} sid Player sessionID
 	 * @returns {Promise} mongoose Promise then/catch
 	 */
-	resetActionCard(id, sid) {
+	resetActionCard(id) {
 		if (!id) {
 			throw new Error('Missing game "id" to reset action card!');
 		}
 
-		if (!sid) {
-			throw new Error('Missing sessionId value to reset action card!');
-		}
-
-		return GameModel.findByIdAndUpdate(id, { actionCard: null }, sid);
+		return this.update(id, { actionCard: null });
 	},
 
 	async resetGame(gameData, options) {

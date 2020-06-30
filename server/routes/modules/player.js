@@ -1,8 +1,7 @@
-const _ = require('lodash');
 const config = require('../../config/config');
-const logger = config.logger('routes:modules:player');
+const logger = config.logger('modules:player');
 const Q = require('q');
-const { isEmpty } = require('lodash');
+const { isEmpty, union } = require('lodash');
 
 const initPlayer = {
 	$set: { cardsInHand: [], cardsInStorage: [] },
@@ -29,14 +28,14 @@ class Player {
 		return this.update(id, initPlayer, sid);
 	}
 
-	reset(id, sid) {
+	reset(id) {
 		const newGameData = Object.assign({}, initPlayer, {
 			score: 0,
 		});
 
 		logger.debug('newGameData -> ', newGameData);
 
-		return this.update(id, newGameData, sid);
+		return this.update(id, newGameData);
 	}
 
 	update(id, data, sid) {
@@ -44,6 +43,12 @@ class Player {
 		const options = { new: true };
 		const cardsDefer = Q.defer();
 		const defer = Q.defer();
+
+		logger.debug('update -> ', id, data, sid);
+
+		if (!id) {
+			return Promise.reject("ERROR: Missing 'id' for player update!");
+		}
 
 		if (!isEmpty(data.cardsInHand)) {
 			if (data.addCards) {
@@ -54,7 +59,7 @@ class Player {
 					.then(pl => {
 						logger.debug('pl -> ', pl);
 						cardsDefer.resolve(
-							_.union(data.cardsInHand, pl[0].cardsInHand)
+							union(data.cardsInHand, pl[0].cardsInHand)
 						);
 					});
 			} else {
@@ -66,22 +71,23 @@ class Player {
 
 		cardsDefer.promise
 			.then(cards => {
-				logger.debug('cards -> ', cards);
+				logger.debug('cardsAdded -> ', cards);
 
 				if (!isEmpty(cards)) {
 					data.cardsInHand = cards;
 					data.totalCards = cards.length;
-
-					// Make sure the player can't draw more than 7 cards
-					// if (data.totalCards >= 7) {
-					// 	data.isFirstTurn = false;
-					// }
 				}
 
 				// prettier-ignore
 				this.PlayerModel
-					.findOneAndUpdate(playerId, data, options)
+					.findByIdAndUpdate(playerId._id, data, options)
 					.then(doc => {
+						logger.debug('updated -> ', doc);
+
+						if (!doc || isEmpty(doc)) {
+							return defer.reject('ERROR: Catastrophe!!');
+						}
+
 						const wsData = {
 							namespace: 'wsPlayers',
 							action: 'update',
@@ -95,10 +101,6 @@ class Player {
 					.catch(err => {
 						defer.reject(err);
 					});
-			})
-			.catch(err => {
-				logger.error(err);
-				defer.reject(err);
 			});
 
 		return defer.promise;

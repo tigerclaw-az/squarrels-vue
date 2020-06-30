@@ -38,6 +38,8 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
 	Vue.$log.debug('router.beforeEach', store, to, from);
 
+	const currentRoute = router.currentRoute;
+
 	Vue.$log.info(router.currentRoute);
 
 	if (to.name === 'offline' || router.currentRoute.name === 'offline') {
@@ -56,8 +58,10 @@ router.beforeEach((to, from, next) => {
 				next();
 			}
 		})
-		.catch(() => {
-			if (to.path !== '/login') {
+		.catch(err => {
+			Vue.$log.error(err);
+
+			if (currentRoute !== '/login' && to.path !== '/login') {
 				next('/login');
 			} else {
 				next();

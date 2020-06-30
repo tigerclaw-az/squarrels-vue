@@ -8,6 +8,7 @@ const logger = config.logger('PlayerActions');
 
 const player = require('../routes/modules/player');
 const game = require('../routes/modules/game');
+const { partition, isEmpty, union } = require('lodash');
 
 const playerModel = mongoose.model('Player');
 
@@ -66,8 +67,6 @@ class PlayerActions {
 			.exec()
 			.then(list => {
 				if (list[0]) {
-					logger.info('getMyCards -> ', list[0]);
-
 					const wsData = {
 						action: 'getMyCards',
 						nuts: list[0],
@@ -85,56 +84,58 @@ class PlayerActions {
 		logger.debug(data);
 
 		const stealCards = players => {
+			const playersSplit = partition(players, pl => pl.isActive);
+			const opponentsUpdated = [];
 			let cards = [];
-			let playerToUpdate = {};
 
-			players.forEach(pl => {
-				const card = sampleSize(pl.cardsInHand)[0];
-				let opponent = {};
+			logger.debug('stealCards -> ', playersSplit);
 
-				if (!pl.isActive) {
-					logger.debug('card -> ', card);
+			const playerToUpdate = playersSplit[0][0];
+			const opponents = playersSplit[1];
 
-					// Only update if the player has at least 1 card
-					if (card) {
-						pull(pl.cardsInHand, card);
-						cards.push(card);
+			opponents.forEach(pl => {
+				logger.debug('opponent -> ', pl);
 
-						opponent = {
-							cardsInHand: pl.cardsInHand,
-						};
+				// Only update if the player has at least 1 card
+				if (!isEmpty(pl.cardsInHand)) {
+					const card = sampleSize(pl.cardsInHand)[0];
 
-						// FIXME: Handle update completed & error
-						player
-							.update(pl.id, opponent, this.sid)
-							.then(() => {})
-							.catch(() => {});
-					}
-				} else {
-					cards = _.union(cards, pl.cardsInHand);
-					playerToUpdate = pl;
-					logger.debug(
-						'playerToUpdate -> ',
-						playerToUpdate
-					);
+					pull(pl.cardsInHand, card);
+					cards.push(card);
+
+					// FIXME: Handle update completed & error
+					opponentsUpdated.push(player.update(pl.id, { cardsInHand: pl.cardsInHand }, this.sid));
 				}
 			});
 
-			const plData = {
-				cardsInHand: cards,
-			};
+			return Promise.all(opponentsUpdated)
+				.then(() => {
+					logger.debug('give cards to player -> ', playerToUpdate);
 
-			return player.update(playerToUpdate.id, plData, this.sid);
+					cards = union(cards, playerToUpdate.cardsInHand);
+					logger.debug('cards -> ', cards);
+
+					return player.update(playerToUpdate.id, {
+						cardsInHand: cards,
+					}, this.sid);
+				})
+				.catch(err => {
+					logger.error(err);
+				});
 		};
 
-		player
-			.getState({ gameId: data.gameId })
-			.then(stealCards)
-			.then(() => {
-				return game.resetActionCard(data.gameId, this.sid);
-			})
-			.catch(err => {
-				logger.error(err);
+		return player
+			.findPlayersWithCards({ gameId: data.gameId })
+			.then(docs => {
+				logger.debug('playersWithCards -> ', docs);
+
+				stealCards(docs)
+					.then(() => {
+						return game.resetActionCard(data.gameId, this.sid);
+					})
+					.catch(err => {
+						throw new Error(err);
+					});
 			});
 	}
 
@@ -181,15 +182,16 @@ class PlayerActions {
 	whirlwind(data) {
 		logger.debug(data);
 
+		const gameId = data.gameId;
+
 		player
-			.getState({ gameId: data.gameId })
+			.findPlayersWithCards({ gameId })
 			.then(players => {
 				let cardIds = [];
 				let startPlayer = 0;
-				const updatePromises = [];
 
 				const dealCards = () => {
-					const playersOrder = _.union(
+					const playersOrder = union(
 						players.slice(startPlayer),
 						players.slice(0, startPlayer)
 					);
@@ -211,6 +213,8 @@ class PlayerActions {
 						player.cardsInHand.push(id);
 					});
 
+					const playersUpdated = [];
+
 					playersOrder.forEach(pl => {
 						const playerData = {
 							cardsInHand: pl.cardsInHand,
@@ -218,30 +222,41 @@ class PlayerActions {
 
 						logger.debug('playerData -> ', playerData);
 
-						player.update(
-							pl.id,
-							playerData,
-							this.sid
+						playersUpdated.push(
+							player.update(
+								pl.id,
+								playerData,
+								this.sid
+							)
 						);
 					});
 
-					setTimeout(() => {
-						game.resetActionCard(data.gameId, this.sid)
-							.catch(err => {
-								logger.error(`ERROR: Unable to reset action card -> ${err}`);
-							});
-					}, 1500);
+					// setTimeout(() => {
+					return Promise.all(playersUpdated)
+						.then(() => {
+							return game.resetActionCard(gameId, this.sid)
+								.catch(err => {
+									logger.error(`ERROR: Unable to reset action card -> ${err}`);
+								});
+						})
+						.catch(err => {
+							logger.error(err);
+						});
+					// }, 1500);
 				};
 
 				logger.debug('players -> ', players);
 
+				const updatePromises = [];
+
 				players.forEach((pl, index) => {
 					const plCards = pl.cardsInHand.slice(); // Copy array
 
-					cardIds = _.union(cardIds, plCards);
+					cardIds = union(cardIds, plCards);
 
 					// Remove cards from player's hand
 					pl.cardsInHand = [];
+
 					updatePromises.push(
 						player.update(
 							pl.id,
