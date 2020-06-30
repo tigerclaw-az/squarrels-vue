@@ -6,7 +6,7 @@ const read = require('fs-readdir-recursive');
 
 class MongooseSeed {
 	constructor(opts = {}) {
-		mongoose.set('debug', opts.debug || process.env.DEBUG_MONGO || false);
+		mongoose.set('debug', opts.debug || process.env.MONGOOSE_DEBUG || false);
 		mongoose.set('useUnifiedTopology', true);
 		mongoose.Promise = opts.Promise || global.Promise;
 		this.logger = opts.logger || null;
