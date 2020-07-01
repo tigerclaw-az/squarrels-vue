@@ -15,6 +15,7 @@ export const logger = Object.freeze({
 export const toast = Object.freeze({
 	duration: 8000,
 	iconPack: 'fontawesome',
+	position: 'top-center',
 });
 
 export const websocket = Object.freeze({
