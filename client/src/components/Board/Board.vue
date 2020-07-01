@@ -77,7 +77,7 @@ export default {
 #board {
 	background-blend-mode: overlay;
 	// prettier-ignore
-	background-color: color("kenyan-copper");
+	background-color: color("mine-shaft");
 	// prettier-ignore
 	background-image: url("~@/assets/images/board-bg.jpg");
 	background-size: 100%;
