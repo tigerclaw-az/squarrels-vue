@@ -67,7 +67,6 @@ export default {
 	color: $white;
 	display: inline-flex;
 	padding: 0.5rem 1rem;
-	position: absolute;
 	text-align: right;
 	width: auto;
 	z-index: 999;

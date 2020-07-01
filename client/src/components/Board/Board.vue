@@ -1,6 +1,5 @@
 <template>
 	<div id="board">
-		<BoardHeader></BoardHeader>
 		<div class="container_board">
 			<div class="container_players">
 				<Player v-for="p in playersInGame" :key="p.id" :player="p" />
@@ -10,6 +9,7 @@
 				<slot name="action"></slot>
 			</div>
 		</div>
+		<BoardHeader></BoardHeader>
 	</div>
 </template>
 
@@ -109,11 +109,13 @@ export default {
 }
 
 .container_decks {
+	align-items: center;
 	display: flex;
 	flex: 0 1 100%;
 	flex-flow: row wrap;
 	justify-content: center;
 	position: relative;
+	min-height: 0;
 	min-width: 425px;
 	z-index: 99;
 }
