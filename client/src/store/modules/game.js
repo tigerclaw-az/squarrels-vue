@@ -259,16 +259,18 @@ const actions = {
 		}
 	},
 
-	async resetAction({ dispatch }) {
+	async resetAction({ dispatch, state }) {
 		try {
+			const actionCardId = state.actionCard.id;
+
+			await api.games.actionCard(state.id, null);
+
 			// Add current action card to the 'discard' deck
 			await dispatch(
 				'decks/addCard',
-				{ type: 'discard', cardId: state.actionCard.id },
+				{ type: 'discard', cardId: actionCardId },
 				{ root: true },
 			);
-
-			return await api.games.actionCard(state.id, null);
 		} catch (err) {
 			this._vm.$toasted.error(err);
 			throw new Error(err);
