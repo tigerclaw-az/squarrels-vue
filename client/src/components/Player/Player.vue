@@ -8,9 +8,12 @@
 		class="sq-player"
 	>
 		<div class="sq-player-avatar">
-			<img class="img-circle" src="@/assets/images/squirrel-placeholder.jpg" />
-			<PlayerStorage :player="player" />
+			<b-img-lazy
+				src="@/assets/images/squirrel-placeholder.jpg"
+				rounded="circle"
+			></b-img-lazy>
 			<div class="sq-player-name">{{ player.name }}</div>
+			<PlayerStorage :player="player" />
 		</div>
 		<div class="sq-player-cards">
 			<PlayerQuarrel :player="player" />
@@ -270,18 +273,21 @@ $card-width: (
 		align-items: flex-end;
 		align-self: flex-end;
 		display: flex;
-		position: relative;
-		width: 6.5rem;
+		position: absolute;
 		z-index: 60;
 
-		img {
-			width: 100%;
+		> img {
+			width: 6.5rem;
+			// width: 100%;
 		}
 
 		.sq-player-name {
+			bottom: -12px;
 			color: inherit;
 			font-size: 1.5em;
 			font-weight: $font-weight-bold;
+			left: 15%;
+			position: absolute;
 		}
 	}
 
@@ -297,7 +303,7 @@ $card-width: (
 	.sq-player-cards {
 		height: 100%;
 		order: 1;
-		transform: translateX(-75px);
+		transform: translateX(0);
 		width: 100%;
 
 		.cards-group {
@@ -369,7 +375,7 @@ $card-width: (
 	}
 
 	&.active {
-		color: color('desert');
+		color: color('gold-light');
 	}
 
 	@include media-breakpoint-up(lg) {
