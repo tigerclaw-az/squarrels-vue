@@ -552,9 +552,12 @@ const actions = {
 
 		if (state[playerId] && playerId === localPlayerId) {
 			await Vue.$storage.setItem('player', state[playerId]);
+
+			if (!payload.cardsInHand) {
 			// Send async websocket request for 'whoami' to update
 			// cardsInHand for local player
 			this._vm.$socket.sendObj({ action: 'getMyCards' });
+		}
 		}
 	},
 };
