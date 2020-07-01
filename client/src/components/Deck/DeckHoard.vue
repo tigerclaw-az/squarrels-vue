@@ -4,6 +4,7 @@
 			empty: !numCards,
 		}"
 		class="deck"
+		@click.prevent="onClick"
 	>
 		<transition-group
 			v-show="numCards"
@@ -12,7 +13,6 @@
 			class="cards-group"
 			role="button"
 			name="cards-hoard"
-			@click.prevent="onClick"
 		>
 			<div
 				v-for="card in numCards"
@@ -62,9 +62,6 @@ export default {
 		isDisabled: function() {
 			return this.tooManyClicks || !this.actionCard;
 		},
-	},
-	mounted: function() {
-		// this.$store.dispatch('decks/load', this.id);
 	},
 	methods: {
 		collectHoard: function() {
