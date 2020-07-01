@@ -81,6 +81,12 @@ class Player {
 				// prettier-ignore
 				this.PlayerModel
 					.findByIdAndUpdate(playerId._id, data, options)
+					.select('+sessionId +cardsInHand')
+					.populate({
+						path: 'cardsInHand',
+						model: 'Card',
+						options: { sort: '-amount' },
+					})
 					.then(doc => {
 						logger.debug('updated -> ', doc);
 
