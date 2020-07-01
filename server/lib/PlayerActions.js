@@ -153,16 +153,14 @@ class PlayerActions {
 		if (!this.hoardPlayer) {
 			this.hoardPlayer = this.playerSession;
 
-			// 	FIXME: HACK!!
-			setTimeout(() => {
-				this.send({
-					action: `actioncard_${data.action}`,
-					nuts: data.player,
-				});
-				this.hoardPlayer = null;
+			this.send({
+				action: `actioncard_${data.action}`,
+				nuts: data.player,
+			});
 
-				// game.resetActionCard();
-			}, 250);
+			setTimeout(() => {
+				this.hoardPlayer = null;
+			}, 1000);
 		} else {
 			this.send({
 				action: 'showMessage',
@@ -171,6 +169,10 @@ class PlayerActions {
 		}
 	}
 
+	/**
+	 * Handle a player selecting card for Quarrel action
+	 * @param {object} data 'player' & 'card'
+	 */
 	quarrel(data) {
 		logger.debug(data);
 
