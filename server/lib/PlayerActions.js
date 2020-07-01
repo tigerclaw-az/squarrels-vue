@@ -115,9 +115,15 @@ class PlayerActions {
 					cards = union(cards, playerToUpdate.cardsInHand);
 					logger.debug('cards -> ', cards);
 
-					return player.update(playerToUpdate.id, {
-						cardsInHand: cards,
-					}, this.sid);
+					return player
+						.update(
+							playerToUpdate.id,
+							{ cardsInHand: cards },
+							this.sid
+						)
+						.then(() => {
+							return game.resetActionCard(data.gameId, this.sid);
+						});
 				})
 				.catch(err => {
 					logger.error(err);

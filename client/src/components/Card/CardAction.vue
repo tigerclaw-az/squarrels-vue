@@ -76,20 +76,17 @@ export default {
 						{ root: true },
 					);
 
-					this.$store.dispatch('decks/addCard', {
-						type: 'discard',
-						cardId,
-					});
-
 					break;
 
 				case 'hoard':
 					if (!this.hoardCards.length) {
 						this.$toasted.success('No cards to Hoard', {
-							duration: 250,
+							duration: 1000,
 						});
 						this.$store.dispatch('game/resetAction');
 					}
+
+					// Wait for player to click the "Hoard" deck
 
 					break;
 
@@ -110,7 +107,7 @@ export default {
 					break;
 
 				default:
-					this.$store.dispatch('game/resetAction');
+					this.$toasted.error('A rogue action card has appeared!');
 					break;
 			}
 		},
@@ -137,6 +134,7 @@ export default {
 		}
 	}
 
+	left: 0;
 	opacity: 1;
 	position: absolute;
 	transform: scale(2);
@@ -150,13 +148,9 @@ export default {
 
 	// Once the card is flipped we need to move it towards the 'action' deck
 	&.shown {
-		transform: translate(80px, 0) scale(1);
+		transform: scale(1);
 	}
 
-	@include media-breakpoint-up(lg) {
-		&.shown {
-			transform: translate(80px, 0) scale(1);
-		}
-	}
+	@include media-breakpoint-up(lg) {}
 }
 </style>
