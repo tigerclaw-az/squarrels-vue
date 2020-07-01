@@ -186,22 +186,20 @@ const actions = {
 			});
 	},
 
-	create({ commit, dispatch }, plObj) {
+	async create({ commit, dispatch }, plObj) {
 		const plData = Object.assign({}, plDefault, plObj);
 
-		return new Promise((resolve, reject) => {
-			api.players
-				.create(plData)
-				.then(res => {
-					commit('LOGIN', res.data, { root: true });
-					dispatch('updateLocalPlayer', res.data);
-					resolve(res.data);
-				})
-				.catch(err => {
-					this._vm.$log.error(err);
-					reject(err);
-				});
-		});
+		try {
+			const res = await api.players.create(plData);
+
+			commit('LOGIN', res.data, { root: true });
+			await dispatch('updateLocalPlayer', res.data);
+
+			return res.data;
+		} catch (err) {
+			this._vm.$log.error(err);
+			throw new Error(err);
+		}
 	},
 
 	collectHoard({ dispatch, getters, rootGetters }, pl) {
@@ -257,13 +255,6 @@ const actions = {
 		const cardIds = state[playerId].cardsInHand.map(card => card._id);
 		const cardsInHand = difference(cardIds, [payload.card.id]);
 
-		// dispatch('updateLocalPlayer', {
-		// 	id: playerId,
-		// 	cardsInHand,
-		// 	quarrel: false,
-		// 	message: null,
-		// });
-
 		this._vm.$log.debug(cardsInHand);
 
 		const data = { cardsInHand };
@@ -282,7 +273,7 @@ const actions = {
 		const playerId = payload.id || getters.getMyPlayer.id;
 
 		try {
-			return await dispatch('update', {
+			await dispatch('update', {
 				id: playerId,
 				data: {
 					hasDrawnCard: true,
@@ -290,8 +281,7 @@ const actions = {
 			});
 		} catch (err) {
 			this._vm.$log.error(err);
-
-			return false;
+			throw new Error(err);
 		}
 	},
 
@@ -554,10 +544,10 @@ const actions = {
 			await Vue.$storage.setItem('player', state[playerId]);
 
 			if (!payload.cardsInHand) {
-			// Send async websocket request for 'whoami' to update
-			// cardsInHand for local player
-			this._vm.$socket.sendObj({ action: 'getMyCards' });
-		}
+				// Send async websocket request for 'whoami' to update
+				// cardsInHand for local player
+				this._vm.$socket.sendObj({ action: 'getMyCards' });
+			}
 		}
 	},
 };
