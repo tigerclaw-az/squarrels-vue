@@ -1,7 +1,11 @@
 <template>
 	<div id="game">
-		<transition tag="div" name="winter">
-			<div v-if="isWinter" class="game-overlay--new-game winter"></div>
+		<transition
+			v-if="isWinter"
+			tag="div"
+			class="game-overlay--new-game winter"
+			name="winter"
+		>
 		</transition>
 		<GameResults v-if="isWinter" :game-id="id" :player-ids="playerIds">
 			<template slot="newGame">

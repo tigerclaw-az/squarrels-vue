@@ -5,21 +5,21 @@
 		}"
 		class="deck"
 	>
-		<div
+		<transition-group
 			v-show="numCards"
+			tag="div"
 			:class="{ disabled: isDisabled }"
 			class="cards-group"
 			role="button"
+			name="cards-hoard"
 			@click.prevent="onClick"
 		>
-			<transition-group tag="div" class="transition" name="cards-hoard">
-				<div
-					v-for="card in numCards"
-					:key="card"
-					class="btn-card card blank--"
-				></div>
-			</transition-group>
-		</div>
+			<div
+				v-for="card in numCards"
+				:key="card"
+				class="btn-card card blank--"
+			></div>
+		</transition-group>
 	</div>
 </template>
 

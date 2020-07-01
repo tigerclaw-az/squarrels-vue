@@ -20,40 +20,38 @@
 			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">
 				{{ player.message }}
 			</div>
-			<div class="cards-group hand">
-				<transition-group
-					v-if="isCurrentPlayer"
-					tag="div"
-					class="transition"
-					name="cards"
-				>
-					<Card
-						v-for="(card, index) in myCards"
-						:id="card.id"
-						:key="card.id"
-						:on-click="onClickCard"
-						:card-data="card"
-						:card-style="cardStyle(index)"
-						:matches="
-							card.cardType === 'special' ? [] : findCardMatches(card.amount)
-						"
-						card-type="hand"
-					/>
-				</transition-group>
-				<transition-group
-					v-if="!isCurrentPlayer"
-					tag="div"
-					class="transition"
-					name="cards"
-				>
-					<Card
-						v-for="n in player.totalCards"
-						:key="n"
-						:card-style="cardStyle(n)"
-						card-type="hand"
-					/>
-				</transition-group>
-			</div>
+			<transition-group
+				v-if="isCurrentPlayer"
+				tag="div"
+				class="cards-group hand"
+				name="cards"
+			>
+				<Card
+					v-for="(card, index) in myCards"
+					:id="card.id"
+					:key="card.id"
+					:on-click="onClickCard"
+					:card-data="card"
+					:card-style="cardStyle(index)"
+					:matches="
+						card.cardType === 'special' ? [] : findCardMatches(card.amount)
+					"
+					card-type="hand"
+				/>
+			</transition-group>
+			<transition-group
+				v-if="!isCurrentPlayer"
+				tag="div"
+				class="cards-group hand"
+				name="cards"
+			>
+				<Card
+					v-for="n in player.totalCards"
+					:key="n"
+					:card-style="cardStyle(n)"
+					card-type="hand"
+				/>
+			</transition-group>
 		</div>
 		<player-storage-modal :player="player"></player-storage-modal>
 	</div>
@@ -278,7 +276,6 @@ $card-width: (
 
 		> img {
 			width: 6.5rem;
-			// width: 100%;
 		}
 
 		.sq-player-name {
@@ -320,14 +317,6 @@ $card-width: (
 				top: 0;
 			}
 
-			/* Card drawn animation into player hand */
-			.transition {
-				display: flex;
-				justify-content: center;
-				top: 0;
-				width: 100%;
-			}
-
 			.cards-enter-active,
 			.cards-leave-active {
 				position: absolute;
@@ -354,7 +343,13 @@ $card-width: (
 	}
 
 	&.current {
+		justify-content: center;
+		margin-top: 3rem;
 		order: 5;
+
+		.sq-player-avatar {
+			bottom: -20px;
+		}
 
 		.sq-player-cards {
 			.cards-group {
@@ -366,7 +361,7 @@ $card-width: (
 					&.selected,
 					&:hover {
 						.card {
-							transform: translateY(-15%) scale(2);
+							transform: translateY(-50px) scale(1.5);
 						}
 					}
 				}

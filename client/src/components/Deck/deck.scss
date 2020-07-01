@@ -45,14 +45,6 @@ $deck-height: 8 !default;
 			display: flex;
 			height: rem-calc($height);
 			justify-content: center;
-
-			// Fixes issue with element created by <transition-group>
-			> .transition {
-				display: flex;
-				justify-content: center;
-				// position: absolute;
-				top: 0;
-			}
 		}
 	}
 
