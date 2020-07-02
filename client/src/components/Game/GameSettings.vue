@@ -1,32 +1,27 @@
 <template>
-	<b-dropdown id="dropdown-game-settings" variant="primary">
-		<template slot="button-content">
-			<icon name="cog" class="icon icon-settings" label="Settings" />
-		</template>
-		<b-dropdown-item @click="onClickSetting('toggleSound')">
-			<icon :name="getIcon('sound')" class="icon icon-sound" label="Sound" />
-			<span v-if="sound.isEnabled">Sounds Off</span>
-			<span v-else>Sounds On</span>
-		</b-dropdown-item>
-		<b-dropdown-item>
-			<router-link to="/">
-				Leave Game
-			</router-link>
-		</b-dropdown-item>
-	</b-dropdown>
+	<b-button-toolbar>
+		<b-button-group class="mx-1">
+			<b-button class="mx-1" @click="onClickSetting('toggleSound')">
+				<icon :name="getIcon('sound')" class="icon icon-sound" label="Sound" />
+				<!-- <span v-if="sound.isEnabled">Sounds Off</span>
+				<span v-else>Sounds On</span> -->
+			</b-button>
+			<b-button variant="danger" to="/">
+				Quit
+			</b-button>
+		</b-button-group>
+	</b-button-toolbar>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 
 import Icon from 'vue-awesome/components/Icon';
-import { BDropdown } from 'bootstrap-vue';
 
 export default {
 	name: 'game-settings',
 	components: {
-		'b-dropdown': BDropdown,
-		'icon': Icon,
+		icon: Icon,
 	},
 	computed: {
 		...mapState({
