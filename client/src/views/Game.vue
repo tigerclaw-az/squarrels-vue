@@ -254,22 +254,6 @@ export default {
 
 	.game-overlay--start-game {
 		@extend %center;
-
-		.waiting-message {
-			animation-duration: 1.25s;
-			/**
-			* This makes sure that the starting style (opacity: .2)
-			* of the animation is applied before the animation starts.
-			* Otherwise we would see a short flash or would have
-			* to set the default styling of the dots to the same
-			* as the animation. Same applies for the ending styles.
-			*/
-			animation-fill-mode: both;
-			animation-iteration-count: infinite;
-			animation-name: blink;
-
-			transform: translateZ(0);
-		}
 	}
 
 	.game-overlay--new-game {
