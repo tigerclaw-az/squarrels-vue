@@ -340,5 +340,6 @@ module.exports = {
 				'x-invalid-end-tag': false,
 			},
 		],
+		'vue/no-unused-components': 1,
 	},
 };
