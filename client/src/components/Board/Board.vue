@@ -53,19 +53,13 @@ export default {
 		...mapState({
 			allPlayers: state => state.players,
 			decks: state => state.decks,
-			playerIdsInGame: state => state.game.playerIds,
 		}),
 		playersInGame: function() {
-			return filter(this.allPlayers, pl =>
-				includes(this.playerIdsInGame, pl.id),
-			);
+			return filter(this.allPlayers, pl => includes(this.playerIds, pl.id));
 		},
 		opponents: function() {
 			return filter(this.playersInGame, pl => pl.id !== this.currentPlayer.id);
 		},
-	},
-	unload: function() {
-		this.$store.dispatch({ type: 'decks/unload', gameId: this.gameId });
 	},
 };
 </script>
@@ -92,10 +86,10 @@ export default {
 }
 
 .container_board {
-	align-items: center;
 	display: flex;
 	flex-direction: row;
 	height: 100%;
+	place-content: center space-between;
 	position: relative;
 }
 
@@ -103,17 +97,17 @@ export default {
 	align-items: flex-start;
 	display: flex;
 	flex: 1 0 50%;
-	height: 100%;
-	padding-left: 1rem;
 	flex-flow: column;
+	height: 100%;
+	place-content: start space-between;
+	padding-left: 1rem;
 }
 
 .container_decks {
-	align-items: center;
 	display: flex;
 	flex: 0 1 100%;
 	flex-flow: row wrap;
-	justify-content: center;
+	place-content: center center;
 	position: relative;
 	min-height: 0;
 	min-width: 425px;

@@ -130,7 +130,7 @@ export default {
 				'z-index': index + 1,
 			};
 
-			const spacing = (this.isCurrentPlayer ? 240 : 100) / cardsCount;
+			const spacing = (this.isCurrentPlayer ? 240 : 140) / cardsCount;
 			const spacingMultiplier = index;
 
 			styles.left = spacing * spacingMultiplier + 'px';
@@ -314,7 +314,16 @@ $card-width: (
 
 			.btn-card,
 			.card {
+				transition: transform 0.75s ease-in-out;
 				top: 0;
+			}
+
+			.btn-card {
+				&:hover {
+					.card {
+						transform: translateY(25px) scale(1.25);
+					}
+				}
 			}
 
 			.cards-enter-active,
@@ -343,8 +352,9 @@ $card-width: (
 	}
 
 	&.current {
+		// Pushes player to end of "container"
+		margin-top: auto;
 		justify-content: center;
-		margin-top: 3rem;
 		order: 5;
 
 		.sq-player-avatar {
@@ -361,7 +371,7 @@ $card-width: (
 					&.selected,
 					&:hover {
 						.card {
-							transform: translateY(-50px) scale(1.5);
+							transform: translateY(-75px) scale(1.5);
 						}
 					}
 				}
