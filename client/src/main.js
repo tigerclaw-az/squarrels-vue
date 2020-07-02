@@ -74,5 +74,7 @@ const app = new Vue({
 window.sqVue = app;
 
 window.onbeforeunload = function() {
-	app.$disconnect();
+	// Only need this if we are using connectManually option
+	// app.$disconnect();
+	app.$store.dispatch('game/unload');
 };

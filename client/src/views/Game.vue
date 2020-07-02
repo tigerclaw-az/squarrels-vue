@@ -89,6 +89,19 @@ export default {
 			isLoading: false,
 		};
 	},
+	beforeRouteLeave(to, from, next) {
+		if (to.name === 'start') {
+			this.unload()
+				.then(() => {
+					next();
+				})
+				.catch(err => {
+					this.$log.error(err);
+					this.$toasted.error(err);
+					next(false);
+				});
+		}
+	},
 	computed: {
 		...mapGetters({
 			currentPlayer: 'players/getMyPlayer',
@@ -156,14 +169,6 @@ export default {
 					});
 				}
 			});
-
-		// Need to unload current game from player if they leave
-		window.onbeforeunload = () => {
-			this.unload();
-		};
-	},
-	beforeDestroy: function() {
-		this.unload();
 	},
 	methods: {
 		onClickStartGame: async function(evt) {
@@ -196,8 +201,10 @@ export default {
 		unload: function() {
 			// Only unload if the current game was valid
 			if (this.$store.state.game.id) {
-				this.$store.dispatch({ type: 'game/unload' });
+				return this.$store.dispatch({ type: 'game/unload' });
 			}
+
+			return Promise.resolve();
 		},
 	},
 };

@@ -1,7 +1,16 @@
 import Vue from 'vue';
 import router from '@/routes';
 
-import { concat, groupBy, keys, map, max, union, without } from 'lodash';
+import {
+	concat,
+	groupBy,
+	keys,
+	map,
+	max,
+	union,
+	without,
+	isEmpty,
+} from 'lodash';
 
 import api from '@/api/index';
 
@@ -208,6 +217,7 @@ const actions = {
 			this._vm.$log.debug('cards -> ', cards);
 
 			// Wait until cards are shown to display winner
+			// prettier-ignore
 			setTimeout(async() => {
 				dispatch(
 					'players/setQuarrelWinner',
@@ -354,7 +364,8 @@ const actions = {
 
 		return api.games
 			.updatePlayers(state.id, updatedPlayerIds)
-			.then(async() => { // eslint-disable-line
+			.then(async() => {
+        // eslint-disable-line
 				await dispatch(
 					'players/updateGame',
 					{
@@ -372,7 +383,7 @@ const actions = {
 	},
 
 	// eslint-disable-next-line
-	update({}, data) {
+  update({}, data) {
 		return api.games.update(state.id, data);
 	},
 };
@@ -391,34 +402,36 @@ const mutations = {
 	},
 
 	UPDATE(state, payload) {
-		const prevPlayerCount = state.playerIds.length;
-
 		Vue.$log.debug('mutation::game/update', state, payload);
 
-		if (payload) {
-			for (const prop in payload) {
-				if (Object.prototype.hasOwnProperty.call(state, prop)) {
-					if (Array.isArray(state[prop])) {
-						state[prop] = [...payload[prop]];
-					} else {
-						Vue.set(state, prop, payload[prop]);
-					}
+		if (isEmpty(payload)) {
+			this.$log.warn('Empty payload for "UPDATE"!');
+		}
 
-					if (prop === 'playerIds' && prevPlayerCount > 0) {
-						const newPlayerCount = payload[prop].length;
-						const countDiff = newPlayerCount - prevPlayerCount;
+		const prevPlayerCount = state.playerIds.length;
 
-						if (countDiff !== 0) {
-							const msg = 'Player ' + (countDiff > 0 ? 'joined' : 'left') + '!';
+		for (const prop in payload) {
+			if (Object.prototype.hasOwnProperty.call(state, prop)) {
+				if (Array.isArray(state[prop])) {
+					state[prop] = [...payload[prop]];
+				} else {
+					Vue.set(state, prop, payload[prop]);
+				}
 
-							this._vm.$toasted.info(msg, { duration: 500 });
-						}
+				if (prop === 'playerIds') {
+					const newPlayerCount = payload[prop].length;
+					const countDiff = newPlayerCount - prevPlayerCount;
+
+					if (countDiff !== 0) {
+						const msg = 'Player ' + (countDiff > 0 ? 'joined' : 'left') + '!';
+
+						this._vm.$toasted.info(msg, { duration: 500 });
 					}
 				}
 			}
-
-			state.startDate = state.updatedAt;
 		}
+
+		state.startDate = state.updatedAt;
 	},
 };
 
