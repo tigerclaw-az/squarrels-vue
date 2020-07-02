@@ -1,5 +1,7 @@
 import { isEmpty } from 'lodash';
 
+import mutationTypes from '@/store/mutation-types';
+
 const state = {};
 
 const getters = {};
@@ -10,7 +12,7 @@ const actions = {
 	},
 	update({ commit }, data) {
 		if (data.nuts && !isEmpty(data.nuts)) {
-			commit('decks/UPDATE', data.nuts, { root: true });
+			commit(`decks/${mutationTypes.decks.UPDATE}`, data.nuts, { root: true });
 		}
 	},
 };

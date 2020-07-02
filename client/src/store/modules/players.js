@@ -19,6 +19,7 @@ import {
 } from 'lodash';
 
 import api from '@/api/index';
+import mutationTypes from '@/store/mutation-types';
 
 const plDefault = {
 	name: utils.getRandomStr(12),
@@ -192,7 +193,7 @@ const actions = {
 		try {
 			const res = await api.players.create(plData);
 
-			commit('LOGIN', res.data, { root: true });
+			commit(mutationTypes.root.LOGIN, res.data, { root: true });
 			await dispatch('updateLocalPlayer', res.data);
 
 			return res.data;
@@ -532,7 +533,7 @@ const actions = {
 			this._vm.$log.info('Missing "id" from payload:', payload);
 		}
 
-		commit('UPDATE', payload);
+		commit(mutationTypes.players.UPDATE, payload);
 
 		const playerId = payload.id;
 		const $playerStorage = await Vue.$storage.getItem('player');
@@ -553,7 +554,7 @@ const actions = {
 };
 
 const mutations = {
-	DRAW_CARD(state, payload) {
+	[mutationTypes.players.DRAW_CARD](state, payload) {
 		const myCards = state[payload.id].cardsDrawnIds;
 
 		this._vm.$log.debug('players/DRAW_CARD', payload, state);
@@ -585,7 +586,7 @@ const mutations = {
 		);
 	},
 
-	UPDATE(state, payload) {
+	[mutationTypes.players.UPDATE](state, payload) {
 		const playerId = payload.id;
 		const ids = state.ids;
 
@@ -605,7 +606,7 @@ const mutations = {
 		}
 	},
 
-	UPDATE_CARDS(state, payload) {
+	[mutationTypes.players.UPDATE_CARDS](state, payload) {
 		this._vm.$log.debug('mutation::players/UPDATE_CARDS', state, payload);
 
 		const id = payload.id;

@@ -1,5 +1,7 @@
 import { isEmpty } from 'lodash';
 
+import mutationTypes from '@/store/mutation-types';
+
 const state = {};
 
 const getters = {};
@@ -32,7 +34,7 @@ const actions = {
 		const id = data.nuts.id;
 		const cardsInHand = data.nuts.cardsInHand;
 
-		commit('players/UPDATE_CARDS', { id, cardsInHand }, { root: true });
+		commit(`players/${mutationTypes.players.UPDATE_CARDS}`, { id, cardsInHand }, { root: true });
 	},
 
 	// eslint-disable-next-line

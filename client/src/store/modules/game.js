@@ -13,6 +13,7 @@ import {
 } from 'lodash';
 
 import api from '@/api/index';
+import mutationTypes from '@/store/mutation-types';
 
 const newRoundState = {
 	actionCard: null,
@@ -102,7 +103,7 @@ const actions = {
 			saved: savedCards,
 		};
 
-		commit('UPDATE', { quarrelCards });
+		commit(mutationTypes.game.UPDATE, { quarrelCards });
 
 		this._vm.$log.debug('addQuarrelCard', newCards, state.quarrelCount);
 
@@ -126,7 +127,7 @@ const actions = {
 			Vue.$log.debug('updatePlayers()', res);
 			const gameData = res.data;
 
-			commit('UPDATE', gameData);
+			commit(mutationTypes.game.UPDATE, gameData);
 
 			await dispatch(
 				'players/updateGame',
@@ -162,8 +163,8 @@ const actions = {
 							});
 						}
 
-						commit('UPDATE', gameData);
-						commit('LOADED');
+						commit(mutationTypes.game.UPDATE, gameData);
+						commit(mutationTypes.game.LOADED);
 
 						resolve(gameData);
 					} else {
@@ -205,7 +206,7 @@ const actions = {
 
 		this._vm.$log.debug(quarrelGroup, winners);
 
-		commit('UPDATE', { showQuarrel: true });
+		commit(mutationTypes.game.UPDATE, { showQuarrel: true });
 
 		if (winners.length === 1) {
 			const cards = map(state.quarrelCards.saved, obj => {
@@ -229,7 +230,7 @@ const actions = {
 				);
 
 				// Wait some time after winner has been set before resetting
-				commit('UPDATE', {
+				commit(mutationTypes.game.UPDATE, {
 					showQuarrel: false,
 					quarrelCards: { current: [], saved: [] },
 				});
@@ -247,7 +248,7 @@ const actions = {
 
 			setTimeout(() => {
 				// Reset current quarrelCards
-				commit('UPDATE', {
+				commit(mutationTypes.game.UPDATE, {
 					quarrelCards: {
 						current: [],
 						saved: state.quarrelCards.saved,
@@ -347,7 +348,7 @@ const actions = {
 	},
 
 	setQuarrelCount({ commit }, count) {
-		commit('UPDATE', { quarrelCount: count });
+		commit(mutationTypes.game.UPDATE, { quarrelCount: count });
 	},
 
 	/**
@@ -375,7 +376,7 @@ const actions = {
 					{ root: true },
 				);
 
-				commit('INIT');
+				commit(mutationTypes.game.INIT);
 			})
 			.catch(err => {
 				this._vm.$log.error(err);
@@ -389,11 +390,7 @@ const actions = {
 };
 
 const mutations = {
-	LOADED(state) {
-		state.isLoaded = true;
-	},
-
-	INIT(state) {
+	[mutationTypes.game.INIT](state) {
 		for (const prop in initialState) {
 			Vue.set(state, prop, initialState[prop]);
 		}
@@ -401,7 +398,11 @@ const mutations = {
 		Vue.set(state, 'isLoaded', false);
 	},
 
-	UPDATE(state, payload) {
+	[mutationTypes.game.LOADED](state) {
+		state.isLoaded = true;
+	},
+
+	[mutationTypes.game.UPDATE](state, payload) {
 		Vue.$log.debug('mutation::game/update', state, payload);
 
 		if (isEmpty(payload)) {

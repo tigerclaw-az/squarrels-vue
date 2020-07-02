@@ -4,6 +4,7 @@ import router from '@/routes';
 import wsDecks from '@/store/modules/websocket/wsDecks';
 import wsGame from '@/store/modules/websocket/wsGame';
 import wsPlayers from '@/store/modules/websocket/wsPlayers';
+import mutationTypes from '@/store/mutation-types';
 
 const state = {
 	socket: {
@@ -23,12 +24,12 @@ const getters = {
 const actions = {};
 
 const mutations = {
-	SOCKET_ONOPEN(state, event) {
+	[mutationTypes.websocket.SOCKET_ONOPEN](state, event) {
 		Vue.$log.info(state, event);
 		state.socket.isConnected = true;
 		state.socket.isOpen = true;
 	},
-	SOCKET_ONCLOSE(state, event) {
+	[mutationTypes.websocket.SOCKET_ONCLOSE](state, event) {
 		Vue.$log.info(state, event);
 
 		if (router.currentRoute.path !== '/offline') {
@@ -38,7 +39,7 @@ const mutations = {
 		state.socket.isConnected = false;
 		state.socket.isOpen = false;
 	},
-	SOCKET_ONERROR(state, event) {
+	[mutationTypes.websocket.SOCKET_ONERROR](state, event) {
 		if (state.socket.isOpen) {
 			// Only display error if the error wasn't from socket close
 			Vue.$log.error(state, event);
@@ -48,16 +49,16 @@ const mutations = {
 			router.push('/offline');
 		}
 	},
-	SOCKET_ONMESSAGE(state, message) {
+	[mutationTypes.websocket.SOCKET_ONMESSAGE](state, message) {
 		Vue.$log.debug(state, message);
 		state.message = message;
 	},
 	// mutations for reconnect methods
-	SOCKET_RECONNECT(state, count) {
+	[mutationTypes.websocket.SOCKET_RECONNECT](state, count) {
 		Vue.$log.info(state, count);
 	},
 	// mutations for reconnect methods
-	SOCKET_RECONNECT_ERROR(state, count) {
+	[mutationTypes.websocket.SOCKET_RECONNECT_ERROR](state, count) {
 		Vue.$log.error(state, count);
 	},
 };

@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import router from '@/routes';
 
-// import EventBus from '@/EventBus';
+import mutationTypes from '@/store/mutation-types';
 
 const state = {};
 
@@ -15,13 +15,13 @@ const actions = {
 			duration: 500,
 		});
 
-		commit('start/ADD_GAME', data.nuts, { root: true });
+		commit(`start/${mutationTypes.start.ADD_GAME}`, data.nuts, { root: true });
 	},
 
 	delete({ commit }, data) {
 		Vue.$log.debug(this, this._vm, data);
 		// EventBus.$emit('game:delete', data.id);
-		commit('start/DELETE_GAME', data.id, { root: true });
+		commit(`start/${mutationTypes.start.DELETE_GAME}`, data.id, { root: true });
 	},
 
 	update({ commit }, data) {
@@ -32,7 +32,7 @@ const actions = {
 
 		// Only perform an update action if the player is on the proper route
 		if (curRoute.name === 'game' && curRoute.params.id === nuts.id) {
-			commit('game/UPDATE', data.nuts, { root: true });
+			commit(`game/${mutationTypes.game.UPDATE}`, data.nuts, { root: true });
 		}
 	},
 };

@@ -1,5 +1,7 @@
 import { filter } from 'lodash';
+
 import api from '@/api/index';
+import mutationTypes from '@/store/mutation-types';
 
 const state = {
 	games: [],
@@ -12,7 +14,7 @@ const getters = {};
 
 const actions = {
 	createGame({ commit }, playerId) {
-		commit('GAME_CREATE', { wait: true });
+		commit(mutationTypes.start.GAME_CREATE, { wait: true });
 
 		api.games
 			.create(playerId)
@@ -21,34 +23,34 @@ const actions = {
 
 				this._vm.$log.debug('start/createGame', this, game);
 
-				commit('GAME_CREATE', { wait: false });
+				commit(mutationTypes.start.GAME_CREATE, { wait: false });
 				// Websocket will trigger 'wsGame/create'
 			})
 			.catch(err => {
-				commit('GAME_CREATE', { wait: false });
+				commit(mutationTypes.start.GAME_CREATE, { wait: false });
 				this._vm.$log.error(err);
 			});
 	},
 
 	deleteGame({ commit }, id) {
-		commit('GAME_DELETE', { wait: true });
+		commit(mutationTypes.start.GAME_DELETE, { wait: true });
 
 		api.games
 			.delete(id)
 			.then(() => {
 				// Websocket will trigger 'wsGame/delete'
-				commit('GAME_DELETE', { wait: false });
+				commit(mutationTypes.start.GAME_DELETE, { wait: false });
 			})
 			.catch(err => {
-				commit('GAME_DELETE', { wait: false });
-				this.$log.error(err);
+				// commit('GAME_DELETE', { wait: false });
+				this._vm.$log.error(err);
 			});
 	},
 
 	loadGames({ commit }) {
-		commit('GAMES_LOAD', { wait: true });
+		commit(mutationTypes.start.GAMES_LOAD, { wait: true });
 
-		commit('GAMES_CLEAR');
+		commit(mutationTypes.start.GAMES_CLEAR);
 
 		api.games
 			.get()
@@ -58,38 +60,38 @@ const actions = {
 
 					this._vm.$log.debug('start/loadGames', gamesData);
 
-					commit('GAMES_LOAD', { wait: false });
+					commit(mutationTypes.start.GAMES_LOAD, { wait: false });
 
 					for (const game of gamesData) {
-						commit('ADD_GAME', game);
+						commit(mutationTypes.start.ADD_GAME, game);
 					}
 				}
 			})
 			.catch(err => {
-				commit('GAMES_LOAD', { wait: false });
+				commit(mutationTypes.start.GAMES_LOAD, { wait: false });
 				this._vm.$log.error(err);
 			});
 	},
 };
 
 const mutations = {
-	ADD_GAME(state, nuts) {
+	[mutationTypes.start.ADD_GAME](state, nuts) {
 		state.games.push(nuts);
 	},
 	// Comes from websocket/wsGame (ws-game.js)
-	DELETE_GAME(state, id) {
+	[mutationTypes.start.DELETE_GAME](state, id) {
 		state.games = filter(state.games, g => g.id !== id);
 	},
-	GAME_CREATE(state, payload) {
+	[mutationTypes.start.GAME_CREATE](state, payload) {
 		state.waitCreateGame = payload.wait;
 	},
-	GAME_DELETE(state, payload) {
+	[mutationTypes.start.GAME_DELETE](state, payload) {
 		state.waitDeleteGame = payload;
 	},
-	GAMES_CLEAR(state) {
+	[mutationTypes.start.GAMES_CLEAR](state) {
 		state.games = [];
 	},
-	GAMES_LOAD(state) {
+	[mutationTypes.start.GAMES_LOAD](state) {
 		state.waitLoadGames = false;
 	},
 };

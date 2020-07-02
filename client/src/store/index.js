@@ -3,8 +3,9 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
-import api from '@/api/index';
-import modules from './modules';
+import api from '@/api';
+import modules from '@/store/modules';
+import mutationTypes from '@/store/mutation-types';
 
 const state = {
 	isAdmin: false,
@@ -18,7 +19,7 @@ const actions = {
 
 		this._vm.$log.debug('store/init', isAdmin);
 
-		commit('SET_CONFIG', {
+		commit(mutationTypes.root.SET_CONFIG, {
 			isAdmin,
 		});
 	},
@@ -34,7 +35,7 @@ const actions = {
 		}
 
 		if (localPlayer.id) {
-			commit('LOGIN', player);
+			commit(mutationTypes.root.LOGIN, player);
 
 			return localPlayer;
 		}
@@ -49,7 +50,7 @@ const actions = {
 
 			const pl = res.data[0];
 
-			commit('LOGIN', pl);
+			commit(mutationTypes.root.LOGIN, pl);
 
 			return pl;
 		} catch (err) {
@@ -60,12 +61,12 @@ const actions = {
 };
 
 const mutations = {
-	LOGIN(state, player) {
+	[mutationTypes.root.LOGIN](state, player) {
 		state.isLoggedIn = true;
 		state.localPlayer = player;
 		Vue.$storage.setItem('player', player);
 	},
-	SET_CONFIG(state, config) {
+	[mutationTypes.root.SET_CONFIG](state, config) {
 		state.isAdmin = config.isAdmin;
 	},
 };
