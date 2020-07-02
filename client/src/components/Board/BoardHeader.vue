@@ -66,7 +66,7 @@ export default {
 	padding: 0.5rem 1rem;
 	text-align: right;
 	width: 100%;
-	z-index: 999;
+	z-index: 10;
 
 	.game-settings {
 		display: flex;

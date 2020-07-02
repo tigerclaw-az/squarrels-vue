@@ -272,7 +272,7 @@ $card-width: (
 		align-self: flex-end;
 		display: flex;
 		position: absolute;
-		z-index: 60;
+		z-index: 9;
 
 		> img {
 			width: 6.5rem;

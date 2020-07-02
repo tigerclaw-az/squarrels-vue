@@ -24,13 +24,10 @@
 			class="game-overlay"
 			blur="2px"
 			opacity="0.75"
+			spinner-type="border"
 			variant="dark"
 		>
-			<div
-				v-cloak
-				v-if="!isStarted && !isLoading && !isWinter"
-				class="game-overlay--start-game"
-			>
+			<div v-if="showOverlay" class="game-overlay--start-game">
 				<b-button
 					v-if="showStartGame"
 					class="btn btn-start-game"
@@ -40,7 +37,6 @@
 					START GAME
 				</b-button>
 				<div v-else class="waiting-message">
-					<b-spinner></b-spinner>
 					<span v-if="needPlayers">
 						Waiting for other players to join...
 					</span>
@@ -131,10 +127,17 @@ export default {
 			return this.actionCard && this.actionCard.name === 'winter';
 		},
 		showOverlay() {
-			return !this.isStarted || this.isLoading;
+			return (
+				(this.needPlayers || !this.isStarted || this.isLoading) &&
+				!this.isWinter
+			);
 		},
 		showStartGame() {
-			return !this.isDealing && this.createdBy === this.currentPlayer.id;
+			return (
+				!this.needPlayers &&
+				!this.isDealing &&
+				this.createdBy === this.currentPlayer.id
+			);
 		},
 	},
 	watch: {
@@ -259,15 +262,26 @@ export default {
 	min-height: 100%;
 	width: 100%;
 
+	.spinner-border {
+		height: 8rem;
+		width: 8rem;
+	}
+
 	.game-overlay--new-game,
 	.game-overlay--start-game {
 		color: $white;
 		font-size: 2em;
+		text-align: center;
+		width: 100%;
 		z-index: 120;
 	}
 
 	.game-overlay--start-game {
 		@extend %center;
+
+		.waiting-message {
+			width: 100%;
+		}
 	}
 
 	.game-overlay--new-game {

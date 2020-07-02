@@ -111,6 +111,5 @@ export default {
 	position: relative;
 	min-height: 0;
 	min-width: 425px;
-	z-index: 99;
 }
 </style>
