@@ -84,7 +84,7 @@ export default {
 	display: flex;
 	flex: 1 1 0;
 	flex-direction: column;
-	height: 100%;
+	height: 100vh;
 	object-fit: contain;
 	object-position: center;
 	overflow: hidden;

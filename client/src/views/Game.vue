@@ -19,17 +19,20 @@
 				</div>
 			</template>
 		</GameResults>
-		<div v-if="!isStarted" class="game-overlay">
+		<b-overlay
+			:show="showOverlay"
+			class="game-overlay"
+			blur="2px"
+			opacity="0.75"
+			variant="dark"
+		>
 			<div
 				v-cloak
-				v-if="!isLoading && !isWinter"
+				v-if="!isStarted && !isLoading && !isWinter"
 				class="game-overlay--start-game"
 			>
-				<div v-if="needPlayers" class="waiting-message">
-					Waiting for other players to join...
-				</div>
 				<b-button
-					v-else-if="showStartGame"
+					v-if="showStartGame"
 					class="btn btn-start-game"
 					variant="primary"
 					@click="onClickStartGame"
@@ -37,20 +40,26 @@
 					START GAME
 				</b-button>
 				<div v-else class="waiting-message">
-					Waiting for player to start the game...
+					<b-spinner></b-spinner>
+					<span v-if="needPlayers">
+						Waiting for other players to join...
+					</span>
+					<span v-else>
+						Waiting for player to start the game...
+					</span>
 				</div>
 			</div>
-		</div>
-		<Board
-			v-else-if="deckIds.length && decksLoaded"
-			:deck-ids="deckIds"
-			:game-id="id"
-			:player-ids="playerIds"
-		>
-			<template slot="action">
-				<CardAction v-if="actionCard"></CardAction>
-			</template>
-		</Board>
+			<Board
+				v-if="deckIds.length && decksLoaded"
+				:deck-ids="deckIds"
+				:game-id="id"
+				:player-ids="playerIds"
+			>
+				<template slot="action">
+					<CardAction v-if="actionCard"></CardAction>
+				</template>
+			</Board>
+		</b-overlay>
 	</div>
 </template>
 
@@ -107,6 +116,9 @@ export default {
 		},
 		isWinter: function() {
 			return this.actionCard && this.actionCard.name === 'winter';
+		},
+		showOverlay() {
+			return !this.isStarted || this.isLoading;
 		},
 		showStartGame() {
 			return !this.isDealing && this.createdBy === this.currentPlayer.id;
@@ -237,13 +249,8 @@ export default {
 }
 
 .game-overlay {
-	background-color: rgba($black, 0.8);
-	height: auto !important;
-	margin: 0 auto -20px;
 	min-height: 100%;
-	position: fixed;
 	width: 100%;
-	z-index: 110;
 
 	.game-overlay--new-game,
 	.game-overlay--start-game {
