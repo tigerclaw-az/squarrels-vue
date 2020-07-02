@@ -3,7 +3,7 @@ const logger = config.logger('routes:cards');
 
 const cards = require('express').Router();
 
-const CardModel = require('../models/card');
+const CardModel = require('../config/models/card');
 
 cards.get('/:id', function(req, res) {
 	const ids = req.params.id.split(',');

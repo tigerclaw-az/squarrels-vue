@@ -3,7 +3,7 @@ const logger = config.logger('routes:decks');
 
 const decks = require('express').Router();
 
-const DeckModel = require('../models/deck');
+const DeckModel = require('../config/models/deck');
 
 decks.get('/:id', function(req, res) {
 	const ids = req.params.id.split(',');

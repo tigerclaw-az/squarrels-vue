@@ -15,7 +15,7 @@ mongooseSeed
 	.then(async() => {
 		const populateOpts = { populateExisting: false };
 
-		mongooseSeed.loadModels(path.join(__dirname, '../models'));
+		mongooseSeed.loadModels(path.join(__dirname, '../config/models'));
 
 		if (process.env.CLEAR_MODELS === true) {
 			await mongooseSeed.clearAll();

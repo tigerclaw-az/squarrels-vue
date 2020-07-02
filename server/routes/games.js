@@ -3,9 +3,9 @@ const config = require('../config/config');
 const logger = config.logger('routes:games');
 const games = require('express').Router();
 
-const CardModel = require('../models/card');
-const DeckModel = require('../models/deck');
-const GameModel = require('../models/game');
+const CardModel = require('../config/models/card');
+const DeckModel = require('../config/models/deck');
+const GameModel = require('../config/models/game');
 
 const game = require('./modules/game');
 const playerMod = require('./modules/player');

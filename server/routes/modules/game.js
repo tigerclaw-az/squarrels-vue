@@ -1,8 +1,8 @@
 const config = require('../../config/config');
 const logger = config.logger('modules:game');
 
-const DeckModel = require('../../models/deck');
-const GameModel = require('../../models/game');
+const DeckModel = require('../../config/models/deck');
+const GameModel = require('../../config/models/game');
 
 const player = require('./player');
 const { isEmpty } = require('lodash');

@@ -5,7 +5,23 @@ const validator = require('validator');
 const players = express.Router();
 
 const player = require('./modules/player');
-const PlayerModel = require('../models/player');
+const PlayerModel = require('../config/models/player');
+
+const validatePlayer = pl => {
+	if (pl.name) {
+		pl.name = validator.stripLow(validator.escape(pl.name));
+
+		if (pl.name.length > 24) {
+			const err = `The name you provided (${
+				pl.name
+			}) is longer than 24 chars!`;
+
+			return err;
+		}
+	}
+
+	return pl;
+};
 
 players.delete('/:id?', function(req, res) {
 	if (req.params.id) {
@@ -85,22 +101,6 @@ players.get('/:id?', function(req, res) {
 players.post('/:id?', function(req, res) {
 	const sessionId = req.sessionID;
 	const playerId = req.params.id;
-
-	const validatePlayer = pl => {
-		if (pl.name) {
-			pl.name = validator.stripLow(validator.escape(pl.name));
-
-			if (pl.name.length > 24) {
-				const err = `The name you provided (${
-					pl.name
-				}) is longer than 24 chars!`;
-
-				return err;
-			}
-		}
-
-		return pl;
-	};
 
 	if (!sessionId) {
 		logger.error('!!Possible Attack!!', req);
