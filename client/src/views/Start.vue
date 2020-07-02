@@ -81,6 +81,11 @@ export default {
 					sortable: true,
 				},
 				{
+					key: 'createdBy.name',
+					label: 'Created By',
+					sortable: true,
+				},
+				{
 					key: 'isStarted',
 					label: 'Started?',
 					formatter: value => {
@@ -88,7 +93,6 @@ export default {
 					},
 					sortable: true,
 				},
-				'roundNumber',
 				{
 					key: 'playerIds',
 					label: '# of Players',
@@ -123,7 +127,7 @@ export default {
 	},
 	methods: {
 		createGame: function() {
-			this.$store.dispatch('start/createGame');
+			this.$store.dispatch('start/createGame', this.player.id);
 		},
 
 		loadGames: function() {

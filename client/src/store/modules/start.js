@@ -11,11 +11,11 @@ const state = {
 const getters = {};
 
 const actions = {
-	createGame({ commit }) {
+	createGame({ commit }, playerId) {
 		commit('GAME_CREATE', { wait: true });
 
 		api.games
-			.create()
+			.create(playerId)
 			.then(res => {
 				const game = res.data;
 

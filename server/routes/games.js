@@ -77,7 +77,11 @@ games.get('/:id?', function(req, res) {
 	// prettier-ignore
 	GameModel
 		.find(query)
-		.populate('actionCard')
+		.populate('actionCard createdBy')
+		// .populate({
+		// 	path: 'createdBy',
+		// 	select: 'name',
+		// })
 		.exec()
 		.then(function(list) {
 			if (list.length === 0) {
@@ -98,21 +102,26 @@ games.get('/:id?', function(req, res) {
 
 games.post('/', function(req, res) {
 	const sessionId = req.sessionID;
+	const data = req.body;
 
-	const gameModel = new GameModel();
+	if (!data.playerId) {
+		return res.status(500).json({ error: 'Invalid request, missing "playerId"' });
+	}
 
-	logger.debug('create -> ', req.body);
+	logger.debug('create -> ', data);
 
 	// prettier-ignore
-	GameModel
-		.create(gameModel)
-		.then(doc => {
+	new GameModel({ createdBy: data.playerId })
+		.save()
+		.then(async doc => {
+			const gameData = await GameModel.populate(doc, { path: 'createdBy' });
+
 			wss.broadcast(
-				{ namespace: 'wsGame', action: 'create', nuts: doc },
+				{ namespace: 'wsGame', action: 'create', nuts: gameData },
 				sessionId,
 			);
 
-			res.status(201).json(doc);
+			res.status(201).json(gameData);
 		})
 		.catch(err => {
 			logger.error(err);

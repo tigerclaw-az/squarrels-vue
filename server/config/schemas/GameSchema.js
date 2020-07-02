@@ -7,13 +7,10 @@ module.exports = new Schema({
 		ref: 'Card',
 		default: null,
 	},
-	roundNumber: {
-		type: Number,
-		default: 1,
-	},
-	playerIds: {
-		type: [Schema.Types.ObjectId],
+	createdBy: {
+		type: Schema.Types.ObjectId,
 		ref: 'Player',
+		default: null,
 	},
 	deckIds: {
 		type: [Schema.Types.ObjectId],
@@ -26,6 +23,14 @@ module.exports = new Schema({
 	isStarted: {
 		type: Boolean,
 		default: false,
+	},
+	playerIds: {
+		type: [Schema.Types.ObjectId],
+		ref: 'Player',
+	},
+	roundNumber: {
+		type: Number,
+		default: 1,
 	},
 }, {
 	collection: 'games',

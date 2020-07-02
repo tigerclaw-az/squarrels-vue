@@ -7,6 +7,7 @@ import api from '@/api/index';
 
 const newRoundState = {
 	actionCard: null,
+	createdBy: null,
 	isDealing: false,
 	isLoaded: false,
 	isStarted: false,

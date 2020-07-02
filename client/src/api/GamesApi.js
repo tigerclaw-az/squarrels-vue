@@ -9,6 +9,10 @@ export default class GamesApi extends BaseApi {
 		return this.update(id, { actionCard: value });
 	}
 
+	create(playerId) {
+		return this.http.post('/', { playerId });
+	}
+
 	shuffleDecks(id) {
 		if (!id) {
 			return Promise.reject('Missing parameter "id" for shuffleDecks()');

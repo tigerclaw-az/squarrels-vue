@@ -5,8 +5,7 @@
 			tag="div"
 			class="game-overlay--new-game winter"
 			name="winter"
-		>
-		</transition>
+		></transition>
 		<GameResults v-if="isWinter" :game-id="id" :player-ids="playerIds">
 			<template slot="newGame">
 				<div class="container-button">
@@ -30,13 +29,16 @@
 					Waiting for other players to join...
 				</div>
 				<b-button
-					v-else-if="!isDealing"
+					v-else-if="showStartGame"
 					class="btn btn-start-game"
 					variant="primary"
 					@click="onClickStartGame"
 				>
 					START GAME
 				</b-button>
+				<div v-else class="waiting-message">
+					Waiting for player to start the game...
+				</div>
 			</div>
 		</div>
 		<Board
@@ -84,26 +86,30 @@ export default {
 		}),
 		...mapState('game', [
 			'actionCard',
+			'createdBy',
 			'deckIds',
 			'isDealing',
 			'isLoaded',
 			'isStarted',
 			'playerIds',
 		]),
+		allowMorePlayers: function() {
+			return this.playerIds.length < config.MAX_PLAYERS;
+		},
 		decksLoaded() {
 			return this.$store.state.decks.isLoaded;
 		},
 		needPlayers: function() {
 			return this.playerIds.length < 2;
 		},
-		allowMorePlayers: function() {
-			return this.playerIds.length < config.MAX_PLAYERS;
-		},
 		playerExists: function() {
 			return this.playerIds.filter(pl => pl === this.currentPlayer.id).length;
 		},
 		isWinter: function() {
 			return this.actionCard && this.actionCard.name === 'winter';
+		},
+		showStartGame() {
+			return !this.isDealing && this.createdBy === this.currentPlayer.id;
 		},
 	},
 	watch: {
