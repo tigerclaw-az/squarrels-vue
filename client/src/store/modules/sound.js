@@ -1,3 +1,5 @@
+import mutationTypes from '@/store/mutation-types';
+
 const SOUNDS_PATH = '/sounds/';
 const SOUND_EFFECTS = {
 	'action-card': 'action-card.mp3',
@@ -36,12 +38,12 @@ const actions = {
 		}
 	},
 	toggle: ({ commit }) => {
-		commit('toggle');
+		commit(mutationTypes.sounds.TOGGLE);
 	},
 };
 
 const mutations = {
-	toggle: state => {
+	[mutationTypes.sounds.TOGGLE]: state => {
 		state.isEnabled = !state.isEnabled;
 	},
 };

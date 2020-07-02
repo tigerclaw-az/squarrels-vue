@@ -2,8 +2,9 @@ import Vue from 'vue';
 import { concat, find, filter, pull, reject, sampleSize } from 'lodash';
 
 import api from '@/api/index';
-import store from '@/store/index';
 import { config } from '@/config';
+import store from '@/store/index';
+import mutationTypes from '@/store/mutation-types';
 
 const state = {
 	isLoaded: false,
@@ -136,7 +137,7 @@ const actions = {
 
 		// Need to update the cards in main deck so that the next
 		// player doesn't draw the same card (async)
-		commit('UPDATE_CARDS', {
+		commit(mutationTypes.decks.UPDATE_CARDS, {
 			id: mainDeck.id,
 			cards: reject(mainDeck.cards, c => cardDrawn.id === c.id),
 		});
@@ -178,10 +179,10 @@ const actions = {
 						const decks = res.data;
 
 						decks.forEach(deck => {
-							commit('UPDATE', deck);
+							commit(mutationTypes.decks.UPDATE, deck);
 						});
 
-						commit('LOADED');
+						commit(mutationTypes.decks.LOADED);
 						resolve(decks);
 					} else {
 						this._vm.$log.error(res);
@@ -201,7 +202,7 @@ const actions = {
 	},
 
 	unload({ commit }) {
-		commit('INIT');
+		commit(mutationTypes.decks.INIT);
 
 		return Promise.resolve();
 	},
@@ -240,7 +241,7 @@ const actions = {
 };
 
 const mutations = {
-	INIT(state) {
+	[mutationTypes.decks.INIT](state) {
 		Vue.set(state, 'isLoaded', false);
 
 		for (const prop in state) {
@@ -250,11 +251,11 @@ const mutations = {
 		}
 	},
 
-	LOADED(state) {
+	[mutationTypes.decks.LOADED](state) {
 		state.isLoaded = true;
 	},
 
-	UPDATE(state, payload) {
+	[mutationTypes.decks.UPDATE](state, payload) {
 		const deckId = payload.id;
 
 		this._vm.$log.debug('mutation::decks/update', state, payload);
@@ -268,7 +269,7 @@ const mutations = {
 		}
 	},
 
-	UPDATE_CARDS(state, payload) {
+	[mutationTypes.decks.UPDATE_CARDS](state, payload) {
 		this._vm.$log.debug('decks/UPDATE_CARDS', payload);
 
 		Vue.set(state[payload.id], 'cards', [...payload.cards]);
