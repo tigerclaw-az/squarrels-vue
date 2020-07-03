@@ -85,8 +85,8 @@ $green: #28a745;
 $teal: #20c997;
 $cyan: #17a2b8;
 
-$primary: map-get($colors, "bronze");
-$secondary: $gray-600;
+$primary: map-get($colors, 'bronze');
+$secondary: map-get($colors, 'desert');
 $success: $green;
 $info: $cyan;
 $warning: $yellow;

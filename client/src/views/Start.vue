@@ -10,7 +10,10 @@
 					Choose a game from the list, or start a "New Game"
 				</p>
 			</div>
-			<div class="games-list w-75">
+			<b-button class="btn-new-game" variant="primary" @click="createGame">
+				NEW GAME
+			</b-button>
+			<div class="games-list p-3">
 				<b-table
 					v-if="hasGames"
 					:bordered="true"
@@ -22,23 +25,24 @@
 					sort-by.sync="createdAt"
 				>
 					<template v-slot:cell(join)="data">
-						<router-link
+						<b-button
 							:to="{ name: 'game', params: { id: data.item.id } }"
 							class="btn btn-primary btn-join-game"
 						>
 							JOIN
-						</router-link>
+						</b-button>
 					</template>
 					<template v-slot:cell(delete)="data">
-						<button class="btn btn-danger" @click="deleteGame(data.item.id)">
+						<b-button
+							v-if="canDelete(data.item)"
+							variant="outline-danger"
+							@click="deleteGame(data.item.id)"
+						>
 							<icon name="trash" class="icon icon-delete" />
-						</button>
+						</b-button>
 					</template>
 				</b-table>
 			</div>
-			<button class="btn btn-primary btn-new-game" @click="createGame">
-				NEW GAME
-			</button>
 		</div>
 	</div>
 </template>
@@ -49,11 +53,12 @@ import { isEmpty } from 'lodash';
 import moment from 'moment';
 
 import Icon from 'vue-awesome/components/Icon';
-import { BTable } from 'bootstrap-vue';
+import { BButton, BTable } from 'bootstrap-vue';
 
 export default {
 	name: 'start',
 	components: {
+		'b-button': BButton,
 		'b-table': BTable,
 		Icon,
 	},
@@ -103,7 +108,7 @@ export default {
 				},
 				{
 					key: 'delete',
-					label: 'Delete Game',
+					label: 'Remove',
 				},
 			],
 		};
@@ -112,6 +117,7 @@ export default {
 		...mapGetters({
 			player: 'players/getMyPlayer',
 		}),
+		...mapState(['isAdmin']),
 		...mapState('start', [
 			'games',
 			'waitCreateGame',
@@ -126,16 +132,17 @@ export default {
 		this.loadGames();
 	},
 	methods: {
-		createGame: function() {
+		canDelete(item) {
+			return this.isAdmin || item.createdBy.id === this.player.id;
+		},
+		createGame() {
 			this.$store.dispatch('start/createGame', this.player.id);
 		},
-
-		loadGames: function() {
-			this.$store.dispatch('start/loadGames');
-		},
-
-		deleteGame: function(id) {
+		deleteGame(id) {
 			this.$store.dispatch('start/deleteGame', id);
+		},
+		loadGames() {
+			this.$store.dispatch('start/loadGames');
 		},
 	},
 };
@@ -143,6 +150,7 @@ export default {
 
 <style lang="scss" scoped>
 // prettier-ignore
+@import "~@/assets/scss/variables";
 @import "~@/assets/scss/mixins";
 
 .winter {
@@ -162,6 +170,8 @@ export default {
 }
 
 .games-list {
+	background-color: rgba(map-get($theme-colors, 'secondary'), 0.8);
+	box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.75);
 	max-height: 75vh;
 	overflow: auto;
 
