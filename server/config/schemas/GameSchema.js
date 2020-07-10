@@ -20,6 +20,10 @@ module.exports = new Schema({
 		type: Boolean,
 		default: false,
 	},
+	isDrawingCard: {
+		type: Boolean,
+		default: false,
+	},
 	isStarted: {
 		type: Boolean,
 		default: false,

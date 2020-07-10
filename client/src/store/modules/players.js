@@ -270,21 +270,23 @@ const actions = {
 		});
 	},
 
-	drawCard({ getters }, payload) {
+	async drawCard({ dispatch, getters }, payload) {
 		const playerId = payload.id || getters.getMyPlayer.id;
 
 		try {
-			this._vm.$socket.sendObj({
-				action: 'drawCard',
-				playerId,
-			});
-
-			// await dispatch('update', {
-			// 	id: playerId,
-			// 	data: {
-			// 		hasDrawnCard: true,
-			// 	},
+			// this._vm.$socket.sendObj({
+			// 	action: 'drawCard',
+			// 	playerId,
 			// });
+
+			await dispatch('game/update', { isDrawingCard: true }, { root: true });
+
+			await dispatch('update', {
+				id: playerId,
+				data: {
+					hasDrawnCard: true,
+				},
+			});
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
@@ -541,9 +543,9 @@ const actions = {
 
 		this._vm.$log.debug('playerMatch?', playerId, localPlayerId);
 
-		if (payload.hasDrawnCard) {
-			commit(`game/${mutationTypes.game.TOGGLE_DRAW_CARD}`, {}, { root: true });
-		}
+		// if (Object.prototype.hasOwnProperty.call(payload, 'hasDrawnCard')) {
+		// 	commit(`game/${mutationTypes.game.TOGGLE_DRAW_CARD}`, payload.hasDrawnCard, { root: true });
+		// }
 
 		if (state[playerId] && playerId === localPlayerId) {
 			await Vue.$storage.setItem('player', state[playerId]);

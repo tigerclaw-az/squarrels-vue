@@ -80,11 +80,11 @@ class PlayerActions {
 			});
 	}
 
-	async drawCard(data) {
-		logger.debug(data);
+	// async drawCard(data) {
+	// 	logger.debug(data);
 
-		await player.update(data.playerId, { hasDrawnCard: true }, this.sid);
-	}
+	// 	await player.update(data.playerId, { hasDrawnCard: true }, this.sid);
+	// }
 
 	ambush(data) {
 		logger.debug(data);

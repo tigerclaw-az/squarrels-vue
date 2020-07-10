@@ -140,6 +140,15 @@ games.post('/:id', function(req, res) {
 		.then(doc => {
 			const statusCode = doc ? 200 : 204;
 
+			wss.broadcast(
+				{
+					namespace: 'wsGame',
+					action: 'update',
+					nuts: doc,
+				},
+				sessionId
+			);
+
 			res.status(statusCode).json(doc);
 		})
 		.catch(err => {

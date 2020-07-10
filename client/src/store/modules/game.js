@@ -403,15 +403,16 @@ const mutations = {
 		state.isLoaded = true;
 	},
 
-	[mutationTypes.game.TOGGLE_DRAW_CARD](state) {
-		state.isDrawingCard = !state.isDrawingCard;
+	[mutationTypes.game.TOGGLE_DRAW_CARD](state, toggle) {
+		Vue.$log.debug('TOGGLE_DRAW_CARD', state.isDrawingCard, toggle);
+		state.isDrawingCard = toggle;
 	},
 
 	[mutationTypes.game.UPDATE](state, payload) {
 		Vue.$log.debug('mutation::game/update', state, payload);
 
 		if (isEmpty(payload)) {
-			this.$log.warn('Empty payload for "UPDATE"!');
+			Vue.$log.warn('Empty payload for "UPDATE"!');
 		}
 
 		const prevPlayerCount = state.playerIds.length;

@@ -13,7 +13,7 @@
 		</div>
 		<div class="cards-group">
 			<div
-				v-show="isCardDrawn"
+				v-show="isDrawingCard"
 				:class="{ 'has-card': cardDrawn }"
 				:style="cardDrawnStyle(numCards)"
 				class="card-drawn"
@@ -100,6 +100,8 @@ export default {
 	},
 	watch: {
 		isDrawingCard(val) {
+			this.$log.debug(val);
+
 			if (!val) {
 				return;
 			}
@@ -168,7 +170,8 @@ export default {
 		onCardDrawnAnimationEnd: function() {
 			this.$log.debug('animation ended -> ', this.cardDrawn);
 
-			this.$store.commit(`game/${mutationTypes.game.TOGGLE_DRAW_CARD}`);
+			// this.$store.commit(`game/${mutationTypes.game.TOGGLE_DRAW_CARD}`, false);
+			this.$store.dispatch('game/update', { isDrawingCard: false });
 
 			this.onCardDrawn(this.cardDrawn);
 		},
@@ -197,7 +200,7 @@ export default {
 
 			this.$cardDrawnEl.style.left = left - 2.5 + 'px';
 
-			if (!this.cardDrawn) {
+			if (!this.cardDrawn && this.isDrawingCard) {
 				window.requestAnimationFrame(this.moveCard);
 			}
 		},
