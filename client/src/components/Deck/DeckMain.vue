@@ -53,6 +53,8 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
+import mutationTypes from '@/store/mutation-types';
+
 import Icon from 'vue-awesome/components/Icon';
 
 import Card from '@/components/Card/Card.vue';
@@ -88,11 +90,35 @@ export default {
 		...mapState({
 			decks: state => state.decks,
 		}),
+		...mapState('game', ['isDrawingCard']),
 		dropdownList: function() {
 			return this.cards;
 		},
 		isDisabled: function() {
 			return !this.canDrawCard;
+		},
+	},
+	watch: {
+		isDrawingCard(val) {
+			if (!val) {
+				return;
+			}
+
+			// Animate card draw for all players
+			window.requestAnimationFrame(this.moveCard);
+
+			// Only valid for current player drawing card
+			if (this.isCardDrawn) {
+				this.$store
+					.dispatch('decks/drawCard')
+					.then(card => {
+						this.cardDrawn = card;
+					})
+					.catch(err => {
+						this.$log.error(err);
+						this.$toasted.error(`Error drawing card! ${err}`);
+					});
+			}
 		},
 	},
 	created: function() {
@@ -120,7 +146,7 @@ export default {
 				transform: `translate(${pos}px, ${pos}px)`,
 			};
 		},
-		handleCardDrawn: function(cardDrawn) {
+		onCardDrawn: function(cardDrawn) {
 			const cardAction = cardDrawn.action;
 
 			let dispatchAction = 'players/addCards';
@@ -134,7 +160,7 @@ export default {
 			}
 
 			this.$store.dispatch(dispatchAction, cardData).then(() => {
-				this.$cardDrawnEl.style.left = '0px';
+				// this.$cardDrawnEl.style.left = '0px';
 				this.isCardDrawn = false;
 				this.cardDrawn = null;
 			});
@@ -142,29 +168,15 @@ export default {
 		onCardDrawnAnimationEnd: function() {
 			this.$log.debug('animation ended -> ', this.cardDrawn);
 
-			setTimeout(() => {
-				if (this.cardDrawn) {
-					this.handleCardDrawn(this.cardDrawn);
-				}
-			}, 500);
+			this.$store.commit(`game/${mutationTypes.game.TOGGLE_DRAW_CARD}`);
+
+			this.onCardDrawn(this.cardDrawn);
 		},
 		onClick: function() {
 			if (this.canDrawCard) {
 				this.isCardDrawn = true;
 
 				this.$store.dispatch('players/drawCard', this.myPlayer);
-
-				window.requestAnimationFrame(this.moveCard);
-
-				this.$store
-					.dispatch('decks/drawCard')
-					.then(card => {
-						this.cardDrawn = card;
-					})
-					.catch(err => {
-						this.$log.error(err);
-						this.$toasted.error(`Error drawing card! ${err}`);
-					});
 			}
 		},
 		onClickDrawCard: function(adminCard) {
@@ -173,7 +185,7 @@ export default {
 			this.$store
 				.dispatch('decks/drawCard', { adminCard })
 				.then(card => {
-					this.handleCardDrawn(card);
+					this.onCardDrawn(card);
 				})
 				.catch(err => {
 					this.$log.error(err);
@@ -185,7 +197,7 @@ export default {
 
 			this.$cardDrawnEl.style.left = left - 2.5 + 'px';
 
-			if (left > -100) {
+			if (!this.cardDrawn) {
 				window.requestAnimationFrame(this.moveCard);
 			}
 		},

@@ -19,12 +19,17 @@ module.exports = function(server) {
 			const data = JSON.parse(message);
 
 			// Process WebSocket message
-			logger.debug('Message received: ', data);
-			logger.debug(`websocket:onmessage:${data.action} -> ${sid}`);
+			logger.info('Message received: ', data);
+			logger.info(`websocket:onmessage:${data.action} -> ${sid}`);
 
 			if (typeof actions[data.action] === 'function') {
-				actions[data.action](data);
+				try {
+					actions[data.action](data);
+				} catch (err) {
+					logger.error(err);
+				}
 			} else {
+				logger.warn(`No action '${data.action}' associated with PlayerActions`)
 				wss.broadcast(data);
 			}
 		};

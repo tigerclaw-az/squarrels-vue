@@ -12,6 +12,7 @@ export default Object.freeze({
 	game: {
 		LOADED: 'LOADED',
 		INIT: 'INIT',
+		TOGGLE_DRAW_CARD: 'TOGGLE_DRAW_CARD',
 		UPDATE: 'UPDATE',
 	},
 	players: {

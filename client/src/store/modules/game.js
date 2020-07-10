@@ -20,6 +20,7 @@ const newRoundState = {
 	createdBy: null,
 	isDealing: false,
 	isLoaded: false,
+	isDrawingCard: false,
 	isStarted: false,
 	quarrelCards: {
 		current: [],
@@ -400,6 +401,10 @@ const mutations = {
 
 	[mutationTypes.game.LOADED](state) {
 		state.isLoaded = true;
+	},
+
+	[mutationTypes.game.TOGGLE_DRAW_CARD](state) {
+		state.isDrawingCard = !state.isDrawingCard;
 	},
 
 	[mutationTypes.game.UPDATE](state, payload) {

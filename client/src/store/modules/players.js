@@ -270,16 +270,21 @@ const actions = {
 		});
 	},
 
-	async drawCard({ dispatch, getters }, payload) {
+	drawCard({ getters }, payload) {
 		const playerId = payload.id || getters.getMyPlayer.id;
 
 		try {
-			await dispatch('update', {
-				id: playerId,
-				data: {
-					hasDrawnCard: true,
-				},
+			this._vm.$socket.sendObj({
+				action: 'drawCard',
+				playerId,
 			});
+
+			// await dispatch('update', {
+			// 	id: playerId,
+			// 	data: {
+			// 		hasDrawnCard: true,
+			// 	},
+			// });
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
@@ -336,23 +341,14 @@ const actions = {
 		);
 
 		if (activePlayerIndex !== -1) {
-			dispatch('update', {
+			return dispatch('update', {
 				id: activePlayer.id,
 				data: {
 					isActive: false,
 					hasDrawnCard: false,
 					hasStoredCards: false,
 				},
-			})
-				.then(res => {
-					// Merge data with existing object of player
-					if (res.status === 200) {
-						// this.update(res.data.id, res.data);
-					}
-				})
-				.catch(err => {
-					this.$log.error(err);
-				});
+			});
 		}
 
 		return dispatch('update', {
@@ -540,6 +536,10 @@ const actions = {
 		const localPlayerId = $playerStorage && $playerStorage.id;
 
 		this._vm.$log.debug('playerMatch?', playerId, localPlayerId);
+
+		if (payload.hasDrawnCard) {
+			commit(`game/${mutationTypes.game.TOGGLE_DRAW_CARD}`, {}, { root: true });
+		}
 
 		if (state[playerId] && playerId === localPlayerId) {
 			await Vue.$storage.setItem('player', state[playerId]);
