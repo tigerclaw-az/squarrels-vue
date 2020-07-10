@@ -2,7 +2,7 @@ const bodyParser = require('body-parser');
 const config = require('../config/config');
 const cors = require('cors');
 const express = require('express');
-const logger = config.logger();
+const logger = config.logger('app-server');
 const appSession = require('../lib/app-session');
 
 const app = express();

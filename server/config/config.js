@@ -6,9 +6,10 @@ log.configure({
 		console: { type: 'console' },
 	},
 	categories: {
-		"default": { appenders: ['console'], level: process.env.LOGLEVEL },
-		"websocket": { appenders: ['console'], level: 'INFO' },
+		'default': { appenders: ['console'], level: process.env.LOGLEVEL },
+		'websocket': { appenders: ['console'], level: 'INFO' },
 		'routes:decks': { appenders: ['console'], level: 'WARN' },
+		'routes:players': { appenders: ['console'], level: 'INFO' },
 	},
 });
 

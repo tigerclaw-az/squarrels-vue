@@ -1,5 +1,5 @@
 const config = require('../config/config');
-const logger = config.logger();
+const logger = config.logger('app-session');
 const session = require('express-session');
 const MongodbSession = require('connect-mongodb-session')(session);
 
@@ -17,7 +17,7 @@ const sessionStore = new MongodbSession({
 });
 
 sessionStore.on('error', err => {
-	logger.error('sessionStore ERROR -> ', err);
+	logger.error('ERROR -> ', err);
 });
 
 // sessionParser
