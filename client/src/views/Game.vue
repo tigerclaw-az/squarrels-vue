@@ -1,11 +1,5 @@
 <template>
 	<div id="game">
-		<transition
-			v-if="isWinter"
-			tag="div"
-			class="game-overlay--new-game winter"
-			name="winter"
-		></transition>
 		<GameResults v-if="isWinter" :game-id="id" :player-ids="playerIds">
 			<template slot="newGame">
 				<div class="container-button">
@@ -222,18 +216,6 @@ export default {
 	display: flex;
 	height: 100%;
 	justify-content: center;
-}
-
-.winter {
-	background: url(https://media1.tenor.com/images/cfd482be411aab7af3e5e71c7aa324f5/tenor.gif?itemid=3316293)
-		no-repeat;
-	background-position: center;
-	background-size: cover;
-	height: 100%;
-	opacity: 0.75;
-	position: absolute;
-	width: 100%;
-	z-index: 100;
 }
 
 .winter-enter-active,
