@@ -137,24 +137,28 @@ export default {
 
 			return styles;
 		},
-		discard: function(card) {
+		async discard(card) {
 			this.$log.debug(card);
 
 			this.$store.dispatch('sound/play', 'discard');
 
-			const deckUpdate = this.$store.dispatch('decks/discard', card);
-			const playerUpdate = this.$store.dispatch('players/discard', {
-				card,
-			});
-
-			Promise.all([deckUpdate, playerUpdate])
-				.then(() => {
-					this.$store.dispatch('players/nextPlayer');
-				})
-				.catch(err => {
-					this.$log.error(err);
-					this.$toasted.error(`ERROR: Unable to discard card: ${card.name}`);
+			try {
+				await this.$store.dispatch('decks/discard', card);
+				await this.$store.dispatch('players/discard', {
+					card,
 				});
+			} catch (err) {
+				this.$log.error(err);
+				this.$toasted.error(`ERROR: Unable to discard card: ${card.name}`);
+			}
+
+			try {
+				await this.$store.dispatch('players/nextPlayer');
+			} catch (err) {
+				// TODO: Handle reverting "discard" for current player
+				this.$log.error(err);
+				this.$toasted.error('ERROR: Unable to notify next player');
+			}
 		},
 		findCardMatches: function(amount) {
 			const groups = groupBy(this.myCards, c => c.amount);

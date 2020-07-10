@@ -326,7 +326,7 @@ const actions = {
 		}
 	},
 
-	nextPlayer({ dispatch, getters }) {
+	async nextPlayer({ dispatch, getters }) {
 		const activePlayer = getters.getByProp('isActive', true);
 		const activePlayerIndex = activePlayer
 			? state.ids.indexOf(activePlayer.id)
@@ -341,14 +341,18 @@ const actions = {
 		);
 
 		if (activePlayerIndex !== -1) {
-			return dispatch('update', {
-				id: activePlayer.id,
-				data: {
-					isActive: false,
-					hasDrawnCard: false,
-					hasStoredCards: false,
-				},
-			});
+			try {
+				await dispatch('update', {
+					id: activePlayer.id,
+					data: {
+						isActive: false,
+						hasDrawnCard: false,
+						hasStoredCards: false,
+					},
+				});
+			} catch (err) {
+				throw new Error(err);
+			}
 		}
 
 		return dispatch('update', {
