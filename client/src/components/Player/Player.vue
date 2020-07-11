@@ -1,7 +1,7 @@
 <template>
 	<div
 		:class="{
-			'active': isActivePlayer,
+			'active': player.isActive,
 			'current': isCurrentPlayer,
 			'my-turn': isMyTurn,
 		}"
@@ -20,25 +20,11 @@
 			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">
 				{{ player.message }}
 			</div>
-			<transition-group
+			<PlayerCards
 				v-if="isCurrentPlayer"
-				tag="div"
-				class="cards-group hand"
-				name="cards"
-			>
-				<Card
-					v-for="(card, index) in myCards"
-					:id="card.id"
-					:key="card.id"
-					:on-click="onClickCard"
-					:card-data="card"
-					:card-style="cardStyle(index)"
-					:matches="
-						card.cardType === 'special' ? [] : findCardMatches(card.amount)
-					"
-					card-type="hand"
-				/>
-			</transition-group>
+				:action-card="actionCard"
+				:player="myPlayer"
+			></PlayerCards>
 			<transition-group
 				v-if="!isCurrentPlayer"
 				tag="div"
@@ -60,9 +46,8 @@
 <script>
 import { mapGetters, mapState } from 'vuex';
 
-import { filter, groupBy, sampleSize } from 'lodash';
-
 import Card from '@/components/Card/Card.vue';
+import PlayerCards from '@/components/Player/PlayerCards.vue';
 import PlayerQuarrel from '@/components/Player/PlayerQuarrel.vue';
 import PlayerStorage from '@/components/Player/PlayerStorage.vue';
 import PlayerStorageModal from '@/components/Player/PlayerStorageModal.vue';
@@ -71,6 +56,7 @@ export default {
 	name: 'player',
 	components: {
 		Card,
+		PlayerCards,
 		PlayerQuarrel,
 		PlayerStorage,
 		'player-storage-modal': PlayerStorageModal,
@@ -92,26 +78,15 @@ export default {
 			actionCard: state => state.game.actionCard,
 			isGameStarted: state => state.game.isStarted,
 		}),
-		hasCards: function() {
-			const cards = this.myCards;
-
-			return cards && cards.length ? true : false;
-		},
-		isActivePlayer: function() {
-			return this.player.isActive;
-		},
-		isCurrentPlayer: function() {
+		isCurrentPlayer() {
 			return this.myPlayer.id === this.player.id;
 		},
-		isMyTurn: function() {
-			return this.isActivePlayer && this.myPlayer.id === this.player.id;
-		},
-		myCards: function() {
-			return this.myPlayer.cardsInHand;
+		isMyTurn() {
+			return this.player.isActive && this.myPlayer.id === this.player.id;
 		},
 	},
 	watch: {
-		isMyTurn: function(to, from) {
+		isMyTurn(to, from) {
 			if (to && to !== from) {
 				this.$toasted.success('YOUR TURN', {
 					duration: 1000,
@@ -121,122 +96,19 @@ export default {
 		},
 	},
 	methods: {
-		cardStyle: function(index) {
-			const cardsCount = this.isCurrentPlayer
-				? this.myCards.length
-				: this.player.totalCards;
+		cardStyle(index) {
+			const cardsCount = this.player.totalCards;
 
 			const styles = {
 				'z-index': index + 1,
 			};
 
-			const spacing = (this.isCurrentPlayer ? 240 : 140) / cardsCount;
+			const spacing = 140 / cardsCount;
 			const spacingMultiplier = index;
 
 			styles.left = spacing * spacingMultiplier + 'px';
 
 			return styles;
-		},
-		async discard(card) {
-			this.$log.debug(card);
-
-			this.$store.dispatch('sound/play', 'discard');
-
-			try {
-				await this.$store.dispatch('decks/discard', card);
-				await this.$store.dispatch('players/discard', {
-					card,
-				});
-			} catch (err) {
-				this.$log.error(err);
-				this.$toasted.error(`ERROR: Unable to discard card: ${card.name}`);
-			}
-
-			try {
-				await this.$store.dispatch('players/nextPlayer');
-			} catch (err) {
-				// TODO: Handle reverting "discard" for current player
-				this.$log.error(err);
-				this.$toasted.error('ERROR: Unable to notify next player');
-			}
-		},
-		findCardMatches: function(amount) {
-			const groups = groupBy(this.myCards, c => c.amount);
-
-			if (groups[5] && groups[5].length) {
-				groups[5] = filter(groups[5], c => c.cardType !== 'special');
-			}
-
-			if (groups[amount].length >= 3) {
-				return groups[amount];
-			}
-
-			return [];
-		},
-		onClickCard: async function(card, cardsToStore, evt) {
-			this.$log.debug(card, cardsToStore, evt);
-
-			if (this.myPlayer.quarrel) {
-				await this.$store.dispatch('players/selectQuarrelCard', {
-					id: this.myPlayer.id,
-					card,
-				});
-
-				this.$store
-					.dispatch('players/discard', {
-						card,
-						isQuarrel: true,
-					})
-					.catch(err => {
-						this.$log.error(err);
-						this.$toasted.error(err.toString());
-					});
-			}
-
-			// User can't click card if action card has been drawn
-			if (this.actionCard || !this.myPlayer.hasDrawnCard) {
-				return false;
-			}
-
-			if (this.myPlayer.isActive) {
-				if (card.cardType === 'special' && this.myPlayer.totalCards > 1) {
-					this.$toasted.error(
-						'You cannot discard this card unless it is your ONLY card.',
-					);
-
-					return false;
-				}
-
-				// If the card selected doesn't have at least 3 matching cards
-				// then we are just discarding the selected card
-				if (cardsToStore.length < 3) {
-					return this.discard(card);
-				}
-
-				// If the card selected has at least 3 matching cards
-				// then we are storing the cards for end of game
-				if (cardsToStore.length >= 3) {
-					cardsToStore = sampleSize(cardsToStore, 3);
-
-					return this.storeCards(cardsToStore);
-				}
-			}
-		},
-		storeCards: function(cardsToStore) {
-			this.$log.debug(cardsToStore);
-
-			this.$store
-				.dispatch('players/storeCards', {
-					id: this.myPlayer.id,
-					cards: cardsToStore,
-					cardsInHand: this.myCards,
-				})
-				.then(res => {
-					this.$log.debug(res);
-				})
-				.catch(err => {
-					this.$log.error(err);
-				});
 		},
 	},
 };
