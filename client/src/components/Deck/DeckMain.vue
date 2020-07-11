@@ -198,7 +198,7 @@ export default {
 		moveCard: function() {
 			const left = parseInt(this.$cardDrawnEl.style.left);
 
-			this.$cardDrawnEl.style.left = left - 2.5 + 'px';
+			this.$cardDrawnEl.style.left = left - 8 + 'px';
 
 			if (!this.cardDrawn && this.isDrawingCard) {
 				window.requestAnimationFrame(this.moveCard);
