@@ -14,9 +14,6 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
-import { filter, includes } from 'lodash';
-
 import BoardHeader from '@/components/Board/BoardHeader.vue';
 import Deck from '@/components/Deck/Deck.vue';
 import Player from '@/components/Player/Player.vue';
@@ -33,33 +30,13 @@ export default {
 			type: Array,
 			required: true,
 		},
-		gameId: {
-			type: String,
-			required: true,
-		},
-		playerIds: {
+		playersInGame: {
 			type: Array,
 			required: true,
 		},
 	},
 	data() {
 		return {};
-	},
-	computed: {
-		...mapGetters({
-			currentPlayer: 'players/getMyPlayer',
-		}),
-		...mapState(['isAdmin']),
-		...mapState({
-			allPlayers: state => state.players,
-			decks: state => state.decks,
-		}),
-		playersInGame: function() {
-			return filter(this.allPlayers, pl => includes(this.playerIds, pl.id));
-		},
-		opponents: function() {
-			return filter(this.playersInGame, pl => pl.id !== this.currentPlayer.id);
-		},
 	},
 };
 </script>

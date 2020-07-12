@@ -42,8 +42,7 @@
 			<Board
 				v-if="deckIds.length && decksLoaded"
 				:deck-ids="deckIds"
-				:game-id="id"
-				:player-ids="playerIds"
+				:players-in-game="playersInGame"
 			>
 				<template slot="action">
 					<CardAction v-if="actionCard"></CardAction>
@@ -55,6 +54,8 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
+import { filter, includes } from 'lodash';
+
 import { config } from '@/config';
 
 import CardAction from '@/components/Card/CardAction.vue';
@@ -105,20 +106,27 @@ export default {
 			'isStarted',
 			'playerIds',
 		]),
-		allowMorePlayers: function() {
+		...mapState({
+			allPlayers: state => state.players,
+			decks: state => state.decks,
+		}),
+		allowMorePlayers() {
 			return this.playerIds.length < config.MAX_PLAYERS;
 		},
 		decksLoaded() {
-			return this.$store.state.decks.isLoaded;
+			return this.decks.isLoaded;
 		},
-		needPlayers: function() {
+		isWinter() {
+			return this.actionCard && this.actionCard.name === 'winter';
+		},
+		needPlayers() {
 			return this.playerIds.length < 2;
 		},
-		playerExists: function() {
+		playerExists() {
 			return this.playerIds.filter(pl => pl === this.currentPlayer.id).length;
 		},
-		isWinter: function() {
-			return this.actionCard && this.actionCard.name === 'winter';
+		playersInGame() {
+			return filter(this.allPlayers, pl => includes(this.playerIds, pl.id));
 		},
 		showOverlay() {
 			return (
@@ -197,7 +205,7 @@ export default {
 		},
 		unload: function() {
 			// Only unload if the current game was valid
-			if (this.$store.state.game.id) {
+			if (this.id) {
 				return this.$store.dispatch({ type: 'game/unload' });
 			}
 
