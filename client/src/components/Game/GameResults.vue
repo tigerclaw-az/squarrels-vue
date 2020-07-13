@@ -23,6 +23,17 @@
 						<div class="sq-player-name">{{ player.name }}</div>
 						<PlayerStorage :player="player" />
 					</div>
+					<div class="sq-player-cards">
+						<div class="cards-group hand">
+							<Card
+								v-for="card in cardsToShow[player.id]"
+								:id="card.id"
+								:key="card.id"
+								:card-data="card"
+								card-type="hand"
+							/>
+						</div>
+					</div>
 				</div>
 				<!-- TODO: Get player's cards and see if they have golden/rotten card -->
 			</b-col>
@@ -34,14 +45,16 @@
 </template>
 
 <script>
-import { orderBy } from 'lodash';
+import { filter, orderBy } from 'lodash';
 
+import Card from '@/components/Card/Card.vue';
 // import Player from '@/components/Player/Player.vue';
 import PlayerStorage from '@/components/Player/PlayerStorage.vue';
 
 export default {
 	name: 'game-results',
 	components: {
+		Card,
 		// Player,
 		PlayerStorage,
 	},
@@ -59,14 +72,65 @@ export default {
 			required: true,
 		},
 	},
+	data: function() {
+		return {
+			cardsToShow: {},
+		};
+	},
 	computed: {
 		sortedByScore() {
 			return orderBy(this.players, 'score', 'desc');
 		},
 	},
+	mounted() {
+		let timeout = 500;
+
+		this.players.forEach(pl => {
+			setTimeout(() => {
+				this.updateScore(pl);
+			}, timeout);
+
+			timeout += 1000;
+		});
+	},
 	methods: {
 		isCurrentPlayer(pl) {
 			return this.myPlayer.id === pl.id;
+		},
+		specialCards(pl) {
+			return filter(pl.cardsInHand, card => card.cardType === 'special');
+		},
+		updateScore(pl) {
+			const specialCards = this.specialCards(pl);
+			let timeout = 1000;
+
+			if (specialCards.length) {
+				specialCards.forEach(card => {
+					setTimeout(() => {
+						if (!this.cardsToShow[pl.id]) {
+							this.$set(this.cardsToShow, pl.id, [card]);
+						} else {
+							this.$set(this.cardsToShow, pl.id, [
+								...this.cardsToShow[pl.id],
+								card,
+							]);
+						}
+
+						if (!this.isCurrentPlayer(pl)) {
+							return;
+						}
+
+						this.$store.dispatch('players/update', {
+							id: pl.id,
+							data: {
+								score: pl.score + card.amount,
+							},
+						});
+					}, timeout);
+
+					timeout += 1500;
+				});
+			}
 		},
 	},
 };
@@ -108,6 +172,7 @@ export default {
 		width: 100%;
 
 		.sq-player {
+			margin-top: 1rem;
 			min-height: 1px;
 			width: 100%;
 
@@ -117,6 +182,17 @@ export default {
 
 			.sq-player-avatar {
 				position: initial;
+			}
+
+			.sq-player-cards .cards-group {
+				.btn-card:nth-child(n+2) {
+					margin-left: 1rem;
+				}
+				.btn-card,
+				.card {
+					cursor: initial;
+					position: initial;
+				}
 			}
 		}
 	}
