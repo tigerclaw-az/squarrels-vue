@@ -1,7 +1,9 @@
 <template>
 	<b-container id="game-results" class="game-overlay--new-game winter" fluid>
 		<b-row class="title">
-			<b-col><h2>Round {{ roundNumber }} Results:</h2></b-col>
+			<b-col>
+				<h2>Round {{ roundNumber }} Results:</h2>
+			</b-col>
 		</b-row>
 		<b-row class="container_players" align-center>
 			<b-col>
