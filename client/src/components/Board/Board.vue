@@ -9,7 +9,7 @@
 				<slot name="action"></slot>
 			</div>
 		</div>
-		<BoardHeader></BoardHeader>
+		<BoardHeader :round-number="roundNumber"></BoardHeader>
 	</div>
 </template>
 
@@ -32,6 +32,10 @@ export default {
 		},
 		playersInGame: {
 			type: Array,
+			required: true,
+		},
+		roundNumber: {
+			type: Number,
 			required: true,
 		},
 	},
@@ -75,7 +79,7 @@ export default {
 	display: flex;
 	flex: 1 0 50%;
 	flex-flow: column;
-	height: 100%;
+	height: calc(100% - 2rem);
 	place-content: start space-between;
 	padding-left: 1rem;
 }

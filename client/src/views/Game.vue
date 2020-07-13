@@ -1,6 +1,12 @@
 <template>
 	<div id="game">
-		<GameResults v-if="isWinter" :game-id="id" :player-ids="playerIds">
+		<GameResults
+			v-if="isWinter"
+			:game-id="id"
+			:my-player="myPlayer"
+			:players="playersInGame"
+			:round-number="roundNumber"
+		>
 			<template slot="newGame">
 				<div class="container-button">
 					<b-button
@@ -43,6 +49,7 @@
 				v-if="deckIds.length && decksLoaded"
 				:deck-ids="deckIds"
 				:players-in-game="playersInGame"
+				:round-number="roundNumber"
 			>
 				<template slot="action">
 					<CardAction v-if="actionCard"></CardAction>
@@ -95,7 +102,7 @@ export default {
 	},
 	computed: {
 		...mapGetters({
-			currentPlayer: 'players/getMyPlayer',
+			myPlayer: 'players/getMyPlayer',
 		}),
 		...mapState('game', [
 			'actionCard',
@@ -105,6 +112,7 @@ export default {
 			'isLoaded',
 			'isStarted',
 			'playerIds',
+			'roundNumber',
 		]),
 		...mapState({
 			allPlayers: state => state.players,
@@ -123,7 +131,7 @@ export default {
 			return this.playerIds.length < 2;
 		},
 		playerExists() {
-			return this.playerIds.filter(pl => pl === this.currentPlayer.id).length;
+			return this.playerIds.filter(pl => pl === this.myPlayer.id).length;
 		},
 		playersInGame() {
 			return filter(this.allPlayers, pl => includes(this.playerIds, pl.id));
@@ -138,7 +146,7 @@ export default {
 			return (
 				!this.needPlayers &&
 				!this.isDealing &&
-				this.createdBy === this.currentPlayer.id
+				this.createdBy === this.myPlayer.id
 			);
 		},
 	},
@@ -170,7 +178,7 @@ export default {
 					this.$store.dispatch({
 						type: 'game/addPlayer',
 						gameId: this.id,
-						playerId: this.currentPlayer.id,
+						playerId: this.myPlayer.id,
 					});
 				}
 			});
@@ -197,7 +205,7 @@ export default {
 
 			try {
 				await this.$store.dispatch({ type: 'game/nextRound' });
-				this.$store.dispatch({ type: 'game/start' });
+				await this.$store.dispatch({ type: 'game/start' });
 			} catch (err) {
 				this.$log.error(err);
 				this.$toasted.error(err.message);

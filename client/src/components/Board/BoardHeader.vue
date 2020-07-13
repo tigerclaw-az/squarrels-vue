@@ -23,13 +23,17 @@ export default {
 		'game-settings': GameSettings,
 		// Icon,
 	},
-	props: {},
+	props: {
+		roundNumber: {
+			type: Number,
+			required: true,
+		},
+	},
 	data: function() {
 		return {};
 	},
 	computed: {
 		...mapState(['isAdmin']),
-		...mapState('game', ['roundNumber']),
 		startDate: function() {
 			return moment(this.$store.state.game.startDate).format(
 				'dddd, MMMM Do YYYY, h:mm:ss a',
