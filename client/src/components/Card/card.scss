@@ -2,13 +2,13 @@
 @import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
 $card-height: (
-	small: 158,
-	medium: 158,
+	small: 113,
+	medium: 138,
 ) !default;
 
 $card-width: (
-	small: 120,
-	medium: 120,
+	small: 80,
+	medium: 100,
 ) !default;
 
 $card-width-stack: 120 !default;
@@ -52,8 +52,7 @@ $card-images: (
 %playing-cards {
 	position: relative;
 
-	.btn-card,
-	.card {
+	.btn-card {
 		position: absolute;
 	}
 

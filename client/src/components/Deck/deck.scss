@@ -1,5 +1,16 @@
 @import "~@/assets/scss/variables";
 @import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
+
+$card-height: (
+	small: 158,
+	medium: 158,
+);
+
+$card-width: (
+	small: 120,
+	medium: 120,
+);
+
 @import "~@/components/Card/card";
 
 $deck-height: 8 !default;
