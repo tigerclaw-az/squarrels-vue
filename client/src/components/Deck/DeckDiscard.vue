@@ -3,7 +3,7 @@
 		:class="{
 			empty: !numCards,
 		}"
-		class="deck"
+		class="deck disabled"
 	>
 		<transition-group
 			v-show="numCards"
