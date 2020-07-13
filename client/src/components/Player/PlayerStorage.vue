@@ -6,9 +6,11 @@
 		@click.prevent="onClickStorage"
 	>
 		<b-img src="@/assets/images/acorn.png" width="60" height="60"></b-img>
-		<span class="sq-player-score">
-			{{ player.score }}
-		</span>
+		<transition name="computing" mode="out-in">
+			<span :key="displayScore" class="sq-player-score">
+				{{ displayScore }}
+			</span>
+		</transition>
 	</a>
 </template>
 
@@ -20,6 +22,49 @@ export default {
 		player: {
 			type: Object,
 			required: true,
+		},
+	},
+	data: function() {
+		return {
+			displayScore: 0,
+		};
+	},
+	computed: {
+		myScore() {
+			return this.player.score;
+		},
+	},
+	watch: {
+		myScore: {
+			immediate: true,
+			handler: function(newVal, oldVal) {
+				this.$log.debug(this, newVal, oldVal);
+
+				if (!oldVal) {
+					this.displayScore = newVal;
+
+					return;
+				}
+
+				const totalChange =
+					newVal >= 0 ? newVal - oldVal : newVal + Math.abs(oldVal);
+
+				if (totalChange === 0) {
+					return;
+				}
+
+				const change = newVal > oldVal ? 1 : -1;
+				let computed = change;
+
+				const interval = setInterval(() => {
+					this.displayScore += change;
+					computed += change;
+
+					if (!this || computed >= totalChange) {
+						clearInterval(interval);
+					}
+				}, 250);
+			},
 		},
 	},
 	methods: {
@@ -45,6 +90,7 @@ export default {
 	display: flex;
 	font-size: 1.75rem;
 	justify-content: flex-end;
+	text-decoration: none;
 
 	.sq-player-score {
 		color: inherit;
@@ -54,6 +100,7 @@ export default {
 		transform: translateX(-55px);
 	}
 
-	@include media-breakpoint-up(md) {}
+	@include media-breakpoint-up(md) {
+	}
 }
 </style>
