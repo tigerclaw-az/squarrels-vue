@@ -120,16 +120,6 @@ export default {
 // prettier-ignore
 @import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
-$card-height: (
-	small: 113,
-	medium: 138,
-);
-
-$card-width: (
-	small: 80,
-	medium: 100,
-);
-
 // prettier-ignore
 @import "~@/components/Card/card";
 
