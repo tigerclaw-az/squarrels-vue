@@ -1,7 +1,7 @@
 <template>
 	<div id="game">
 		<GameResults
-			v-if="isWinter"
+			v-if="isWinter && !needPlayers"
 			:game-id="id"
 			:my-player="myPlayer"
 			:players="playersInGame"
@@ -41,7 +41,7 @@
 						Waiting for other players to join...
 					</span>
 					<span v-else>
-						Waiting for player to start the game...
+						Waiting for game to start...
 					</span>
 				</div>
 			</div>
@@ -144,9 +144,10 @@ export default {
 		},
 		showStartGame() {
 			return (
+				this.roundNumber === 1 &&
+				this.createdBy === this.myPlayer.id &&
 				!this.needPlayers &&
-				!this.isDealing &&
-				this.createdBy === this.myPlayer.id
+				!this.isDealing
 			);
 		},
 	},
