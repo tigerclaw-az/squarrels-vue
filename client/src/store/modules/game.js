@@ -145,24 +145,15 @@ const actions = {
 		return Promise.reject('NO PLAYERS TO ADD');
 	},
 
-	load({ commit, dispatch }, { id }) {
+	load({ commit }, { id }) {
 		return new Promise((resolve, reject) => {
 			api.games
 				.get(id)
-				.then(async res => {
+				.then(res => {
 					Vue.$log.debug('game/load', res);
 
 					if (res.status === 200) {
-						const gameData = res.data[0],
-							// deckIds = gameData.deckIds,
-							playersInGame = gameData.playerIds;
-
-						// Add all players to the current state of game
-						if (playersInGame.length) {
-							await dispatch('players/add', playersInGame, {
-								root: true,
-							});
-						}
+						const gameData = res.data[0];
 
 						commit(mutationTypes.game.UPDATE, gameData);
 						commit(mutationTypes.game.LOADED);
