@@ -1,23 +1,29 @@
+import { Howl } from 'howler';
+import Vue from 'vue';
+
+import audiospriteConfig from '@/assets/sounds/audiosprite.json';
 import mutationTypes from '@/store/mutation-types';
 
-const SOUNDS_PATH = '/sounds/';
-const SOUND_EFFECTS = {
-	'action-card': 'action-card.mp3',
-	'action-card--whirlwind': 'action-card--whirlwind.mp3',
-	'active-player': 'active-player.mp3',
-	'cards-shuffle': 'cards-shuffle.mp3',
-	'discard': 'discard.mp3',
-	'draw-card': 'draw-card.mp3',
-	'hoard-taken': 'hoard-taken.mp3',
-	'new-player': 'new-player.mp3',
-	'store-cards': 'store-cards.mp3',
-};
+const howlConfig = Object.assign({}, audiospriteConfig, {
+	// pool: 1,
+	onload: function() {
+		Vue.$log.info('audio::onload', this.state());
+	},
+	onloaderror: function(error) {
+		Vue.$log.info('audio::onload', this.state(), error);
+	},
+	onplayerror: function(id, err) {
+		Vue.$log.error('audio::onplayerror -> ', id, err);
+	},
+	onplay: function(id) {
+		Vue.$log.info('audio::onplay -> ', id);
+	},
+	onend: id => {
+		Vue.$log.info('audio::onend -> ', id);
+	},
+});
 
-const audio = {};
-
-for (const effect in SOUND_EFFECTS) {
-	audio[effect] = new Audio(`${SOUNDS_PATH}${SOUND_EFFECTS[effect]}`);
-}
+const audio = new Howl(howlConfig);
 
 const state = {
 	isEnabled: true,
@@ -27,14 +33,16 @@ const getters = {};
 
 const actions = {
 	play({ state }, name) {
-		if (!audio[name]) {
-			return;
+		if (!audiospriteConfig.sprite[name]) {
+			throw new Error(`Unknown sprite sound for '${name}'`);
 		}
 
-		const soundToPlay = audio[name];
+		this._vm.$log.debug('audio::play', state, audio, name);
 
 		if (state.isEnabled) {
-			soundToPlay.play();
+			const id = audio.play(name);
+
+			this._vm.$log.info('audio::id -> ', id);
 		}
 	},
 	toggle: ({ commit }) => {

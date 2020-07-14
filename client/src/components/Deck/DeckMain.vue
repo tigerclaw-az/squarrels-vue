@@ -162,7 +162,7 @@ export default {
 			}
 
 			this.$store.dispatch(dispatchAction, cardData).then(() => {
-				// this.$cardDrawnEl.style.left = '0px';
+				this.$cardDrawnEl.style.left = '0px';
 				this.isCardDrawn = false;
 				this.cardDrawn = null;
 			});

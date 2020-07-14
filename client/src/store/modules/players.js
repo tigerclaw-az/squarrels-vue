@@ -233,7 +233,7 @@ const actions = {
 				});
 		} else {
 			this._vm.$toasted.info(`HOARD TAKEN BY: ${pl.name}`);
-			dispatch('sound/play', 'hoard-taken', { root: true });
+			dispatch('sound/play', this.$sounds.hoardTaken, { root: true });
 		}
 	},
 
@@ -492,7 +492,7 @@ const actions = {
 
 		this._vm.$log.debug('plData -> ', plData);
 
-		dispatch('sound/play', 'store-cards', { root: true });
+		dispatch('sound/play', this._vm.$sounds.storeCards, { root: true });
 
 		return dispatch('update', {
 			id: currentPlayer.id,

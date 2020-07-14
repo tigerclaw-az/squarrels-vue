@@ -46,7 +46,7 @@ export default {
 		},
 	},
 	mounted: function() {
-		this.$store.dispatch('sound/play', 'action-card');
+		this.$store.dispatch('sound/play', this.$sounds.actionCard);
 
 		this.$nextTick(() => {
 			this.$el
@@ -62,10 +62,13 @@ export default {
 		onAnimationEnd() {
 			const cardId = this.card.id;
 			const cardName = this.card.name;
+			const sound = this.$sounds[`actionCard${cardName}`];
 
 			this.hideCard = true;
 
-			this.$store.dispatch('sound/play', `action-card--${cardName}`);
+			if (sound) {
+				this.$store.dispatch('sound/play', sound);
+			}
 
 			switch (cardName) {
 				case 'ambush':

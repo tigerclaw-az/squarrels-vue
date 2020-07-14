@@ -12,6 +12,18 @@ export const logger = Object.freeze({
 	showConsoleColors: true,
 });
 
+export const SOUND_EFFECTS = {
+	actionCard: 'action-card',
+	actionCardwhirlwind: 'action-card--whirlwind',
+	activePlayer: 'active-player',
+	cardsShuffle: 'cards-shuffle',
+	discard: 'discard',
+	drawCard: 'draw-card',
+	hoardTaken: 'hoard-taken',
+	newPlayer: 'new-player',
+	storeCards: 'store-cards',
+};
+
 export const toast = Object.freeze({
 	duration: 8000,
 	iconPack: 'fontawesome',

@@ -70,7 +70,7 @@ const actions = {
 		// used again with new deal later
 		await dispatch('players/resetCardsDrawn', { id: playerId }, { root: true });
 
-		dispatch('sound/play', 'cards-shuffle', { root: true });
+		dispatch('sound/play', this._vm.$sounds.cardsShuffle, { root: true });
 
 		return new Promise((resolve, reject) => {
 			// Watch for each time a card was drawn and updated for
@@ -126,7 +126,7 @@ const actions = {
 
 		this._vm.$log.debug('decks/drawCard -> ', options, mainDeck);
 
-		dispatch('sound/play', 'draw-card', { root: true });
+		dispatch('sound/play', this._vm.$sounds.drawCard, { root: true });
 
 		const cardsFromDeck = {
 			ids: getters.getCardIds(mainDeck.id),

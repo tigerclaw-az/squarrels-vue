@@ -61,7 +61,7 @@ export default {
 					card,
 				});
 				await this.$store.dispatch('decks/discard', card);
-				this.$store.dispatch('sound/play', 'discard');
+				this.$store.dispatch('sound/play', this.$sounds.discard);
 			} catch (err) {
 				this.$log.error(err);
 				this.$toasted.error(`ERROR: Unable to discard card: ${card.name}`);

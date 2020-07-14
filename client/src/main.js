@@ -19,10 +19,10 @@ import router from '@/routes';
 import store from '@/store/index';
 
 import {
+	logger as loggerConfig,
+	SOUND_EFFECTS as soundEffects,
 	toast as toastConfig,
 	websocket as wsConfig,
-	// webStorage as storageConfig,
-	logger as loggerConfig,
 } from './config';
 
 Vue.use(BootstrapVue);
@@ -53,6 +53,7 @@ Vue.$storage = localForage;
 Vue.$storage.config(storageConfig);
 Vue.prototype.$timeout = window.setTimeout;
 Vue.prototype.$timer = window.setInterval;
+Vue.prototype.$sounds = soundEffects;
 
 Vue.filter('limit', function(value, amount) {
 	return value.filter(function(val, index) {

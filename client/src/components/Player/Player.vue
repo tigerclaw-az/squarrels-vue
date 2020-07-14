@@ -91,7 +91,7 @@ export default {
 				this.$toasted.success('YOUR TURN', {
 					duration: 1000,
 				});
-				this.$store.dispatch('sound/play', 'active-player');
+				this.$store.dispatch('sound/play', this.$sounds.activePlayer);
 			}
 		},
 	},
