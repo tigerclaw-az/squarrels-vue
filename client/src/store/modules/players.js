@@ -321,7 +321,7 @@ const actions = {
 				playersUpdated.push(dispatch('updateLocalPlayer', plData));
 			});
 
-			return Promise.all(playersUpdated);
+			await Promise.all(playersUpdated);
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
