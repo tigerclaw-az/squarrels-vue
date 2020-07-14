@@ -1,37 +1,62 @@
 <template>
-	<div
-		id="action-card"
-		:class="[{ shown: hideCard, instant: isInstant }, card.name]"
-		class="action-card--wrapper"
+	<b-modal
+		v-model="showModal"
+		centered
+		hide-backdrop
+		hide-footer
+		hide-header
+		no-close-on-backdrop
+		no-close-on-esc
+		size="sm"
+		@shown="showCard"
 	>
-		<span class="card blank--"></span>
-		<Card :id="card.id" ref="card" :card-data="card" card-type="action" />
-	</div>
+		<template v-slot:default>
+			<b-container fluid>
+				<div
+					id="action-card"
+					:class="[{ shown: isCardVisible, instant: isInstant }, card.name]"
+					class="action-card--wrapper"
+				>
+					<span ref="card" class="card blank--"></span>
+					<Card :id="card.id" :card-data="card" card-type="action" />
+				</div>
+			</b-container>
+		</template>
+	</b-modal>
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 
+import { BModal } from 'bootstrap-vue';
 import Card from '@/components/Card/Card.vue';
 
 export default {
 	name: 'card-action',
 	components: {
+		'b-modal': BModal,
 		Card,
+	},
+	props: {
+		card: {
+			type: Object,
+			required: true,
+		},
+		gameId: {
+			type: String,
+			required: true,
+		},
 	},
 	data: function() {
 		return {
-			hideCard: false,
+			isCardVisible: false,
 			instantAction: false,
+			showModal: true,
 		};
 	},
 	computed: {
 		...mapGetters({
 			isActivePlayer: 'players/isActivePlayer',
-		}),
-		...mapState('game', {
-			gameId: 'id',
-			card: 'actionCard',
 		}),
 		hoardCards() {
 			return this.hoardDeck.cards;
@@ -48,23 +73,30 @@ export default {
 	mounted: function() {
 		this.$store.dispatch('sound/play', this.$sounds.actionCard);
 
-		this.$nextTick(() => {
-			this.$el
-				.querySelector('.card')
-				.addEventListener('animationend', this.onAnimationEnd.bind(this));
-		});
+		// this.showCard();
+		// this.$nextTick(() => {
+		// 	this.$el
+		// 		.querySelector('.card')
+		// 		.addEventListener('animationend', this.onAnimationEnd.bind(this));
+		// });
 
 		if (!this.hoardCards.length) {
 			this.instantAction = true;
 		}
 	},
 	methods: {
-		onAnimationEnd() {
+		showCard() {
+			this.$refs.card.addEventListener(
+				'animationend',
+				this.onAnimationEnd.bind(this),
+			);
+		},
+		async onAnimationEnd() {
 			const cardId = this.card.id;
 			const cardName = this.card.name;
 			const sound = this.$sounds[`actionCard${cardName}`];
 
-			this.hideCard = true;
+			this.isCardVisible = true;
 
 			if (sound) {
 				this.$store.dispatch('sound/play', sound);
@@ -73,7 +105,7 @@ export default {
 			switch (cardName) {
 				case 'ambush':
 				case 'whirlwind':
-					this.$store.dispatch(
+					await this.$store.dispatch(
 						'players/actionCard',
 						{ name: cardName, gameId: this.gameId },
 						{ root: true },
@@ -86,24 +118,35 @@ export default {
 						this.$toasted.success('No cards to Hoard', {
 							duration: 1000,
 						});
-						this.$store.dispatch('game/resetAction');
+
+						await this.$store.dispatch('game/resetAction');
 					}
 
 					// Wait for player to click the "Hoard" deck
+					setTimeout(() => {
+						this.$store.dispatch('decks/addCard', {
+							type: 'discard',
+							cardId,
+						});
+						this.showModal = false;
+					}, 1000);
 
 					break;
 
 				case 'quarrel':
-					this.$store.dispatch('players/startQuarrel');
+					await this.$store.dispatch('players/startQuarrel');
+					this.showModal = false;
 					break;
 
 				case 'winter':
-					this.$store.dispatch('decks/addCard', {
-						type: 'action',
+					await this.$store.dispatch('decks/addCard', {
+						type: 'discard',
 						cardId,
 					});
 
-					this.$store.dispatch('game/update', {
+					this.showModal = false;
+
+					await this.$store.dispatch('game/update', {
 						isStarted: false,
 					});
 
@@ -139,7 +182,7 @@ export default {
 
 	left: 0;
 	opacity: 1;
-	position: absolute;
+	// position: absolute;
 	transform: scale(2);
 	transition-duration: 0.5s;
 	transition-property: transform, opacity;
@@ -154,6 +197,7 @@ export default {
 		transform: scale(1);
 	}
 
-	@include media-breakpoint-up(lg) {}
+	@include media-breakpoint-up(lg) {
+	}
 }
 </style>

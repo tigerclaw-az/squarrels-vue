@@ -52,7 +52,11 @@
 				:round-number="roundNumber"
 			>
 				<template slot="action">
-					<CardAction v-if="actionCard"></CardAction>
+					<CardAction
+						v-if="actionCard"
+						:game-id="id"
+						:card="actionCard"
+					></CardAction>
 				</template>
 			</Board>
 		</b-overlay>
