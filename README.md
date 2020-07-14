@@ -16,4 +16,13 @@ $ cd client
 $ npm run serve
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## audiosprite
+
+```
+> brew install ffmpeg
+> npm install -g audiosprite
+> cd src/assets/sounds
+> audiosprite --path /sounds/ --output audiosprite -f howler ../../../public/sounds/*.mp3
+```
+
+Copy audiosprite.* files into /public folder
