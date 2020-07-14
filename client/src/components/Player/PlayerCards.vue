@@ -55,13 +55,13 @@ export default {
 		async discard(card) {
 			this.$log.debug(card);
 
-			this.$store.dispatch('sound/play', 'discard');
 
 			try {
-				await this.$store.dispatch('decks/discard', card);
 				await this.$store.dispatch('players/discard', {
 					card,
 				});
+				await this.$store.dispatch('decks/discard', card);
+				this.$store.dispatch('sound/play', 'discard');
 			} catch (err) {
 				this.$log.error(err);
 				this.$toasted.error(`ERROR: Unable to discard card: ${card.name}`);

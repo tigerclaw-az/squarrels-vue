@@ -1,5 +1,13 @@
 import Vue from 'vue';
-import { concat, find, filter, pull, reject, sampleSize } from 'lodash';
+import {
+	concat,
+	find,
+	filter,
+	pull,
+	reject,
+	sampleSize,
+	isArray,
+} from 'lodash';
 
 import api from '@/api/index';
 import { config } from '@/config';
@@ -265,7 +273,13 @@ const mutations = {
 		}
 
 		for (const prop in payload) {
-			Vue.set(state[deckId], prop, payload[prop]);
+			let value = payload[prop];
+
+			if (isArray(prop)) {
+				value = [...payload[prop]];
+			}
+
+			Vue.set(state[deckId], prop, value);
 		}
 	},
 
@@ -273,7 +287,6 @@ const mutations = {
 		this._vm.$log.debug('decks/UPDATE_CARDS', payload);
 
 		Vue.set(state[payload.id], 'cards', [...payload.cards]);
-		// Vue.set(state, 'cardsDrawnIds', payload.cardDrawnId);
 	},
 };
 
