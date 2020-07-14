@@ -7,7 +7,9 @@
 			:on-click="onClickCard"
 			:card-data="card"
 			:card-style="cardStyle(index)"
+			:is-active-player="isMyTurn"
 			:matches="card.cardType === 'special' ? [] : findCardMatches(card.amount)"
+			:my-player="player"
 			card-type="hand"
 		/>
 	</transition-group>
@@ -26,6 +28,10 @@ export default {
 		actionCard: {
 			type: Object,
 			default: () => ({}),
+		},
+		isMyTurn: {
+			type: Boolean,
+			required: true,
 		},
 		player: {
 			type: Object,
@@ -54,7 +60,6 @@ export default {
 		},
 		async discard(card) {
 			this.$log.debug(card);
-
 
 			try {
 				await this.$store.dispatch('players/discard', {
@@ -113,7 +118,7 @@ export default {
 				return false;
 			}
 
-			if (this.player.isActive) {
+			if (this.isMyTurn) {
 				if (card.cardType === 'special' && this.player.totalCards > 1) {
 					this.$toasted.error(
 						'You cannot discard this card unless it is your ONLY card.',

@@ -27,6 +27,10 @@ export default {
 		icon: Icon,
 	},
 	props: {
+		isActivePlayer: {
+			type: Boolean,
+			default: false,
+		},
 		cardData: {
 			type: Object,
 			required: false,
@@ -56,6 +60,12 @@ export default {
 				return [];
 			},
 		},
+		myPlayer: {
+			type: Object,
+			default: () => {
+				return {};
+			},
+		},
 		onClick: {
 			type: Function,
 			default: function() {
@@ -79,14 +89,6 @@ export default {
 		hasMatch: function() {
 			return this.matches.length;
 		},
-		isActivePlayer: function() {
-			const activePlayer = this.$store.getters['players/getByProp'](
-				'isActive',
-				true,
-			);
-
-			return activePlayer && activePlayer.id === this.myPlayer.id;
-		},
 		isDisabled: function() {
 			if (this.myPlayer.quarrel) {
 				return false;
@@ -95,9 +97,6 @@ export default {
 			}
 
 			return !(this.isActivePlayer || this.myPlayer.hasDrawnCard);
-		},
-		myPlayer: function() {
-			return this.$store.getters['players/getMyPlayer'];
 		},
 	},
 	mounted: function() {

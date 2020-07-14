@@ -16,13 +16,14 @@
 			<PlayerStorage :player="player" />
 		</div>
 		<div class="sq-player-cards">
-			<PlayerQuarrel :player="player" />
+			<PlayerQuarrel v-if="player.quarrel" :player="player" />
 			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">
 				{{ player.message }}
 			</div>
 			<PlayerCards
 				v-if="isCurrentPlayer"
 				:action-card="actionCard"
+				:is-my-turn="isMyTurn"
 				:player="myPlayer"
 			></PlayerCards>
 			<transition-group
