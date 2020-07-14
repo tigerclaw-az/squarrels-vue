@@ -1,0 +1,46 @@
+{
+  "src": [
+    "/sounds/audiosprite.ogg",
+    "/sounds/audiosprite.m4a",
+    "/sounds/audiosprite.mp3",
+    "/sounds/audiosprite.ac3"
+  ],
+  "sprite": {
+    "action-card--whirlwind": [
+      0,
+      3958.458049886621
+    ],
+    "action-card": [
+      5000,
+      628.004535147392
+    ],
+    "active-player": [
+      7000,
+      962.1768707482996
+    ],
+    "cards-shuffle": [
+      9000,
+      853.3333333333335
+    ],
+    "discard": [
+      11000,
+      1541.224489795919
+    ],
+    "draw-card": [
+      14000,
+      1462.8571428571427
+    ],
+    "hoard-taken": [
+      17000,
+      2000
+    ],
+    "new-player": [
+      20000,
+      1645.7142857142842
+    ],
+    "store-cards": [
+      23000,
+      1488.9795918367347
+    ]
+  }
+}
