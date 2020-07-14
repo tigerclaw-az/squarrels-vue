@@ -177,7 +177,9 @@ class PlayerActions {
 
 	/**
 	 * Handle a player selecting card for Quarrel action
+	 *
 	 * @param {object} data 'player' & 'card'
+	 * @returns {void}
 	 */
 	quarrel(data) {
 		logger.debug(data);
