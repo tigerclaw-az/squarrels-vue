@@ -6,12 +6,11 @@
 			'empty': !numCards,
 		}"
 		class="deck"
-		@click="onClick"
 	>
 		<div v-show="!canDrawCard || isCardDrawn" class="overlay">
 			<icon name="ban" scale="7" class="icon" />
 		</div>
-		<div class="cards-group">
+		<div class="cards-group" @click="onClick">
 			<div
 				v-show="isDrawingCard"
 				:class="{ 'has-card': cardDrawn }"
@@ -53,7 +52,6 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
-import mutationTypes from '@/store/mutation-types';
 
 import Icon from 'vue-awesome/components/Icon';
 
