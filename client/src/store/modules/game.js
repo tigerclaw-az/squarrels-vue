@@ -49,17 +49,24 @@ const getters = {
 			playerId,
 		);
 
-		const quarrelObj = find(state.quarrelCards.current, obj => {
+		if (!state.quarrelCards.current.length) {
+			return null;
+		}
+
+		const quarrelObj = state.quarrelCards.current.find(obj => {
 			return obj.playerId === playerId;
 		});
 
 		Vue.$log.debug('playerQuarrelCard->', quarrelObj);
 
-		if (quarrelObj) {
-			return quarrelObj.card;
+		if (
+			!quarrelObj ||
+			!Object.prototype.hasOwnProperty.call(quarrelObj, 'card')
+		) {
+			return null;
 		}
 
-		return null;
+		return quarrelObj.card;
 	},
 	isActionCard: state => (name = '') => {
 		Vue.$log.debug('isActionCard->', state, name);
@@ -178,9 +185,13 @@ const actions = {
 		return api.games.nextRound(state.id);
 	},
 
-	quarrelWinner({ commit, dispatch, state }) {
+	async quarrelWinner({ commit, dispatch, state }) {
 		if (!state.quarrelCards.current.length) {
-			dispatch('resetAction');
+			try {
+				await dispatch('resetAction');
+			} catch (err) {
+				throw new Error(err);
+			}
 
 			return false;
 		}
@@ -212,28 +223,32 @@ const actions = {
 			// Wait until cards are shown to display winner
 			// prettier-ignore
 			setTimeout(async() => {
-				dispatch(
-					'players/setQuarrelWinner',
-					{
-						id: winner,
-						cards,
-					},
-					{ root: true },
-				);
+				try {
+					await dispatch(
+						'players/setQuarrelWinner',
+						{
+							id: winner,
+							cards,
+						},
+						{ root: true },
+					);
 
-				// Wait some time after winner has been set before resetting
-				commit(mutationTypes.game.UPDATE, {
-					showQuarrel: false,
-					quarrelCards: { current: [], saved: [] },
-				});
+					// Wait some time after winner has been set before resetting
+					commit(mutationTypes.game.UPDATE, {
+						showQuarrel: false,
+						quarrelCards: { current: [], saved: [] },
+					});
 
-				await dispatch('resetAction');
+					await dispatch('resetAction');
 
-				await dispatch(
-					'players/resetQuarrelWinner',
-					{ id: winner },
-					{ root: true },
-				);
+					await dispatch(
+						'players/resetQuarrelWinner',
+						{ id: winner },
+						{ root: true },
+					);
+				} catch (err) {
+					throw new Error(err);
+				}
 			}, 3500);
 		} else {
 			const players = map(winners, obj => obj.playerId);
