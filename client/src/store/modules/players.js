@@ -203,37 +203,29 @@ const actions = {
 		}
 	},
 
-	collectHoard({ dispatch, getters, rootGetters }, pl) {
+	async collectHoard({ dispatch, getters, rootGetters }, pl) {
 		const myPlayer = getters.getMyPlayer;
 		const hoardDeck = rootGetters['decks/getByType']('hoard');
 		const hoardCards = rootGetters['decks/getCardIds'](hoardDeck.id);
 		const cardsInHand = union(myPlayer.cardsInHand, hoardCards);
 
 		if (pl.id === myPlayer.id) {
-			// Add hoard cards to player cards
-			// prettier-ignore
-			dispatch('update', { id: myPlayer.id, data: { cardsInHand } })
-				.then(async() => {
-					try {
-						await dispatch(
-							'decks/updateById',
-							{ id: hoardDeck.id, data: { cards: [] } },
-							{ root: true },
-						);
+			try {
+				// Add hoard cards to player cards
+				await dispatch('update', { id: myPlayer.id, data: { cardsInHand } });
 
-						dispatch(
-							'game/resetAction',
-							{},
-							{ root: true },
-						);
-					} catch (err) {
-						this._vm.$toasted.error(err);
-						this._vm.$log.error(err);
-					}
-				});
+				// Remove cards from the 'Hoard' deck
+				await dispatch('decks/removeCards', { type: 'hoard' }, { root: true });
+
+				// Reset the action
+				await dispatch('game/resetAction', {}, { root: true });
+			} catch (err) {
+				this._vm.$toasted.error(err);
+				this._vm.$log.error(err);
+			}
 		} else {
 			this._vm.$toasted.info(`HOARD TAKEN BY: ${pl.name}`);
-			dispatch('sound/play', this.$sounds.hoardTaken, { root: true });
+			dispatch('sound/play', this._vm.$sounds.hoardTaken, { root: true });
 		}
 	},
 
