@@ -13,15 +13,14 @@
 		<div class="cards-group" @click="onClick">
 			<div
 				v-show="isDrawingCard"
+				ref="card"
 				:class="{ 'has-card': cardDrawn }"
-				:style="cardDrawnStyle(numCards)"
 				class="card-drawn"
 			>
 				<div class="btn-card card blank--"></div>
 				<Card
 					v-if="cardDrawn"
 					:id="cardDrawn.id"
-					ref="card"
 					:card-data="cardDrawn"
 					card-type="deck"
 				></Card>
@@ -104,6 +103,8 @@ export default {
 				return;
 			}
 
+			this.$cardDrawnEl.style.left = '0px';
+
 			// Animate card draw for all players
 			window.requestAnimationFrame(this.moveCard);
 
@@ -121,9 +122,10 @@ export default {
 			}
 		},
 	},
-	created: function() {
+	mounted: function() {
+		// this.$cardDrawnEl = this.$el.querySelector('.card-drawn');
+		this.$cardDrawnEl = this.$refs.card;
 		this.$nextTick(() => {
-			this.$cardDrawnEl = this.$el.querySelector('.card-drawn');
 			this.$cardDrawnEl.addEventListener(
 				'animationend',
 				this.onCardDrawnAnimationEnd,
@@ -131,14 +133,6 @@ export default {
 		});
 	},
 	methods: {
-		cardDrawnStyle: function(val) {
-			const pos = val * -0.25;
-
-			return {
-				left: `${pos}px`,
-				top: `${pos}px`,
-			};
-		},
 		cardStyle: function(index) {
 			const pos = index * -0.25;
 
@@ -160,7 +154,6 @@ export default {
 			}
 
 			this.$store.dispatch(dispatchAction, cardData).then(() => {
-				this.$cardDrawnEl.style.left = '0px';
 				this.isCardDrawn = false;
 				this.cardDrawn = null;
 			});
@@ -238,7 +231,9 @@ export default {
 }
 
 .card-drawn {
+	left: 0;
 	position: absolute;
+	top: 0;
 	z-index: 99;
 
 	&.has-card {
