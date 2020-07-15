@@ -9,6 +9,7 @@
 		no-close-on-esc
 		size="sm"
 		@shown="showCard"
+		@hidden="onModalClosed"
 	>
 		<template v-slot:default>
 			<b-container fluid>
@@ -85,6 +86,20 @@ export default {
 		}
 	},
 	methods: {
+		async onModalClosed() {
+			const cardId = this.card.id;
+
+			if (this.isActivePlayer) {
+				try {
+					await this.$store.dispatch('decks/addCard', {
+						type: 'discard',
+						cardId,
+					});
+				} catch (err) {
+					this.$toasted.error(err);
+				}
+			}
+		},
 		showCard() {
 			this.$refs.card.addEventListener(
 				'animationend',
@@ -92,7 +107,6 @@ export default {
 			);
 		},
 		async onAnimationEnd() {
-			const cardId = this.card.id;
 			const cardName = this.card.name;
 			const sound = this.$sounds[`actionCard${cardName}`];
 
@@ -125,16 +139,7 @@ export default {
 					}
 
 					// Wait for player to click the "Hoard" deck
-					setTimeout(() => {
-						if (this.isActivePlayer) {
-							this.$store.dispatch('decks/addCard', {
-								type: 'discard',
-								cardId,
-							});
-						}
-
-						this.showModal = false;
-					}, 500);
+					this.showModal = false;
 
 					break;
 
@@ -144,13 +149,6 @@ export default {
 					break;
 
 				case 'winter':
-					if (this.isActivePlayer) {
-						await this.$store.dispatch('decks/addCard', {
-							type: 'discard',
-							cardId,
-						});
-					}
-
 					this.showModal = false;
 
 					await this.$store.dispatch('game/update', {
@@ -180,7 +178,7 @@ export default {
 		position: relative;
 	}
 
-	@include flip-card {
+	@include flip-card(0.5s) {
 		&.action--whirlwind {
 			animation-duration: 2s;
 			animation-name: action-whirlwind;
@@ -199,7 +197,6 @@ export default {
 		transition-delay: 2.5s;
 	}
 
-	// Once the card is flipped we need to move it towards the 'action' deck
 	&.shown {
 		transform: scale(1);
 	}
