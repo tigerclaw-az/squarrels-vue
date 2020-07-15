@@ -278,22 +278,20 @@ const actions = {
 		}
 	},
 
-	async resetAction({ dispatch, state, rootGetters }) {
-		if (!rootGetters['players/isActivePlayer']) {
-			return false;
-		}
+	async resetAction({ state }) {
+		this._vm.$log.debug(state);
 
 		try {
-			const actionCardId = state.actionCard.id;
+			// const actionCardId = state.actionCard.id;
 
 			await api.games.actionCard(state.id, null);
 
 			// Add current action card to the 'discard' deck
-			await dispatch(
-				'decks/addCard',
-				{ type: 'discard', cardId: actionCardId },
-				{ root: true },
-			);
+			// await dispatch(
+			// 	'decks/addCard',
+			// 	{ type: 'discard', cardId: actionCardId },
+			// 	{ root: true },
+			// );
 		} catch (err) {
 			this._vm.$toasted.error(err);
 			throw new Error(err);
