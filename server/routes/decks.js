@@ -37,7 +37,7 @@ decks.post('/:id', function(req, res) {
 	const query = { _id: deckId };
 	const options = { new: true };
 
-	logger.debug('decks/:id', query, req.body);
+	logger.info('decks/:id', query, req.body);
 
 	// prettier-ignore
 	DeckModel

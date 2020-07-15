@@ -43,7 +43,7 @@ const actions = {
 
 		const cardsInDeck = deck.cards;
 
-		this._vm.$log.debug(payload, deck, cardsInDeck);
+		this._vm.$log.debug('decks/addCard | ', payload, deck, cardsInDeck);
 
 		if (some(cardsInDeck, { id: payload.cardId })) {
 			this._vm.$log.warn(

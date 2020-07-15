@@ -27,42 +27,49 @@ games.delete('/:id', function(req, res) {
 			logger.debug('decks -> ', deckIds);
 			logger.debug('players -> ', playerIds);
 
-			_.forEach(playerIds, id => {
-				playerMod.reset(id).then(doc => {
-					wss.broadcast(
-						{
-							namespace: 'wsPlayers',
-							action: 'update',
-							nuts: doc,
-						},
-						sessionId
-					);
-				});
-			});
-
-			// prettier-ignore
-			GameModel
-				.remove({ _id: doc.id })
-				.then(function() {
-					wss.broadcast(
-						{
-							namespace: 'wsGame',
-							action: 'delete',
-							id: doc.id,
-						},
-						sessionId
-					);
-
-					res.sendStatus(200);
-				})
-				.catch(function(err) {
-					logger.error(err);
-					res.status(500).json(config.apiError(err));
-				});
-
-			// prettier-ignore
 			DeckModel
 				.deleteMany({ _id: { $in: deckIds } })
+				.then(() => {
+					wss.broadcast(
+						{
+							namespace: 'wsDecks',
+							action: 'reset',
+						},
+						sessionId
+					);
+
+					_.forEach(playerIds, id => {
+						playerMod.reset(id).then(doc => {
+							wss.broadcast(
+								{
+									namespace: 'wsPlayers',
+									action: 'reset',
+									nuts: doc,
+								},
+								sessionId
+							);
+						});
+					});
+
+					GameModel
+						.remove({ _id: doc.id })
+						.then(() => {
+							wss.broadcast(
+								{
+									namespace: 'wsGame',
+									action: 'delete',
+									id: doc.id,
+								},
+								sessionId
+							);
+
+							res.sendStatus(200);
+						})
+						.catch(function(err) {
+							logger.error(err);
+							res.status(500).json(config.apiError(err));
+						});
+				})
 				.catch(err => {
 					logger.error(err);
 					res.status(500).json(config.apiError(err));

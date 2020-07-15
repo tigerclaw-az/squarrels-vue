@@ -15,6 +15,9 @@ const actions = {
 			commit(`decks/${mutationTypes.decks.UPDATE}`, data.nuts, { root: true });
 		}
 	},
+	reset({ dispatch }) {
+		dispatch('decks/unload', {}, { root: true });
+	},
 };
 
 const mutations = {};
