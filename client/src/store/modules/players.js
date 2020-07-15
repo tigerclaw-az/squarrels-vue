@@ -452,7 +452,7 @@ const actions = {
 
 		// If no players, or just 1 player, have enough cards for Quarrel
 		if (quarrelPlayers.length <= 1) {
-			dispatch('game/quarrelWinner');
+			dispatch('game/quarrelWinner', {}, { root: true });
 		} else {
 			dispatch('game/setQuarrelCount', quarrelPlayers.length, {
 				root: true,
