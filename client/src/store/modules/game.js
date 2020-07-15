@@ -263,7 +263,11 @@ const actions = {
 		}
 	},
 
-	async resetAction({ dispatch, state }) {
+	async resetAction({ dispatch, state, rootGetters }) {
+		if (!rootGetters['players/isActivePlayer']) {
+			return false;
+		}
+
 		try {
 			const actionCardId = state.actionCard.id;
 
