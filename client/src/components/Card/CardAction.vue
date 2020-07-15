@@ -119,17 +119,22 @@ export default {
 							duration: 1000,
 						});
 
-						await this.$store.dispatch('game/resetAction');
+						if (this.isActivePlayer) {
+							await this.$store.dispatch('game/resetAction');
+						}
 					}
 
 					// Wait for player to click the "Hoard" deck
 					setTimeout(() => {
-						this.$store.dispatch('decks/addCard', {
-							type: 'discard',
-							cardId,
-						});
+						if (this.isActivePlayer) {
+							this.$store.dispatch('decks/addCard', {
+								type: 'discard',
+								cardId,
+							});
+						}
+
 						this.showModal = false;
-					}, 1000);
+					}, 500);
 
 					break;
 
@@ -139,10 +144,12 @@ export default {
 					break;
 
 				case 'winter':
-					await this.$store.dispatch('decks/addCard', {
-						type: 'discard',
-						cardId,
-					});
+					if (this.isActivePlayer) {
+						await this.$store.dispatch('decks/addCard', {
+							type: 'discard',
+							cardId,
+						});
+					}
 
 					this.showModal = false;
 
@@ -184,7 +191,7 @@ export default {
 	opacity: 1;
 	// position: absolute;
 	transform: scale(2);
-	transition-duration: 0.5s;
+	transition-duration: 0.25s;
 	transition-property: transform, opacity;
 	z-index: 100;
 
