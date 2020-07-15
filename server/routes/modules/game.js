@@ -94,7 +94,7 @@ module.exports = {
 					wss.broadcast(
 						{
 							namespace: 'wsPlayers',
-							action: 'update',
+							action: 'reset',
 							nuts: doc,
 						},
 						sessionId

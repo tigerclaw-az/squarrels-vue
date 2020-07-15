@@ -34,12 +34,24 @@ const actions = {
 		const id = data.nuts.id;
 		const cardsInHand = data.nuts.cardsInHand;
 
-		commit(`players/${mutationTypes.players.UPDATE_CARDS}`, { id, cardsInHand }, { root: true });
+		commit(
+			`players/${mutationTypes.players.UPDATE_CARDS}`,
+			{ id, cardsInHand },
+			{ root: true },
+		);
 	},
 
-	// eslint-disable-next-line
-	reset({}, data) {
+	reset({ dispatch }, data) {
 		this._vm.$log.debug('ws-players:reset', data);
+
+		const playerObj = {
+			...data.nuts,
+			message: null,
+			quarrel: false,
+			isQuarrelWinner: false,
+		};
+
+		dispatch('players/updateLocalPlayer', playerObj, { root: true });
 	},
 
 	// eslint-disable-next-line
