@@ -93,19 +93,25 @@ export default {
 
 			return [];
 		},
-		async onClickCard(card, cardsToStore, evt) {
+		onClickCard(card, cardsToStore, evt) {
 			this.$log.debug(card, cardsToStore, evt);
 
 			if (this.player.quarrel) {
-				await this.$store.dispatch('players/selectQuarrelCard', {
-					id: this.player.id,
-					card,
-				});
-
 				this.$store
-					.dispatch('players/discard', {
+					.dispatch('players/selectQuarrelCard', {
+						id: this.player.id,
 						card,
-						isQuarrel: true,
+					})
+					.then(() => {
+						this.$store
+							.dispatch('players/discard', {
+								card,
+								isQuarrel: true,
+							})
+							.catch(err => {
+								this.$log.error(err);
+								this.$toasted.error(err.toString());
+							});
 					})
 					.catch(err => {
 						this.$log.error(err);
