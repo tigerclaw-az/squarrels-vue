@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import store from '@/store/index';
 
+import Demo from '@/views/Demo.vue';
 import Game from '@/views/Game.vue';
 import Login from '@/views/Login.vue';
 import Offline from '@/views/Offline.vue';
@@ -10,11 +11,12 @@ import Start from '@/views/Start.vue';
 Vue.use(VueRouter);
 
 const router = new VueRouter({
+	mode: 'history',
 	routes: [
 		{
-			path: '/',
-			name: 'start',
-			component: Start,
+			path: '/demo',
+			name: 'demo',
+			component: Demo,
 		},
 		{
 			path: '/offline',
@@ -31,6 +33,11 @@ const router = new VueRouter({
 			name: 'game',
 			component: Game,
 			props: true,
+		},
+		{
+			path: '/',
+			name: 'start',
+			component: Start,
 		},
 	],
 });
