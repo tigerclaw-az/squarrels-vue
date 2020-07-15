@@ -6,6 +6,7 @@ import {
 	pull,
 	reject,
 	sampleSize,
+	some,
 	isArray,
 } from 'lodash';
 
@@ -43,6 +44,12 @@ const actions = {
 		const cardsInDeck = deck.cards;
 
 		this._vm.$log.debug(payload, deck, cardsInDeck);
+
+		if (some(cardsInDeck, { id: payload.cardId })) {
+			this._vm.$log.warn(
+				`Adding card '${payload.cardId} would add duplicates to the deck!`,
+			);
+		}
 
 		return api.decks.update(deck.id, {
 			cards: concat(cardsInDeck, payload.cardId),
