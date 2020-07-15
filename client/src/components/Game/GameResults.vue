@@ -90,7 +90,7 @@ export default {
 				this.updateScore(pl);
 			}, timeout);
 
-			timeout += 1000;
+			timeout += 1200;
 		});
 	},
 	methods: {
@@ -102,7 +102,7 @@ export default {
 		},
 		updateScore(pl) {
 			const specialCards = this.specialCards(pl);
-			let timeout = 1000;
+			let timeout = 500;
 
 			if (specialCards.length) {
 				specialCards.forEach(card => {
