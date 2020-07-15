@@ -7,7 +7,10 @@
 		}"
 		class="sq-player"
 	>
-		<div class="sq-player-avatar">
+		<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">
+			{{ player.message }}
+		</div>
+		<div v-else class="sq-player-avatar">
 			<b-img-lazy
 				src="@/assets/images/squirrel-placeholder.jpg"
 				rounded="circle"
@@ -16,10 +19,7 @@
 			<PlayerStorage :player="player" />
 		</div>
 		<div class="sq-player-cards">
-			<PlayerQuarrel v-if="player.quarrel" :player="player" />
-			<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">
-				{{ player.message }}
-			</div>
+			<PlayerQuarrel :action-card="actionCard" :player="player" />
 			<PlayerCards
 				v-if="isCurrentPlayer"
 				:action-card="actionCard"
@@ -134,7 +134,8 @@ export default {
 	text-align: center;
 	width: 100%;
 
-	.sq-player-avatar {
+	.sq-player-avatar,
+	.sq-quarrel-message {
 		align-items: flex-end;
 		align-self: flex-end;
 		display: flex;
@@ -158,10 +159,6 @@ export default {
 	.sq-quarrel-message {
 		color: $white;
 		font-size: 1.25em;
-
-		&::after {
-			content: '->';
-		}
 	}
 
 	.sq-player-cards {

@@ -11,7 +11,7 @@
 		<Card
 			v-if="showQuarrel"
 			:card-data="quarrelCard(player.id)"
-			card-type="quarrel"
+			card-type="hand"
 		/>
 	</div>
 </template>
@@ -27,6 +27,9 @@ export default {
 		Card,
 	},
 	props: {
+		actionCard: {
+			type: Object,
+		},
 		player: {
 			type: Object,
 			required: true,
@@ -34,10 +37,9 @@ export default {
 	},
 	computed: {
 		...mapState({
-			actionCard: state => state.game.actionCard,
 			showQuarrel: state => state.game.showQuarrel,
 		}),
-		isQuarrelWinner: function() {
+		isQuarrelWinner() {
 			return this.$store.state.players[this.player.id].isQuarrelWinner;
 		},
 	},
@@ -60,9 +62,8 @@ export default {
 
 	animation: 0.5s linear grow;
 	left: 0;
-	position: absolute;
 	top: 0;
-	transform: scale(1.25);
+	transform: scale(1.5);
 	z-index: 70;
 
 	.card:not(.blank--) {
