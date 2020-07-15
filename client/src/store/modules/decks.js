@@ -216,6 +216,18 @@ const actions = {
 		return api.decks.delete(deckIds.join(','));
 	},
 
+	removeCards({ getters }, payload) {
+		const deck = payload.type
+			? getters.getByType(payload.type)
+			: getters.getById(payload.id);
+
+		this._vm.$log.debug(payload, deck);
+
+		return api.decks.update(deck.id, {
+			cards: [],
+		});
+	},
+
 	unload({ commit }) {
 		commit(mutationTypes.decks.INIT);
 
