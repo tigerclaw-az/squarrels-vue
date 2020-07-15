@@ -46,24 +46,26 @@ export default {
 					return;
 				}
 
+				// Determine how much the value will change by: -5, 0, 1, 5
 				const totalChange =
 					newVal >= 0 ? newVal - oldVal : newVal + Math.abs(oldVal);
 
 				if (totalChange === 0) {
+					this.displayScore = newVal;
+
 					return;
 				}
 
+				// Determine if value should be incremented or decremented
 				const change = newVal > oldVal ? 1 : -1;
-				let computed = change;
 
 				const interval = setInterval(() => {
 					this.displayScore += change;
-					computed += change;
 
-					if (!this || computed >= totalChange) {
+					if (!this || this.displayScore === newVal) {
 						clearInterval(interval);
 					}
-				}, 250);
+				}, 240);
 			},
 		},
 	},
