@@ -92,7 +92,7 @@ export default {
 		};
 	},
 	beforeRouteLeave(to, from, next) {
-		if (to.name === 'start') {
+		if (this.$store.state.websocket.isConnected) {
 			this.unload()
 				.then(() => {
 					next();
