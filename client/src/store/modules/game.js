@@ -305,55 +305,58 @@ const actions = {
 
 		await api.games.update(state.id, { isDealing: true });
 
-		await api.games
+
+		try {
+			dispatch('sound/play', this._vm.$sounds.cardsShuffle, { root: true });
+
 			// Returns after all decks have been initialized
-			.shuffleDecks(state.id, state.playerIds)
-			.then(async res => {
-				this._vm.$log.debug('game/shuffleDecks -> ', res);
-				const gameData = res.data;
+			const res = await api.games.shuffleDecks(state.id, state.playerIds);
 
-				try {
-					await dispatch(
-						'decks/load',
-						{ ids: gameData.deckIds },
-						{ root: true },
-					);
-				} catch (err) {
-					throw new Error(err);
-				}
+			this._vm.$log.debug('game/shuffleDecks -> ', res);
+			const gameData = res.data;
 
-				// Loop through each player and deal cards
-				// Each deal will be saved as a Promise so we can wait
-				// for all players to be dealt cards before starting game
-				for (const playerId of state.playerIds) {
-					dealPromises.push(
-						// prettier-ignore
-						dispatch(
-							'decks/dealCards',
-							playerId,
-							{ root: true },
-						),
-					);
-				}
-
-				// prettier-ignore
-				Promise.all(dealPromises)
-					.then(() => {
-						dispatch('decks/cardsDealt', null, { root: true })
-							.then(async() => {
-								// All players and decks have been updated, game can start
-								await api.games.update(state.id, { isDealing: false });
-								await api.games.start(state.id);
-								dispatch('players/nextPlayer', null, { root: true });
-							});
-					})
-					.catch(err => {
-						throw new Error(err);
-					});
-			})
-			.catch(err => {
+			try {
+				await dispatch('decks/load', { ids: gameData.deckIds }, { root: true });
+			} catch (err) {
+				await dispatch(
+					'decks/remove',
+					{ ids: gameData.deckIds },
+					{ root: true },
+				);
 				throw new Error(err);
-			});
+			}
+
+			// Loop through each player and deal cards
+			// Each deal will be saved as a Promise so we can wait
+			// for all players to be dealt cards before starting game
+			for (const playerId of state.playerIds) {
+				dealPromises.push(
+					// prettier-ignore
+					dispatch(
+						'decks/dealCards',
+						playerId,
+						{ root: true },
+					),
+				);
+			}
+
+			// prettier-ignore
+			Promise.all(dealPromises)
+				.then(() => {
+					dispatch('decks/cardsDealt', null, { root: true })
+						.then(async() => {
+							// All players and decks have been updated, game can start
+							await api.games.update(state.id, { isDealing: false });
+							await api.games.start(state.id);
+							dispatch('players/nextPlayer', null, { root: true });
+						});
+				})
+				.catch(err => {
+					throw new Error(err);
+				});
+		} catch (err) {
+			throw new Error(err);
+		}
 	},
 
 	setQuarrelCount({ commit }, count) {

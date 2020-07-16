@@ -77,8 +77,6 @@ const actions = {
 		// used again with new deal later
 		await dispatch('players/resetCardsDrawn', { id: playerId }, { root: true });
 
-		dispatch('sound/play', this._vm.$sounds.cardsShuffle, { root: true });
-
 		return new Promise((resolve, reject) => {
 			// Watch for each time a card was drawn and updated for
 			// a given player, then continue to draw until they have MAX_CARDS
@@ -211,8 +209,9 @@ const actions = {
 		});
 	},
 
-	// eslint-disable-next-line
-	remove({ }, deckIds) {
+	async remove({ dispatch }, deckIds) {
+		await dispatch('decks/unload');
+
 		return api.decks.delete(deckIds.join(','));
 	},
 
