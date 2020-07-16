@@ -1,18 +1,16 @@
 <template>
 	<div
-		v-if="actionCard && quarrelCard(player.id)"
+		ref="card"
 		:class="{
 			flip: showQuarrel,
 			winner: isQuarrelWinner,
 		}"
 		class="sq-player-quarrel"
 	>
-		<div class="btn-card card blank-- disabled" role="button" disabled></div>
-		<Card
-			v-if="showQuarrel"
-			:card-data="quarrelCard(player.id)"
-			card-type="hand"
-		/>
+		<div v-if="quarrelCard(player.id)" class="cards-group">
+			<div class="btn-card card blank-- disabled" disabled></div>
+			<Card :card-data="quarrelCard(player.id)" card-type="hand" />
+		</div>
 	</div>
 </template>
 
@@ -59,39 +57,48 @@ export default {
 
 .sq-player-quarrel {
 	@extend %playing-cards;
-
 	animation: 0.5s linear grow;
-	left: 0;
+
+	position: absolute;
+	right: 0;
 	top: 0;
 	transform: scale(1.5);
 	z-index: 70;
 
+	.btn-card,
+	.card {
+		position: inherit;
+	}
+
+	.blank-- {
+		z-index: 1;
+	}
+
 	.card:not(.blank--) {
 		box-shadow: none;
 		left: 0;
-		transform: rotateY(120deg);
+		transform: rotateY(90deg);
 
 		&::after {
-			// prettier-ignore
-			box-shadow: 0 0 20px 20px color("saffron");
-			// prettier-ignore
-			content: "";
+			content: '';
 			height: 100%;
 			left: 0;
 			opacity: 0;
-			position: absolute;
+			position: inherit;
 			transition: opacity 0.5s linear;
 			width: 100%;
 		}
 	}
 
 	&.flip {
-		@include flip-card;
+		@include flip-card(1.25s, 0.75s);
 	}
 
 	&.winner {
+		.btn-card,
 		.card {
 			&::after {
+				box-shadow: 0 0 20px 20px color('saffron');
 				opacity: 1;
 			}
 		}

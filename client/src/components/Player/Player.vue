@@ -19,7 +19,11 @@
 			<PlayerStorage :player="player" />
 		</div>
 		<div class="sq-player-cards">
-			<PlayerQuarrel :action-card="actionCard" :player="player" />
+			<PlayerQuarrel
+				v-if="actionCard && actionCard.name === 'quarrel'"
+				:action-card="actionCard"
+				:player="player"
+			/>
 			<PlayerCards
 				v-if="isCurrentPlayer"
 				:action-card="actionCard"
