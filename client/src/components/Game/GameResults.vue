@@ -1,8 +1,9 @@
 <template>
 	<b-container id="game-results" class="game-overlay--new-game winter" fluid>
-		<b-row class="title">
+		<b-row class="title mt-3 text-center">
 			<b-col>
-				<h2>Round {{ roundNumber }} Results:</h2>
+				<h2 v-if="winningPlayer">Game Results</h2>
+				<h2 v-else>Round {{ roundNumber }} Results</h2>
 			</b-col>
 		</b-row>
 		<b-row class="container_players" align-center>
@@ -12,6 +13,7 @@
 					:key="player.id"
 					:class="{
 						current: isCurrentPlayer(player),
+						winner: winningPlayer && winningPlayer.id === player.id,
 					}"
 					class="sq-player"
 				>
@@ -23,7 +25,7 @@
 						<div class="sq-player-name">{{ player.name }}</div>
 						<PlayerStorage :player="player" />
 					</div>
-					<div class="sq-player-cards">
+					<div v-if="!winningPlayer" class="sq-player-cards">
 						<div class="cards-group hand">
 							<Card
 								v-for="card in cardsToShow[player.id]"
@@ -35,10 +37,12 @@
 						</div>
 					</div>
 				</div>
-				<!-- TODO: Get player's cards and see if they have golden/rotten card -->
 			</b-col>
+		</b-row>
+		<b-row class="text-center">
 			<b-col>
-				<slot name="newGame"></slot>
+				<slot v-if="winningPlayer" name="gameOver"></slot>
+				<slot v-else name="newGame"></slot>
 			</b-col>
 		</b-row>
 	</b-container>
@@ -78,6 +82,15 @@ export default {
 		};
 	},
 	computed: {
+		winningPlayer() {
+			const winner = filter(this.players, pl => pl.score >= 20);
+
+			if (winner.length) {
+				return winner[0];
+			}
+
+			return null;
+		},
 		sortedByScore() {
 			return orderBy(this.players, 'score', 'desc');
 		},
@@ -146,7 +159,7 @@ export default {
 	flex-direction: column;
 	height: 80%;
 	margin: 0 auto;
-	place-content: start space-between;
+	place-content: center space-between;
 	position: absolute;
 	width: 80%;
 	z-index: 120;
@@ -168,24 +181,34 @@ export default {
 		height: 100%;
 		// flex: 0 1 50%;
 		// flex-direction: column;
-		place-content: center space-between;
+		place-content: center center;
 		width: 100%;
 
 		.sq-player {
+			justify-content: center;
 			margin-top: 1rem;
 			min-height: 1px;
 			width: 100%;
 
-			&.current {
-				justify-content: flex-start;
+			.sq-player-avatar {
+				border: 0 dashed rgba(red, 0.75);
+				position: initial;
+				transition: transform 2s ease-in;
+
+				.sq-player-name {
+					left: initial;
+				}
 			}
 
-			.sq-player-avatar {
-				position: initial;
+			&.winner {
+				.sq-player-avatar {
+					border-width: 2px;
+					transform: scale(1.75);
+				}
 			}
 
 			.sq-player-cards .cards-group {
-				.btn-card:nth-child(n+2) {
+				.btn-card:nth-child(n + 2) {
 					margin-left: 1rem;
 				}
 				.btn-card,
