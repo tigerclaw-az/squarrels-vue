@@ -11,10 +11,23 @@
 				<div class="container-button">
 					<b-button
 						class="btn btn-new-game"
+						size="lg"
 						variant="primary"
 						@click="onClickNewGame"
 					>
 						NEXT ROUND
+					</b-button>
+				</div>
+			</template>
+			<template slot="gameOver">
+				<div class="container-button">
+					<b-button
+						class="btn btn-new-game"
+						size="lg"
+						variant="primary"
+						@click="onClickNewGame($event, false)"
+					>
+						NEW GAME
 					</b-button>
 				</div>
 			</template>
@@ -32,7 +45,7 @@
 					v-if="showStartGame"
 					class="btn btn-start-game"
 					variant="primary"
-					@click="onClickStartGame"
+					@click="onClickNewGame($event, true)"
 				>
 					START GAME
 				</b-button>
@@ -204,8 +217,21 @@ export default {
 				});
 			}
 		},
-		onClickNewGame: async function(evt) {
-			this.$log.debug('onClickNewGame', evt);
+		onClickNewGame: async function(evt, resetGame) {
+			this.$log.debug('onClickNewGame', evt, resetGame);
+
+			if (resetGame) {
+				try {
+					await this.$store.dispatch({ type: 'game/reset' });
+					await this.$store.dispatch({ type: 'game/start' });
+				} catch (err) {
+					this.$log.error(err);
+					this.$toasted.error(err.message);
+				}
+
+				return;
+			}
+
 			this.isLoading = true;
 
 			try {
