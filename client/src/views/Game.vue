@@ -302,7 +302,7 @@ export default {
 		font-size: 2em;
 		text-align: center;
 		width: 100%;
-		z-index: 120;
+		z-index: 200;
 	}
 
 	.game-overlay--start-game {
@@ -324,7 +324,7 @@ export default {
 		@include animation-pulse;
 
 		font-size: inherit;
-		z-index: 130;
+		z-index: 210;
 	}
 }
 
