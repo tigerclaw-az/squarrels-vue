@@ -7,10 +7,10 @@
 		}"
 		class="deck"
 	>
-		<div v-show="!canDrawCard || isCardDrawn" class="overlay">
-			<icon name="ban" scale="7" class="icon" />
-		</div>
 		<div class="cards-group" @click="onClick">
+			<div v-show="!canDrawCard || isCardDrawn" class="overlay">
+				<icon name="ban" scale="10" class="icon" />
+			</div>
 			<div
 				v-show="isDrawingCard"
 				ref="card"
@@ -28,7 +28,8 @@
 			<Card
 				v-for="index in numCards"
 				:key="index"
-				:card-style="cardStyle(index)"
+				ref="deck"
+				:card-style="cardPositions[index]"
 				card-type="deck"
 			/>
 		</div>
@@ -67,6 +68,10 @@ export default {
 			type: Array,
 			required: true,
 		},
+		isShuffling: {
+			type: Boolean,
+			default: false,
+		},
 		numCards: {
 			type: Number,
 			required: true,
@@ -76,6 +81,9 @@ export default {
 		return {
 			isCardDrawn: false,
 			cardDrawn: null,
+			cardPositions: [],
+			cardStyles: [],
+			cardsShuffled: 0,
 		};
 	},
 	computed: {
@@ -96,6 +104,11 @@ export default {
 		},
 	},
 	watch: {
+		cardsShuffled(val) {
+			if (val === this.cards.length) {
+				this.$log.debug('CARDS SHUFFLED!');
+			}
+		},
 		isDrawingCard(val) {
 			this.$log.debug(val);
 
@@ -121,11 +134,30 @@ export default {
 					});
 			}
 		},
+		isShuffling() {
+			this.shuffleCards();
+		},
 	},
 	mounted: function() {
+		// Setup position of cards in deck
+		for (let i = 0; i < this.cards.length; i++) {
+			const pos = i * -0.25;
+
+			this.$set(this.cardStyles, i, {
+				left: 0,
+				right: 0,
+				top: pos,
+				zIndex: i,
+			});
+			this.$set(this.cardPositions, i, {
+				transform: `translate(0px, ${pos}px)`,
+				zIndex: i,
+			});
+		}
+
 		// this.$cardDrawnEl = this.$el.querySelector('.card-drawn');
-		this.$cardDrawnEl = this.$refs.card;
 		this.$nextTick(() => {
+			this.$cardDrawnEl = this.$refs.card;
 			this.$cardDrawnEl.addEventListener(
 				'animationend',
 				this.onCardDrawnAnimationEnd,
@@ -133,13 +165,6 @@ export default {
 		});
 	},
 	methods: {
-		cardStyle: function(index) {
-			const pos = index * -0.25;
-
-			return {
-				transform: `translate(${pos}px, ${pos}px)`,
-			};
-		},
 		onCardDrawn: function(cardDrawn) {
 			const cardAction = cardDrawn.action;
 
@@ -189,10 +214,96 @@ export default {
 		moveCard: function() {
 			const left = parseInt(this.$cardDrawnEl.style.left);
 
-			this.$cardDrawnEl.style.left = left - 8 + 'px';
+			this.$cardDrawnEl.style.left = left - 10 + 'px';
 
 			if (!this.cardDrawn && this.isDrawingCard) {
 				window.requestAnimationFrame(this.moveCard);
+			}
+		},
+		shuffleCards() {
+			const left = [];
+			const right = [];
+
+			this.cardsShuffled = 0;
+
+			for (let i = 0; i < this.cards.length; ++i) {
+				const start = 0;
+				// const end = Math.ceil(60 * Math.random() + 120);
+				const end = 105;
+
+				const card = {
+					index: i,
+					speed: 15,
+					start,
+					end,
+				};
+
+				if (Math.random() <= 0.5) {
+					card.direction = 'left';
+					left.push(card);
+				} else {
+					card.direction = 'right';
+					right.push(card);
+				}
+			}
+
+			this.$log.debug(left, right);
+
+			left.forEach(c => {
+				setTimeout(() => {
+					this.animateCard(c);
+				}, 120 * Math.random());
+			});
+			right.forEach(c => {
+				setTimeout(() => {
+					this.animateCard(c);
+				}, 120 * Math.random());
+			});
+		},
+		animateCard(c) {
+			// this.$log.debug(c);
+
+			c.start -= c.speed;
+
+			this.$set(this.cardStyles[c.index], c.direction, c.start);
+			const style = this.cardStyles[c.index];
+
+			const xPos = style.left === 0 ? style.right * -1 : style.left;
+			const yPos = style.top;
+
+			// this.$set(this.cardPositions, c.index, this.getStyle(c.index));
+			this.$set(
+				this.cardPositions[c.index],
+				'transform',
+				`translate(${xPos}px, ${yPos}px)`,
+			);
+
+			if (Math.abs(c.start) < c.end) {
+				c.req = requestAnimationFrame(this.animateCard.bind(this, c));
+			} else if (c.start < 0) {
+				this.$set(
+					this.cardPositions[c.index],
+					'zIndex',
+					Math.ceil(this.cards.length * Math.random()),
+				);
+
+				c.end = 0;
+
+				if (c.speed > 0) {
+					c.speed *= -1;
+				}
+
+				c.speed += 1;
+				c.req = requestAnimationFrame(this.animateCard.bind(this, c));
+			} else {
+				this.$set(this.cardStyles[c.index], c.direction, 0);
+				// this.$set(this.cardPositions, c.index, this.getStyle(c.index));
+				this.$set(
+					this.cardPositions[c.index],
+					'transform',
+					`translate(0px, ${yPos}px)`,
+				);
+				this.cardsShuffled++;
 			}
 		},
 	},
@@ -214,16 +325,14 @@ export default {
 }
 
 .overlay {
-	height: 100%;
-	left: -25px;
+	left: 0;
 	position: absolute;
-	top: -50px;
+	top: 0;
 	width: 100%;
-	z-index: 5;
+	z-index: 130;
 
 	.icon {
-		// prettier-ignore
-		color: theme-color("primary");
+		color: theme-color('primary');
 		display: flex;
 		height: 100%;
 		margin: 0 auto;
@@ -234,7 +343,7 @@ export default {
 	left: 0;
 	position: absolute;
 	top: 0;
-	z-index: 99;
+	z-index: 140;
 
 	&.has-card {
 		@include flip-card($flip-speed: 1s, $flip-delay: 0.5s);
