@@ -13,12 +13,12 @@ export default class GamesApi extends BaseApi {
 		return this.http.post('/', { playerId });
 	}
 
-	shuffleDecks(id) {
+	createDecks(id) {
 		if (!id) {
-			return Promise.reject('Missing parameter "id" for shuffleDecks()');
+			return Promise.reject('Missing parameter "id" for createDecks()');
 		}
 
-		return this.http.get(`/${id}/shuffle-decks`);
+		return this.http.post(`/${id}/decks`);
 	}
 
 	nextRound(id) {

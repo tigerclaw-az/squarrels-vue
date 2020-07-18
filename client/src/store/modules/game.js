@@ -298,6 +298,30 @@ const actions = {
 		}
 	},
 
+	async createDecks({ dispatch, state }) {
+		dispatch('sound/play', this._vm.$sounds.cardsShuffle, { root: true });
+
+		try {
+			// Returns after all decks have been initialized
+			const res = await api.games.createDecks(state.id, state.playerIds);
+
+			this._vm.$log.debug('game/createDecks -> ', res);
+
+			const ids = res.data.deckIds;
+
+			try {
+				await dispatch('decks/load', { ids }, { root: true });
+			} catch (err) {
+				await dispatch('decks/remove', { ids }, { root: true });
+				throw new Error(err);
+			}
+
+			return res.data;
+		} catch (err) {
+			throw new Error(err);
+		}
+	},
+
 	async start({ dispatch, state }) {
 		const dealPromises = [];
 
@@ -305,27 +329,7 @@ const actions = {
 
 		await api.games.update(state.id, { isDealing: true });
 
-
 		try {
-			dispatch('sound/play', this._vm.$sounds.cardsShuffle, { root: true });
-
-			// Returns after all decks have been initialized
-			const res = await api.games.shuffleDecks(state.id, state.playerIds);
-
-			this._vm.$log.debug('game/shuffleDecks -> ', res);
-			const gameData = res.data;
-
-			try {
-				await dispatch('decks/load', { ids: gameData.deckIds }, { root: true });
-			} catch (err) {
-				await dispatch(
-					'decks/remove',
-					{ ids: gameData.deckIds },
-					{ root: true },
-				);
-				throw new Error(err);
-			}
-
 			// Loop through each player and deal cards
 			// Each deal will be saved as a Promise so we can wait
 			// for all players to be dealt cards before starting game

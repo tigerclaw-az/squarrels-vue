@@ -1,41 +1,124 @@
 const config = require('../../config/config');
 const logger = config.logger('modules:game');
 
-const DeckModel = require('../../config/models/deck');
-const GameModel = require('../../config/models/game');
+const { isEmpty, shuffle } = require('lodash');
 
-const player = require('./player');
-const { isEmpty } = require('lodash');
+class Game {
+	constructor() {
+		this.CardModel = require('../../config/models/card');
+		this.DeckModel = require('../../config/models/deck');
+		this.GameModel = require('../../config/models/game');
+		this.player = require('./player');
+	}
 
-module.exports = {
-	update: (id, data, sid) => {
+	async createDecks(id, sessionId) {
+		try {
+			const cards = await this.CardModel.find({}).exec();
+
+			const decks = [
+				await new this.DeckModel({
+					deckType: 'discard',
+				}).save(),
+				await new this.DeckModel({
+					deckType: 'main',
+					cards: shuffle(shuffle(cards)),
+				}).save(),
+				await new this.DeckModel({
+					deckType: 'hoard',
+				}).save(),
+			];
+
+			// const decks = Promise.all(deckPromises);
+
+			const gameData = {
+				deckIds: decks.map(deck => deck.id),
+			};
+
+			logger.debug('gameData -> ', gameData);
+
+			const doc = await this.update(id, gameData, sessionId);
+
+			logger.debug('game:createDecks -> ', doc);
+
+			return doc;
+		} catch (err) {
+			logger.error(err);
+			throw new Error(err);
+		}
+	}
+
+	async delete(id, sessionId) {
+		const doc = await this.GameModel.findById(id).exec();
+
+		const deckIds = doc.deckIds;
+		const playerIds = doc.playerIds;
+
+		logger.debug('decks -> ', deckIds);
+		logger.debug('players -> ', playerIds);
+
+		try {
+			await this.DeckModel.deleteMany({ _id: { $in: deckIds } });
+			wss.broadcast(
+				{
+					namespace: 'wsDecks',
+					action: 'reset',
+				},
+				sessionId
+			);
+
+			playerIds.forEach(id => {
+				this.player.reset(id).then(doc => {
+					wss.broadcast(
+						{
+							namespace: 'wsPlayers',
+							action: 'reset',
+							nuts: doc,
+						},
+						sessionId
+					);
+				});
+			});
+
+			await this.GameModel.remove({ _id: doc.id });
+
+			wss.broadcast(
+				{
+					namespace: 'wsGame',
+					action: 'delete',
+					id: doc.id,
+				},
+				sessionId
+			);
+		} catch (err) {
+			logger.error(err);
+			throw new Error(err);
+		}
+	}
+
+	async update(id, data, sid) {
 		logger.debug(id, data, sid);
 
 		const gameId = { _id: id };
 		const options = { new: true };
 
 		if (isEmpty(data) || typeof data !== 'object') {
-			return Promise.reject('ERROR: Invalid "data" to update game!');
+			throw new Error('ERROR: Invalid "data" to update game!');
 		}
 
-		// prettier-ignore
-		return GameModel
-			.findByIdAndUpdate(gameId, data, options)
-			.populate('actionCard')
-			.then(doc => {
-				wss.broadcast(
-					{ namespace: 'wsGame', action: 'update', nuts: doc },
-					sid
-				);
+		try {
+			const doc = await this.GameModel.findByIdAndUpdate(gameId, data, options).populate('actionCard');
 
-				return Promise.resolve(doc);
-			})
-			.catch(err => {
-				logger.error(err);
+			wss.broadcast(
+				{ namespace: 'wsGame', action: 'update', nuts: doc },
+				sid
+			);
 
-				return Promise.reject(err);
-			});
-	},
+			return doc;
+		} catch (err) {
+			logger.error(err);
+			throw new Error(err);
+		}
+	}
 
 	/**
 	 * Remove the 'actionCard' from the game, which will trigger a
@@ -50,9 +133,9 @@ module.exports = {
 		}
 
 		return this.update(id, { actionCard: null });
-	},
+	}
 
-	async resetGame(gameData, options) {
+	async reset(gameData, options) {
 		logger.debug('gameData -> ', gameData);
 		logger.debug('option -> ', options);
 
@@ -68,7 +151,7 @@ module.exports = {
 		const gameId = gameData.id;
 		const sessionId = gameData.sessionId;
 
-		const game = await GameModel.findById(gameId).exec();
+		const game = await this.GameModel.findById(gameId).exec();
 
 		logger.debug('game -> ', game);
 
@@ -78,17 +161,19 @@ module.exports = {
 		logger.debug('decks -> ', deckIds);
 		logger.debug('players -> ', playerIds);
 
-		game.deckIds = [];
-
 		try {
-			await DeckModel.deleteMany({ _id: { $in: deckIds } });
+			const decksDeleted = await this.DeckModel.deleteMany({ _id: { $in: deckIds } });
+
+			if (!decksDeleted || decksDeleted.deletedCount !== deckIds.length) {
+				throw new Error('DECKS NOT DELTED!');
+			}
 		} catch (err) {
 			throw new Error(err);
 		}
 
 		playerIds.forEach(id => {
 			// prettier-ignore
-			player[options.isNewRound ? 'newRound' : 'reset'](id, sessionId)
+			this.player[options.isNewRound ? 'newRound' : 'reset'](id, sessionId)
 				.then(doc => {
 					logger.debug('player reset -> ', doc);
 					wss.broadcast(
@@ -113,23 +198,15 @@ module.exports = {
 		logger.debug('game init -> ', init);
 
 		try {
-			// eslint-disable-next-line
-			for (const prop in init) {
-				game[prop] = init[prop];
-			}
-
-			logger.debug('game reset -> ', game);
-			game.save();
-
-			wss.broadcast(
-				{ namespace: 'wsGame', action: 'update', nuts: game },
-				sessionId
-			);
-
-			return game;
+			return this.update(game.id, {
+				deckIds: [],
+				...init,
+			});
 		} catch (err) {
 			logger.error(err);
 			throw new Error(err);
 		}
-	},
-};
+	}
+}
+
+module.exports = new Game();
