@@ -51,7 +51,7 @@ games.get('/:id?', function(req, res) {
 games.get('/:id/start', function(req, res) {
 	const gameId = req.params.id;
 	const sessionId = req.sessionID;
-	const gameData = { isStarted: true };
+	const gameData = { status: 'STARTED' };
 
 	logger.debug('/start', gameId, sessionId, gameData);
 

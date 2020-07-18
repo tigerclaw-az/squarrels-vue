@@ -30,6 +30,10 @@ export default {
 			type: Array,
 			required: true,
 		},
+		gameStatus: {
+			type: String,
+			default: null,
+		},
 		playersInGame: {
 			type: Array,
 			required: true,

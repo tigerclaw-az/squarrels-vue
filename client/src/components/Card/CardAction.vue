@@ -152,7 +152,7 @@ export default {
 					this.showModal = false;
 
 					await this.$store.dispatch('game/update', {
-						isStarted: false,
+						status: 'ROUND_ENDED',
 					});
 
 					break;

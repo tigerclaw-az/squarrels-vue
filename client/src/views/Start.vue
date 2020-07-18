@@ -91,11 +91,11 @@ export default {
 					sortable: true,
 				},
 				{
-					key: 'isStarted',
-					label: 'Started?',
-					formatter: value => {
-						return value ? 'Yes' : 'No';
-					},
+					key: 'status',
+					label: 'Status',
+					// formatter: value => {
+					// 	return value ? 'Yes' : 'No';
+					// },
 					sortable: true,
 				},
 				{

@@ -45,7 +45,7 @@
 					v-if="showStartGame"
 					class="btn btn-start-game"
 					variant="primary"
-					@click="onClickNewGame($event, true)"
+					@click="onClickStartGame()"
 				>
 					START GAME
 				</b-button>
@@ -59,8 +59,8 @@
 				</div>
 			</div>
 			<Board
-				v-if="deckIds.length && decksLoaded"
 				:deck-ids="deckIds"
+				:game-status="status"
 				:players-in-game="playersInGame"
 				:round-number="roundNumber"
 			>
@@ -78,7 +78,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
-import { filter, includes } from 'lodash';
+import { filter, includes, isEmpty } from 'lodash';
 
 import { config } from '@/config';
 
@@ -125,11 +125,10 @@ export default {
 			'actionCard',
 			'createdBy',
 			'deckIds',
-			'isDealing',
-			'isLoaded',
-			'isStarted',
+			// 'isStarted',
 			'playerIds',
 			'roundNumber',
+			'status',
 		]),
 		...mapState({
 			allPlayers: state => state.players,
@@ -137,9 +136,6 @@ export default {
 		}),
 		allowMorePlayers() {
 			return this.playerIds.length < config.MAX_PLAYERS;
-		},
-		decksLoaded() {
-			return this.decks.isLoaded;
 		},
 		isWinter() {
 			return this.actionCard && this.actionCard.name === 'winter';
@@ -154,30 +150,30 @@ export default {
 			return filter(this.allPlayers, pl => includes(this.playerIds, pl.id));
 		},
 		showOverlay() {
-			return (
-				(this.needPlayers || !this.isStarted || this.isLoading) &&
-				!this.isWinter
-			);
+			return (this.needPlayers || this.status === 'INIT') && !this.isWinter;
 		},
 		showStartGame() {
 			return (
 				this.roundNumber === 1 &&
 				this.createdBy === this.myPlayer.id &&
 				!this.needPlayers &&
-				!this.isDealing
+				this.status === 'INIT'
 			);
 		},
 	},
 	watch: {
-		isStarted: function(to) {
-			if (to) {
-				this.isLoading = false;
-				this.$store
-					.dispatch('decks/load', { ids: this.deckIds }, { root: true })
-					.then(() => {
-						// this.decksLoaded = true;
-					});
-			}
+		deckIds: {
+			immediate: true,
+			handler: function(ids) {
+				if (!isEmpty(ids)) {
+					// this.isLoading = false;
+					this.$store
+						.dispatch('decks/load', { ids }, { root: true })
+						.then(() => {
+							// this.decksLoaded = true;
+						});
+				}
+			},
 		},
 	},
 	mounted: function() {
@@ -204,42 +200,42 @@ export default {
 	methods: {
 		onClickStartGame: async function(evt) {
 			this.$log.debug('onClickStartGame', evt);
-			this.isLoading = true;
 
 			try {
-				await this.$store.dispatch({ type: 'game/start' });
+				await this.startGame();
 			} catch (err) {
 				this.$log.error(err);
 				this.$toasted.error(err.message);
-				await this.$store.dispatch('game/update', {
-					isDealing: false,
-					isStarted: false,
-				});
 			}
 		},
 		onClickNewGame: async function(evt, resetGame) {
 			this.$log.debug('onClickNewGame', evt, resetGame);
 
-			if (resetGame) {
-				try {
+			try {
+				if (resetGame) {
 					await this.$store.dispatch({ type: 'game/reset' });
-					await this.$store.dispatch({ type: 'game/start' });
-				} catch (err) {
-					this.$log.error(err);
-					this.$toasted.error(err.message);
+				} else {
+					await this.$store.dispatch({ type: 'game/nextRound' });
 				}
-
-				return;
+			} catch (err) {
+				this.$log.error(err);
+				this.$toasted.error(err.message);
 			}
 
+			await this.startGame();
+		},
+		async startGame() {
 			this.isLoading = true;
 
 			try {
-				await this.$store.dispatch({ type: 'game/nextRound' });
+				await this.$store.dispatch({ type: 'game/createDecks' });
+				// TODO: Wait here for deck shuffling to complete
 				await this.$store.dispatch({ type: 'game/start' });
 			} catch (err) {
 				this.$log.error(err);
 				this.$toasted.error(err.message);
+				// await this.$store.dispatch({ type: 'game/reset' });
+				throw new Error(err);
 			}
 		},
 		unload: function() {

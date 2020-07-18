@@ -16,18 +16,14 @@ module.exports = new Schema({
 		type: [Schema.Types.ObjectId],
 		ref: 'Deck',
 	},
-	isDealing: {
-		type: Boolean,
-		default: false,
-	},
 	isDrawingCard: {
 		type: Boolean,
 		default: false,
 	},
-	isStarted: {
-		type: Boolean,
-		default: false,
-	},
+	// isStarted: {
+	// 	type: Boolean,
+	// 	default: false,
+	// },
 	playerIds: {
 		type: [Schema.Types.ObjectId],
 		ref: 'Player',
@@ -35,6 +31,11 @@ module.exports = new Schema({
 	roundNumber: {
 		type: Number,
 		default: 1,
+	},
+	// TODO: Use GameState schema
+	status: {
+		type: String,
+		default: null,
 	},
 }, {
 	collection: 'games',

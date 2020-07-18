@@ -18,16 +18,15 @@ import mutationTypes from '@/store/mutation-types';
 const newRoundState = {
 	actionCard: null,
 	createdBy: null,
-	isDealing: false,
-	isLoaded: false,
 	isDrawingCard: false,
-	isStarted: false,
+	isLoaded: false,
 	quarrelCards: {
 		current: [],
 		saved: [],
 	},
 	quarrelCount: 0,
 	showQuarrel: false,
+	status: 'INIT',
 };
 
 const initialState = Object.assign({}, newRoundState, {
@@ -299,8 +298,6 @@ const actions = {
 	},
 
 	async createDecks({ dispatch, state }) {
-		dispatch('sound/play', this._vm.$sounds.cardsShuffle, { root: true });
-
 		try {
 			// Returns after all decks have been initialized
 			const res = await api.games.createDecks(state.id, state.playerIds);
@@ -310,9 +307,13 @@ const actions = {
 			const ids = res.data.deckIds;
 
 			try {
+				await api.games.update(state.id, { status: 'SHUFFLE' });
 				await dispatch('decks/load', { ids }, { root: true });
 			} catch (err) {
-				await dispatch('decks/remove', { ids }, { root: true });
+				if (ids.length) {
+					await dispatch('decks/remove', { ids }, { root: true });
+				}
+
 				throw new Error(err);
 			}
 
@@ -327,9 +328,9 @@ const actions = {
 
 		this._vm.$log.debug('game/start', state);
 
-		await api.games.update(state.id, { isDealing: true });
-
 		try {
+			await api.games.update(state.id, { status: 'DEALING' });
+
 			// Loop through each player and deal cards
 			// Each deal will be saved as a Promise so we can wait
 			// for all players to be dealt cards before starting game
@@ -350,9 +351,8 @@ const actions = {
 					dispatch('decks/cardsDealt', null, { root: true })
 						.then(async() => {
 							// All players and decks have been updated, game can start
-							await api.games.update(state.id, { isDealing: false });
 							await api.games.start(state.id);
-							dispatch('players/nextPlayer', null, { root: true });
+							await dispatch('players/nextPlayer', null, { root: true });
 						});
 				})
 				.catch(err => {

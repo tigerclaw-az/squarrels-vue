@@ -141,11 +141,8 @@ class Game {
 
 		const init = {
 			actionCard: null,
-			isDealing: false,
-			isLoaded: false,
-			isStarted: false,
 			roundNumber: 1,
-			// $set: { deckIds: [] },
+			status: 'INIT',
 		};
 
 		const gameId = gameData.id;
