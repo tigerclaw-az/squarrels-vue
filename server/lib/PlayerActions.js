@@ -182,13 +182,13 @@ class PlayerActions {
 	 * @returns {void}
 	 */
 	quarrel(data) {
-		logger.debug(data);
+		logger.info(data);
 
 		const nuts = {
 			playerId: data.player || null,
 		};
 
-		if (data.hasOwnProperty('card')) {
+		if (Object.prototype.hasOwnProperty.call(data, 'card')) {
 			nuts.card = data.card;
 		}
 

@@ -313,7 +313,7 @@ const actions = {
 				playersUpdated.push(dispatch('updateLocalPlayer', plData));
 			});
 
-			await Promise.all(playersUpdated);
+			return Promise.all(playersUpdated);
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
@@ -534,10 +534,6 @@ const actions = {
 		const localPlayerId = $playerStorage && $playerStorage.id;
 
 		this._vm.$log.debug('playerMatch?', playerId, localPlayerId);
-
-		// if (Object.prototype.hasOwnProperty.call(payload, 'hasDrawnCard')) {
-		// 	commit(`game/${mutationTypes.game.TOGGLE_DRAW_CARD}`, payload.hasDrawnCard, { root: true });
-		// }
 
 		if (state[playerId] && playerId === localPlayerId) {
 			await Vue.$storage.setItem('player', state[playerId]);

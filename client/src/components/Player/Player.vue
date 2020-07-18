@@ -81,7 +81,6 @@ export default {
 		}),
 		...mapState({
 			actionCard: state => state.game.actionCard,
-			isGameStarted: state => state.game.isStarted,
 		}),
 		isCurrentPlayer() {
 			return this.myPlayer.id === this.player.id;
