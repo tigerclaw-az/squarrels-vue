@@ -8,6 +8,7 @@ import {
 	sampleSize,
 	some,
 	isArray,
+	isEmpty,
 } from 'lodash';
 
 import api from '@/api/index';
@@ -177,42 +178,40 @@ const actions = {
 		});
 	},
 
-	load({ commit }, { ids }) {
+	async load({ commit }, { ids }) {
 		this._vm.$log.debug('decks/load', ids);
 
-		if (!ids || !ids.length) {
+		if (isEmpty(ids)) {
 			return Promise.reject('ERROR: No ids provided for "decks/load"');
 		}
 
-		return new Promise((resolve, reject) => {
-			api.decks
-				.get(ids.join(','))
-				.then(res => {
-					if (res.status === 200) {
-						const decks = res.data;
+		try {
+			const res = await api.decks.get(ids.join(','));
 
-						decks.forEach(deck => {
-							commit(mutationTypes.decks.UPDATE, deck);
-						});
+			if (res.status !== 200) {
+				this._vm.$log.error(res);
+				throw new Error(res);
+			}
 
-						commit(mutationTypes.decks.LOADED);
-						resolve(decks);
-					} else {
-						this._vm.$log.error(res);
-						reject(res);
-					}
-				})
-				.catch(err => {
-					this._vm.$log.error(err);
-					reject(err);
-				});
-		});
+			const decks = res.data;
+
+			decks.forEach(deck => {
+				commit(mutationTypes.decks.UPDATE, deck);
+			});
+
+			commit(mutationTypes.decks.LOADED);
+
+			return decks;
+		} catch (err) {
+			this._vm.$log.error(err);
+			reject(err);
+		}
 	},
 
-	async remove({ dispatch }, deckIds) {
-		await dispatch('decks/unload');
+	async remove({ dispatch }, ids) {
+		await dispatch('unload');
 
-		return api.decks.delete(deckIds.join(','));
+		return api.decks.delete(ids.join(','));
 	},
 
 	removeCards({ getters }, payload) {

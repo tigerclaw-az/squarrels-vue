@@ -12,6 +12,8 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
+
 export default {
 	name: 'deck',
 	props: {
@@ -19,13 +21,19 @@ export default {
 			type: String,
 			required: true,
 		},
+		shuffleDeck: {
+			type: Object,
+			default: () => ({}),
+		},
 	},
 	computed: {
 		cards: function() {
 			return this.deck.cards;
 		},
 		deck: function() {
-			return this.$store.state.decks[this.id];
+			return !isEmpty(this.shuffleDeck)
+				? this.shuffleDeck
+				: this.$store.state.decks[this.id];
 		},
 		deckComponent: function() {
 			if (this.deck) {
@@ -45,5 +53,4 @@ export default {
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" src="./deck.scss"></style>

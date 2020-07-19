@@ -4,7 +4,10 @@
 			<div class="container_players">
 				<Player v-for="p in playersInGame" :key="p.id" :player="p" />
 			</div>
-			<div class="container_decks">
+			<div v-if="gameStatus === 'SHUFFLE'" class="container_shuffle">
+				<Deck id="123" :shuffle-deck="shuffleDeck" />
+			</div>
+			<div v-else-if="decksLoaded" class="container_decks">
 				<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
 				<slot name="action"></slot>
 			</div>
@@ -44,7 +47,17 @@ export default {
 		},
 	},
 	data() {
-		return {};
+		return {
+			shuffleDeck: {
+				cards: Array(120),
+				deckType: 'shuffle',
+			},
+		};
+	},
+	computed: {
+		decksLoaded() {
+			return this.$store.state.decks.isLoaded;
+		},
 	},
 };
 </script>

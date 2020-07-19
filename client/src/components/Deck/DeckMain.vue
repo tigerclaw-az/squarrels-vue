@@ -17,7 +17,7 @@
 				:class="{ 'has-card': cardDrawn }"
 				class="card-drawn"
 			>
-				<div class="btn-card card blank--"></div>
+				<span class="btn-card card blank--"></span>
 				<Card
 					v-if="cardDrawn"
 					:id="cardDrawn.id"
@@ -26,7 +26,7 @@
 				></Card>
 			</div>
 			<Card
-				v-for="index in numCards"
+				v-for="(n, index) in numCards"
 				:key="index"
 				ref="deck"
 				:card-style="cardPositions[index]"
@@ -67,10 +67,6 @@ export default {
 		cards: {
 			type: Array,
 			required: true,
-		},
-		isShuffling: {
-			type: Boolean,
-			default: false,
 		},
 		numCards: {
 			type: Number,
@@ -134,9 +130,6 @@ export default {
 					});
 			}
 		},
-		isShuffling() {
-			this.shuffleCards();
-		},
 	},
 	mounted: function() {
 		// Setup position of cards in deck
@@ -186,7 +179,6 @@ export default {
 		onCardDrawnAnimationEnd: function() {
 			this.$log.debug('animation ended -> ', this.cardDrawn);
 
-			// this.$store.commit(`game/${mutationTypes.game.TOGGLE_DRAW_CARD}`, false);
 			this.$store.dispatch('game/update', { isDrawingCard: false });
 
 			this.onCardDrawn(this.cardDrawn);
@@ -220,98 +212,13 @@ export default {
 				window.requestAnimationFrame(this.moveCard);
 			}
 		},
-		shuffleCards() {
-			const left = [];
-			const right = [];
 
-			this.cardsShuffled = 0;
-
-			for (let i = 0; i < this.cards.length; ++i) {
-				const start = 0;
-				// const end = Math.ceil(60 * Math.random() + 120);
-				const end = 105;
-
-				const card = {
-					index: i,
-					speed: 15,
-					start,
-					end,
-				};
-
-				if (Math.random() <= 0.5) {
-					card.direction = 'left';
-					left.push(card);
-				} else {
-					card.direction = 'right';
-					right.push(card);
-				}
-			}
-
-			this.$log.debug(left, right);
-
-			left.forEach(c => {
-				setTimeout(() => {
-					this.animateCard(c);
-				}, 120 * Math.random());
-			});
-			right.forEach(c => {
-				setTimeout(() => {
-					this.animateCard(c);
-				}, 120 * Math.random());
-			});
-		},
-		animateCard(c) {
-			// this.$log.debug(c);
-
-			c.start -= c.speed;
-
-			this.$set(this.cardStyles[c.index], c.direction, c.start);
-			const style = this.cardStyles[c.index];
-
-			const xPos = style.left === 0 ? style.right * -1 : style.left;
-			const yPos = style.top;
-
-			// this.$set(this.cardPositions, c.index, this.getStyle(c.index));
-			this.$set(
-				this.cardPositions[c.index],
-				'transform',
-				`translate(${xPos}px, ${yPos}px)`,
-			);
-
-			if (Math.abs(c.start) < c.end) {
-				c.req = requestAnimationFrame(this.animateCard.bind(this, c));
-			} else if (c.start < 0) {
-				this.$set(
-					this.cardPositions[c.index],
-					'zIndex',
-					Math.ceil(this.cards.length * Math.random()),
-				);
-
-				c.end = 0;
-
-				if (c.speed > 0) {
-					c.speed *= -1;
-				}
-
-				c.speed += 1;
-				c.req = requestAnimationFrame(this.animateCard.bind(this, c));
-			} else {
-				this.$set(this.cardStyles[c.index], c.direction, 0);
-				// this.$set(this.cardPositions, c.index, this.getStyle(c.index));
-				this.$set(
-					this.cardPositions[c.index],
-					'transform',
-					`translate(0px, ${yPos}px)`,
-				);
-				this.cardsShuffled++;
-			}
-		},
 	},
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss" scoped>
+<style lang="scss">
 // prettier-ignore
 @import "~@/assets/scss/variables";
 
@@ -346,7 +253,7 @@ export default {
 	z-index: 140;
 
 	&.has-card {
-		@include flip-card($flip-speed: 1s, $flip-delay: 0.5s);
+		@include flip-card($flip-speed: 1s, $flip-delay: 0.75s);
 	}
 }
 
