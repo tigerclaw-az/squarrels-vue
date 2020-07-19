@@ -67,7 +67,7 @@
 		}
 	}
 
-	.btn-card ::v-deep {
+	.btn-card {
 		.card {
 			animation-delay: $flip-delay;
 			animation-duration: 0.5s;

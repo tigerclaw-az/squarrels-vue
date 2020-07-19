@@ -1,5 +1,6 @@
 <template>
 	<div
+		v-if="quarrelCard(player.id)"
 		ref="card"
 		:class="{
 			flip: showQuarrel,
@@ -7,10 +8,8 @@
 		}"
 		class="sq-player-quarrel"
 	>
-		<div v-if="quarrelCard(player.id)" class="cards-group">
-			<div class="btn-card card blank-- disabled" disabled></div>
-			<Card :card-data="quarrelCard(player.id)" card-type="hand" />
-		</div>
+		<span class="btn-card card blank-- disabled" disabled></span>
+		<Card :card-data="quarrelCard(player.id)" card-type="hand" />
 	</div>
 </template>
 
@@ -74,24 +73,26 @@ export default {
 		z-index: 1;
 	}
 
-	.card:not(.blank--) {
-		box-shadow: none;
-		left: 0;
-		transform: rotateY(90deg);
-
-		&::after {
-			content: '';
-			height: 100%;
+	.btn-card {
+		.card {
+			box-shadow: none;
 			left: 0;
-			opacity: 0;
-			position: inherit;
-			transition: opacity 0.5s linear;
-			width: 100%;
+			transform: rotateY(90deg);
+
+			&::after {
+				content: '';
+				height: 100%;
+				left: 0;
+				// opacity: 0;
+				position: inherit;
+				// transition: opacity 0.5s linear;
+				width: 100%;
+			}
 		}
 	}
 
 	&.flip {
-		@include flip-card(1.25s, 0.75s);
+		@include flip-card(1s, 0.75s);
 	}
 
 	&.winner {
