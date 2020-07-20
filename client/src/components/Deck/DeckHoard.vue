@@ -1,24 +1,20 @@
 <template>
 	<div
 		:class="{
-			empty: !numCards,
+			empty: totalCards === 0,
 		}"
 		class="deck"
 		@click.prevent="onClick"
 	>
 		<transition-group
-			v-show="numCards"
+			v-show="totalCards !== 0"
 			tag="div"
 			:class="{ disabled: isDisabled }"
 			class="cards-group"
 			role="button"
 			name="cards-hoard"
 		>
-			<div
-				v-for="card in numCards"
-				:key="card"
-				class="btn-card card blank--"
-			></div>
+			<div v-for="n in totalCards" :key="n" class="btn-card card blank--"></div>
 		</transition-group>
 	</div>
 </template>
@@ -31,10 +27,6 @@ export default {
 	props: {
 		cards: {
 			type: Array,
-			required: true,
-		},
-		numCards: {
-			type: Number,
 			required: true,
 		},
 	},
@@ -61,6 +53,9 @@ export default {
 		},
 		isDisabled: function() {
 			return this.tooManyClicks || !this.actionCard;
+		},
+		totalCards() {
+			return this.cards.length;
 		},
 	},
 	methods: {

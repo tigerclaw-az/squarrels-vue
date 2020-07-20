@@ -1,13 +1,15 @@
 <template>
-	<div class="deck">
-		<div class="cards-group">
-			<Card
-				v-for="(n, index) in numCards"
-				:key="index"
-				ref="deck"
-				:card-style="cardPositions[index]"
-				card-type="deck"
-			/>
+	<div class="deck-container">
+		<div class="deck">
+			<div class="cards-group">
+				<Card
+					v-for="(n, index) in totalCards"
+					:key="index"
+					ref="deck"
+					:card-style="cardPositions[index]"
+					card-type="deck"
+				/>
+			</div>
 		</div>
 	</div>
 </template>
@@ -24,20 +26,40 @@ export default {
 			type: Array,
 			required: true,
 		},
+		cardsShuffled: {
+			type: Boolean,
+			default: false,
+		},
 	},
 	data() {
 		return {
-			cardStyles: [],
 			cardPositions: [],
+			cardStyles: [],
+			cardsAnimated: 0,
+			shuffleCount: 0,
 		};
 	},
 	computed: {
-		numCards() {
+		totalCards() {
 			return this.cards.length;
 		},
 	},
+	watch: {
+		cardsAnimated(val) {
+			if (val === this.cards.length) {
+				this.$log.debug('CARDS SHUFFLED!');
+
+				if (this.shuffleCount >= 2) {
+					this.$emit('update:cards-shuffled', true);
+				} else {
+					this.shuffleCount++;
+					this.shuffleCards();
+				}
+			}
+		},
+	},
 	mounted() {
-		for (let i = 0; i < this.cards.length; i++) {
+		for (let i = 0; i < this.totalCards; i++) {
 			const pos = i * -0.25;
 
 			this.$set(this.cardStyles, i, {
@@ -56,6 +78,8 @@ export default {
 	},
 	methods: {
 		shuffleCards() {
+			this.cardsAnimated = 0;
+
 			this.$store.dispatch('sound/play', this.$sounds.cardsShuffle, {
 				root: true,
 			});
@@ -63,9 +87,7 @@ export default {
 			const left = [];
 			const right = [];
 
-			this.cardsShuffled = 0;
-
-			for (let i = 0; i < this.cards.length; ++i) {
+			for (let i = 0; i < this.totalCards; ++i) {
 				const start = 0;
 				// const end = Math.ceil(60 * Math.random() + 120);
 				const end = 105;
@@ -142,11 +164,14 @@ export default {
 					'transform',
 					`translate(0px, ${yPos}px)`,
 				);
-				this.cardsShuffled++;
+				this.cardsAnimated++;
+				// this.$emit('update:cards-shuffled', this.cardsShuffled + 1);
 			}
 		},
 	},
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+@import '~@/components/Deck/deck';
+</style>

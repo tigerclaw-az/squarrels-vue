@@ -5,7 +5,10 @@
 				<Player v-for="p in playersInGame" :key="p.id" :player="p" />
 			</div>
 			<div v-if="gameStatus === 'SHUFFLE'" class="container_shuffle">
-				<Deck id="123" :shuffle-deck="shuffleDeck" />
+				<DeckShuffle
+					:cards="shuffleDeck.cards"
+					@update:cards-shuffled="cardsShuffled($event)"
+				/>
 			</div>
 			<div v-else-if="decksLoaded" class="container_decks">
 				<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
@@ -19,6 +22,7 @@
 <script>
 import BoardHeader from '@/components/Board/BoardHeader.vue';
 import Deck from '@/components/Deck/Deck.vue';
+import DeckShuffle from '@/components/Deck/DeckShuffle.vue';
 import Player from '@/components/Player/Player.vue';
 
 export default {
@@ -26,6 +30,7 @@ export default {
 	components: {
 		BoardHeader,
 		Deck,
+		DeckShuffle,
 		Player,
 	},
 	props: {
@@ -50,13 +55,18 @@ export default {
 		return {
 			shuffleDeck: {
 				cards: Array(120),
-				deckType: 'shuffle',
 			},
 		};
 	},
 	computed: {
 		decksLoaded() {
 			return this.$store.state.decks.isLoaded;
+		},
+	},
+	methods: {
+		cardsShuffled(val) {
+			this.$log.debug('cards-shuffled:Board -> ', val);
+			this.$emit('update:cards-shuffled', val);
 		},
 	},
 };
@@ -99,6 +109,12 @@ export default {
 	height: calc(100% - 2rem);
 	place-content: start space-between;
 	padding-left: 1rem;
+}
+
+.container_shuffle {
+	left: 50%;
+	position: absolute;
+	top: 25%;
 }
 
 .container_decks {

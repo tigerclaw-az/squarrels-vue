@@ -1,19 +1,13 @@
 <template>
 	<div v-if="deck" :type="deck.deckType" class="deck-container">
 		<keep-alive>
-			<component
-				:is="deckComponent"
-				:cards="deck.cards"
-				:num-cards="totalCards"
-			/>
+			<component :is="deckComponent" :cards="deck.cards" />
 		</keep-alive>
 		<span class="deck-label">{{ deck.deckType }} - {{ totalCards }}</span>
 	</div>
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
-
 export default {
 	name: 'deck',
 	props: {
@@ -21,19 +15,13 @@ export default {
 			type: String,
 			required: true,
 		},
-		shuffleDeck: {
-			type: Object,
-			default: () => ({}),
-		},
 	},
 	computed: {
 		cards: function() {
 			return this.deck.cards;
 		},
 		deck: function() {
-			return !isEmpty(this.shuffleDeck)
-				? this.shuffleDeck
-				: this.$store.state.decks[this.id];
+			return this.$store.state.decks[this.id];
 		},
 		deckComponent: function() {
 			if (this.deck) {

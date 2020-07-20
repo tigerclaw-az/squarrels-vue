@@ -63,6 +63,7 @@
 				:game-status="status"
 				:players-in-game="playersInGame"
 				:round-number="roundNumber"
+				@update:cards-shuffled="cardsShuffled($event)"
 			>
 				<template slot="action">
 					<CardAction
@@ -100,9 +101,7 @@ export default {
 		},
 	},
 	data: function() {
-		return {
-			isLoading: false,
-		};
+		return {};
 	},
 	beforeRouteLeave(to, from, next) {
 		if (this.$store.state.websocket.isConnected) {
@@ -143,6 +142,9 @@ export default {
 		needPlayers() {
 			return this.playerIds.length < 2;
 		},
+		isCreator() {
+			return this.createdBy === this.myPlayer.id;
+		},
 		playerExists() {
 			return this.playerIds.filter(pl => pl === this.myPlayer.id).length;
 		},
@@ -155,7 +157,7 @@ export default {
 		showStartGame() {
 			return (
 				this.roundNumber === 1 &&
-				this.createdBy === this.myPlayer.id &&
+				this.isCreator &&
 				!this.needPlayers &&
 				this.status === 'INIT'
 			);
@@ -166,7 +168,6 @@ export default {
 			immediate: true,
 			handler: function(ids) {
 				if (!isEmpty(ids)) {
-					// this.isLoading = false;
 					this.$store
 						.dispatch('decks/load', { ids }, { root: true })
 						.then(() => {
@@ -198,6 +199,13 @@ export default {
 			});
 	},
 	methods: {
+		async cardsShuffled(val) {
+			this.$log.debug('cards-shuffled:Game -> ', val);
+
+			if (val && this.isCreator) {
+				await this.$store.dispatch({ type: 'game/start' });
+			}
+		},
 		onClickStartGame: async function(evt) {
 			this.$log.debug('onClickStartGame', evt);
 
@@ -225,12 +233,8 @@ export default {
 			await this.startGame();
 		},
 		async startGame() {
-			this.isLoading = true;
-
 			try {
 				await this.$store.dispatch({ type: 'game/createDecks' });
-				// TODO: Wait here for deck shuffling to complete
-				await this.$store.dispatch({ type: 'game/start' });
 			} catch (err) {
 				this.$log.error(err);
 				this.$toasted.error(err.message);

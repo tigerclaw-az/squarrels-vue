@@ -1,12 +1,12 @@
 <template>
 	<div
 		:class="{
-			empty: !numCards,
+			empty: totalCards === 0,
 		}"
 		class="deck disabled"
 	>
 		<transition-group
-			v-show="numCards"
+			v-show="totalCards !== 0"
 			tag="div"
 			class="cards-group disabled"
 			role="button"
@@ -30,9 +30,10 @@ export default {
 			type: Array,
 			required: true,
 		},
-		numCards: {
-			type: Number,
-			required: true,
+	},
+	computed: {
+		totalCards() {
+			return this.cards.length;
 		},
 	},
 };

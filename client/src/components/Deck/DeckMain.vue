@@ -3,7 +3,7 @@
 		:class="{
 			'can-draw': canDrawCard && !isCardDrawn,
 			'disabled': isDisabled,
-			'empty': !numCards,
+			'empty': !totalCards,
 		}"
 		class="deck"
 	>
@@ -26,7 +26,7 @@
 				></Card>
 			</div>
 			<Card
-				v-for="(n, index) in numCards"
+				v-for="(n, index) in totalCards"
 				:key="index"
 				ref="deck"
 				:card-style="cardPositions[index]"
@@ -68,10 +68,6 @@ export default {
 			type: Array,
 			required: true,
 		},
-		numCards: {
-			type: Number,
-			required: true,
-		},
 	},
 	data: function() {
 		return {
@@ -98,13 +94,11 @@ export default {
 		isDisabled: function() {
 			return !this.canDrawCard;
 		},
+		totalCards() {
+			return this.cards.length;
+		},
 	},
 	watch: {
-		cardsShuffled(val) {
-			if (val === this.cards.length) {
-				this.$log.debug('CARDS SHUFFLED!');
-			}
-		},
 		isDrawingCard(val) {
 			this.$log.debug(val);
 
