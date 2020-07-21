@@ -164,6 +164,14 @@ class Game {
 			if (!decksDeleted || decksDeleted.deletedCount !== deckIds.length) {
 				throw new Error('DECKS NOT DELTED!');
 			}
+
+			wss.broadcast(
+				{
+					namespace: 'wsDecks',
+					action: 'reset',
+				},
+				sessionId
+			);
 		} catch (err) {
 			throw new Error(err);
 		}

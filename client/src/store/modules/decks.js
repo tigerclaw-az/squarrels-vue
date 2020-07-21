@@ -228,8 +228,6 @@ const actions = {
 
 	unload({ commit }) {
 		commit(mutationTypes.decks.INIT);
-
-		return Promise.resolve();
 	},
 
 	// eslint-disable-next-line

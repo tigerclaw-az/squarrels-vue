@@ -267,12 +267,11 @@ const actions = {
 		}
 	},
 
-	async reset({ dispatch, state }) {
+	reset({ state }) {
 		try {
-			await dispatch('decks/unload', {}, { root: true });
-
 			return api.games.reset(state.id);
 		} catch (err) {
+			this._vm.$log.error(err);
 			throw new Error(err);
 		}
 	},
