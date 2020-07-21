@@ -75,8 +75,12 @@ class Player {
 
 				if (!isEmpty(cards)) {
 					data.cardsInHand = cards;
-					data.totalCards = cards.length;
 				}
+
+				if (Object.prototype.hasOwnProperty.call(data, 'cardsInHand')) {
+					data.totalCards = data.cardsInHand.length;
+				}
+
 
 				// prettier-ignore
 				this.PlayerModel
