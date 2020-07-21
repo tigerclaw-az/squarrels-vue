@@ -83,20 +83,17 @@ const actions = {
 			// Watch for each time a card was drawn and updated for
 			// a given player, then continue to draw until they have MAX_CARDS
 			const unsubscribe = store.subscribe((mutation, state) => {
-				this._vm.$log.debug(
-					'decks/dealCards.subscribe',
-					mutation,
-					state.players[playerId].cardsDrawnCount,
-					state,
-				);
+				const playerCards = state.players[playerId].cardsDrawnIds;
 
 				if (mutation.type === 'players/DRAW_CARD') {
-					if (state.players[playerId].cardsDrawnCount === config.MAX_CARDS) {
+					this._vm.$log.debug('decks/dealCards.subscribe', playerCards, state);
+
+					if (playerCards.length === config.MAX_CARDS) {
 						unsubscribe();
 
 						api.players
 							.update(playerId, {
-								cardsInHand: state.players[playerId].cardsDrawnIds,
+								cardsInHand: playerCards,
 							})
 							.then(() => {
 								resolve({
@@ -132,7 +129,7 @@ const actions = {
 		return dispatch('addCard', { type: 'hoard', cardId: card.id });
 	},
 
-	drawCard({ commit, dispatch, getters }, options = {}) {
+	async drawCard({ commit, dispatch, getters }, options = {}) {
 		const mainDeck = getters.getByType('main');
 
 		this._vm.$log.debug('decks/drawCard -> ', options, mainDeck);
@@ -151,15 +148,24 @@ const actions = {
 		this._vm.$log.debug('cardsFromDeck -> ', cardsFromDeck);
 		this._vm.$log.debug('cardDrawn -> ', cardDrawn);
 
-		// Removes cardDrawn.id from cardsFromDeck.ids
-		pull(cardsFromDeck.ids, cardDrawn.id);
+		if (!cardDrawn) {
+			throw new Error('Card drawn does not exist!');
+		}
 
-		// Need to update the cards in main deck so that the next
-		// player doesn't draw the same card (async)
-		commit(mutationTypes.decks.UPDATE_CARDS, {
-			id: mainDeck.id,
-			cards: reject(mainDeck.cards, c => cardDrawn.id === c.id),
-		});
+		try {
+			// Removes cardDrawn.id from cardsFromDeck.ids
+			pull(cardsFromDeck.ids, cardDrawn.id);
+
+			// Need to update the cards in main deck so that the next
+			// player doesn't draw the same card (async)
+			commit(mutationTypes.decks.UPDATE_CARDS, {
+				id: mainDeck.id,
+				// "cards" is an array of objects here
+				cards: reject(mainDeck.cards, c => cardDrawn.id === c.id),
+			});
+		} catch (err) {
+			throw new Error(err);
+		}
 
 		// Need to update the cards drawn by the player so that
 		// the subscribe knows when to stop
@@ -173,14 +179,16 @@ const actions = {
 				{ root: true },
 			);
 
-			return Promise.resolve(cardDrawn);
+			return cardDrawn;
 		}
 
-		return new Promise(resolve => {
-			api.decks.update(mainDeck.id, { cards: cardsFromDeck.ids }).then(() => {
-				resolve(cardDrawn);
-			});
-		});
+		try {
+			await api.decks.update(mainDeck.id, { cards: cardsFromDeck.ids });
+		} catch (err) {
+			throw new Error(err);
+		}
+
+		return cardDrawn;
 	},
 
 	async load({ commit }, { ids }) {
