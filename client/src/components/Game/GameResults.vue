@@ -173,7 +173,7 @@ export default {
 		opacity: 0.95;
 		position: absolute;
 		width: 100%;
-		z-index: 100;
+		z-index: 175;
 	}
 
 	.container_players {
