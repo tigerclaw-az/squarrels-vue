@@ -115,7 +115,7 @@ games.post('/:id/next-round', function(req, res) {
 	const gameId = req.params.id;
 	const sessionId = req.sessionID;
 
-	game.resetGame({ id: gameId, sessionId }, { isNewRound: true })
+	game.reset({ id: gameId, sessionId }, { isNewRound: true })
 		.then(doc => {
 			res.status(200).json(doc);
 		})
