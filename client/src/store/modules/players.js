@@ -384,7 +384,6 @@ const actions = {
 	async resetCardsDrawn({ dispatch }, data) {
 		await dispatch('updateLocalPlayer', {
 			id: data.id,
-			cardsDrawnCount: 0,
 			cardsDrawnIds: [],
 		});
 	},
@@ -554,30 +553,16 @@ const mutations = {
 		this._vm.$log.debug('players/DRAW_CARD', payload, state);
 
 		if (
-			!Object.prototype.hasOwnProperty.call(
-				state[payload.id],
-				'cardsDrawnCount',
-			)
-		) {
-			Vue.set(state[payload.id], 'cardsDrawnCount', 0);
-		}
-
-		if (
 			!Object.prototype.hasOwnProperty.call(state[payload.id], 'cardsDrawnIds')
 		) {
 			Vue.set(state[payload.id], 'cardsDrawnIds', []);
 		}
 
 		myCards.push(payload.cardDrawnId);
-		state[payload.id].cardsDrawnCount += 1;
 
 		Vue.set(state[payload.id], 'cardsDrawnIds', [...myCards]);
 
-		this._vm.$log.debug(
-			'cardsDrawn',
-			state[payload.id].cardsDrawnIds,
-			state[payload.id].cardsDrawnCount,
-		);
+		this._vm.$log.debug('cardsDrawn', state[payload.id].cardsDrawnIds);
 	},
 
 	[mutationTypes.players.UPDATE](state, payload) {
