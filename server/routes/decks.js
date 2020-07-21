@@ -37,14 +37,14 @@ decks.post('/:id', function(req, res) {
 	const query = { _id: deckId };
 	const options = { new: true };
 
-	logger.info('decks/:id', query, req.body);
+	logger.debug('decks/:id', query, req.body);
 
 	// prettier-ignore
 	DeckModel
 		.findByIdAndUpdate(query, req.body, options)
 		.populate('cards')
 		.then(function(doc) {
-			logger.info(doc);
+			logger.debug(doc);
 
 			wss.broadcast(
 				{ namespace: 'wsDecks', action: 'update', nuts: doc },
