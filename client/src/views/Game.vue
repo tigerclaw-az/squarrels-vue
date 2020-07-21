@@ -176,7 +176,7 @@ export default {
 		deckIds: {
 			immediate: true,
 			handler: async function(ids) {
-				if (isEmpty(ids)) {
+				if (isEmpty(ids) || this.decks.isLoaded) {
 					return;
 				}
 
