@@ -106,14 +106,14 @@ export default {
 	},
 	beforeRouteLeave(to, from, next) {
 		if (this.$store.state.websocket.isConnected) {
-			this.unload()
+			this.unload(this.id)
 				.then(() => {
 					next();
 				})
 				.catch(err => {
 					this.$log.error(err);
 					this.$toasted.error(err);
-					next(false);
+					next();
 				});
 		}
 	},
@@ -283,9 +283,8 @@ export default {
 				throw new Error(err);
 			}
 		},
-		unload: function() {
-			// Only unload if the current game was valid
-			if (this.id) {
+		unload: function(id) {
+			if (id) {
 				return this.$store.dispatch({ type: 'game/unload' });
 			}
 
