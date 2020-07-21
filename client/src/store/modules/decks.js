@@ -160,7 +160,6 @@ const actions = {
 			// player doesn't draw the same card (async)
 			commit(mutationTypes.decks.UPDATE_CARDS, {
 				id: mainDeck.id,
-				// "cards" is an array of objects here
 				cards: reject(mainDeck.cards, c => cardDrawn.id === c.id),
 			});
 		} catch (err) {
@@ -242,38 +241,6 @@ const actions = {
 	unload({ commit }) {
 		commit(mutationTypes.decks.INIT);
 	},
-
-	// eslint-disable-next-line
-	updateById({ }, payload) {
-		if (!payload.id) {
-			throw new Error('Missing required "id" property.');
-		}
-
-		return new Promise((resolve, reject) => {
-			api.decks
-				.update(payload.id, payload.data)
-				.then(res => {
-					resolve(res);
-				})
-				.catch(res => {
-					reject(res);
-				});
-		});
-	},
-
-	async updateByType({ getters }, payload) {
-		if (!payload.type) {
-			throw new Error('Missing required "type" property.');
-		}
-
-		const deck = getters.getByType(payload.type);
-
-		try {
-			return await api.decks.update(deck.id, payload.data);
-		} catch (err) {
-			return err;
-		}
-	},
 };
 
 const mutations = {
@@ -282,7 +249,7 @@ const mutations = {
 	},
 
 	[mutationTypes.decks.INIT](state) {
-		Vue.set(state, 'isLoaded', false);
+		state.isLoaded = false;
 
 		for (const prop in state) {
 			if (typeof state[prop] === 'object') {
