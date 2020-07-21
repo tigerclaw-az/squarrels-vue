@@ -4,6 +4,7 @@ export default Object.freeze({
 		SET_CONFIG: 'SET_CONFIG',
 	},
 	decks: {
+		CARDS_SHUFFLED: 'CARDS_SHUFFLED',
 		INIT: 'INIT',
 		LOADED: 'LOADED',
 		UPDATE: 'UPDATE',

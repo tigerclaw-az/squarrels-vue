@@ -10,7 +10,7 @@
 					@update:cards-shuffled="cardsShuffled($event)"
 				/>
 			</div>
-			<div v-else-if="decksLoaded" class="container_decks">
+			<div v-else class="container_decks">
 				<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
 				<slot name="action"></slot>
 			</div>
@@ -58,15 +58,10 @@ export default {
 			},
 		};
 	},
-	computed: {
-		decksLoaded() {
-			return this.$store.state.decks.isLoaded;
-		},
-	},
 	methods: {
 		cardsShuffled(val) {
-			this.$log.debug('cards-shuffled:Board -> ', val);
-			this.$emit('update:cards-shuffled', val);
+			this.$log.debug('cards-shuffled:Board -> ', val, this);
+			this.$store.dispatch('decks/cardsShuffled');
 		},
 	},
 };

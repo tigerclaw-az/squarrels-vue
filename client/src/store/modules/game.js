@@ -151,37 +151,42 @@ const actions = {
 		return Promise.reject('NO PLAYERS TO ADD');
 	},
 
-	load({ commit }, { id }) {
-		return new Promise((resolve, reject) => {
-			api.games
-				.get(id)
-				.then(res => {
-					Vue.$log.debug('game/load', res);
+	async load({ commit }, { id }) {
+		try {
+			const res = await api.games.get(id);
 
-					if (res.status === 200) {
-						const gameData = res.data[0];
+			Vue.$log.debug('game/load', res);
 
-						commit(mutationTypes.game.UPDATE, gameData);
-						commit(mutationTypes.game.LOADED);
+			if (res.status !== 200) {
+				router.push('/');
+				throw new Error(res);
+			}
 
-						resolve(gameData);
-					} else {
-						router.push('/');
-					}
-				})
-				.catch(err => {
-					this._vm.$log.error(err);
-					reject(err);
-				});
-		});
+			const gameData = res.data[0];
+
+			Vue.$log.debug('game/load', gameData);
+
+			commit(mutationTypes.game.UPDATE, gameData);
+			commit(mutationTypes.game.LOADED);
+
+			// await dispatch('decks/load', { ids: gameData.deckIds }, { root: true });
+
+			return gameData;
+		} catch (err) {
+			this._vm.$log.error(err);
+			throw new Error(err);
+		}
 	},
 
-	async nextRound({ dispatch, state }) {
+	nextRound({ state }) {
 		this._vm.$log.debug('game/nextRound');
 
-		await dispatch('decks/unload', {}, { root: true });
-
-		return api.games.nextRound(state.id);
+		try {
+			return api.games.nextRound(state.id);
+		} catch (err) {
+			this._vm.$log.error(err);
+			throw new Error(err);
+		}
 	},
 
 	async quarrelWinner({ commit, dispatch, state }) {
@@ -299,7 +304,7 @@ const actions = {
 	async createDecks({ dispatch, state }) {
 		try {
 			// Returns after all decks have been initialized
-			const res = await api.games.createDecks(state.id, state.playerIds);
+			const res = await api.games.createDecks(state.id);
 
 			this._vm.$log.debug('game/createDecks -> ', res);
 
@@ -313,6 +318,7 @@ const actions = {
 					await dispatch('decks/remove', { ids }, { root: true });
 				}
 
+				this._vm.$log.error(err);
 				throw new Error(err);
 			}
 
@@ -323,8 +329,6 @@ const actions = {
 	},
 
 	async start({ dispatch, state }) {
-		const dealPromises = [];
-
 		this._vm.$log.debug('game/start', state);
 
 		try {
@@ -333,31 +337,23 @@ const actions = {
 			// Loop through each player and deal cards
 			// Each deal will be saved as a Promise so we can wait
 			// for all players to be dealt cards before starting game
-			for (const playerId of state.playerIds) {
-				dealPromises.push(
-					// prettier-ignore
-					dispatch(
-						'decks/dealCards',
-						playerId,
-						{ root: true },
-					),
-				);
-			}
+			await Promise.all(
+				state.playerIds.map(async id => {
+					try {
+						await dispatch('decks/dealCards', id, { root: true });
+					} catch (err) {
+						throw new Error(err);
+					}
+				}),
+			);
 
-			// prettier-ignore
-			Promise.all(dealPromises)
-				.then(() => {
-					dispatch('decks/cardsDealt', null, { root: true })
-						.then(async() => {
-							// All players and decks have been updated, game can start
-							await api.games.start(state.id);
-							await dispatch('players/nextPlayer', null, { root: true });
-						});
-				})
-				.catch(err => {
-					throw new Error(err);
-				});
+			await dispatch('decks/cardsDealt', null, { root: true });
+			// All players and decks have been updated, game can start
+			await api.games.start(state.id);
+			await dispatch('players/nextPlayer', null, { root: true });
 		} catch (err) {
+			await api.games.update(state.id, { status: 'SHUFFLE' });
+			this._vm.$log.error(err);
 			throw new Error(err);
 		}
 	},
@@ -374,28 +370,26 @@ const actions = {
 	 *
 	 * @returns {Object} 	Promise
 	 */
-	unload({ commit, dispatch, state, rootState }) {
+	async unload({ commit, dispatch, state, rootState }) {
 		const playerIds = state.playerIds;
 		const updatedPlayerIds = without(playerIds, rootState.localPlayer.id);
 
-		return api.games
-			.updatePlayers(state.id, updatedPlayerIds)
-			.then(async() => {
-        // eslint-disable-line
-				await dispatch(
-					'players/updateGame',
-					{
-						id: rootState.localPlayer.id,
-						gameId: null,
-					},
-					{ root: true },
-				);
+		try {
+			await api.games.updatePlayers(state.id, updatedPlayerIds);
+			await dispatch(
+				'players/updateGame',
+				{
+					id: rootState.localPlayer.id,
+					gameId: null,
+				},
+				{ root: true },
+			);
 
-				commit(mutationTypes.game.INIT);
-			})
-			.catch(err => {
-				this._vm.$log.error(err);
-			});
+			commit(mutationTypes.game.INIT);
+		} catch (err) {
+			this._vm.$log.error(err);
+			throw new Error(err);
+		}
 	},
 
 	// eslint-disable-next-line

@@ -18,6 +18,7 @@ import mutationTypes from '@/store/mutation-types';
 
 const state = {
 	isLoaded: false,
+	isShuffled: false,
 };
 
 const getters = {
@@ -121,6 +122,10 @@ const actions = {
 					reject(err);
 				});
 		});
+	},
+
+	cardsShuffled({ commit }) {
+		commit(mutationTypes.decks.CARDS_SHUFFLED, true);
 	},
 
 	discard({ dispatch }, card) {
@@ -264,6 +269,10 @@ const actions = {
 };
 
 const mutations = {
+	[mutationTypes.decks.CARDS_SHUFFLED](state, val) {
+		state.isShuffled = val;
+	},
+
 	[mutationTypes.decks.INIT](state) {
 		Vue.set(state, 'isLoaded', false);
 

@@ -49,7 +49,7 @@ export default {
 			if (val === this.cards.length) {
 				this.$log.debug('CARDS SHUFFLED!');
 
-				if (this.shuffleCount >= 2) {
+				if (this.shuffleCount >= 1) {
 					this.$emit('update:cards-shuffled', true);
 				} else {
 					this.shuffleCount++;
@@ -108,8 +108,6 @@ export default {
 				}
 			}
 
-			this.$log.debug(left, right);
-
 			left.forEach(c => {
 				setTimeout(() => {
 					this.animateCard(c);
@@ -158,14 +156,12 @@ export default {
 				c.req = requestAnimationFrame(this.animateCard.bind(this, c));
 			} else {
 				this.$set(this.cardStyles[c.index], c.direction, 0);
-				// this.$set(this.cardPositions, c.index, this.getStyle(c.index));
 				this.$set(
 					this.cardPositions[c.index],
 					'transform',
 					`translate(0px, ${yPos}px)`,
 				);
 				this.cardsAnimated++;
-				// this.$emit('update:cards-shuffled', this.cardsShuffled + 1);
 			}
 		},
 	},

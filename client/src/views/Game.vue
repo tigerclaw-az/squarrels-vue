@@ -13,7 +13,7 @@
 						class="btn btn-new-game"
 						size="lg"
 						variant="primary"
-						@click="onClickNewGame"
+						@click="onClickNewGame()"
 					>
 						NEXT ROUND
 					</b-button>
@@ -63,7 +63,6 @@
 				:game-status="status"
 				:players-in-game="playersInGame"
 				:round-number="roundNumber"
-				@update:cards-shuffled="cardsShuffled($event)"
 			>
 				<template slot="action">
 					<CardAction
@@ -101,7 +100,9 @@ export default {
 		},
 	},
 	data: function() {
-		return {};
+		return {
+			isLoaded: false,
+		};
 	},
 	beforeRouteLeave(to, from, next) {
 		if (this.$store.state.websocket.isConnected) {
@@ -124,7 +125,6 @@ export default {
 			'actionCard',
 			'createdBy',
 			'deckIds',
-			// 'isStarted',
 			'playerIds',
 			'roundNumber',
 			'status',
@@ -143,7 +143,13 @@ export default {
 			return this.playerIds.length < 2;
 		},
 		isCreator() {
-			return this.createdBy === this.myPlayer.id;
+			let createdById = this.createdBy;
+
+			if (createdById && typeof createdById !== 'string') {
+				createdById = createdById.id;
+			}
+
+			return createdById === this.myPlayer.id;
 		},
 		playerExists() {
 			return this.playerIds.filter(pl => pl === this.myPlayer.id).length;
@@ -152,7 +158,10 @@ export default {
 			return filter(this.allPlayers, pl => includes(this.playerIds, pl.id));
 		},
 		showOverlay() {
-			return (this.needPlayers || this.status === 'INIT') && !this.isWinter;
+			return (
+				(!this.isLoaded || this.needPlayers || this.status === 'INIT') &&
+				!this.isWinter
+			);
 		},
 		showStartGame() {
 			return (
@@ -166,13 +175,34 @@ export default {
 	watch: {
 		deckIds: {
 			immediate: true,
-			handler: function(ids) {
-				if (!isEmpty(ids)) {
-					this.$store
-						.dispatch('decks/load', { ids }, { root: true })
-						.then(() => {
-							// this.decksLoaded = true;
-						});
+			handler: async function(ids) {
+				if (isEmpty(ids)) {
+					return;
+				}
+
+				try {
+					await this.$store.dispatch('decks/load', { ids }, { root: true });
+				} catch (err) {
+					this.$log.error(err);
+					this.$toasted.error(err);
+				}
+			},
+		},
+		decks: {
+			deep: true,
+			handler: async function(state) {
+				this.$log.debug('Game::decks -> ', state, this);
+
+				if (!state.isLoaded || !state.isShuffled) {
+					return;
+				}
+
+				if (this.isCreator && this.status === 'SHUFFLE') {
+					try {
+						await this.$store.dispatch({ type: 'game/start' });
+					} catch (err) {
+						throw new Error(err);
+					}
 				}
 			},
 		},
@@ -180,32 +210,43 @@ export default {
 	mounted: function() {
 		this.$store
 			.dispatch({ type: 'game/load', id: this.id })
-			.then(data => {
-				if (data.playerIds.length) {
-					return this.$store.dispatch({
+			.then(async data => {
+				this.$log.debug('Game:load :: ', data);
+
+				if (!isEmpty(data.playerIds)) {
+					await this.$store.dispatch({
 						type: 'players/load',
 						ids: data.playerIds,
 					});
 				}
-			})
-			.then(() => {
-				if (this.allowMorePlayers && !this.playerExists) {
-					this.$store.dispatch({
-						type: 'game/addPlayer',
-						gameId: this.id,
-						playerId: this.myPlayer.id,
+
+				if (!isEmpty(data.deckIds)) {
+					await this.$store.dispatch({
+						type: 'decks/load',
+						ids: data.deckIds,
 					});
 				}
+			})
+			.then(() => {
+				if (this.playerExists) {
+					return Promise.resolve();
+				}
+
+				return this.$store.dispatch({
+					type: 'game/addPlayer',
+					gameId: this.id,
+					playerId: this.myPlayer.id,
+				});
+			})
+			.then(() => {
+				this.isLoaded = true;
+			})
+			.catch(err => {
+				this.$log.error(err);
+				this.$toasted.error(err);
 			});
 	},
 	methods: {
-		async cardsShuffled(val) {
-			this.$log.debug('cards-shuffled:Game -> ', val);
-
-			if (val && this.isCreator) {
-				await this.$store.dispatch({ type: 'game/start' });
-			}
-		},
 		onClickStartGame: async function(evt) {
 			this.$log.debug('onClickStartGame', evt);
 
