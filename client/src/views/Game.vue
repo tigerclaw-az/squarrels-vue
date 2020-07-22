@@ -134,7 +134,11 @@ export default {
 			decks: state => state.decks,
 		}),
 		allowMorePlayers() {
-			return this.playerIds.length < config.MAX_PLAYERS;
+			return (
+				this.roundNumber === 1 &&
+				this.status === 'INIT' &&
+				this.playerIds.length < config.MAX_PLAYERS
+			);
 		},
 		isWinter() {
 			return this.actionCard && this.actionCard.name === 'winter';
