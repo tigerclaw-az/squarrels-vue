@@ -9,7 +9,7 @@
 	>
 		<div class="cards-group" @click="onClick">
 			<div v-show="!canDrawCard || isCardDrawn" class="overlay">
-				<icon name="ban" scale="10" class="icon" />
+				<icon name="ban" scale="8" class="icon" />
 			</div>
 			<div
 				v-show="isDrawingCard"
@@ -206,15 +206,13 @@ export default {
 				window.requestAnimationFrame(this.moveCard);
 			}
 		},
-
 	},
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
-// prettier-ignore
-@import "~@/assets/scss/variables";
+@import '~@/assets/scss/variables';
 
 .count {
 	bottom: 0;
@@ -226,15 +224,13 @@ export default {
 }
 
 .overlay {
-	left: 0;
-	position: absolute;
-	top: 0;
+	display: flex;
 	width: 100%;
 	z-index: 130;
 
 	.icon {
 		color: theme-color('primary');
-		display: flex;
+		display: inherit;
 		height: 100%;
 		margin: 0 auto;
 	}

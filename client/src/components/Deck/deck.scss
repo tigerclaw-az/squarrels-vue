@@ -20,9 +20,9 @@ $deck-height: 8 !default;
 
 	align-items: center;
 	display: flex;
-	flex: 0 0 40%;
+	flex: 0 0 30%;
 	flex-direction: column;
-	margin-right: 1rem;
+	margin: 0.5rem;
 	position: relative;
 
 	.deck-label {
@@ -34,7 +34,8 @@ $deck-height: 8 !default;
 		@extend %playing-cards;
 
 		border: 2px dashed map-get($colors, "red");
-		margin-top: 1rem;
+		height: rem-calc($height);
+		margin-top: 0.5rem;
 		text-align: center;
 		width: 100%;
 
@@ -43,8 +44,6 @@ $deck-height: 8 !default;
 		}
 
 		&.empty {
-			height: rem-calc(map-get($card-height, "medium"));
-
 			&::before {
 				content: "";
 				font-size: rem-calc(map-get($card-width, "small") - 7);
@@ -54,7 +53,7 @@ $deck-height: 8 !default;
 		.cards-group {
 			align-items: center;
 			display: flex;
-			height: rem-calc($height);
+			height: inherit;
 			justify-content: center;
 		}
 	}
@@ -63,10 +62,7 @@ $deck-height: 8 !default;
 		$height: map-get($card-height, "medium") + $deck-height;
 
 		.deck {
-			.cards-group {
-				height: rem-calc($height);
-				// width: rem-calc(map-get($card-width, "medium"));
-			}
+			height: rem-calc($height);
 		}
 	}
 }
