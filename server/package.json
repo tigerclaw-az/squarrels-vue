@@ -17,7 +17,7 @@
 		"express-session": "^1.17.1",
 		"express-ws-routes": "^1.1.0",
 		"fs-readdir-recursive": "^1.1.0",
-		"lodash": "^4.17.15",
+		"lodash": "^4.17.19",
 		"log4js": "^4.0.2",
 		"mongoose": "^5.9.20",
 		"morgan": "^1.10.0",
