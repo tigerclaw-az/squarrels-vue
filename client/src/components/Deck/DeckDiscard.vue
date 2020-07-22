@@ -9,7 +9,6 @@
 			v-show="totalCards !== 0"
 			tag="div"
 			class="cards-group disabled"
-			role="button"
 			name="cards-discard"
 		>
 			<div
