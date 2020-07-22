@@ -121,34 +121,34 @@ const actions = {
 	},
 	async addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
 		if (!playerId) {
-			return Promise.reject('ERROR: Missing "playerId" parameter');
+			throw new Error('ERROR: Missing "playerId" parameter');
 		}
 
 		const newPlayers = union(playerId, [...state.playerIds, playerId]);
 
-		Vue.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
+		this._vm.$log.debug('game/addPlayer', gameId, playerId, newPlayers);
 
-		if (newPlayers.length) {
-			const res = await api.games.updatePlayers(gameId, newPlayers);
-
-			Vue.$log.debug('updatePlayers()', res);
-			const gameData = res.data;
-
-			commit(mutationTypes.game.UPDATE, gameData);
-
-			await dispatch(
-				'players/updateGame',
-				{
-					id: playerId,
-					gameId,
-				},
-				{ root: true },
-			);
-
-			return Promise.resolve(gameData);
+		if (!newPlayers.length) {
+			throw new Error('ERROR: NO PLAYERS TO ADD');
 		}
 
-		return Promise.reject('NO PLAYERS TO ADD');
+		const res = await api.games.updatePlayers(gameId, newPlayers);
+
+		this._vm.$log.debug('updatePlayers()', res);
+		const gameData = res.data;
+
+		commit(mutationTypes.game.UPDATE, gameData);
+
+		await dispatch(
+			'players/updateGame',
+			{
+				id: playerId,
+				gameId,
+			},
+			{ root: true },
+		);
+
+		return gameData;
 	},
 
 	async load({ commit }, { id }) {
