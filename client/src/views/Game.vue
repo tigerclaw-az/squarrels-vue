@@ -25,7 +25,7 @@
 						class="btn btn-new-game"
 						size="lg"
 						variant="primary"
-						@click="onClickNewGame($event, false)"
+						@click="onClickNewGame($event, true)"
 					>
 						NEW GAME
 					</b-button>
