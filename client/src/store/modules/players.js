@@ -386,11 +386,11 @@ const actions = {
 		});
 	},
 
-	resetQuarrelWinner({ dispatch }, payload) {
-		Vue.$log.debug(payload);
+	resetQuarrel({ dispatch }, { id }) {
+		Vue.$log.debug(id);
 
 		return dispatch('update', {
-			id: payload.id,
+			id,
 			data: {
 				isQuarrelWinner: false,
 				hasDrawnCard: false,
@@ -436,16 +436,20 @@ const actions = {
 
 	startQuarrel({ dispatch, getters, state }, options = {}) {
 		const myPlayer = getters.getMyPlayer;
-		const players = options.players || state.ids;
+		const players = options.players || state.ids.map(id => state[id]);
 
 		this._vm.$log.debug(players, myPlayer);
 
-		if (!includes(players, myPlayer.id)) {
-			return;
-		}
+		// if (!includes(players, { id: myPlayer.id })) {
+		// 	this._vm.$log.warn(`Player ${JSON.stringify(myPlayer)} not found!`);
+
+		// 	return;
+		// }
 
 		// Find all players that have at least 1 card
 		const quarrelPlayers = reject(players, { totalCards: 0 });
+
+		this._vm.$log.debug('quarrelPlayers -> ', quarrelPlayers);
 
 		// If no players, or just 1 player, have enough cards for Quarrel
 		if (quarrelPlayers.length <= 1) {

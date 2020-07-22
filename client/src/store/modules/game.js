@@ -100,7 +100,7 @@ const actions = {
 			return err;
 		}
 	},
-	addQuarrelCard({ commit, dispatch, state }, card) {
+	addQuarrelCard({ commit, state }, card) {
 		this._vm.$log.debug(card);
 
 		const newCards = concat(state.quarrelCards.current, card);
@@ -116,7 +116,7 @@ const actions = {
 
 		// All players have selected a card
 		if (newCards.length === state.quarrelCount) {
-			dispatch('quarrelWinner');
+			commit(mutationTypes.game.UPDATE, { showQuarrel: true });
 		}
 	},
 	async addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
@@ -189,6 +189,17 @@ const actions = {
 		}
 	},
 
+	async quarrelEnded({ commit, dispatch }, { winner }) {
+		commit(mutationTypes.game.UPDATE, {
+			showQuarrel: false,
+			quarrelCards: { current: [], saved: [] },
+		});
+
+		await dispatch('resetAction');
+
+		await dispatch('players/resetQuarrel', { id: winner }, { root: true });
+	},
+
 	async quarrelWinner({ commit, dispatch, state }) {
 		if (!state.quarrelCards.current.length) {
 			try {
@@ -196,8 +207,6 @@ const actions = {
 			} catch (err) {
 				throw new Error(err);
 			}
-
-			return false;
 		}
 
 		const quarrelGroup = groupBy(state.quarrelCards.current, data => {
@@ -211,51 +220,36 @@ const actions = {
 		const winningCard = max(keys(quarrelGroup));
 		const winners = quarrelGroup[winningCard];
 
-		this._vm.$log.debug(quarrelGroup, winners);
-
-		commit(mutationTypes.game.UPDATE, { showQuarrel: true });
+		this._vm.$log.debug('quarrelWinner -> ', quarrelGroup, winners);
 
 		if (winners.length === 1) {
-			const cards = map(state.quarrelCards.saved, obj => {
+			const cards = state.quarrelCards.saved.map(obj => {
 				return obj.card;
 			});
-
 			const winner = winners[0].playerId;
 
 			this._vm.$log.debug('cards -> ', cards);
+			this._vm.$log.debug('winner -> ', winner);
 
 			// Wait until cards are shown to display winner
 			// prettier-ignore
-			setTimeout(async() => {
-				try {
-					await dispatch(
-						'players/setQuarrelWinner',
-						{
-							id: winner,
-							cards,
-						},
-						{ root: true },
-					);
-
-					// Wait some time after winner has been set before resetting
-					commit(mutationTypes.game.UPDATE, {
-						showQuarrel: false,
-						quarrelCards: { current: [], saved: [] },
-					});
-
-					await dispatch('resetAction');
-
-					await dispatch(
-						'players/resetQuarrelWinner',
-						{ id: winner },
-						{ root: true },
-					);
-				} catch (err) {
-					throw new Error(err);
-				}
-			}, 3500);
+			try {
+				await dispatch(
+					'players/setQuarrelWinner',
+					{
+						id: winner,
+						cards,
+					},
+					{ root: true },
+				);
+			} catch (err) {
+				throw new Error(err);
+			}
 		} else {
-			const players = map(winners, obj => obj.playerId);
+			// const players = map(winners, obj => obj.playerId);
+			const players = winners;
+
+			this._vm.$log.debug('quarrel TIE -> ', players);
 
 			setTimeout(() => {
 				// Reset current quarrelCards

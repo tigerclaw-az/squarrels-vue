@@ -40,6 +40,22 @@ export default {
 			return this.$store.state.players[this.player.id].isQuarrelWinner;
 		},
 	},
+	watch: {
+		isQuarrelWinner(val) {
+			if (val) {
+				setTimeout(() => {
+					this.$store.dispatch({ type: 'game/quarrelEnded' });
+				}, 1000);
+			}
+		},
+		showQuarrel(val) {
+			if (val && this.$refs.card) {
+				this.$refs.card.addEventListener('animationend', () => {
+					this.$store.dispatch({ type: 'game/quarrelWinner' });
+				});
+			}
+		},
+	},
 	methods: {
 		quarrelCard: function(id) {
 			return this.$store.getters['game/getQuarrelCardByPlayer'](id);
