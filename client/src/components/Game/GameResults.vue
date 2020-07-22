@@ -13,7 +13,7 @@
 					:key="player.id"
 					:class="{
 						current: isCurrentPlayer(player),
-						winner: winningPlayer && winningPlayer.id === player.id,
+						winner: showWinner && winningPlayer.id === player.id,
 					}"
 					class="sq-player"
 				>
@@ -25,7 +25,7 @@
 						<div class="sq-player-name">{{ player.name }}</div>
 						<PlayerStorage :player="player" />
 					</div>
-					<div v-if="!winningPlayer" class="sq-player-cards">
+					<div v-if="!showWinner" class="sq-player-cards">
 						<div class="cards-group hand">
 							<Card
 								v-for="card in cardsToShow[player.id]"
@@ -41,7 +41,7 @@
 		</b-row>
 		<b-row class="text-center">
 			<b-col>
-				<slot v-if="winningPlayer" name="gameOver"></slot>
+				<slot v-if="showWinner" name="gameOver"></slot>
 				<slot v-else name="newGame"></slot>
 			</b-col>
 		</b-row>
@@ -79,9 +79,13 @@ export default {
 	data: function() {
 		return {
 			cardsToShow: {},
+			showWinner: false,
 		};
 	},
 	computed: {
+		sortedByScore() {
+			return orderBy(this.players, 'score', 'desc');
+		},
 		winningPlayer() {
 			const winner = filter(this.players, pl => pl.score >= 20);
 
@@ -91,8 +95,16 @@ export default {
 
 			return null;
 		},
-		sortedByScore() {
-			return orderBy(this.players, 'score', 'desc');
+	},
+	watch: {
+		winningPlayer(val) {
+			this.$log.debug(val);
+
+			if (val) {
+				setTimeout(() => {
+					this.showWinner = true;
+				}, 2000);
+			}
 		},
 	},
 	mounted() {
@@ -204,17 +216,22 @@ export default {
 				.sq-player-avatar {
 					border-width: 2px;
 					transform: scale(1.75);
+					z-index: 999;
 				}
 			}
 
-			.sq-player-cards .cards-group {
-				.btn-card:nth-child(n + 2) {
-					margin-left: 1rem;
-				}
-				.btn-card,
-				.card {
-					cursor: initial;
-					position: initial;
+			.sq-player-cards {
+				width: auto;
+
+				.cards-group {
+					.btn-card:nth-child(n + 2) {
+						margin-left: 1rem;
+					}
+					.btn-card,
+					.card {
+						cursor: initial;
+						position: initial;
+					}
 				}
 			}
 		}
