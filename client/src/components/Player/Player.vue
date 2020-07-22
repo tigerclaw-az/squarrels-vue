@@ -30,12 +30,7 @@
 				:is-my-turn="isMyTurn"
 				:player="myPlayer"
 			></PlayerCards>
-			<transition-group
-				v-if="!isCurrentPlayer"
-				tag="div"
-				class="cards-group hand"
-				name="cards"
-			>
+			<transition-group v-else tag="div" class="cards-group hand" name="cards">
 				<Card
 					v-for="n in player.totalCards"
 					:key="n"
@@ -181,7 +176,7 @@ export default {
 
 			.btn-card,
 			.card {
-				transition: transform 0.75s ease-in-out;
+				transition: transform 0.5s ease-in-out;
 				top: 0;
 			}
 
@@ -196,7 +191,7 @@ export default {
 			.cards-enter-active,
 			.cards-leave-active {
 				position: absolute;
-				transition-duration: 0.75s;
+				transition-duration: 0.5s;
 				transition-property: opacity, transform;
 			}
 
@@ -212,7 +207,6 @@ export default {
 
 			.cards-leave-to {
 				opacity: 0;
-				position: absolute;
 				transform: translateY(3rem);
 			}
 		}
