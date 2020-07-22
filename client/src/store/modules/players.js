@@ -294,7 +294,7 @@ const actions = {
 	async load({ dispatch }, { ids }) {
 		this._vm.$log.debug('players/load', ids);
 
-		if (!ids.length) {
+		if (isEmpty(ids)) {
 			throw new Error('Need at least one player to be loaded!');
 		}
 
@@ -307,13 +307,11 @@ const actions = {
 				throw new Error(res.error);
 			}
 
-			const playersUpdated = [];
-
-			res.data.forEach(plData => {
-				playersUpdated.push(dispatch('updateLocalPlayer', plData));
-			});
-
-			return Promise.all(playersUpdated);
+			await Promise.all(
+				res.data.map(async plData => {
+					await dispatch('updateLocalPlayer', plData);
+				}),
+			);
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
