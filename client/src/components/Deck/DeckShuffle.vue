@@ -47,8 +47,6 @@ export default {
 	watch: {
 		cardsAnimated(val) {
 			if (val === this.cards.length) {
-				this.$log.debug('CARDS SHUFFLED!');
-
 				if (this.shuffleCount >= 1) {
 					this.$emit('update:cards-shuffled', true);
 				} else {
@@ -130,7 +128,6 @@ export default {
 			const xPos = style.left === 0 ? style.right * -1 : style.left;
 			const yPos = style.top;
 
-			// this.$set(this.cardPositions, c.index, this.getStyle(c.index));
 			this.$set(
 				this.cardPositions[c.index],
 				'transform',
