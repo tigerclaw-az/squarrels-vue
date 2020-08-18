@@ -59,6 +59,7 @@
 				</div>
 			</div>
 			<Board
+				v-if="isLoaded"
 				:deck-ids="deckIds"
 				:game-status="status"
 				:players-in-game="playersInGame"
