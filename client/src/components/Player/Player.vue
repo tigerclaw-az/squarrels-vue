@@ -7,8 +7,11 @@
 		}"
 		class="sq-player"
 	>
-		<div v-if="isCurrentPlayer && player.message" class="sq-quarrel-message">
-			{{ player.message }}
+		<div
+			v-if="isCurrentPlayer && myPlayer.selectQuarrelCard"
+			class="sq-quarrel-message"
+		>
+			Choose a Card
 		</div>
 		<div v-else class="sq-player-avatar">
 			<b-img-lazy
@@ -20,7 +23,7 @@
 		</div>
 		<div class="sq-player-cards">
 			<PlayerQuarrel
-				v-if="actionCard && actionCard.name === 'quarrel'"
+				v-if="isQuarrelAction"
 				:action-card="actionCard"
 				:player="player"
 			/>
@@ -82,6 +85,9 @@ export default {
 		},
 		isMyTurn() {
 			return this.player.isActive && this.myPlayer.id === this.player.id;
+		},
+		isQuarrelAction() {
+			return this.actionCard && this.actionCard.name === 'quarrel';
 		},
 	},
 	watch: {

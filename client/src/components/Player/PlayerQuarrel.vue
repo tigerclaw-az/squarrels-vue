@@ -41,12 +41,17 @@ export default {
 		},
 	},
 	watch: {
-		isQuarrelWinner(val) {
-			if (val) {
-				setTimeout(() => {
-					this.$store.dispatch({ type: 'game/quarrelEnded' });
-				}, 1000);
-			}
+		isQuarrelWinner: {
+			immediate: true,
+			handler: function(val) {
+				this.$log.debug('isQuarrelWinner -> ', val);
+
+				if (val && this.player.isActive) {
+					setTimeout(() => {
+						this.$store.dispatch({ type: 'game/quarrelEnded' });
+					}, 1000);
+				}
+			},
 		},
 		showQuarrel(val) {
 			if (val && this.$refs.card) {

@@ -90,7 +90,7 @@ export default {
 			return this.matches.length;
 		},
 		isDisabled: function() {
-			if (this.myPlayer.quarrel) {
+			if (this.myPlayer.selectQuarrelCard) {
 				return false;
 			} else if (this.cardType === 'deck') {
 				return true;

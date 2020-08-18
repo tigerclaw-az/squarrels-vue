@@ -26,10 +26,18 @@ module.exports = new Schema({
 		type: Boolean,
 		default: false,
 	},
+	selectQuarrelCard: {
+		type: Boolean,
+		default: false,
+	},
 	img: {
 		type: String,
 	},
 	isActive: {
+		type: Boolean,
+		default: false,
+	},
+	isQuarrelWinner: {
 		type: Boolean,
 		default: false,
 	},

@@ -96,7 +96,7 @@ export default {
 		onClickCard(card, cardsToStore, evt) {
 			this.$log.debug(card, cardsToStore, evt);
 
-			if (this.player.quarrel) {
+			if (this.player.selectQuarrelCard) {
 				this.$store
 					.dispatch('players/selectQuarrelCard', {
 						id: this.player.id,

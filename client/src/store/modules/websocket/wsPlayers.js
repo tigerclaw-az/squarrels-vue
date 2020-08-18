@@ -46,9 +46,6 @@ const actions = {
 
 		const playerObj = {
 			...data.nuts,
-			message: null,
-			quarrel: false,
-			isQuarrelWinner: false,
 		};
 
 		dispatch('players/updateLocalPlayer', playerObj, { root: true });

@@ -8,6 +8,8 @@ const initPlayer = {
 	hasDrawnCard: false,
 	hasStoredCards: false,
 	isActive: false,
+	isQuarrelWinner: false,
+	selectQuarrelCard: false,
 	totalCards: 0,
 };
 

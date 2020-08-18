@@ -189,15 +189,12 @@ const actions = {
 		}
 	},
 
-	async quarrelEnded({ commit, dispatch }, { winner }) {
-		commit(mutationTypes.game.UPDATE, {
-			showQuarrel: false,
-			quarrelCards: { current: [], saved: [] },
-		});
+	async quarrelEnded({ dispatch }) {
+		this._vm.$log.debug('quarrelEnded');
 
 		await dispatch('resetAction');
 
-		await dispatch('players/resetQuarrel', { id: winner }, { root: true });
+		await dispatch('players/resetQuarrel', {}, { root: true });
 	},
 
 	async quarrelWinner({ commit, dispatch, state }) {
@@ -276,7 +273,7 @@ const actions = {
 	},
 
 	async resetAction({ state }) {
-		this._vm.$log.debug(state);
+		this._vm.$log.debug('game/resetAction -> ', state);
 
 		try {
 			// const actionCardId = state.actionCard.id;
@@ -438,6 +435,14 @@ const mutations = {
 					}
 				}
 			}
+		}
+
+		// Reset quarrel data for all players when game is updated with null actionCard
+		if (!state.actionCard && state.quarrelCards) {
+			state.showQuarrel = false;
+			state.quarrelCount = 0;
+			Vue.set(state.quarrelCards, 'current', []);
+			Vue.set(state.quarrelCards, 'saved', []);
 		}
 
 		state.startDate = state.updatedAt;

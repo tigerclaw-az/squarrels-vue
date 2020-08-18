@@ -30,7 +30,7 @@ const state = {
 };
 
 const getters = {
-	canDrawCard: (state, getter, rootState, rootGetters) => {
+	canDrawCard: (state, getter, _, rootGetters) => {
 		const myPlayer = getter.getMyPlayer;
 
 		Vue.$log.debug(state, myPlayer);
@@ -386,16 +386,28 @@ const actions = {
 		});
 	},
 
-	resetQuarrel({ dispatch }, { id }) {
-		Vue.$log.debug(id);
+	async resetQuarrel({ dispatch, state }) {
+		this._vm.$log.debug('resetQuarrel -> ', state);
 
-		return dispatch('update', {
-			id,
-			data: {
-				isQuarrelWinner: false,
-				hasDrawnCard: false,
-			},
-		});
+		const player = filter(state, { isQuarrelWinner: true });
+
+		this._vm.$log.debug('player -> ', player);
+
+		if (!player.id) {
+			throw new Error(`Unknown winner: ${player}`);
+		}
+
+		try {
+			await dispatch('update', {
+				id: player.id,
+				data: {
+					isQuarrelWinner: false,
+					hasDrawnCard: false,
+				},
+			});
+		} catch (err) {
+			throw new Error(err);
+		}
 	},
 
 	async selectQuarrelCard({ dispatch }, data) {
@@ -411,10 +423,11 @@ const actions = {
 			wsObj.card = data.card;
 		}
 
-		await dispatch('updateLocalPlayer', {
+		await dispatch('update', {
 			id: data.id,
-			message: null,
-			quarrel: false,
+			data: {
+				selectQuarrelCard: false,
+			},
 		});
 
 		this._vm.$socket.sendObj(wsObj);
@@ -434,17 +447,20 @@ const actions = {
 		}
 	},
 
-	startQuarrel({ dispatch, getters, state }, options = {}) {
+	async startQuarrel({ dispatch, getters, state }, options = {}) {
 		const myPlayer = getters.getMyPlayer;
-		const players = options.players || state.ids.map(id => state[id]);
+		const players = options.players
+			? options.players.map(pl => state[pl.playerId])
+			: state.ids.map(id => state[id]);
 
-		this._vm.$log.debug(players, myPlayer);
+		this._vm.$log.debug('startQuarrel -> ', players, myPlayer);
 
-		// if (!includes(players, { id: myPlayer.id })) {
-		// 	this._vm.$log.warn(`Player ${JSON.stringify(myPlayer)} not found!`);
+		// Player may not be participating in quarrel when other players tied
+		if (findIndex(players, { id: myPlayer.id }) === -1) {
+			this._vm.$log.info('You are not participating in this Quarrel');
 
-		// 	return;
-		// }
+			return;
+		}
 
 		// Find all players that have at least 1 card
 		const quarrelPlayers = reject(players, { totalCards: 0 });
@@ -453,16 +469,17 @@ const actions = {
 
 		// If no players, or just 1 player, have enough cards for Quarrel
 		if (quarrelPlayers.length <= 1) {
-			dispatch('game/quarrelWinner', {}, { root: true });
+			await dispatch('game/quarrelWinner', {}, { root: true });
 		} else {
 			dispatch('game/setQuarrelCount', quarrelPlayers.length, {
 				root: true,
 			});
 
-			dispatch('updateLocalPlayer', {
+			await dispatch('update', {
 				id: myPlayer.id,
-				message: 'Choose a Card',
-				quarrel: true,
+				data: {
+					selectQuarrelCard: true,
+				},
 			});
 		}
 	},
@@ -573,17 +590,19 @@ const mutations = {
 
 		this._vm.$log.debug('mutation::players/UPDATE', state, payload);
 
-		if (isString(playerId)) {
-			if (!state[playerId]) {
-				Vue.set(state, playerId, {});
-				ids.push(playerId);
-			}
+		if (!isString(playerId)) {
+			throw new Error('Player ID must be a string!');
+		}
 
-			state.ids = [...ids];
+		if (!state[playerId]) {
+			Vue.set(state, playerId, {});
+			ids.push(playerId);
+		}
 
-			for (const prop in payload) {
-				Vue.set(state[playerId], prop, payload[prop]);
-			}
+		state.ids = [...ids];
+
+		for (const prop in payload) {
+			Vue.set(state[playerId], prop, payload[prop]);
 		}
 	},
 
@@ -593,9 +612,9 @@ const mutations = {
 		const id = payload.id;
 		const cards = payload.cardsInHand;
 
-		// if (!state[id].cardsInHand) {
-		// 	Vue.set(state[id], 'cardsInHand', []);
-		// }
+		if (!state[id].cardsInHand) {
+			Vue.set(state[id], 'cardsInHand', []);
+		}
 
 		Vue.set(state[id], 'cardsInHand', [...cards]);
 	},
