@@ -77,7 +77,7 @@ games.post('/', function(req, res) {
 	logger.debug('create -> ', data);
 
 	// prettier-ignore
-	new GameModel({ createdBy: data.playerId })
+	new GameModel({ createdBy: data.playerId, status: 'INIT' })
 		.save()
 		.then(async doc => {
 			const gameData = await GameModel.populate(doc, { path: 'createdBy' });
