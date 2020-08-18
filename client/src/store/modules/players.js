@@ -8,7 +8,6 @@ import {
 	findIndex,
 	flatten,
 	flow,
-	includes,
 	isEmpty,
 	isString,
 	map,
@@ -389,7 +388,7 @@ const actions = {
 	async resetQuarrel({ dispatch, state }) {
 		this._vm.$log.debug('resetQuarrel -> ', state);
 
-		const player = filter(state, { isQuarrelWinner: true });
+		const player = find(Object.values(state), { isQuarrelWinner: true });
 
 		this._vm.$log.debug('player -> ', player);
 

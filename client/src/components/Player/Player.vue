@@ -25,6 +25,7 @@
 			<PlayerQuarrel
 				v-if="isQuarrelAction"
 				:action-card="actionCard"
+				:my-player="myPlayer"
 				:player="player"
 			/>
 			<PlayerCards

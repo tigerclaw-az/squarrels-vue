@@ -27,6 +27,10 @@ export default {
 		actionCard: {
 			type: Object,
 		},
+		myPlayer: {
+			type: Object,
+			required: true,
+		},
 		player: {
 			type: Object,
 			required: true,
@@ -37,16 +41,16 @@ export default {
 			showQuarrel: state => state.game.showQuarrel,
 		}),
 		isQuarrelWinner() {
-			return this.$store.state.players[this.player.id].isQuarrelWinner;
+			return this.player.isQuarrelWinner;
 		},
 	},
 	watch: {
 		isQuarrelWinner: {
 			immediate: true,
 			handler: function(val) {
-				this.$log.debug('isQuarrelWinner -> ', val);
+				this.$log.debug('isQuarrelWinner -> ', val, this.player);
 
-				if (val && this.player.isActive) {
+				if (val && this.myPlayer.isActive) {
 					setTimeout(() => {
 						this.$store.dispatch({ type: 'game/quarrelEnded' });
 					}, 1000);

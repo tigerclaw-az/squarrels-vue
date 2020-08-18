@@ -192,9 +192,13 @@ const actions = {
 	async quarrelEnded({ dispatch }) {
 		this._vm.$log.debug('quarrelEnded');
 
-		await dispatch('resetAction');
-
-		await dispatch('players/resetQuarrel', {}, { root: true });
+		try {
+			await dispatch('resetAction');
+			await dispatch('players/resetQuarrel', {}, { root: true });
+		} catch (e) {
+			this._vm.$log.error(e);
+			throw new Error(e);
+		}
 	},
 
 	async quarrelWinner({ commit, dispatch, state }) {
