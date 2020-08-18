@@ -73,6 +73,8 @@ export default {
 		return {
 			isCardDrawn: false,
 			cardDrawn: null,
+			cardDrawnPosition: { left: 0, top: 0 },
+			cardDrawnStyle: { transform: null },
 			cardPositions: [],
 			cardStyles: [],
 			cardsShuffled: 0,
@@ -106,7 +108,9 @@ export default {
 				return;
 			}
 
-			this.$cardDrawnEl.style.left = '0px';
+			// this.$cardDrawnEl.style.left = '0px';
+			this.cardDrawnPosition.left = 0;
+			this.cardDrawnPosition.top = 0;
 
 			// Animate card draw for all players
 			window.requestAnimationFrame(this.moveCard);
@@ -198,9 +202,14 @@ export default {
 				});
 		},
 		moveCard: function() {
-			const left = parseInt(this.$cardDrawnEl.style.left);
+			// const left = parseInt(this.$cardDrawnEl.style.left);
+			// this.$cardDrawnEl.style.left = left - 10 + 'px';
 
-			this.$cardDrawnEl.style.left = left - 10 + 'px';
+			const xPos = (this.cardDrawnPosition.left -= 20);
+			const yPos = (this.cardDrawnPosition.top += 10);
+
+			// this.cardDrawnStyle.transform = `translate(${xPos}px, ${yPos}px)`;
+			this.$cardDrawnEl.style.transform = `translate(${xPos}px, ${yPos}px)`;
 
 			if (!this.cardDrawn && this.isDrawingCard) {
 				window.requestAnimationFrame(this.moveCard);
@@ -240,6 +249,7 @@ export default {
 	left: 0;
 	position: absolute;
 	top: 0;
+	transition: transform 0s ease-in-out;
 	z-index: 140;
 
 	&.has-card {
