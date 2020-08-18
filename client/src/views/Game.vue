@@ -232,7 +232,7 @@ export default {
 				}
 			})
 			.then(() => {
-				if (this.playerExists) {
+				if (this.playerExists && this.myPlayer.gameId === this.id) {
 					return Promise.resolve();
 				}
 
