@@ -51,6 +51,8 @@ const actions = {
 			this._vm.$log.warn(
 				`Adding card '${payload.cardId} would add duplicates to the deck!`,
 			);
+
+			return Promise.reject(`ERROR: Duplicate card '${payload.cardId}'`);
 		}
 
 		return api.decks.update(deck.id, {
