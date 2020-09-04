@@ -7,9 +7,10 @@ log.configure({
 	},
 	categories: {
 		'default': { appenders: ['console'], level: process.env.LOGLEVEL },
-		'websocket': { appenders: ['console'], level: 'INFO' },
-		'routes:decks': { appenders: ['console'], level: 'WARN' },
+		'modules:game': { appenders: ['console'], level: 'DEBUG' },
+		'routes:decks': { appenders: ['console'], level: 'INFO' },
 		'routes:players': { appenders: ['console'], level: 'INFO' },
+		'websocket': { appenders: ['console'], level: 'INFO' },
 	},
 });
 
