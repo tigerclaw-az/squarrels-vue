@@ -4,7 +4,9 @@ const logger = config.logger('routes:decks');
 const decks = require('express').Router();
 
 const DeckModel = require('../config/models/deck');
+const deck = require('./modules/deck');
 
+// TODO: Remove API, cards in deck will only be manipulated through websocket
 decks.get('/:id', function(req, res) {
 	const ids = req.params.id.split(',');
 	const deckQuery = DeckModel.find()
@@ -34,22 +36,12 @@ decks.post('/:id', function(req, res) {
 	const sessionId = req.sessionID;
 
 	const deckId = req.params.id;
-	const query = { _id: deckId };
-	const options = { new: true };
 
-	logger.debug('decks/:id', query, req.body);
+	logger.debug('decks/:id', deckId, req.body);
 
-	// prettier-ignore
-	DeckModel
-		.findByIdAndUpdate(query, req.body, options)
-		.populate('cards')
-		.then(function(doc) {
+	deck.update(deckId, req.body, sessionId)
+		.then(doc => {
 			logger.debug(doc);
-
-			wss.broadcast(
-				{ namespace: 'wsDecks', action: 'update', nuts: doc },
-				sessionId
-			);
 
 			if (doc) {
 				res.status(200).json(doc);

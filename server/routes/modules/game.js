@@ -1,34 +1,29 @@
 const config = require('../../config/config');
 const logger = config.logger('modules:game');
 
-const { isEmpty, shuffle } = require('lodash');
+const { isEmpty } = require('lodash');
 
 class Game {
 	constructor() {
-		this.CardModel = require('../../config/models/card');
 		this.DeckModel = require('../../config/models/deck');
 		this.GameModel = require('../../config/models/game');
+		this.deck = require('./deck');
 		this.player = require('./player');
 	}
 
 	async createDecks(id, sessionId) {
 		try {
-			const cards = await this.CardModel.find({}).exec();
-
 			const decks = [
-				await new this.DeckModel({
+				await this.deck.create({
 					deckType: 'discard',
-				}).save(),
-				await new this.DeckModel({
+				}),
+				await this.deck.create({
 					deckType: 'main',
-					cards: shuffle(shuffle(cards)),
-				}).save(),
-				await new this.DeckModel({
+				}),
+				await this.deck.create({
 					deckType: 'hoard',
-				}).save(),
+				}),
 			];
-
-			// const decks = Promise.all(deckPromises);
 
 			const gameData = {
 				deckIds: decks.map(deck => deck.id),
@@ -57,7 +52,8 @@ class Game {
 		logger.debug('players -> ', playerIds);
 
 		try {
-			await this.DeckModel.deleteMany({ _id: { $in: deckIds } });
+			await this.deck.delete(deckIds);
+
 			wss.broadcast(
 				{
 					namespace: 'wsDecks',
@@ -98,7 +94,6 @@ class Game {
 	async update(id, data, sid) {
 		logger.debug(id, data, sid);
 
-		const gameId = { _id: id };
 		const options = { new: true };
 
 		if (isEmpty(data) || typeof data !== 'object') {
@@ -106,7 +101,7 @@ class Game {
 		}
 
 		try {
-			const doc = await this.GameModel.findByIdAndUpdate(gameId, data, options).populate('actionCard');
+			const doc = await this.GameModel.findByIdAndUpdate(id, data, options).populate('actionCard');
 
 			wss.broadcast(
 				{ namespace: 'wsGame', action: 'update', nuts: doc },
@@ -159,7 +154,7 @@ class Game {
 		logger.debug('players -> ', playerIds);
 
 		try {
-			const decksDeleted = await this.DeckModel.deleteMany({ _id: { $in: deckIds } });
+			const decksDeleted = await this.deck.delete(deckIds);
 
 			if (!decksDeleted || decksDeleted.deletedCount !== deckIds.length) {
 				throw new Error('DECKS NOT DELTED!');
