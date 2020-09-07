@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-module.exports = DeckSchema = new Schema({
+module.exports = new Schema({
 	deckType: {
 		type: String,
 		required: true,
@@ -10,6 +10,7 @@ module.exports = DeckSchema = new Schema({
 		{
 			type: Schema.Types.ObjectId,
 			ref: 'Card',
+			select: false,
 		},
 	],
 },
