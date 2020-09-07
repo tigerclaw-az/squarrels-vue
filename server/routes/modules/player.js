@@ -19,9 +19,9 @@ class Player {
 	}
 
 	// prettier-ignore
-	findPlayersWithCards(data = {}) {
+	findPlayersWithCards(query = {}) {
 		return this.PlayerModel
-			.find(data)
+			.find(query)
 			.select('+cardsInHand')
 			.exec();
 	}
@@ -41,7 +41,7 @@ class Player {
 	}
 
 	update(id, data, sid) {
-		const playerId = { _id: id };
+		const playerQuery = { _id: id };
 		const options = { new: true };
 		const cardsDefer = Q.defer();
 		const defer = Q.defer();
@@ -57,7 +57,7 @@ class Player {
 				// Get existing cards from player and merge them with the given cards
 				// prettier-ignore
 				this
-					.findPlayersWithCards(playerId)
+					.findPlayersWithCards(playerQuery)
 					.then(pl => {
 						logger.debug('pl -> ', pl);
 						cardsDefer.resolve(
@@ -86,7 +86,7 @@ class Player {
 
 				// prettier-ignore
 				this.PlayerModel
-					.findByIdAndUpdate(playerId._id, data, options)
+					.findByIdAndUpdate(playerQuery._id, data, options)
 					.select('+sessionId +cardsInHand')
 					.populate({
 						path: 'cardsInHand',
