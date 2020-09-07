@@ -33,14 +33,14 @@ class Deck {
 			return this.DeckModel.deleteMany({ _id: { $in: ids } });
 		}
 
-		return this.DeckModel.deleteOne({ _id: ids });
+		return this.DeckModel.findByIdAndDelete(ids);
 	}
 
-	getCards(id) {
-		const deckId = { _id: id };
-
+	getDecksWithCards(ids) {
 		return this.DeckModel
-			.findById(deckId)
+			.find()
+			.where('_id')
+			.in(ids)
 			.populate('cards')
 			.exec();
 	}

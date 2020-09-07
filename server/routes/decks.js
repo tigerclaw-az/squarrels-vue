@@ -9,14 +9,8 @@ const deck = require('./modules/deck');
 // TODO: Remove API, cards in deck will only be manipulated through websocket
 decks.get('/:id', function(req, res) {
 	const ids = req.params.id.split(',');
-	const deckQuery = DeckModel.find()
-		.where('_id')
-		.in(ids);
 
-	deckQuery
-		// .find(query)
-		.populate('cards')
-		.exec()
+	deck.getDecksWithCards(ids)
 		.then(function(list) {
 			if (list.length === 0) {
 				res.status(204);
