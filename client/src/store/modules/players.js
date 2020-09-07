@@ -515,6 +515,8 @@ const actions = {
 
 		if (!isString(payload.id)) {
 			throw new Error('"payload.id" MUST be a string');
+		} else if (isEmpty(payload.data)) {
+			throw new Error('Missing "payload.data" for players/update!');
 		}
 
 		return api.players.update(payload.id, payload.data);
