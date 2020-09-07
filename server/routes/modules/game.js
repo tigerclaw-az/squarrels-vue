@@ -15,13 +15,13 @@ class Game {
 		try {
 			const decks = [
 				await this.deck.create({
-					deckType: 'discard',
+					name: 'discard',
 				}),
 				await this.deck.create({
-					deckType: 'main',
+					name: 'main',
 				}),
 				await this.deck.create({
-					deckType: 'hoard',
+					name: 'hoard',
 				}),
 			];
 
