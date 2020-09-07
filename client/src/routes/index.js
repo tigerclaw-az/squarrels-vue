@@ -56,8 +56,13 @@ router.beforeEach((to, from, next) => {
 	store
 		.dispatch('checkLogin')
 		.then(pl => {
-			pl.isCurrent = true;
-			store.dispatch('players/update', pl);
+			const data = pl;
+
+			data.isCurrent = true;
+
+			Vue.$log.debug('playerLogin -> ', pl);
+
+			store.dispatch('players/update', { id: pl.id, data });
 
 			if (to.path === '/login') {
 				next('/');
