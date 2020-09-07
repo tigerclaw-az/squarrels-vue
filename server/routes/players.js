@@ -6,6 +6,7 @@ const players = express.Router();
 
 const player = require('./modules/player');
 const PlayerModel = require('../config/models/player');
+const { isObject, isEmpty } = require('lodash');
 
 const validatePlayer = pl => {
 	if (pl.name) {
@@ -57,6 +58,11 @@ players.get('/:id?', function(req, res) {
 
 	if (ids.length) {
 		playerQuery = playerQuery.where('_id').in(ids);
+	} else {
+		logger.error('No playerIds provided to API!');
+		res.status(500).json(config.apiError(''));
+
+		return [];
 	}
 
 	playerQuery
@@ -68,7 +74,7 @@ players.get('/:id?', function(req, res) {
 				res.status(204);
 			}
 
-			res.json(list);
+			res.status(200).json(list);
 
 			/* ****IN CASE WE DO THIS LATER****
 			const playerId = list[0].id;
@@ -92,8 +98,6 @@ players.get('/:id?', function(req, res) {
 			if (err) {
 				logger.error(err);
 				res.status(500).json(config.apiError(err));
-
-				return [];
 			}
 		});
 });
@@ -114,8 +118,8 @@ players.post('/:id?', function(req, res) {
 	if (playerId) {
 		const plData = validatePlayer(req.body);
 
-		if (typeof plData !== 'object') {
-			res.status(500).json(config.apiError(plData));
+		if (!isObject(plData) || isEmpty(plData)) {
+			res.status(500).json(config.apiError('Invalid data sent for update!'));
 
 			return false;
 		}
@@ -123,8 +127,10 @@ players.post('/:id?', function(req, res) {
 		player
 			.update(playerId, plData, sessionId)
 			.then(doc => {
-				const statusCode = doc ? 200 : 204,
-					data = doc ? doc : [];
+				const statusCode = doc ? 200 : 204;
+				const data = doc ? doc : [];
+
+				logger.debug('players/update', data);
 
 				res.status(statusCode).json(data);
 			})
