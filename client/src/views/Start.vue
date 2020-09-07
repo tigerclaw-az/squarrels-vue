@@ -13,9 +13,8 @@
 			<b-button class="btn-new-game" variant="primary" @click="createGame">
 				NEW GAME
 			</b-button>
-			<div class="games-list p-3">
+			<div v-if="hasGames" class="games-list p-3">
 				<b-table
-					v-if="hasGames"
 					:bordered="true"
 					:dark="true"
 					:fields="tableFields"
@@ -128,7 +127,7 @@ export default {
 			return !isEmpty(this.games);
 		},
 	},
-	created: function() {
+	mounted: function() {
 		this.loadGames();
 	},
 	methods: {
