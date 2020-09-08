@@ -27,9 +27,10 @@ module.exports = function(server) {
 					actions[data.action](data);
 				} catch (err) {
 					logger.error(err);
+					wss.broadcast({ error: err });
 				}
 			} else {
-				logger.warn(`No action '${data.action}' associated with PlayerActions`)
+				logger.warn(`No action '${data.action}' associated with PlayerActions`);
 				wss.broadcast(data);
 			}
 		};

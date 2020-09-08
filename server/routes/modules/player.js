@@ -83,7 +83,6 @@ class Player {
 					data.totalCards = data.cardsInHand.length;
 				}
 
-
 				// prettier-ignore
 				this.PlayerModel
 					.findByIdAndUpdate(playerQuery._id, data, options)

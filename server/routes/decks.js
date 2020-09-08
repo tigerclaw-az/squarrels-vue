@@ -3,7 +3,6 @@ const logger = config.logger('routes:decks');
 
 const decks = require('express').Router();
 
-const DeckModel = require('../config/models/deck');
 const deck = require('./modules/deck');
 
 // TODO: Remove API, cards in deck will only be manipulated through websocket

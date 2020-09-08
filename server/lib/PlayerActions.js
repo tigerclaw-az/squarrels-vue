@@ -83,8 +83,15 @@ class PlayerActions {
 	async drawCard(data) {
 		logger.debug(data);
 
-		await player.update(data.playerId, { hasDrawnCard: true }, this.sid);
+		try {
+			await player.update(data.playerId, { hasDrawnCard: true }, this.sid);
+		} catch (err) {
+			logger.error(err);
+			this.send({ error: err });
+		}
 	}
+
+	/** Action Card **/
 
 	ambush(data) {
 		logger.debug(data);

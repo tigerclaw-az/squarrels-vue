@@ -337,6 +337,7 @@ const actions = {
 					try {
 						await dispatch('decks/dealCards', id, { root: true });
 					} catch (err) {
+						this._vm.$log.error(err);
 						throw new Error(err);
 					}
 				}),

@@ -136,7 +136,6 @@ const actions = {
 	async add({ dispatch }, plArr) {
 		this._vm.$log.debug('add()', plArr);
 
-		// if (plArr.length) {
 		try {
 			const res = await api.players.get(plArr.join(','));
 
@@ -144,12 +143,12 @@ const actions = {
 				return dispatch('updateLocalPlayer', res.data[0]);
 			}
 
+			this._vm.$log.error(res.error);
 			throw new Error(res.error);
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
 		}
-		// }
 	},
 
 	addCards({ dispatch, getters }, data) {
@@ -159,10 +158,6 @@ const actions = {
 			throw new Error('Parameter "cards" cannot be empty!');
 		}
 
-		// const cardsToAdd = _(data.cards)
-		// 	.flatten([data.cards])
-		// 	.map(card => card.id)
-		// 	.value();
 		const cardsToAdd = flow(
 			map(card => card.id),
 			flatten,
@@ -236,6 +231,7 @@ const actions = {
 			await api.players.delete(playerId);
 		} catch (err) {
 			this._vm.$toasted.error(err);
+			this._vm.$log.error(err);
 			throw new Error(err);
 		}
 	},
@@ -296,6 +292,7 @@ const actions = {
 			this._vm.$log.debug('api/players/get', res);
 
 			if (res.status !== 200) {
+				this._vm.$log.error(res.error);
 				throw new Error(res.error);
 			}
 
@@ -335,6 +332,7 @@ const actions = {
 					},
 				});
 			} catch (err) {
+				this._vm.$log.error(err);
 				throw new Error(err);
 			}
 		}
@@ -372,6 +370,7 @@ const actions = {
 	},
 
 	async resetCardsDrawn({ dispatch }, data) {
+		// cardsDrawnIds is only used locally for drawing cards (until draw card moved to websocket)
 		await dispatch('updateLocalPlayer', {
 			id: data.id,
 			cardsDrawnIds: [],
@@ -398,6 +397,7 @@ const actions = {
 				},
 			});
 		} catch (err) {
+			this._vm.$log.error(err);
 			throw new Error(err);
 		}
 	},
@@ -550,7 +550,7 @@ const actions = {
 		if (state[playerId] && playerId === localPlayerId) {
 			await Vue.$storage.setItem('player', state[playerId]);
 
-			if (!payload.cardsInHand) {
+			if (!Object.prototype.hasOwnProperty.call(payload, 'cardsInHand')) {
 				// Send async websocket request for 'whoami' to update
 				// cardsInHand for local player
 				this._vm.$socket.sendObj({ action: 'getMyCards' });
@@ -560,9 +560,8 @@ const actions = {
 };
 
 const mutations = {
+	// This is only used for dealing cards to player, remove when draw card is run on server
 	[mutationTypes.players.DRAW_CARD](state, payload) {
-		const myCards = state[payload.id].cardsDrawnIds;
-
 		this._vm.$log.debug('players/DRAW_CARD', payload, state);
 
 		if (
@@ -570,6 +569,8 @@ const mutations = {
 		) {
 			Vue.set(state[payload.id], 'cardsDrawnIds', []);
 		}
+
+		const myCards = state[payload.id].cardsDrawnIds;
 
 		myCards.push(payload.cardDrawnId);
 
@@ -606,7 +607,7 @@ const mutations = {
 		const id = payload.id;
 		const cards = payload.cardsInHand;
 
-		if (!state[id].cardsInHand) {
+		if (!Object.prototype.hasOwnProperty.call(state[id], 'cardsInHand')) {
 			Vue.set(state[id], 'cardsInHand', []);
 		}
 

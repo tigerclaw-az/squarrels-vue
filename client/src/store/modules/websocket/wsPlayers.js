@@ -41,14 +41,19 @@ const actions = {
 		);
 	},
 
-	reset({ dispatch }, data) {
+	async reset({ dispatch }, data) {
 		this._vm.$log.debug('ws-players:reset', data);
 
 		const playerObj = {
 			...data.nuts,
 		};
 
-		dispatch('players/updateLocalPlayer', playerObj, { root: true });
+		try {
+			await dispatch('players/updateLocalPlayer', playerObj, { root: true });
+		} catch (e) {
+			this._vm.$log.error(e);
+			throw new Error(e);
+		}
 	},
 
 	// eslint-disable-next-line
@@ -56,11 +61,16 @@ const actions = {
 		this._vm.$toasted.error(data.nuts);
 	},
 
-	update({ dispatch }, data) {
+	async update({ dispatch }, data) {
 		this._vm.$log.debug('wsPlayers/update', data);
 
 		if (!isEmpty(data.nuts)) {
-			dispatch('players/updateLocalPlayer', data.nuts, { root: true });
+			try {
+				await dispatch('players/updateLocalPlayer', data.nuts, { root: true });
+			} catch (e) {
+				this._vm.$log.error(e);
+				throw new Error(e);
+			}
 		}
 	},
 };
