@@ -265,19 +265,12 @@ const actions = {
 		const playerId = payload.id || getters.getMyPlayer.id;
 
 		try {
-			// this._vm.$socket.sendObj({
-			// 	action: 'drawCard',
-			// 	playerId,
-			// });
+			this._vm.$socket.sendObj({
+				action: 'drawCard',
+				playerId,
+			});
 
 			await dispatch('game/update', { isDrawingCard: true }, { root: true });
-
-			await dispatch('update', {
-				id: playerId,
-				data: {
-					hasDrawnCard: true,
-				},
-			});
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
