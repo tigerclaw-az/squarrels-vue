@@ -7,13 +7,15 @@ module.exports = function(server) {
 	const appWSS = new WebsocketServer(server);
 	const wss = appWSS.wss;
 
+	const DeckActions = require('../lib/DeckActions');
 	const PlayerActions = require('../lib/PlayerActions');
 
 	const onConnection = (ws, req) => {
 		logger.info('connection state -> ', ws.readyState);
 
 		const sid = req.sessionID;
-		const actions = new PlayerActions(wss, ws, sid);
+		const deckActions = new DeckActions(wss, ws, sid);
+		const playerActions = new PlayerActions(wss, ws, sid);
 
 		const onMessage = message => {
 			const data = JSON.parse(message);
@@ -22,9 +24,16 @@ module.exports = function(server) {
 			logger.info('Message received: ', data);
 			logger.info(`websocket:onmessage:${data.action} -> ${sid}`);
 
-			if (typeof actions[data.action] === 'function') {
+			if (data.namespace && data.namespace === 'decks') {
 				try {
-					actions[data.action](data);
+					deckActions[data.action](data.payload);
+				} catch (err) {
+					logger.error(err);
+					wss.broadcast({ error: err });
+				}
+			} else if (typeof playerActions[data.action] === 'function') {
+				try {
+					playerActions[data.action](data);
 				} catch (err) {
 					logger.error(err);
 					wss.broadcast({ error: err });
