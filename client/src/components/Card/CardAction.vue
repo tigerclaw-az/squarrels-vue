@@ -9,7 +9,7 @@
 		no-close-on-esc
 		size="sm"
 		@shown="showCard"
-		@hidden="onModalClosed"
+		@hide="onModalClosed"
 	>
 		<template v-slot:default>
 			<b-container fluid>
@@ -84,12 +84,21 @@ export default {
 		// 		.addEventListener('animationend', this.onAnimationEnd.bind(this));
 		// });
 
-		if (!this.hoardCards.length) {
-			this.instantAction = true;
-		}
+		// if (!this.hoardCards.length) {
+		// 	this.instantAction = true;
+		// }
+
+		this.instantAction = true;
 	},
 	methods: {
 		onModalClosed() {
+			this.$log.debug(
+				'onModalClosed',
+				this.isActivePlayer,
+				this.discardDeck,
+				this.card,
+			);
+
 			if (this.isActivePlayer) {
 				this.$socket.sendObj({
 					action: 'discardAction',
@@ -98,14 +107,15 @@ export default {
 						deckId: this.discardDeck.id,
 						cardId: this.card.id,
 					},
-					});
+				});
 			}
 		},
 		showCard() {
-			this.$refs.card.addEventListener(
-				'animationend',
-				this.onAnimationEnd.bind(this),
-			);
+			const animationend = () => {
+				setTimeout(this.onAnimationEnd.bind(this), 1500);
+			};
+
+			this.$refs.card.addEventListener('animationend', animationend.bind(this));
 		},
 		async onAnimationEnd() {
 			const cardName = this.card.name;
@@ -116,6 +126,10 @@ export default {
 			if (sound) {
 				this.$store.dispatch('sound/play', sound);
 			}
+
+			this.$log.debug('CardAction:onAnimationEnd -> ', cardName, this);
+
+			this.showModal = false;
 
 			switch (cardName) {
 				case 'ambush':
@@ -140,18 +154,14 @@ export default {
 					}
 
 					// Wait for player to click the "Hoard" deck
-					this.showModal = false;
 
 					break;
 
 				case 'quarrel':
 					await this.$store.dispatch('players/startQuarrel');
-					this.showModal = false;
 					break;
 
 				case 'winter':
-					this.showModal = false;
-
 					await this.$store.dispatch('game/update', {
 						status: 'ROUND_ENDED',
 					});
@@ -179,9 +189,9 @@ export default {
 		position: relative;
 	}
 
-	@include flip-card(0.5s) {
+	@include flip-card(2s) {
 		&.action--whirlwind {
-			animation-duration: 2s;
+			animation-duration: 3s;
 			animation-name: action-whirlwind;
 		}
 	}
