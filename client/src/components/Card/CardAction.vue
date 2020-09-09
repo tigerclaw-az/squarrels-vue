@@ -59,6 +59,9 @@ export default {
 		...mapGetters({
 			isActivePlayer: 'players/isActivePlayer',
 		}),
+		discardDeck() {
+			return this.$store.getters['decks/getByType']('discard');
+		},
 		hoardCards() {
 			return this.hoardDeck.cards;
 		},
@@ -86,18 +89,16 @@ export default {
 		}
 	},
 	methods: {
-		async onModalClosed() {
-			const cardId = this.card.id;
-
+		onModalClosed() {
 			if (this.isActivePlayer) {
-				try {
-					await this.$store.dispatch('decks/addCard', {
-						type: 'discard',
-						cardId,
+				this.$socket.sendObj({
+					action: 'discardAction',
+					namespace: 'decks',
+					payload: {
+						deckId: this.discardDeck.id,
+						cardId: this.card.id,
+					},
 					});
-				} catch (err) {
-					this.$toasted.error(err);
-				}
 			}
 		},
 		showCard() {
