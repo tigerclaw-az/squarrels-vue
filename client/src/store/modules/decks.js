@@ -106,7 +106,14 @@ const actions = {
 								reject(err);
 							});
 					} else {
-						dispatch('drawCard', drawCardOptions);
+						dispatch('drawCard', drawCardOptions)
+							.then(cardId => {
+								this._vm.$log.debug('card drawn -> ', cardId);
+							})
+							.catch(err => {
+								unsubscribe();
+								reject(err);
+							});
 					}
 				}
 			});
@@ -118,6 +125,7 @@ const actions = {
 					this._vm.$log.debug('card drawn -> ', cardId);
 				})
 				.catch(err => {
+					unsubscribe();
 					reject(err);
 				});
 		});
@@ -165,6 +173,7 @@ const actions = {
 				cards: reject(mainDeck.cards, c => cardDrawn.id === c.id),
 			});
 		} catch (err) {
+			this._vm.$log.error(err);
 			throw new Error(err);
 		}
 
@@ -186,6 +195,7 @@ const actions = {
 		try {
 			await api.decks.update(mainDeck.id, { cards: cardsFromDeck.ids });
 		} catch (err) {
+			this._vm.$log.error(err);
 			throw new Error(err);
 		}
 
