@@ -4,11 +4,12 @@ const sampleSize = require('lodash/sampleSize');
 const mongoose = require('mongoose');
 
 const config = require('../config/config');
-const logger = config.logger('PlayerActions');
+const logger = config.logger('lib:PlayerActions');
 
 const player = require('../routes/modules/player');
 const game = require('../routes/modules/game');
 const { partition, isEmpty, union } = require('lodash');
+const WSSActions = require('./WSSActions');
 
 const playerModel = mongoose.model('Player');
 
@@ -27,32 +28,16 @@ const playerIt = pl => {
 	};
 };
 
-class PlayerActions {
+class PlayerActions extends WSSActions {
 	constructor(wss, ws, sid) {
-		this.wss = wss;
-		this.ws = ws;
-		this.sid = sid;
+		super(wss, ws, sid);
+
+		this.namespace = 'wsPlayers';
 
 		this.hoardPlayer = null;
-		this.namespace = 'wsPlayers';
 		this.playerSession = {
 			sessionId: sid,
 		};
-	}
-
-	send(data, options = { all: true }) {
-		logger.debug(data, options);
-
-		const wsData = {
-			namespace: this.namespace,
-			...data,
-		};
-
-		if (options.all) {
-			return this.wss.broadcast(wsData, this.sid);
-		}
-
-		return this.ws.send(JSON.stringify(wsData));
 	}
 
 	getMyCards() {
