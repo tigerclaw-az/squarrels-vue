@@ -101,7 +101,7 @@ export default {
 
 			if (this.isActivePlayer) {
 				this.$socket.sendObj({
-					action: 'discardAction',
+					action: 'discard',
 					namespace: 'decks',
 					payload: {
 						deckId: this.discardDeck.id,

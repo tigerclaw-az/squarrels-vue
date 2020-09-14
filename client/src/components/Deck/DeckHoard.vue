@@ -64,6 +64,7 @@ export default {
 				this.$socket.sendObj({
 					action: 'hoard',
 					player: this.myPlayer,
+					deckId: this.$store.getters['decks/getByType']('hoard').id,
 				});
 
 				return true;

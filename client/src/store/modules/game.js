@@ -280,16 +280,7 @@ const actions = {
 		this._vm.$log.debug('game/resetAction -> ', state);
 
 		try {
-			// const actionCardId = state.actionCard.id;
-
 			await api.games.actionCard(state.id, null);
-
-			// Add current action card to the 'discard' deck
-			// await dispatch(
-			// 	'decks/addCard',
-			// 	{ type: 'discard', cardId: actionCardId },
-			// 	{ root: true },
-			// );
 		} catch (err) {
 			this._vm.$toasted.error(err);
 			throw new Error(err);

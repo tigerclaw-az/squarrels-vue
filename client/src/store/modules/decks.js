@@ -38,28 +38,6 @@ const getters = {
 };
 
 const actions = {
-	addCard({ getters }, payload) {
-		const deck = payload.type
-			? getters.getByType(payload.type)
-			: getters.getById(payload.id);
-
-		const cardsInDeck = deck.cards;
-
-		this._vm.$log.debug('decks/addCard | ', payload, deck, cardsInDeck);
-
-		if (some(cardsInDeck, { id: payload.cardId })) {
-			this._vm.$log.warn(
-				`Adding card '${payload.cardId} would add duplicates to the deck!`,
-			);
-
-			return Promise.reject(`ERROR: Duplicate card '${payload.cardId}'`);
-		}
-
-		return api.decks.update(deck.id, {
-			cards: concat(cardsInDeck, payload.cardId),
-		});
-	},
-
 	cardsDealt({ getters }) {
 		const mainDeck = getters.getByType('main');
 
@@ -135,8 +113,16 @@ const actions = {
 		commit(mutationTypes.decks.CARDS_SHUFFLED, true);
 	},
 
-	discard({ dispatch }, card) {
-		return dispatch('addCard', { type: 'hoard', cardId: card.id });
+	discard({ getters }, card) {
+		this._vm.$socket.sendObj({
+			action: 'discard',
+			namespace: 'decks',
+			payload: {
+				deckId: getters.getByType('hoard').id,
+				cardId: card.id,
+			},
+		});
+		// return dispatch('addCard', { type: 'hoard', cardId: card.id });
 	},
 
 	async drawCard({ commit, dispatch, getters }, options = {}) {
@@ -236,18 +222,6 @@ const actions = {
 		await dispatch('unload');
 
 		return api.decks.delete(ids.join(','));
-	},
-
-	removeCards({ getters }, payload) {
-		const deck = payload.type
-			? getters.getByType(payload.type)
-			: getters.getById(payload.id);
-
-		this._vm.$log.debug(payload, deck);
-
-		return api.decks.update(deck.id, {
-			cards: [],
-		});
 	},
 
 	unload({ commit }) {

@@ -6,12 +6,8 @@ const mongoose = require('mongoose');
 const config = require('../config/config');
 const logger = config.logger('lib:PlayerActions');
 
-const player = require('../routes/modules/player');
-const game = require('../routes/modules/game');
 const { partition, isEmpty, union } = require('lodash');
 const WSSActions = require('./WSSActions');
-
-const playerModel = mongoose.model('Player');
 
 // Custom iterator to iterate through players in specific order
 const playerIt = pl => {
@@ -32,6 +28,8 @@ class PlayerActions extends WSSActions {
 	constructor(wss, ws, sid) {
 		super(wss, ws, sid);
 
+		this.player = require('../routes/modules/player');
+
 		this.namespace = 'wsPlayers';
 
 		this.hoardPlayer = null;
@@ -41,7 +39,7 @@ class PlayerActions extends WSSActions {
 	}
 
 	getMyCards() {
-		playerModel
+		this.player.model
 			.find(this.playerSession)
 			.select('+sessionId +cardsInHand')
 			.populate({
@@ -69,7 +67,7 @@ class PlayerActions extends WSSActions {
 		logger.debug(data);
 
 		try {
-			await player.update(data.playerId, { hasDrawnCard: true }, this.sid);
+			await this.player.update(data.playerId, { hasDrawnCard: true }, this.sid);
 		} catch (err) {
 			logger.error(err);
 			this.send({ error: err });
@@ -102,7 +100,7 @@ class PlayerActions extends WSSActions {
 					cards.push(card);
 
 					// FIXME: Handle update completed & error
-					opponentsUpdated.push(player.update(pl.id, { cardsInHand: pl.cardsInHand }, this.sid));
+					opponentsUpdated.push(this.player.update(pl.id, { cardsInHand: pl.cardsInHand }, this.sid));
 				}
 			});
 
@@ -143,18 +141,40 @@ class PlayerActions extends WSSActions {
 			});
 	}
 
-	hoard(data) {
+	async hoard(data) {
 		logger.debug(data);
 
-		delete data.player.cardsInHand;
-
 		if (!this.hoardPlayer) {
+			const { player, deckId } = data;
+
+			// delete player.cardsInHand;
 			this.hoardPlayer = this.playerSession;
 
 			this.send({
 				action: `actioncard_${data.action}`,
-				nuts: data.player,
+				nuts: player,
 			});
+
+			const hoardCards = (await this.deck.getDecksWithCards(deckId)).cards;
+
+			logger.debug(hoardCards);
+
+			const newCards = union(player.cardsInHand.map(card => card.id), hoardCards.map(card => card.id));
+
+			this.player.update(
+				player.id,
+				{
+					cardsInHand: newCards,
+					addCards: true,
+				},
+				this.sid,
+			);
+
+			this.deck.update(
+				deckId,
+				{ cards: [] },
+				this.sid,
+			);
 
 			setTimeout(() => {
 				this.hoardPlayer = null;
@@ -218,7 +238,7 @@ class PlayerActions extends WSSActions {
 					cardIds.forEach(id => {
 						const player = pIt.next();
 
-						player.cardsInHand.push(id);
+						this.player.cardsInHand.push(id);
 					});
 
 					const playersUpdated = [];
@@ -231,7 +251,7 @@ class PlayerActions extends WSSActions {
 						logger.debug('playerData -> ', playerData);
 
 						playersUpdated.push(
-							player.update(
+							this.player.update(
 								pl.id,
 								playerData,
 								this.sid
@@ -266,7 +286,7 @@ class PlayerActions extends WSSActions {
 					pl.cardsInHand = [];
 
 					updatePromises.push(
-						player.update(
+						this.player.update(
 							pl.id,
 							{ cardsInHand: [] },
 							this.sid

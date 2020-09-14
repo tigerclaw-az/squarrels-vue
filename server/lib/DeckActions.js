@@ -1,6 +1,5 @@
 /* eslint-disable class-methods-use-this */
 const config = require('../config/config');
-const deck = require('../routes/modules/deck');
 const { sampleSize } = require('lodash');
 const WSSActions = require('./WSSActions');
 const logger = config.logger('lib:DeckActions');
@@ -20,7 +19,7 @@ class DeckActions extends WSSActions {
 	// 	return deck.update(id, { cards });
 	// }
 
-	async discardAction(payload) {
+	async discard(payload) {
 		logger.debug(payload);
 
 		const {
@@ -28,7 +27,7 @@ class DeckActions extends WSSActions {
 			cardId,
 		} = payload;
 
-		await deck.update(deckId, { $push: { cards: cardId } });
+		await this.deck.update(deckId, { $push: { cards: cardId } });
 	}
 
 	drawCard(id, options) {

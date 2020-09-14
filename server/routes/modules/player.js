@@ -15,12 +15,12 @@ const initPlayer = {
 
 class Player {
 	constructor() {
-		this.PlayerModel = require('../../config/models/player.js');
+		this.model = require('../../config/models/player.js');
 	}
 
 	// prettier-ignore
 	findPlayersWithCards(query = {}) {
-		return this.PlayerModel
+		return this.model
 			.find(query)
 			.select('+cardsInHand')
 			.exec();
@@ -84,7 +84,7 @@ class Player {
 				}
 
 				// prettier-ignore
-				this.PlayerModel
+				this.model
 					.findByIdAndUpdate(playerQuery._id, data, options)
 					.select('+sessionId +cardsInHand')
 					.populate({

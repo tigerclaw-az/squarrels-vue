@@ -6,6 +6,9 @@ class WSSActions {
 		this.wss = wss;
 		this.ws = ws;
 		this.sid = sid;
+
+		this.deck = require('../routes/modules/deck');
+		this.game = require('../routes/modules/game');
 	}
 
 	send(data, options = { all: true }) {

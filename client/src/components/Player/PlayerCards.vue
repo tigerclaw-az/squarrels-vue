@@ -65,7 +65,6 @@ export default {
 				await this.$store.dispatch('players/discard', {
 					card,
 				});
-				await this.$store.dispatch('decks/discard', card);
 				this.$store.dispatch('sound/play', this.$sounds.discard);
 			} catch (err) {
 				this.$log.error(err);

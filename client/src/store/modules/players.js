@@ -197,20 +197,11 @@ const actions = {
 		}
 	},
 
-	async collectHoard({ dispatch, getters, rootGetters }, pl) {
+	async collectHoard({ dispatch, getters }, pl) {
 		const myPlayer = getters.getMyPlayer;
-		const hoardDeck = rootGetters['decks/getByType']('hoard');
-		const hoardCards = rootGetters['decks/getCardIds'](hoardDeck.id);
-		const cardsInHand = union(myPlayer.cardsInHand, hoardCards);
 
 		if (pl.id === myPlayer.id) {
 			try {
-				// Add hoard cards to player cards
-				await dispatch('update', { id: myPlayer.id, data: { cardsInHand } });
-
-				// Remove cards from the 'Hoard' deck
-				await dispatch('decks/removeCards', { type: 'hoard' }, { root: true });
-
 				// Reset the action
 				await dispatch('game/resetAction', {}, { root: true });
 			} catch (err) {
@@ -250,6 +241,9 @@ const actions = {
 		if (!payload.isQuarrel) {
 			data.hasStoredCards = true;
 		}
+
+		// TODO: Remove once discard is added to PlayerActions in websocket
+		dispatch('decks/discard', payload.card, { root: true });
 
 		return dispatch('update', {
 			id: playerId,

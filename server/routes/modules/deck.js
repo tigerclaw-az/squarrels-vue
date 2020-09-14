@@ -5,7 +5,7 @@ const logger = config.logger('modules:decks');
 class Deck {
 	constructor() {
 		this.CardModel = require('../../config/models/card');
-		this.DeckModel = require('../../config/models/deck');
+		this.model = require('../../config/models/deck');
 	}
 
 	async create(options) {
@@ -23,28 +23,36 @@ class Deck {
 
 		logger.debug(data);
 
-		return new this.DeckModel(data).save();
+		return new this.model(data).save();
 	}
 
 	delete(ids) {
 		logger.debug(ids);
 
 		if (isArray(ids)) {
-			return this.DeckModel.deleteMany({ _id: { $in: ids } });
+			return this.model.deleteMany({ _id: { $in: ids } });
 		}
 
-		return this.DeckModel.findByIdAndDelete(ids);
+		return this.model.findByIdAndDelete(ids);
 	}
 
 	getDecksWithCards(ids) {
-		return this.DeckModel
-			.find()
+		logger.debug(ids);
+
+		let query = this.model.find()
 			.where('_id')
-			.in(ids)
+			.in(ids);
+
+		if (!isArray(ids)) {
+			query = this.model.findById(ids);
+		}
+
+		return query
 			.populate('cards')
 			.exec();
 	}
 
+	// TODO: Move this into DeckActions once it's not being called from routes/decks.js
 	async update(id, data, sid) {
 		logger.debug(id, data);
 
@@ -55,7 +63,7 @@ class Deck {
 		}
 
 		try {
-			const doc = await this.DeckModel.findByIdAndUpdate(id, data, options).populate('cards');
+			const doc = await this.model.findByIdAndUpdate(id, data, options).populate('cards');
 
 			wss.broadcast(
 				{ namespace: 'wsDecks', action: 'update', nuts: doc },
