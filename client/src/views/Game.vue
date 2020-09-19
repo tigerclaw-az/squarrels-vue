@@ -211,6 +211,28 @@ export default {
 				}
 			},
 		},
+		// myPlayer: {
+		// 	immediate: true,
+		// 	handler: async function(player) {
+		// 		this.$log.info('Game:myPlayer :: ', player);
+
+		// 		if (!player.id) {
+		// 			return;
+		// 		}
+
+		// 		if (this.playerExists && player.gameId === this.id) {
+		// 			return Promise.resolve();
+		// 		}
+
+		// 		await this.$store.dispatch({
+		// 			type: 'game/addPlayer',
+		// 			gameId: this.id,
+		// 			playerId: player.id,
+		// 		});
+
+		// 		this.isLoaded = true;
+		// 	},
+		// },
 	},
 	mounted: function() {
 		this.$store
@@ -244,7 +266,9 @@ export default {
 				});
 			})
 			.then(() => {
-				this.isLoaded = true;
+				if (this.myPlayer.id) {
+					this.isLoaded = true;
+				}
 			})
 			.catch(err => {
 				this.$log.error(err);
