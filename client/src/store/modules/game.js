@@ -13,6 +13,7 @@ import {
 } from 'lodash';
 
 import api from '@/api/index';
+import { GAME_STATUS } from '@/constants';
 import mutationTypes from '@/store/mutation-types';
 
 const newRoundState = {
@@ -26,7 +27,7 @@ const newRoundState = {
 	},
 	quarrelCount: 0,
 	showQuarrel: false,
-	status: 'INIT',
+	status: GAME_STATUS.INIT,
 };
 
 const initialState = Object.assign({}, newRoundState, {
@@ -297,7 +298,7 @@ const actions = {
 			const ids = res.data.deckIds;
 
 			try {
-				await api.games.update(state.id, { status: 'SHUFFLE' });
+				await api.games.update(state.id, { status: GAME_STATUS.SHUFFLE });
 				await dispatch('decks/load', { ids }, { root: true });
 			} catch (err) {
 				if (ids.length) {
@@ -318,7 +319,7 @@ const actions = {
 		this._vm.$log.debug('game/start', state);
 
 		try {
-			await api.games.update(state.id, { status: 'DEALING' });
+			await api.games.update(state.id, { status: GAME_STATUS.DEALING });
 
 			// Loop through each player and deal cards
 			// Each deal will be saved as a Promise so we can wait
@@ -339,7 +340,7 @@ const actions = {
 			await api.games.start(state.id);
 			await dispatch('players/nextPlayer', null, { root: true });
 		} catch (err) {
-			await api.games.update(state.id, { status: 'SHUFFLE' });
+			await api.games.update(state.id, { status: GAME_STATUS.SHUFFLE });
 			this._vm.$log.error(err);
 			throw new Error(err);
 		}

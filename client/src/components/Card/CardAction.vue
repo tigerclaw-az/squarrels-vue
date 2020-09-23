@@ -29,6 +29,8 @@
 <script>
 import { mapGetters } from 'vuex';
 
+import { GAME_STATUS } from '@/constants';
+
 import { BModal } from 'bootstrap-vue';
 import Card from '@/components/Card/Card.vue';
 
@@ -163,7 +165,7 @@ export default {
 
 				case 'winter':
 					await this.$store.dispatch('game/update', {
-						status: 'ROUND_ENDED',
+						status: GAME_STATUS.ROUND_ENDED,
 					});
 
 					break;

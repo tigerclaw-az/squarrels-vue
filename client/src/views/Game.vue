@@ -82,6 +82,7 @@ import { mapGetters, mapState } from 'vuex';
 import { filter, includes, isEmpty } from 'lodash';
 
 import { config } from '@/config';
+import { GAME_STATUS } from '@/constants';
 
 import CardAction from '@/components/Card/CardAction.vue';
 import Board from '@/components/Board/Board.vue';
@@ -207,7 +208,7 @@ export default {
 					return;
 				}
 
-				if (this.isCreator && this.status === 'SHUFFLE') {
+				if (this.isCreator && this.status === GAME_STATUS.SHUFFLE) {
 					try {
 						await this.$store.dispatch({ type: 'game/start' });
 					} catch (err) {
