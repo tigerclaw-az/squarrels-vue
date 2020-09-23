@@ -150,6 +150,7 @@ export default {
 <style lang="scss" scoped>
 // prettier-ignore
 @import "~@/assets/scss/variables";
+// prettier-ignore
 @import "~@/assets/scss/mixins";
 
 .winter {
