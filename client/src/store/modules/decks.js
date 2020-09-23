@@ -19,6 +19,7 @@ import mutationTypes from '@/store/mutation-types';
 const state = {
 	isLoaded: false,
 	isShuffled: false,
+	ids: [],
 };
 
 const getters = {
@@ -242,6 +243,8 @@ const mutations = {
 				Vue.delete(state, prop);
 			}
 		}
+
+		Vue.set(state, 'ids', []);
 	},
 
 	[mutationTypes.decks.LOADED](state) {
@@ -255,6 +258,7 @@ const mutations = {
 
 		if (!state[deckId]) {
 			Vue.set(state, deckId, {});
+			Vue.set(state, 'ids', [...state.ids, deckId]);
 		}
 
 		for (const prop in payload) {

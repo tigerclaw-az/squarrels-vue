@@ -11,17 +11,14 @@
 export default {
 	name: 'deck',
 	props: {
-		id: {
-			type: String,
+		deck: {
+			type: Object,
 			required: true,
 		},
 	},
 	computed: {
 		cards: function() {
 			return this.deck.cards;
-		},
-		deck: function() {
-			return this.$store.state.decks[this.id];
 		},
 		deckComponent: function() {
 			if (this.deck) {

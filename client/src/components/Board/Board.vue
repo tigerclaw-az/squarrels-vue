@@ -11,7 +11,7 @@
 				/>
 			</div>
 			<div v-else class="container_decks">
-				<Deck v-for="deckId in deckIds" :id="deckId" :key="deckId" />
+				<Deck v-for="id in decks.ids" :key="id" :deck="decks[id]" />
 				<slot name="action"></slot>
 			</div>
 		</div>
@@ -34,8 +34,8 @@ export default {
 		Player,
 	},
 	props: {
-		deckIds: {
-			type: Array,
+		decks: {
+			type: Object,
 			required: true,
 		},
 		gameStatus: {

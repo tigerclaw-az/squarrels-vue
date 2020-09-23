@@ -60,7 +60,7 @@
 			</div>
 			<Board
 				v-if="isLoaded"
-				:deck-ids="deckIds"
+				:decks="decks"
 				:game-status="status"
 				:players-in-game="playersInGame"
 				:round-number="roundNumber"
@@ -179,8 +179,9 @@ export default {
 	},
 	watch: {
 		deckIds: {
-			immediate: true,
 			handler: async function(ids) {
+				this.$log.debug('Game::deckIds -> ', ids, this);
+
 				if (isEmpty(ids) || this.decks.isLoaded) {
 					return;
 				}
@@ -195,10 +196,14 @@ export default {
 		},
 		decks: {
 			deep: true,
-			handler: async function(state) {
-				this.$log.debug('Game::decks -> ', state, this);
+			handler: async function(decksState) {
+				this.$log.debug('Game::decks -> ', decksState, this);
 
-				if (!state.isLoaded || !state.isShuffled) {
+				if (
+					isEmpty(decksState.ids) ||
+					!decksState.isLoaded ||
+					!decksState.isShuffled
+				) {
 					return;
 				}
 
@@ -244,13 +249,6 @@ export default {
 					await this.$store.dispatch({
 						type: 'players/load',
 						ids: data.playerIds,
-					});
-				}
-
-				if (!isEmpty(data.deckIds)) {
-					await this.$store.dispatch({
-						type: 'decks/load',
-						ids: data.deckIds,
 					});
 				}
 			})
