@@ -115,12 +115,6 @@ const actions = {
 
 		try {
 			const res = await api.decks.get(ids.join(','));
-
-			if (res.status !== 200) {
-				this._vm.$log.error(res);
-				throw new Error(res);
-			}
-
 			const decks = res.data;
 
 			decks.forEach(deck => {
@@ -132,7 +126,8 @@ const actions = {
 			return decks;
 		} catch (err) {
 			this._vm.$log.error(err);
-			reject(err);
+			this._vm.$toasted.error(err);
+			throw new Error(err);
 		}
 	},
 

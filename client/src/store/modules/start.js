@@ -48,28 +48,22 @@ const actions = {
 	},
 
 	loadGames({ commit }) {
-		commit(mutationTypes.start.GAMES_LOAD, { wait: true });
-
 		commit(mutationTypes.start.GAMES_CLEAR);
 
 		api.games
 			.get()
 			.then(res => {
-				if (res.status === 200) {
-					const gamesData = res.data;
+				const gamesData = res.data;
 
-					this._vm.$log.debug('start/loadGames', gamesData);
+				this._vm.$log.debug('start/loadGames', gamesData);
 
-					commit(mutationTypes.start.GAMES_LOAD, { wait: false });
-
-					for (const game of gamesData) {
-						commit(mutationTypes.start.ADD_GAME, game);
-					}
+				for (const game of gamesData) {
+					commit(mutationTypes.start.ADD_GAME, game);
 				}
 			})
 			.catch(err => {
-				commit(mutationTypes.start.GAMES_LOAD, { wait: false });
 				this._vm.$log.error(err);
+				this._vm.$toasted.error(err);
 			});
 	},
 };
@@ -90,9 +84,6 @@ const mutations = {
 	},
 	[mutationTypes.start.GAMES_CLEAR](state) {
 		state.games = [];
-	},
-	[mutationTypes.start.GAMES_LOAD](state) {
-		state.waitLoadGames = false;
 	},
 };
 

@@ -12,6 +12,15 @@ export default class BaseApi {
 			timeout: 5000,
 			withCredentials: true,
 		});
+
+		this.http.interceptors.response.use(
+			res => {
+				return res;
+			},
+			err => {
+				return Promise.reject(err);
+			},
+		);
 	}
 
 	create(data) {

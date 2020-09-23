@@ -42,20 +42,15 @@ const actions = {
 
 		try {
 			const res = await api.players.get(player.id);
-
-			if (res.status !== 200) {
-				await Vue.$storage.removeItem('player');
-				throw new Error('USER NOT FOUND');
-			}
-
 			const pl = res.data[0];
 
 			commit(mutationTypes.root.LOGIN, pl);
 
 			return pl;
 		} catch (err) {
+			await Vue.$storage.removeItem('player');
 			this._vm.$toasted.error(err);
-			throw new Error('Unable to find player', err);
+			throw new Error('USER NOT FOUND', err);
 		}
 	},
 };

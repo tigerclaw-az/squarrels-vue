@@ -26,6 +26,7 @@ const validatePlayer = pl => {
 
 players.delete('/:id?', function(req, res) {
 	if (req.params.id) {
+		// FIXME: Add 'remove' method to modules/player
 		// Remove single player
 		PlayerModel.findByIdAndRemove(req.params.id)
 			.then(function() {

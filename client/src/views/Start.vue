@@ -117,12 +117,7 @@ export default {
 			player: 'players/getMyPlayer',
 		}),
 		...mapState(['isAdmin']),
-		...mapState('start', [
-			'games',
-			'waitCreateGame',
-			'waitDeleteGame',
-			'waitLoadGames',
-		]),
+		...mapState('start', ['games', 'waitCreateGame', 'waitDeleteGame']),
 		hasGames: function() {
 			return !isEmpty(this.games);
 		},

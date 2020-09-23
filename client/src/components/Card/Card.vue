@@ -106,12 +106,11 @@ export default {
 			api.cards
 				.get(this.id)
 				.then(res => {
-					if (res.status === 200) {
-						this.details = res.data[0];
-					}
+					this.details = res.data[0];
 				})
 				.catch(err => {
 					this.$log.error(err);
+					this.$toasted.error(err);
 				});
 		}
 	},

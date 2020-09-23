@@ -139,12 +139,7 @@ const actions = {
 		try {
 			const res = await api.players.get(plArr.join(','));
 
-			if (res.status === 200) {
-				return dispatch('updateLocalPlayer', res.data[0]);
-			}
-
-			this._vm.$log.error(res.error);
-			throw new Error(res.error);
+			return dispatch('updateLocalPlayer', res.data[0]);
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
@@ -287,11 +282,6 @@ const actions = {
 			const res = await api.players.get(ids.join(','));
 
 			this._vm.$log.debug('api/players/get', res);
-
-			if (res.status !== 200) {
-				this._vm.$log.error(res.error);
-				throw new Error(res.error);
-			}
 
 			return Promise.all(
 				res.data.map(async plData => {

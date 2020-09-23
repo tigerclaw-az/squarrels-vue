@@ -149,11 +149,6 @@ const actions = {
 
 			Vue.$log.debug('game/load', res);
 
-			if (res.status !== 200) {
-				router.push('/');
-				throw new Error(res);
-			}
-
 			const gameData = res.data[0];
 
 			Vue.$log.debug('game/load', gameData);
@@ -166,7 +161,7 @@ const actions = {
 			return gameData;
 		} catch (err) {
 			this._vm.$log.error(err);
-			throw new Error(err);
+			router.push('/');
 		}
 	},
 
