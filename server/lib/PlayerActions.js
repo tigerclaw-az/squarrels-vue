@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const pull = require('lodash/pull');
 const sampleSize = require('lodash/sampleSize');
-const mongoose = require('mongoose');
 
 const config = require('../config/config');
 const logger = config.logger('lib:PlayerActions');
@@ -111,14 +110,14 @@ class PlayerActions extends WSSActions {
 					cards = union(cards, playerToUpdate.cardsInHand);
 					logger.debug('cards -> ', cards);
 
-					return player
+					return this.player
 						.update(
 							playerToUpdate.id,
 							{ cardsInHand: cards },
 							this.sid
 						)
 						.then(() => {
-							return game.resetActionCard(data.gameId, this.sid);
+							return this.game.resetActionCard(data.gameId, this.sid);
 						});
 				})
 				.catch(err => {
@@ -126,14 +125,14 @@ class PlayerActions extends WSSActions {
 				});
 		};
 
-		return player
+		return this.player
 			.findPlayersWithCards({ gameId: data.gameId })
 			.then(docs => {
 				logger.debug('playersWithCards -> ', docs);
 
 				stealCards(docs)
 					.then(() => {
-						return game.resetActionCard(data.gameId, this.sid);
+						return this.game.resetActionCard(data.gameId, this.sid);
 					})
 					.catch(err => {
 						throw new Error(err);
@@ -212,7 +211,7 @@ class PlayerActions extends WSSActions {
 
 		const gameId = data.gameId;
 
-		player
+		this.player
 			.findPlayersWithCards({ gameId })
 			.then(players => {
 				let cardIds = [];
@@ -238,7 +237,7 @@ class PlayerActions extends WSSActions {
 					cardIds.forEach(id => {
 						const player = pIt.next();
 
-						this.player.cardsInHand.push(id);
+						player.cardsInHand.push(id);
 					});
 
 					const playersUpdated = [];
@@ -262,7 +261,7 @@ class PlayerActions extends WSSActions {
 					// setTimeout(() => {
 					return Promise.all(playersUpdated)
 						.then(() => {
-							return game.resetActionCard(gameId, this.sid)
+							return this.game.resetActionCard(gameId, this.sid)
 								.catch(err => {
 									logger.error(`ERROR: Unable to reset action card -> ${err}`);
 								});
