@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-module.exports = new Schema({
+const DeckSchema = new Schema({
 	deckType: {
 		type: String,
 		required: true,
@@ -13,8 +13,7 @@ module.exports = new Schema({
 			select: false,
 		},
 	],
-},
-{
+}, {
 	collection: 'decks',
 	timestamps: true,
 	toObject: {
@@ -24,3 +23,14 @@ module.exports = new Schema({
 		virtuals: true,
 	},
 });
+
+DeckSchema.methods.toJSON = function() {
+	const obj = this.toObject();
+
+	delete obj.__v;
+	delete obj._id;
+
+	return obj;
+};
+
+module.exports = DeckSchema;

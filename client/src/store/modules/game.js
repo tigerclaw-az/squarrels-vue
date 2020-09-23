@@ -1,16 +1,7 @@
 import Vue from 'vue';
 import router from '@/routes';
 
-import {
-	concat,
-	groupBy,
-	keys,
-	map,
-	max,
-	union,
-	without,
-	isEmpty,
-} from 'lodash';
+import { concat, groupBy, keys, max, union, without, isEmpty } from 'lodash';
 
 import api from '@/api/index';
 import { GAME_STATUS } from '@/constants';
@@ -321,21 +312,13 @@ const actions = {
 		try {
 			await api.games.update(state.id, { status: GAME_STATUS.DEALING });
 
-			// Loop through each player and deal cards
-			// Each deal will be saved as a Promise so we can wait
-			// for all players to be dealt cards before starting game
-			await Promise.all(
-				state.playerIds.map(async id => {
-					try {
-						await dispatch('decks/dealCards', id, { root: true });
-					} catch (err) {
-						this._vm.$log.error(err);
-						throw new Error(err);
-					}
-				}),
-			);
+			try {
+				await dispatch('decks/dealCards', state.playerIds, { root: true });
+			} catch (err) {
+				this._vm.$log.error(err);
+				throw new Error(err);
+			}
 
-			await dispatch('decks/cardsDealt', null, { root: true });
 			// All players and decks have been updated, game can start
 			await api.games.start(state.id);
 			await dispatch('players/nextPlayer', null, { root: true });

@@ -1,6 +1,7 @@
 const config = require('../../config/config');
-const { isArray, shuffle, isEmpty } = require('lodash');
-const logger = config.logger('modules:decks');
+const { isArray, shuffle, isEmpty, sampleSize, filter } = require('lodash');
+
+const logger = config.logger('modules:deck');
 
 class Deck {
 	constructor() {
@@ -9,7 +10,7 @@ class Deck {
 	}
 
 	async create(options) {
-		logger.debug(options);
+		logger.debug('create -> ', options);
 		const deckType = options.name;
 		const data = {
 			deckType,
@@ -26,8 +27,40 @@ class Deck {
 		return new this.model(data).save();
 	}
 
+	async drawCard(payload) {
+		logger.debug('drawCard -> ', payload);
+
+		const {
+			deckId: id,
+			sessionId: sid,
+			filter: applyFilter,
+		} = payload;
+
+		const mainDeck = await this.getDecksWithCards(id, filter);
+		const cardsToDraw = applyFilter ? filter(mainDeck.cards, applyFilter) : mainDeck.cards;
+		const cardDrawn = payload.adminCard || sampleSize(cardsToDraw)[0];
+
+		try {
+			// Remove the card drawn from the deck so it doesn't get pulled again
+			mainDeck.cards.pull(cardDrawn.id);
+			await mainDeck.save();
+
+			// This will send a websocket update back to the clients so they update the
+			// local cache of the main deck
+			wss.broadcast(
+				{ namespace: 'wsDecks', action: 'update', nuts: mainDeck },
+				sid
+			);
+
+			return cardDrawn;
+		} catch (err) {
+			logger.error(err);
+			throw new Error(err);
+		}
+	}
+
 	delete(ids) {
-		logger.debug(ids);
+		logger.debug('delete -> ', ids);
 
 		if (isArray(ids)) {
 			return this.model.deleteMany({ _id: { $in: ids } });
@@ -37,7 +70,7 @@ class Deck {
 	}
 
 	getDecksWithCards(ids) {
-		logger.debug(ids);
+		logger.debug('getDecksWithCards -> ', ids);
 
 		let query = this.model.find()
 			.where('_id')
@@ -52,9 +85,8 @@ class Deck {
 			.exec();
 	}
 
-	// TODO: Move this into DeckActions once it's not being called from routes/decks.js
 	async update(id, data, sid) {
-		logger.debug(id, data);
+		logger.debug('update -> ', id, data);
 
 		const options = { new: true };
 

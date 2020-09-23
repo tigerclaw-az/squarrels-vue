@@ -1,19 +1,8 @@
 import Vue from 'vue';
-import {
-	concat,
-	find,
-	filter,
-	pull,
-	reject,
-	sampleSize,
-	some,
-	isArray,
-	isEmpty,
-} from 'lodash';
+import { find, reject, isArray, isEmpty } from 'lodash';
 
 import api from '@/api/index';
 import { config } from '@/config';
-import store from '@/store/index';
 import mutationTypes from '@/store/mutation-types';
 
 const state = {
@@ -39,75 +28,46 @@ const getters = {
 };
 
 const actions = {
-	cardsDealt({ getters }) {
-		const mainDeck = getters.getByType('main');
+	async dealCards({ dispatch }, playerIds) {
+		this._vm.$log.debug('decks/dealCards', playerIds);
 
-		this._vm.$log.debug('dealPromises -> ', mainDeck);
+		const drawCardOptions = { filter: { cardType: 'number' } };
 
-		// After all cards have been dealt, set the starting player
-		return api.decks.update(mainDeck.id, {
-			cards: getters.getCardIds(mainDeck.id),
-		});
-	},
+		// Loop through each player and deal cards
+		// Each deal will be saved as a Promise so we can wait
+		// for all players to be dealt cards before starting game
+		let i = 0;
 
-	async dealCards({ dispatch, getters }, playerId) {
-		const drawCardOptions = { numOnly: true, isDeal: true, playerId };
-		const mainDeck = getters.getByType('main');
+		await [...Array(config.MAX_CARDS)].reduce(async promise => {
+			try {
+				await promise;
 
-		this._vm.$log.debug('decks/dealCards', playerId);
+				this._vm.$log.debug('decks/dealCards :: ', i);
+				i++;
 
-		// Need to reset cardsDrawn* properties so they can be
-		// used again with new deal later
-		await dispatch('players/resetCardsDrawn', { id: playerId }, { root: true });
+				await playerIds.reduce(async(plPromise, id) => {
+					try {
+						await plPromise;
 
-		return new Promise((resolve, reject) => {
-			// Watch for each time a card was drawn and updated for
-			// a given player, then continue to draw until they have MAX_CARDS
-			const unsubscribe = store.subscribe((mutation, state) => {
-				const playerCards = state.players[playerId].cardsDrawnIds;
+						const cardDrawn = await dispatch('drawCard', drawCardOptions);
 
-				if (mutation.type === 'players/DRAW_CARD') {
-					this._vm.$log.debug('decks/dealCards.subscribe', playerCards, state);
+						this._vm.$log.debug('decks/dealCards:cardDrawn :: ', cardDrawn, id);
 
-					if (playerCards.length === config.MAX_CARDS) {
-						unsubscribe();
-
-						api.players
-							.update(playerId, {
-								cardsInHand: playerCards,
-							})
-							.then(() => {
-								resolve({
-									deckId: mainDeck.id,
-								});
-							})
-							.catch(err => {
-								reject(err);
-							});
-					} else {
-						dispatch('drawCard', drawCardOptions)
-							.then(cardId => {
-								this._vm.$log.debug('card drawn -> ', cardId);
-							})
-							.catch(err => {
-								unsubscribe();
-								reject(err);
-							});
+						await dispatch(
+							'players/addCards',
+							{ id, cards: [cardDrawn] },
+							{ root: true },
+						);
+					} catch (err) {
+						this._vm.$log.error(err);
+						throw new Error(err);
 					}
-				}
-			});
-
-			// Trigger initial 'players/DRAW_CARD' mutation, which will trigger the .subscribe() above
-			// and continue drawing cards for given user until they have MAX_CARDS
-			dispatch('drawCard', drawCardOptions)
-				.then(cardId => {
-					this._vm.$log.debug('card drawn -> ', cardId);
-				})
-				.catch(err => {
-					unsubscribe();
-					reject(err);
-				});
-		});
+				}, Promise.resolve());
+			} catch (e) {
+				this._vm.$log.error(e);
+				throw new Error(e);
+			}
+		}, Promise.resolve());
 	},
 
 	cardsShuffled({ commit }) {
@@ -123,70 +83,27 @@ const actions = {
 				cardId: card.id,
 			},
 		});
-		// return dispatch('addCard', { type: 'hoard', cardId: card.id });
 	},
 
-	async drawCard({ commit, dispatch, getters }, options = {}) {
+	async drawCard({ dispatch, getters }, options = {}) {
 		const mainDeck = getters.getByType('main');
 
 		this._vm.$log.debug('decks/drawCard -> ', options, mainDeck);
 
-		dispatch('sound/play', this._vm.$sounds.drawCard, { root: true });
-
-		const cardsFromDeck = {
-			ids: getters.getCardIds(mainDeck.id),
-			toDraw: options.numOnly
-				? filter(mainDeck.cards, { cardType: 'number' })
-				: mainDeck.cards,
-		};
-
-		const cardDrawn = options.adminCard || sampleSize(cardsFromDeck.toDraw)[0];
-
-		this._vm.$log.debug('cardsFromDeck -> ', cardsFromDeck);
-		this._vm.$log.debug('cardDrawn -> ', cardDrawn);
-
-		if (!cardDrawn) {
-			throw new Error('Card drawn does not exist!');
-		}
+		await dispatch('sound/play', this._vm.$sounds.drawCard, { root: true });
 
 		try {
-			// Removes cardDrawn.id from cardsFromDeck.ids
-			pull(cardsFromDeck.ids, cardDrawn.id);
+			const res = await api.decks.drawCard(mainDeck.id, options);
 
-			// Need to update the cards in main deck so that the next
-			// player doesn't draw the same card (async)
-			commit(mutationTypes.decks.UPDATE_CARDS, {
-				id: mainDeck.id,
-				cards: reject(mainDeck.cards, c => cardDrawn.id === c.id),
-			});
-		} catch (err) {
-			this._vm.$log.error(err);
-			throw new Error(err);
+			if (res.data && res.data.card) {
+				return res.data.card;
+			}
+
+			throw new Error('No card returned!');
+		} catch (e) {
+			this._vm.$log.error(e);
+			throw new Error(e);
 		}
-
-		// Need to update the cards drawn by the player so that
-		// the subscribe knows when to stop
-		if (options.isDeal) {
-			commit(
-				'players/DRAW_CARD',
-				{
-					id: options.playerId,
-					cardDrawnId: cardDrawn.id,
-				},
-				{ root: true },
-			);
-
-			return cardDrawn;
-		}
-
-		try {
-			await api.decks.update(mainDeck.id, { cards: cardsFromDeck.ids });
-		} catch (err) {
-			this._vm.$log.error(err);
-			throw new Error(err);
-		}
-
-		return cardDrawn;
 	},
 
 	async load({ commit }, { ids }) {

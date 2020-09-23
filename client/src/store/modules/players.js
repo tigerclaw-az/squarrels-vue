@@ -85,7 +85,7 @@ const getters = {
 		return state;
 	},
 
-	getMyPlayer: (state, getters, rootState) => {
+	getMyPlayer: (state, _getters_, rootState) => {
 		Vue.$log.debug('getMyPlayer()', state, rootState);
 
 		for (const id in state) {
@@ -151,11 +151,11 @@ const actions = {
 		}
 	},
 
-	addCards({ dispatch, getters }, data) {
+	async addCards({ dispatch, getters }, data) {
 		this._vm.$log.debug('players/addCards', data, getters, this);
 
 		if (!data.cards) {
-			throw new Error('Parameter "cards" cannot be empty!');
+			throw new Error('"cards" cannot be empty!');
 		}
 
 		const cardsToAdd = flow(
@@ -165,20 +165,23 @@ const actions = {
 
 		const playerId = data.id || getters.getMyPlayer.id;
 
-		return dispatch('update', {
-			id: playerId,
-			data: {
-				addCards: true,
-				cardsInHand: cardsToAdd,
-			},
-		})
-			.then(res => {
-				this._vm.$log.debug('playersApi:update()', res, this);
-			})
-			.catch(err => {
-				this._vm.$toasted.error('This is nuts! ' + err);
-				this._vm.$log.error('This is nuts! Error: ', err);
+		try {
+			const res = await dispatch('update', {
+				id: playerId,
+				data: {
+					addCards: true,
+					cardsInHand: cardsToAdd,
+				},
 			});
+
+			this._vm.$log.debug('players/update', res);
+
+			return res;
+		} catch (e) {
+			this._vm.$toasted.error('This is nuts! ' + e);
+			this._vm.$log.error('This is nuts! Error: ', e);
+			throw new Error(e);
+		}
 	},
 
 	async create({ commit, dispatch }, plObj) {
@@ -290,7 +293,7 @@ const actions = {
 				throw new Error(res.error);
 			}
 
-			await Promise.all(
+			return Promise.all(
 				res.data.map(async plData => {
 					await dispatch('updateLocalPlayer', plData);
 				}),
@@ -361,14 +364,6 @@ const actions = {
 
 			return dispatch('decks/discard', highCard, { root: true });
 		}
-	},
-
-	async resetCardsDrawn({ dispatch }, data) {
-		// cardsDrawnIds is only used locally for drawing cards (until draw card moved to websocket)
-		await dispatch('updateLocalPlayer', {
-			id: data.id,
-			cardsDrawnIds: [],
-		});
 	},
 
 	async resetQuarrel({ dispatch, state }) {

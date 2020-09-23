@@ -25,22 +25,17 @@ decks.get('/:id', function(req, res) {
 		});
 });
 
-decks.post('/:id', function(req, res) {
+decks.post('/:id/draw', function(req, res) {
 	const sessionId = req.sessionID;
 
 	const deckId = req.params.id;
+	const options = req.body;
 
-	logger.debug('decks/:id', deckId, req.body);
+	logger.debug('decks/:id/draw', deckId, options);
 
-	deck.update(deckId, req.body, sessionId)
-		.then(doc => {
-			logger.debug(doc);
-
-			if (doc) {
-				res.status(200).json(doc);
-			} else {
-				res.status(204).json([]);
-			}
+	deck.drawCard({ deckId, sessionId, ...options })
+		.then(card => {
+			res.status(200).json({ card });
 		})
 		.catch(err => {
 			logger.error(err);
