@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import utils from '@/utils';
+import { getRandomStr } from '@/utils';
 import {
 	concat,
 	difference,
@@ -21,7 +21,7 @@ import api from '@/api/index';
 import mutationTypes from '@/store/mutation-types';
 
 const plDefault = {
-	name: utils.getRandomStr(12),
+	name: getRandomStr(12),
 };
 
 const state = {
