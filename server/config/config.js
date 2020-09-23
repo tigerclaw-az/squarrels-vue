@@ -7,16 +7,14 @@ log.configure({
 	},
 	categories: {
 		'default': { appenders: ['console'], level: process.env.LOGLEVEL },
-		'modules:game': { appenders: ['console'], level: 'DEBUG' },
-		'routes:decks': { appenders: ['console'], level: 'INFO' },
-		'routes:players': { appenders: ['console'], level: 'INFO' },
-		'websocket': { appenders: ['console'], level: 'INFO' },
+		'modules:deck': { appenders: ['console'], level: 'DEBUG' },
+		'routes:decks': { appenders: ['console'], level: 'DEBUG' },
 	},
 });
 
 const config = {
 	/* eslint quotes: "off" */
-	apiError: function(err) {
+	apiError(err) {
 		let error = err;
 
 		if (_.isEmpty(err)) {
@@ -33,11 +31,10 @@ const config = {
 	},
 
 	getRandomStr(num) {
-		const self = this;
-
-		return _.times(num, function() {
-			return String.fromCharCode(self.getRandom(96, 122));
-		}).join('')
+		return _.times(num, () => {
+			return String.fromCharCode(this.getRandom(96, 122));
+		})
+			.join('')
 			.replace(/`/g, ' ');
 	},
 
