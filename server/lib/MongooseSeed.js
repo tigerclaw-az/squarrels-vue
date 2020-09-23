@@ -7,7 +7,6 @@ const read = require('fs-readdir-recursive');
 class MongooseSeed {
 	constructor(seedOptions = {}, dbOptions = {}) {
 		this.options = {
-			debug: process.env.MONGOOSE_DEBUG || false,
 			useFindAndModify: false,
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
@@ -15,6 +14,8 @@ class MongooseSeed {
 		};
 
 		mongoose.Promise = seedOptions.Promise || global.Promise;
+		mongoose.set('debug', process.env.MONGOOSE_DEBUG || false);
+
 		this.logger = seedOptions.logger || null;
 	}
 
@@ -108,13 +109,11 @@ class MongooseSeed {
 			this.logger.info('Clearing collections: ', models);
 		}
 
-		return new Promise(async resolve => {
-			for (const modelName of models) {
-				const Model = mongoose.model(modelName);
-
-				await Model.remove({});
-				resolve();
-			}
+		return new Promise(resolve => {
+			return Promise.all(models.map(name => mongoose.model(name).remove({})))
+				.then(() => {
+					resolve();
+				});
 		});
 	}
 }
