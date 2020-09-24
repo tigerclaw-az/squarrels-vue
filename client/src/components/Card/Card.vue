@@ -105,8 +105,8 @@ export default {
 		} else if (this.id) {
 			api.cards
 				.get(this.id)
-				.then(res => {
-					this.details = res.data[0];
+				.then(data => {
+					this.details = data[0];
 				})
 				.catch(err => {
 					this.$log.error(err);

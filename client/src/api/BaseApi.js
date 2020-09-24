@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { isString } from 'lodash';
+import { isEmpty, isString } from 'lodash';
 
 export default class BaseApi {
 	constructor(path) {
@@ -15,7 +15,13 @@ export default class BaseApi {
 
 		this.http.interceptors.response.use(
 			res => {
-				return res;
+				console.log('API | ', res);
+
+				if (isEmpty(res.data)) {
+					return Promise.reject(res);
+				}
+
+				return res.data;
 			},
 			err => {
 				return Promise.reject(err);

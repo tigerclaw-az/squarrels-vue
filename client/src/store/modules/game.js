@@ -124,12 +124,9 @@ const actions = {
 			throw new Error('ERROR: NO PLAYERS TO ADD');
 		}
 
-		const res = await api.games.updatePlayers(gameId, newPlayers);
+		const data = await api.games.updatePlayers(gameId, newPlayers);
 
-		this._vm.$log.debug('updatePlayers()', res);
-		const gameData = res.data;
-
-		commit(mutationTypes.game.UPDATE, gameData);
+		commit(mutationTypes.game.UPDATE, data);
 
 		await dispatch(
 			'players/updateGame',
@@ -139,19 +136,14 @@ const actions = {
 			},
 			{ root: true },
 		);
-
-		return gameData;
 	},
 
 	async load({ commit }, { id }) {
+		Vue.$log.debug('game/load', id);
+
 		try {
-			const res = await api.games.get(id);
-
-			Vue.$log.debug('game/load', res);
-
-			const gameData = res.data[0];
-
-			Vue.$log.debug('game/load', gameData);
+			const data = await api.games.get(id);
+			const gameData = data[0];
 
 			commit(mutationTypes.game.UPDATE, gameData);
 			commit(mutationTypes.game.LOADED);
@@ -275,13 +267,12 @@ const actions = {
 	},
 
 	async createDecks({ dispatch, state }) {
+		this._vm.$log.debug('game/createDecks -> ', state);
+
 		try {
 			// Returns after all decks have been initialized
-			const res = await api.games.createDecks(state.id);
-
-			this._vm.$log.debug('game/createDecks -> ', res);
-
-			const ids = res.data.deckIds;
+			const data = await api.games.createDecks(state.id);
+			const ids = data.deckIds;
 
 			try {
 				await api.games.update(state.id, { status: GAME_STATUS.SHUFFLE });
@@ -295,7 +286,7 @@ const actions = {
 				throw new Error(err);
 			}
 
-			return res.data;
+			return data;
 		} catch (err) {
 			throw new Error(err);
 		}

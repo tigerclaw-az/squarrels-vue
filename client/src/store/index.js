@@ -41,8 +41,8 @@ const actions = {
 		}
 
 		try {
-			const res = await api.players.get(player.id);
-			const pl = res.data[0];
+			const data = await api.players.get(player.id);
+			const pl = data[0];
 
 			commit(mutationTypes.root.LOGIN, pl);
 

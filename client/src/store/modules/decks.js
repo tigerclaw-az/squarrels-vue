@@ -93,10 +93,10 @@ const actions = {
 		await dispatch('sound/play', this._vm.$sounds.drawCard, { root: true });
 
 		try {
-			const res = await api.decks.drawCard(mainDeck.id, options);
+			const data = await api.decks.drawCard(mainDeck.id, options);
 
-			if (res.data && res.data.card) {
-				return res.data.card;
+			if (data.card) {
+				return data.card;
 			}
 
 			throw new Error('No card returned!');
@@ -114,8 +114,8 @@ const actions = {
 		}
 
 		try {
-			const res = await api.decks.get(ids.join(','));
-			const decks = res.data;
+			const data = await api.decks.get(ids.join(','));
+			const decks = data;
 
 			decks.forEach(deck => {
 				commit(mutationTypes.decks.UPDATE, deck);

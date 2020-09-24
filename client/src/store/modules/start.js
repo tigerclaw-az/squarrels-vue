@@ -18,11 +18,7 @@ const actions = {
 
 		api.games
 			.create(playerId)
-			.then(res => {
-				const game = res.data;
-
-				this._vm.$log.debug('start/createGame', this, game);
-
+			.then(data => {
 				commit(mutationTypes.start.GAME_CREATE, { wait: false });
 				// Websocket will trigger 'wsGame/create'
 			})
@@ -52,12 +48,10 @@ const actions = {
 
 		api.games
 			.get()
-			.then(res => {
-				const gamesData = res.data;
+			.then(data => {
+				this._vm.$log.debug('start/loadGames', data);
 
-				this._vm.$log.debug('start/loadGames', gamesData);
-
-				for (const game of gamesData) {
+				for (const game of data) {
 					commit(mutationTypes.start.ADD_GAME, game);
 				}
 			})

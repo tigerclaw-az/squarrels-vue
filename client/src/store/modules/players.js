@@ -134,12 +134,12 @@ const actions = {
 		}
 	},
 	async add({ dispatch }, plArr) {
-		this._vm.$log.debug('add()', plArr);
+		this._vm.$log.debug('players/add', plArr);
 
 		try {
-			const res = await api.players.get(plArr.join(','));
+			const data = await api.players.get(plArr.join(','));
 
-			return dispatch('updateLocalPlayer', res.data[0]);
+			return dispatch('updateLocalPlayer', data[0]);
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
@@ -183,12 +183,12 @@ const actions = {
 		const plData = Object.assign({}, plDefault, plObj);
 
 		try {
-			const res = await api.players.create(plData);
+			const data = await api.players.create(plData);
 
-			commit(mutationTypes.root.LOGIN, res.data, { root: true });
-			await dispatch('updateLocalPlayer', res.data);
+			commit(mutationTypes.root.LOGIN, data, { root: true });
+			await dispatch('updateLocalPlayer', data);
 
-			return res.data;
+			return data;
 		} catch (err) {
 			this._vm.$log.error(err);
 			throw new Error(err);
@@ -279,12 +279,10 @@ const actions = {
 		}
 
 		try {
-			const res = await api.players.get(ids.join(','));
-
-			this._vm.$log.debug('api/players/get', res);
+			const data = await api.players.get(ids.join(','));
 
 			return Promise.all(
-				res.data.map(async plData => {
+				data.map(async plData => {
 					await dispatch('updateLocalPlayer', plData);
 				}),
 			);
