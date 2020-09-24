@@ -2,14 +2,24 @@
 
 > Squarrels card game done in Vue.js
 
-# Server (nodemon, express, mongo)
+# Setup
+
+1. Add entry to your `/etc/hosts` file with: `squarrels 127.0.0.1`
+1. Clone the repo
+2. Start the server with Docker, must have `docker-compose` installed to run
+3. Start the client
+4. Open 2 different browser instances and navigate to `http://squarrels:8181`
+5. Enter a different name for each player
+6. Create games and join them with each player
+
+## Server (nodemon, express, mongo)
 
 ``` bash
 $ cd server
 $ docker-compose up --build
 ```
 
-# Client (vue-cli)
+## Client (vue-cli)
 
 ``` bash
 $ cd client
