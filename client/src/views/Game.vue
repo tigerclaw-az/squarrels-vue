@@ -106,6 +106,9 @@ export default {
 			isLoaded: false,
 		};
 	},
+	errorCaptured: (err, vm, _info) => {
+		vm.$toasted.error(err);
+	},
 	beforeRouteLeave(to, from, next) {
 		if (this.$store.state.websocket.isConnected) {
 			this.unload(this.id)
@@ -198,7 +201,13 @@ export default {
 		decks: {
 			deep: true,
 			handler: async function(decksState) {
-				this.$log.debug('Game::decks -> ', decksState, this);
+				this.$log.debug(
+					'Game::decks -> ',
+					decksState.ids,
+					decksState.isLoaded,
+					decksState.isShuffled,
+					this.status,
+				);
 
 				if (
 					isEmpty(decksState.ids) ||
@@ -217,28 +226,6 @@ export default {
 				}
 			},
 		},
-		// myPlayer: {
-		// 	immediate: true,
-		// 	handler: async function(player) {
-		// 		this.$log.info('Game:myPlayer :: ', player);
-
-		// 		if (!player.id) {
-		// 			return;
-		// 		}
-
-		// 		if (this.playerExists && player.gameId === this.id) {
-		// 			return Promise.resolve();
-		// 		}
-
-		// 		await this.$store.dispatch({
-		// 			type: 'game/addPlayer',
-		// 			gameId: this.id,
-		// 			playerId: player.id,
-		// 		});
-
-		// 		this.isLoaded = true;
-		// 	},
-		// },
 	},
 	mounted: function() {
 		this.$store
@@ -254,6 +241,8 @@ export default {
 				}
 			})
 			.then(() => {
+				this.$log.debug('players loaded :: ', this.myPlayer);
+
 				if (this.playerExists && this.myPlayer.gameId === this.id) {
 					return Promise.resolve();
 				}
