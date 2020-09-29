@@ -79,7 +79,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex';
-import { filter, includes, isEmpty } from 'lodash';
+import { filter, includes, isEmpty, isString } from 'lodash';
 
 import { config } from '@/config';
 import { GAME_STATUS } from '@/constants';
@@ -141,7 +141,7 @@ export default {
 		allowMorePlayers() {
 			return (
 				this.roundNumber === 1 &&
-				this.status === 'INIT' &&
+				this.status === GAME_STATUS.INIT &&
 				this.playerIds.length < config.MAX_PLAYERS
 			);
 		},
@@ -154,7 +154,7 @@ export default {
 		isCreator() {
 			let createdById = this.createdBy;
 
-			if (createdById && typeof createdById !== 'string') {
+			if (createdById && !isString(createdById)) {
 				createdById = createdById.id;
 			}
 
@@ -168,7 +168,9 @@ export default {
 		},
 		showOverlay() {
 			return (
-				(!this.isLoaded || this.needPlayers || this.status === 'INIT') &&
+				(!this.isLoaded ||
+					this.needPlayers ||
+					this.status === GAME_STATUS.INIT) &&
 				!this.isWinter
 			);
 		},
@@ -177,12 +179,12 @@ export default {
 				this.roundNumber === 1 &&
 				this.isCreator &&
 				!this.needPlayers &&
-				this.status === 'INIT'
+				this.status === GAME_STATUS.INIT
 			);
 		},
 	},
 	watch: {
-		deckIds: {
+		'deckIds': {
 			handler: async function(ids) {
 				this.$log.debug('Game::deckIds -> ', ids, this);
 
@@ -198,26 +200,16 @@ export default {
 				}
 			},
 		},
-		decks: {
+		'decks.isShuffled': {
 			deep: true,
-			handler: async function(decksState) {
-				this.$log.debug(
-					'Game::decks -> ',
-					decksState.ids,
-					decksState.isLoaded,
-					decksState.isShuffled,
-					this.status,
-				);
+			handler: async function(isShuffled) {
+				this.$log.debug('Game::decks.isShuffled -> ', isShuffled, this.status);
 
 				if (
-					isEmpty(decksState.ids) ||
-					!decksState.isLoaded ||
-					!decksState.isShuffled
+					this.isCreator &&
+					isShuffled &&
+					this.status === GAME_STATUS.SHUFFLE
 				) {
-					return;
-				}
-
-				if (this.isCreator && this.status === GAME_STATUS.SHUFFLE) {
 					try {
 						await this.$store.dispatch({ type: 'game/start' });
 					} catch (err) {
