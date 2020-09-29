@@ -13,10 +13,12 @@ class MongooseSeed {
 			...dbOptions,
 		};
 
-		mongoose.Promise = seedOptions.Promise || global.Promise;
-		mongoose.set('debug', process.env.MONGOOSE_DEBUG || false);
+		const mDebug = process.env.MONGOOSE_DEBUG || false;
 
 		this.logger = seedOptions.logger || null;
+
+		mongoose.Promise = seedOptions.Promise || global.Promise;
+		mongoose.set('debug', JSON.parse(mDebug));
 	}
 
 	connect(db) {

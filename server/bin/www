@@ -17,7 +17,7 @@ mongooseSeed
 
 		mongooseSeed.loadModels(path.join(__dirname, '../config/models'));
 
-		if (process.env.CLEAR_MODELS === true) {
+		if (JSON.parse(process.env.CLEAR_MODELS)) {
 			await mongooseSeed.clearAll();
 		}
 
