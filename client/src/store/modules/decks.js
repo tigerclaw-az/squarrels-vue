@@ -138,6 +138,7 @@ const actions = {
 	},
 
 	unload({ commit }) {
+		commit(mutationTypes.decks.CARDS_SHUFFLED, false);
 		commit(mutationTypes.decks.INIT);
 	},
 };
