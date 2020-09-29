@@ -9,6 +9,7 @@ services:
     build: ./server
     ports:
       - "${PORT}:${PORT}"
+      - "${DEBUG_PORT}:${DEBUG_PORT}"
     depends_on:
       - mongo
     volumes:

@@ -1,5 +1,5 @@
 {
-	"ignore": ["bin/server.js", "data/**", "nodemon.json", "package*.json", ".eslintrc", "README.md"],
+	"ignore": ["bin/server.js", "data/*", "nodemon.json", "package*.json", ".eslintrc", "README.md"],
 	"restartable": "rs",
-	"verbose": true
+	"verbose": false
 }

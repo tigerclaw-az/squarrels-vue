@@ -16,8 +16,9 @@ COPY lib/ lib/
 COPY routes/ routes/
 COPY public/ public/
 
-ENV PORT 3100
 EXPOSE 3100
+EXPOSE 5858
 
 RUN ls -la
-CMD /wait && node bin/server.js
+# CMD /wait && node --inspect=127.0.0.1:4000 bin/server.js
+CMD /wait && npm run debug

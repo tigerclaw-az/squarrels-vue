@@ -2,8 +2,10 @@
 	"name": "squarrels-vue-server",
 	"version": "0.1.0",
 	"private": true,
+	"main": "bin/www",
 	"scripts": {
-		"start": "node bin/server.js",
+		"start": "nodemon bin/www",
+		"debug": "nodemon -e js,json --inspect=0.0.0.0:5858 bin/www",
 		"lint": "eslint ."
 	},
 	"dependencies": {
