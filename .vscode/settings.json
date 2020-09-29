@@ -1,0 +1,8 @@
+{
+	"eslint.workingDirectories": [
+		"./client",
+		"./server"
+	],
+	"eslint.format.enable": true,
+	"eslint.lintTask.enable": true,
+}
