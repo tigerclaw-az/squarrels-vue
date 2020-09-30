@@ -99,7 +99,7 @@ export default {
 .container_players {
 	align-items: flex-start;
 	display: flex;
-	flex: 1 0 45%;
+	flex: 1 0 48%;
 	flex-flow: column;
 	height: calc(100% - 2rem);
 	place-content: start space-between;
