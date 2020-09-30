@@ -150,14 +150,16 @@ class Game {
 		const deckIds = [...game.deckIds];
 		const playerIds = [...game.playerIds];
 
-		logger.debug('decks -> ', deckIds);
-		logger.debug('players -> ', playerIds);
+		logger.debug('deckIds -> ', deckIds);
+		logger.debug('playerIds -> ', playerIds);
 
 		try {
 			const decksDeleted = await this.deck.delete(deckIds);
 
+			logger.debug('decksDeleted -> ', decksDeleted);
+
 			if (!decksDeleted || decksDeleted.deletedCount !== deckIds.length) {
-				throw new Error('DECKS NOT DELTED!');
+				throw new Error('DECKS NOT DELETED!');
 			}
 
 			wss.broadcast(
