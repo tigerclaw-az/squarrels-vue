@@ -40,11 +40,10 @@ class Player {
 		return this.update(id, newGameData);
 	}
 
-	update(id, data, sid) {
+	async update(id, data, sid) {
 		const playerQuery = { _id: id };
 		const options = { new: true };
-		const cardsDefer = Q.defer();
-		const defer = Q.defer();
+		let cardsToAdd = [];
 
 		logger.debug('update -> ', id, data, sid);
 
@@ -56,65 +55,52 @@ class Player {
 			if (data.addCards) {
 				// Get existing cards from player and merge them with the given cards
 				// prettier-ignore
-				this
-					.findPlayersWithCards(playerQuery)
-					.then(pl => {
-						logger.debug('pl -> ', pl);
-						cardsDefer.resolve(
-							union(data.cardsInHand, pl[0].cardsInHand)
-						);
-					});
+				const pl = await this.findPlayersWithCards(playerQuery);
+
+				logger.debug('pl -> ', pl);
+				cardsToAdd = union(data.cardsInHand, pl[0].cardsInHand);
 			} else {
-				cardsDefer.resolve(data.cardsInHand);
+				cardsToAdd = data.cardsInHand;
 			}
-		} else {
-			cardsDefer.resolve([]);
 		}
 
-		cardsDefer.promise
-			.then(cards => {
-				logger.debug('cardsAdded -> ', cards);
+		const plUpdates = {
+			...data,
+		};
 
-				if (!isEmpty(cards)) {
-					data.cardsInHand = cards;
-				}
+		if (!isEmpty(cardsToAdd)) {
+			plUpdates.cardsInHand = cardsToAdd;
+			plUpdates.totalCards = cardsToAdd.length;
+		}
 
-				if (Object.prototype.hasOwnProperty.call(data, 'cardsInHand')) {
-					data.totalCards = data.cardsInHand.length;
-				}
+		logger.debug('plUpdates -> ', plUpdates);
 
-				// prettier-ignore
-				this.model
-					.findByIdAndUpdate(playerQuery._id, data, options)
-					.select('+sessionId +cardsInHand')
-					.populate({
-						path: 'cardsInHand',
-						model: 'Card',
-						options: { sort: '-amount' },
-					})
-					.then(doc => {
-						logger.debug('updated -> ', doc);
+		try {
+			const doc = await this.model.findByIdAndUpdate(playerQuery._id, plUpdates, options).select('+sessionId +cardsInHand')
+				.populate({
+					path: 'cardsInHand',
+					model: 'Card',
+					options: { sort: '-amount' },
+				});
 
-						if (!doc || isEmpty(doc)) {
-							return defer.reject('ERROR: Catastrophe!!');
-						}
+			logger.debug('updated -> ', doc);
 
-						const wsData = {
-							namespace: 'wsPlayers',
-							action: 'update',
-							nuts: doc,
-						};
+			if (!doc || isEmpty(doc)) {
+				throw new Error('ERROR: Catastrophe!!');
+			}
 
-						wss.broadcast(wsData, sid);
+			const wsData = {
+				namespace: 'wsPlayers',
+				action: 'update',
+				nuts: doc,
+			};
 
-						defer.resolve(doc);
-					})
-					.catch(err => {
-						defer.reject(err);
-					});
-			});
+			wss.broadcast(wsData, sid);
 
-		return defer.promise;
+			return doc;
+		} catch (e) {
+			throw new Error(e);
+		}
 	}
 }
 

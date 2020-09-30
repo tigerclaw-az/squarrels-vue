@@ -206,101 +206,83 @@ class PlayerActions extends WSSActions {
 		this.send({ action: `actioncard_${data.action}`, nuts });
 	}
 
-	whirlwind(data) {
+	async whirlwind(data) {
 		logger.debug(data);
 
 		const gameId = data.gameId;
+		const players = await this.player.findPlayersWithCards({ gameId });
+		const playersOrder = [...players];
+		const activePlayerIndex = players.findIndex(pl => pl.isActive);
+		const activePlayer = players[activePlayerIndex];
 
-		this.player
-			.findPlayersWithCards({ gameId })
-			.then(players => {
-				let cardIds = [];
-				let startPlayer = 0;
+		logger.debug('players -> ', players);
+		logger.debug('activePlayer -> ', activePlayer);
 
-				const dealCards = () => {
-					const playersOrder = union(
-						players.slice(startPlayer),
-						players.slice(0, startPlayer)
+		// Move active player from current order so they receive cards first
+		playersOrder.splice(activePlayerIndex, 1);
+		playersOrder.splice(0, 0, activePlayer);
+
+		const dealCards = cardIds => {
+			logger.debug('playersOrder -> ', playersOrder);
+			logger.debug('dealCards -> ', cardIds);
+
+			const pIt = playerIt(playersOrder);
+
+			return cardIds.reduce(async(promise, id) => {
+				await promise;
+
+				const player = pIt.next();
+
+				try {
+					return this.player.update(
+						player.id,
+						{
+							addCards: true,
+							cardsInHand: [id],
+						},
+						this.sid,
 					);
+				} catch (e) {
+					logger.error(e);
+					throw new Error(e);
+				}
+			}, Promise.resolve());
+		};
 
-					logger.debug('cardIds (before) -> ', cardIds);
+		try {
+			// Remove cards from ALL players, then shuffle cards and deal each card back to all players
+			Promise.all(players.map(async pl => {
+				await this.player.update(
+					pl.id,
+					{ cardsInHand: [] },
+					this.sid
+				);
 
-					cardIds = _(cardIds)
-						.flatten()
-						.shuffle()
-						.value();
+				return pl.cardsInHand;
+			})).then(cards => {
+				logger.debug('cardIds (before) -> ', cards);
 
-					logger.debug('cardIds (after) -> ', cardIds);
+				const cardIds = _(cards)
+					.flatten()
+					.shuffle()
+					.value();
 
-					const pIt = playerIt(playersOrder);
+				logger.debug('cardIds (after) -> ', cardIds);
 
-					cardIds.forEach(id => {
-						const player = pIt.next();
-
-						player.cardsInHand.push(id);
-					});
-
-					const playersUpdated = [];
-
-					playersOrder.forEach(pl => {
-						const playerData = {
-							cardsInHand: pl.cardsInHand,
-						};
-
-						logger.debug('playerData -> ', playerData);
-
-						playersUpdated.push(
-							this.player.update(
-								pl.id,
-								playerData,
-								this.sid
-							)
-						);
-					});
-
-					// setTimeout(() => {
-					return Promise.all(playersUpdated)
+				setTimeout(() => {
+					dealCards(cardIds)
 						.then(() => {
-							return this.game.resetActionCard(gameId, this.sid)
-								.catch(err => {
-									logger.error(`ERROR: Unable to reset action card -> ${err}`);
-								});
+							return this.game.resetActionCard(gameId, this.sid);
 						})
 						.catch(err => {
-							logger.error(err);
+							logger.error(`ERROR: Unable to reset action card -> ${err}`);
+							throw new Error(err);
 						});
-					// }, 1500);
-				};
-
-				logger.debug('players -> ', players);
-
-				const updatePromises = [];
-
-				players.forEach((pl, index) => {
-					const plCards = pl.cardsInHand.slice(); // Copy array
-
-					cardIds = union(cardIds, plCards);
-
-					// Remove cards from player's hand
-					pl.cardsInHand = [];
-
-					updatePromises.push(
-						this.player.update(
-							pl.id,
-							{ cardsInHand: [] },
-							this.sid
-						)
-					);
-
-					if (pl.isActive) {
-						startPlayer = index;
-					}
-				});
-
-				Promise.all(updatePromises).then(() => {
-					setTimeout(dealCards, 1000);
-				});
+				}, 1000);
 			});
+		} catch (e) {
+			logger.error(e);
+		}
 	}
 }
 

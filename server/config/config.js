@@ -9,6 +9,7 @@ log.configure({
 		'default': { appenders: ['console'], level: process.env.LOGLEVEL },
 		'lib:PlayerActions': { appenders: ['console'], level: 'DEBUG' },
 		'modules:deck': { appenders: ['console'], level: 'DEBUG' },
+		'modules:player': { appenders: ['console'], level: 'DEBUG' },
 		'routes:decks': { appenders: ['console'], level: 'DEBUG' },
 	},
 });

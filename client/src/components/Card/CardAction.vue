@@ -191,24 +191,14 @@ export default {
 		position: relative;
 	}
 
-	@include flip-card(2s) {
-		&.action--whirlwind {
-			animation-duration: 3s;
-			animation-name: action-whirlwind;
-		}
-	}
+	@include flip-card(2s) {}
 
 	left: 0;
 	opacity: 1;
-	// position: absolute;
 	transform: scale(2);
 	transition-duration: 0.25s;
 	transition-property: transform, opacity;
 	z-index: 100;
-
-	&.whirlwind {
-		transition-delay: 2.5s;
-	}
 
 	&.shown {
 		transform: scale(1);
