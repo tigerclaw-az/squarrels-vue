@@ -28,7 +28,7 @@ const getters = {
 };
 
 const actions = {
-	async dealCards({ dispatch }, playerIds) {
+	dealCards({ dispatch }, playerIds) {
 		this._vm.$log.debug('decks/dealCards', playerIds);
 
 		const drawCardOptions = { filter: { cardType: 'number' } };
@@ -38,14 +38,14 @@ const actions = {
 		// for all players to be dealt cards before starting game
 		let i = 0;
 
-		await [...Array(config.MAX_CARDS)].reduce(async promise => {
+		return [...Array(config.MAX_CARDS)].reduce(async promise => {
 			try {
 				await promise;
 
 				this._vm.$log.debug('decks/dealCards :: ', i);
 				i++;
 
-				await playerIds.reduce(async(plPromise, id) => {
+				return Array.from(playerIds).reduce(async(plPromise, id) => {
 					try {
 						await plPromise;
 
@@ -53,7 +53,7 @@ const actions = {
 
 						this._vm.$log.debug('decks/dealCards:cardDrawn :: ', cardDrawn, id);
 
-						await dispatch(
+						return dispatch(
 							'players/addCards',
 							{ id, cards: [cardDrawn] },
 							{ root: true },

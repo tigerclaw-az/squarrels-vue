@@ -202,10 +202,16 @@ export default {
 		},
 		'decks.isShuffled': {
 			deep: true,
-			handler: async function(isShuffled) {
-				this.$log.debug('Game::decks.isShuffled -> ', isShuffled, this.status);
+			handler: async function(isShuffled, prev) {
+				this.$log.debug(
+					'Game::decks.isShuffled -> ',
+					isShuffled,
+					prev,
+					this.status,
+				);
 
 				if (
+					isShuffled !== prev &&
 					this.isCreator &&
 					isShuffled &&
 					this.status === GAME_STATUS.SHUFFLE
