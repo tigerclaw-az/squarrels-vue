@@ -73,6 +73,8 @@ export default {
 		}
 
 		this.shuffleCards();
+		// this.shuffleCount = 2;
+		// this.cardsAnimated = this.cards.length;
 	},
 	methods: {
 		shuffleCards() {
@@ -88,11 +90,11 @@ export default {
 			for (let i = 0; i < this.totalCards; ++i) {
 				const start = 0;
 				// const end = Math.ceil(60 * Math.random() + 120);
-				const end = 105;
+				const end = 80;
 
 				const card = {
 					index: i,
-					speed: 15,
+					speed: 1000 / 60,
 					start,
 					end,
 				};
@@ -108,18 +110,16 @@ export default {
 
 			left.forEach(c => {
 				setTimeout(() => {
-					this.animateCard(c);
-				}, 120 * Math.random());
+					requestAnimationFrame(this.animateCard.bind(this, c));
+				});
 			});
 			right.forEach(c => {
 				setTimeout(() => {
-					this.animateCard(c);
-				}, 120 * Math.random());
+					requestAnimationFrame(this.animateCard.bind(this, c));
+				});
 			});
 		},
 		animateCard(c) {
-			// this.$log.debug(c);
-
 			c.start -= c.speed;
 
 			this.$set(this.cardStyles[c.index], c.direction, c.start);
@@ -146,10 +146,10 @@ export default {
 				c.end = 0;
 
 				if (c.speed > 0) {
-					c.speed *= -1;
+					c.speed *= -0.84;
 				}
 
-				c.speed += 1;
+				c.speed++;
 				c.req = requestAnimationFrame(this.animateCard.bind(this, c));
 			} else {
 				this.$set(this.cardStyles[c.index], c.direction, 0);
