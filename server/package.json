@@ -4,8 +4,9 @@
 	"private": true,
 	"main": "bin/www",
 	"scripts": {
-		"start": "nodemon bin/www",
-		"debug": "nodemon -e js,json --inspect=0.0.0.0:5858 bin/www",
+		"serve": "nodemon bin/www",
+		"serve:debug": "nodemon -e js,json --inspect=0.0.0.0:5858 bin/www",
+		"start": "docker-compose up --build",
 		"lint": "eslint ."
 	},
 	"dependencies": {

@@ -21,4 +21,4 @@ EXPOSE 5858
 
 RUN ls -la
 # CMD /wait && node --inspect=127.0.0.1:4000 bin/server.js
-CMD /wait && npm run debug
+CMD /wait && npm run serve:debug
