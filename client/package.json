@@ -23,7 +23,7 @@
 		"vue": "^2.6.12",
 		"vue-awesome": "^3.4.0",
 		"vue-native-websocket": "^2.0.14",
-		"vue-router": "^3.4.3",
+		"vue-router": "^3.4.5",
 		"vue-toasted": "^1.1.28",
 		"vuejs-logger": "^1.5.4",
 		"vuex": "^3.5.1"
