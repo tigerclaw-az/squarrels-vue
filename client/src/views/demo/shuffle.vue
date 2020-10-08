@@ -1,33 +1,16 @@
 <template>
 	<div class="deck-container">
-		<label>Shuffle</label>
-		<input v-model="isShuffling" type="checkbox" />
-		<div
-			:class="{
-				'can-draw': true,
-			}"
-			class="deck"
-		>
-			<div class="cards-group" @click="onClick">
-				<div
-					v-show="isDrawingCard"
-					ref="card"
-					:class="{ 'has-card': cardDrawn }"
-					class="card-drawn"
-				>
-					<div class="btn-card card blank--"></div>
-					<Card
-						v-if="cardDrawn"
-						:id="cardDrawn.id"
-						:card-data="cardDrawn"
-						card-type="deck"
-					></Card>
-				</div>
+		<b-row>
+			<label>Shuffle</label>
+			<input v-model="isShuffling" type="checkbox" />
+		</b-row>
+		<div class="deck">
+			<div class="cards-group">
 				<Card
 					v-for="(n, index) in 120"
 					:key="index"
 					ref="deck"
-					:card-style="cardPosition[index]"
+					:card-style="cardPositions[index]"
 					card-type="deck"
 				/>
 			</div>
@@ -44,13 +27,10 @@ export default {
 	},
 	data() {
 		return {
-			isDealing: false,
-			isDrawingCard: false,
 			isShuffling: false,
-			cardDrawn: {},
 			cards: [],
-			cardPosition: [],
-			cardStyle: [],
+			cardPositions: [],
+			cardStyles: [],
 			cardsShuffled: 0,
 		};
 	},
@@ -69,29 +49,31 @@ export default {
 		for (let i = 0; i < this.cards.length; i++) {
 			const pos = i * -0.25;
 
-			this.$set(this.cardStyle, i, {
+			this.$set(this.cardStyles, i, {
 				left: 0,
 				right: 0,
 				top: pos,
 				zIndex: i,
 			});
-			this.$set(this.cardPosition, i, this.getStyle(i));
+			this.$set(this.cardPositions, i, this.getStyle(i));
 		}
 	},
 	methods: {
 		getStyle(index) {
-			const style = this.cardStyle[index];
+			const style = this.cardStyles[index];
 
 			const xPos = style.left === 0 ? style.right * -1 : style.left;
 			const yPos = style.top;
 
 			return {
-				transform: `translate(${xPos}px, ${yPos}px)`,
+				transform: `translate3d(${xPos}px, ${yPos}px, 0)`,
 				zIndex: style.zIndex,
 			};
 		},
-		onClick() {
-			this.isDrawingCard = true;
+		setCardStyle(card, styleObj) {
+			this.$set(this.cardPositions[card.index], 'transform', styleObj.transform);
+
+			this.$set(this.cardPositions[card.index], 'zIndex', styleObj.zIndex);
 		},
 		shuffleCards() {
 			const cards = this.$refs.deck;
@@ -103,8 +85,7 @@ export default {
 
 			for (let i = 0; i < cards.length; ++i) {
 				const start = 0;
-				// const end = Math.ceil(60 * Math.random() + 120);
-				const end = 105;
+				const end = 90;
 
 				const card = {
 					index: i,
@@ -124,15 +105,15 @@ export default {
 
 			this.$log.debug(left, right);
 
-			left.forEach(c => {
+			left.forEach((c, idx) => {
 				setTimeout(() => {
 					this.animateCard(c);
-				}, 120 * Math.random());
+				}, (25 * idx) * 0.16);
 			});
-			right.forEach(c => {
+			right.forEach((c, idx) => {
 				setTimeout(() => {
 					this.animateCard(c);
-				}, 120 * Math.random());
+				}, (25 * idx) * 0.16);
 			});
 		},
 		animateCard(c) {
@@ -140,27 +121,21 @@ export default {
 
 			c.start -= c.speed;
 
-			this.$set(this.cardStyle[c.index], c.direction, c.start);
-			const style = this.cardStyle[c.index];
+			this.$set(this.cardStyles[c.index], c.direction, c.start);
+			const style = this.cardStyles[c.index];
 
 			const xPos = style.left === 0 ? style.right * -1 : style.left;
 			const yPos = style.top;
 
-			// this.$set(this.cardPosition, c.index, this.getStyle(c.index));
-			this.$set(
-				this.cardPosition[c.index],
-				'transform',
-				`translate(${xPos}px, ${yPos}px)`,
-			);
-
 			if (Math.abs(c.start) < c.end) {
 				c.req = requestAnimationFrame(this.animateCard.bind(this, c));
 			} else if (c.start < 0) {
-				this.$set(
-					this.cardPosition[c.index],
-					'zIndex',
-					Math.ceil(this.cards.length * Math.random()),
-				);
+				if (c.end !== 0) {
+					this.setCardStyle(c, {
+						transform: `translate3d(${xPos}px, ${yPos}px, 0)`,
+						zIndex: Math.ceil(this.cards.length * Math.random()),
+					});
+				}
 
 				c.end = 0;
 
@@ -171,13 +146,13 @@ export default {
 				c.speed += 1;
 				c.req = requestAnimationFrame(this.animateCard.bind(this, c));
 			} else {
-				this.$set(this.cardStyle[c.index], c.direction, 0);
-				// this.$set(this.cardPosition, c.index, this.getStyle(c.index));
-				this.$set(
-					this.cardPosition[c.index],
-					'transform',
-					`translate(0px, ${yPos}px)`,
-				);
+				this.$set(this.cardStyles[c.index], c.direction, 0);
+
+				this.setCardStyle(c, {
+					transform: `translate3d(0px, ${yPos}px, 0)`,
+					zIndex: c.index,
+				});
+
 				this.cardsShuffled++;
 			}
 		},
@@ -193,15 +168,9 @@ export default {
 	margin: 0 auto;
 	margin-top: 4rem;
 	max-width: 25%;
-}
-.card-drawn {
-	left: 0;
-	position: absolute;
-	top: 0;
-	z-index: 99;
 
-	&.has-card {
-		@include flip-card($flip-speed: 1s, $flip-delay: 0.5s);
+	.cards-group .btn-card {
+		transition: transform 0.5s ease-in-out;
 	}
 }
 </style>

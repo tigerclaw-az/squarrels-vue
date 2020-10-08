@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import store from '@/store/index';
 
-import Demo from '@/views/Demo.vue';
+import DemoIndex from '@/views/demo/index.vue';
 import Game from '@/views/Game.vue';
 import Login from '@/views/Login.vue';
 import Offline from '@/views/Offline.vue';
@@ -14,9 +14,10 @@ const router = new VueRouter({
 	mode: 'history',
 	routes: [
 		{
-			path: '/demo',
+			path: '/demo/:routeName',
 			name: 'demo',
-			component: Demo,
+			component: DemoIndex,
+			props: true,
 		},
 		{
 			path: '/offline',
