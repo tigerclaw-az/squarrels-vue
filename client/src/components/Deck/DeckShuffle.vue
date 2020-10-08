@@ -47,11 +47,15 @@ export default {
 	watch: {
 		cardsAnimated(val) {
 			if (val === this.cards.length) {
-				if (this.shuffleCount >= 1) {
-					this.$emit('update:cards-shuffled', true);
+				if (this.shuffleCount >= 2) {
+					setTimeout(() => {
+						this.$emit('update:cards-shuffled', true);
+					}, 750);
 				} else {
 					this.shuffleCount++;
-					this.shuffleCards();
+					setTimeout(() => {
+						this.shuffleCards();
+					}, 600);
 				}
 			}
 		},
@@ -67,7 +71,7 @@ export default {
 				zIndex: i,
 			});
 			this.$set(this.cardPositions, i, {
-				transform: `translate(0px, ${pos}px)`,
+				transform: `translate3d(0, ${pos}px, 0)`,
 				zIndex: i,
 			});
 		}
@@ -77,6 +81,10 @@ export default {
 		// this.cardsAnimated = this.cards.length;
 	},
 	methods: {
+		setCardStyle(card, styleObj) {
+			this.$set(this.cardPositions[card.index], 'transform', styleObj.transform);
+			this.$set(this.cardPositions[card.index], 'zIndex', styleObj.zIndex);
+		},
 		shuffleCards() {
 			this.cardsAnimated = 0;
 
@@ -89,8 +97,7 @@ export default {
 
 			for (let i = 0; i < this.totalCards; ++i) {
 				const start = 0;
-				// const end = Math.ceil(60 * Math.random() + 120);
-				const end = 80;
+				const end = 110;
 
 				const card = {
 					index: i,
@@ -108,18 +115,20 @@ export default {
 				}
 			}
 
-			left.forEach(c => {
+			left.forEach((c, idx) => {
 				setTimeout(() => {
-					requestAnimationFrame(this.animateCard.bind(this, c));
-				});
+					this.animateCard(c);
+				}, 25 * idx * 0.16);
 			});
-			right.forEach(c => {
+			right.forEach((c, idx) => {
 				setTimeout(() => {
-					requestAnimationFrame(this.animateCard.bind(this, c));
-				});
+					this.animateCard(c);
+				}, 25 * idx * 0.16);
 			});
 		},
 		animateCard(c) {
+			// this.$log.debug(c);
+
 			c.start -= c.speed;
 
 			this.$set(this.cardStyles[c.index], c.direction, c.start);
@@ -128,36 +137,32 @@ export default {
 			const xPos = style.left === 0 ? style.right * -1 : style.left;
 			const yPos = style.top;
 
-			this.$set(
-				this.cardPositions[c.index],
-				'transform',
-				`translate(${xPos}px, ${yPos}px)`,
-			);
-
 			if (Math.abs(c.start) < c.end) {
 				c.req = requestAnimationFrame(this.animateCard.bind(this, c));
 			} else if (c.start < 0) {
-				this.$set(
-					this.cardPositions[c.index],
-					'zIndex',
-					Math.ceil(this.cards.length * Math.random()),
-				);
+				if (c.end !== 0) {
+					this.setCardStyle(c, {
+						transform: `translate3d(${xPos}px, ${yPos}px, 0)`,
+						zIndex: Math.ceil(this.cards.length * Math.random()),
+					});
+				}
 
 				c.end = 0;
 
 				if (c.speed > 0) {
-					c.speed *= -0.84;
+					c.speed *= -1;
 				}
 
-				c.speed++;
+				c.speed += 1;
 				c.req = requestAnimationFrame(this.animateCard.bind(this, c));
 			} else {
 				this.$set(this.cardStyles[c.index], c.direction, 0);
-				this.$set(
-					this.cardPositions[c.index],
-					'transform',
-					`translate(0px, ${yPos}px)`,
-				);
+
+				this.setCardStyle(c, {
+					transform: `translate3d(0px, ${yPos}px, 0)`,
+					zIndex: c.index,
+				});
+
 				this.cardsAnimated++;
 			}
 		},
@@ -167,4 +172,8 @@ export default {
 
 <style lang="scss">
 @import '~@/components/Deck/deck';
+
+.cards-group .btn-card {
+	transition: transform 0.65s ease-in-out;
+}
 </style>
