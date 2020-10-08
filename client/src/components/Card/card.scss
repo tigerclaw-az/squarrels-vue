@@ -56,7 +56,6 @@ $card-images: (
 		height: map-get($card-height, "small") * 1px;
 		width: map-get($card-width, "small") * 1px;
 		position: absolute;
-		// transition: transform 0.16s ease-out;
 	}
 
 	.card {
