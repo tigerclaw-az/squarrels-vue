@@ -368,11 +368,6 @@ const mutations = {
 		state.isLoaded = true;
 	},
 
-	[mutationTypes.game.TOGGLE_DRAW_CARD](state, toggle) {
-		Vue.$log.debug('TOGGLE_DRAW_CARD', state.isDrawingCard, toggle);
-		state.isDrawingCard = toggle;
-	},
-
 	[mutationTypes.game.UPDATE](state, payload) {
 		Vue.$log.debug('mutation::game/update', state, payload);
 

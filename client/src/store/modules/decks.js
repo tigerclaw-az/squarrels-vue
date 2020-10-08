@@ -1,11 +1,12 @@
 import Vue from 'vue';
-import { find, reject, isArray, isEmpty } from 'lodash';
+import { find, isArray, isEmpty } from 'lodash';
 
 import api from '@/api/index';
 import { config } from '@/config';
 import mutationTypes from '@/store/mutation-types';
 
 const state = {
+	isCardDrawn: false,
 	isLoaded: false,
 	isShuffled: false,
 	ids: [],
@@ -28,7 +29,7 @@ const getters = {
 };
 
 const actions = {
-	dealCards({ dispatch }, playerIds) {
+	dealCards({ commit, dispatch }, playerIds) {
 		this._vm.$log.debug('decks/dealCards', playerIds);
 
 		const drawCardOptions = { filter: { cardType: 'number' } };
@@ -49,9 +50,13 @@ const actions = {
 					try {
 						await plPromise;
 
+						await dispatch('game/update', { isDrawingCard: true }, { root: true });
 						const cardDrawn = await dispatch('drawCard', drawCardOptions);
 
 						this._vm.$log.debug('decks/dealCards:cardDrawn :: ', cardDrawn, id);
+
+						await dispatch('game/update', { isDrawingCard: false }, { root: true });
+						commit(mutationTypes.decks.CARD_DRAWN, false);
 
 						return dispatch(
 							'players/addCards',
@@ -85,12 +90,14 @@ const actions = {
 		});
 	},
 
-	async drawCard({ dispatch, getters }, options = {}) {
+	async drawCard({ commit, dispatch, getters }, options = {}) {
 		const mainDeck = getters.getByType('main');
 
 		this._vm.$log.debug('decks/drawCard -> ', options, mainDeck);
 
 		await dispatch('sound/play', this._vm.$sounds.drawCard, { root: true });
+
+		commit(mutationTypes.decks.CARD_DRAWN, true);
 
 		try {
 			const data = await api.decks.drawCard(mainDeck.id, options);
@@ -101,6 +108,7 @@ const actions = {
 
 			throw new Error('No card returned!');
 		} catch (e) {
+			commit(mutationTypes.decks.CARD_DRAWN, false);
 			this._vm.$log.error(e);
 			throw new Error(e);
 		}
@@ -138,26 +146,33 @@ const actions = {
 	},
 
 	unload({ commit }) {
-		commit(mutationTypes.decks.CARDS_SHUFFLED, false);
+		this._vm.$log.debug('decks/unload');
+
 		commit(mutationTypes.decks.INIT);
 	},
 };
 
 const mutations = {
+	[mutationTypes.decks.CARD_DRAWN](state, val) {
+		state.isCardDrawn = val;
+	},
+
 	[mutationTypes.decks.CARDS_SHUFFLED](state, val) {
 		state.isShuffled = val;
 	},
 
 	[mutationTypes.decks.INIT](state) {
-		state.isLoaded = false;
-
 		for (const prop in state) {
 			if (typeof state[prop] === 'object') {
 				Vue.delete(state, prop);
+			} else {
+				state[prop] = false;
 			}
 		}
 
 		Vue.set(state, 'ids', []);
+
+		this._vm.$log.debug('decks.INIT :: ', state);
 	},
 
 	[mutationTypes.decks.LOADED](state) {

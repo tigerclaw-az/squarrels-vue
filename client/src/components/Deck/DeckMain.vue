@@ -11,20 +11,22 @@
 			<div v-show="!canDrawCard || isCardDrawn" class="overlay">
 				<icon name="ban" scale="8" class="icon" />
 			</div>
-			<div
-				v-show="isDrawingCard"
-				ref="card"
-				:class="{ 'has-card': cardDrawn }"
-				class="card-drawn"
-			>
-				<span class="btn-card card blank--"></span>
-				<Card
-					v-if="cardDrawn"
-					:id="cardDrawn.id"
-					:card-data="cardDrawn"
-					card-type="deck"
-				></Card>
-			</div>
+			<transition name="cardDrawn" @enter="onTransitionEnter">
+				<div
+					v-show="isDrawingCard"
+					ref="card"
+					:class="{ 'flip-card': cardDrawn }"
+					class="card-drawn"
+				>
+					<span ref="cardFlip" class="btn-card card blank--"></span>
+					<Card
+						v-if="cardDrawn"
+						:id="cardDrawn.id"
+						:card-data="cardDrawn"
+						card-type="deck"
+					></Card>
+				</div>
+			</transition>
 			<Card
 				v-for="(n, index) in totalCards"
 				:key="index"
@@ -51,11 +53,14 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
 import { mapGetters, mapState } from 'vuex';
 
 import Icon from 'vue-awesome/components/Icon';
 
 import Card from '@/components/Card/Card.vue';
+import { GAME_STATUS } from '@/constants';
+import mutationTypes from '@/store/mutation-types';
 
 export default {
 	name: 'deck-main',
@@ -71,13 +76,10 @@ export default {
 	},
 	data: function() {
 		return {
-			isCardDrawn: false,
+			// isCardDrawn: false,
 			cardDrawn: null,
-			cardDrawnPosition: { left: 0, top: 0 },
-			cardDrawnStyle: { transform: null },
 			cardPositions: [],
 			cardStyles: [],
-			cardsShuffled: 0,
 		};
 	},
 	computed: {
@@ -86,9 +88,7 @@ export default {
 			myPlayer: 'players/getMyPlayer',
 		}),
 		...mapState(['isAdmin']),
-		...mapState({
-			decks: state => state.decks,
-		}),
+		...mapState('decks', ['isCardDrawn']),
 		...mapState('game', ['isDrawingCard']),
 		dropdownList: function() {
 			return this.cards;
@@ -108,15 +108,12 @@ export default {
 				return;
 			}
 
-			// this.$cardDrawnEl.style.left = '0px';
-			this.cardDrawnPosition.left = 0;
-			this.cardDrawnPosition.top = 0;
-
-			// Animate card draw for all players
-			window.requestAnimationFrame(this.moveCard);
-
 			// Only valid for current player drawing card
-			if (this.isCardDrawn) {
+			if (
+				this.$store.state.game.status !== GAME_STATUS.DEALING &&
+				this.myPlayer.isActive &&
+				!this.isCardDrawn
+			) {
 				this.$store
 					.dispatch('decks/drawCard')
 					.then(card => {
@@ -141,22 +138,27 @@ export default {
 				zIndex: i,
 			});
 			this.$set(this.cardPositions, i, {
-				transform: `translate(0px, ${pos}px)`,
+				transform: `translate3d(0px, ${pos}px, 0)`,
 				zIndex: i,
 			});
 		}
 
-		// this.$cardDrawnEl = this.$el.querySelector('.card-drawn');
 		this.$nextTick(() => {
-			this.$cardDrawnEl = this.$refs.card;
-			this.$cardDrawnEl.addEventListener(
+			this.$cardFlipEl = this.$refs.cardFlip;
+			this.$cardFlipEl.addEventListener(
 				'animationend',
 				this.onCardDrawnAnimationEnd,
 			);
 		});
 	},
 	methods: {
+		onTransitionEnter(el) {
+			this.$log.debug(el);
+			// el.style.transform = 'translate(-200px, 200px)';
+		},
 		onCardDrawn: function(cardDrawn) {
+			this.$log.debug(cardDrawn);
+
 			const cardAction = cardDrawn.action;
 
 			let dispatchAction = 'players/addCards';
@@ -170,10 +172,12 @@ export default {
 			}
 
 			this.$store.dispatch(dispatchAction, cardData).then(() => {
-				this.isCardDrawn = false;
+				this.$store.commit(`decks/${mutationTypes.decks.CARD_DRAWN}`, false);
 				this.cardDrawn = null;
 			});
 		},
+		// This will get triggered after the card flip animation is completed,
+		// it will NOT trigger for cards being dealt to players
 		onCardDrawnAnimationEnd: function() {
 			this.$log.debug('animation ended -> ', this.cardDrawn);
 
@@ -183,8 +187,6 @@ export default {
 		},
 		onClick: function() {
 			if (this.canDrawCard) {
-				this.isCardDrawn = true;
-
 				this.$store.dispatch('players/drawCard', this.myPlayer);
 			}
 		},
@@ -200,20 +202,6 @@ export default {
 					this.$log.error(err);
 					this.$toasted.error(`Error drawing card! ${err}`);
 				});
-		},
-		moveCard: function() {
-			// const left = parseInt(this.$cardDrawnEl.style.left);
-			// this.$cardDrawnEl.style.left = left - 10 + 'px';
-
-			const xPos = (this.cardDrawnPosition.left -= 20);
-			const yPos = (this.cardDrawnPosition.top += 10);
-
-			// this.cardDrawnStyle.transform = `translate(${xPos}px, ${yPos}px)`;
-			this.$cardDrawnEl.style.transform = `translate(${xPos}px, ${yPos}px)`;
-
-			if (!this.cardDrawn && this.isDrawingCard) {
-				window.requestAnimationFrame(this.moveCard);
-			}
 		},
 	},
 };
@@ -249,11 +237,26 @@ export default {
 	left: 0;
 	position: absolute;
 	top: 0;
-	transition: transform 0s ease-in-out;
+	// transition: transform 0.5s ease-in-out;
 	z-index: 140;
 
-	&.has-card {
+	&.flip-card {
 		@include flip-card($flip-speed: 1s, $flip-delay: 0.75s);
+	}
+}
+
+.cardDrawn-enter-active,
+.cardDrawn-leave-active {
+	transition: transform 1.25s ease-in-out;
+}
+
+.cardDrawn-enter-to {
+	transform: translate3d(-200px, 200px, 0);
+}
+
+.cardDrawn-leave-to {
+	.card.btn-card {
+		opacity: 0;
 	}
 }
 
