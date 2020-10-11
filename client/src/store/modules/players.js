@@ -238,10 +238,10 @@ const actions = {
 
 		if (!payload.isQuarrel) {
 			data.hasStoredCards = true;
-		}
 
-		// TODO: Remove once discard is added to PlayerActions in websocket
-		dispatch('decks/discard', payload.card, { root: true });
+			// TODO: Remove once discard is added to PlayerActions in websocket
+			dispatch('decks/discard', payload.card, { root: true });
+		}
 
 		return dispatch('update', {
 			id: playerId,
