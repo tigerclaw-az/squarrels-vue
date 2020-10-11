@@ -14,11 +14,14 @@
 			<transition name="cardDrawn" @enter="onTransitionEnter">
 				<div
 					v-show="isDrawingCard"
-					ref="card"
 					:class="{ 'flip-card': cardDrawn }"
 					class="card-drawn"
 				>
-					<transition-group name="card-shown" @after-enter="afterCardShown">
+					<transition-group
+						name="card-shown"
+						mode="out-in"
+						@after-enter="afterCardShown"
+					>
 						<div key="blank" class="btn-card card blank--"></div>
 
 						<Card
@@ -175,9 +178,9 @@ export default {
 
 			try {
 				await this.$store.dispatch('game/update', { isDrawingCard: false });
+				this.cardDrawn = null;
 				await this.$store.dispatch(dispatchAction, cardData);
 				this.$store.commit(`decks/${mutationTypes.decks.CARD_DRAWN}`, false);
-				this.cardDrawn = null;
 			} catch (e) {
 				this.$log.error(e);
 				this.$toasted.error(e);
@@ -249,10 +252,13 @@ export default {
 	}
 }
 
+.cardDrawn-enter-active {
+	transform: translate3d(0, 0, 0);
+}
+
 .cardDrawn-enter-active,
 .cardDrawn-leave-active {
 	transition: opacity, transform 1.75s ease-in-out;
-	transform: translate3d(0, 0, 0);
 }
 
 .cardDrawn-enter-to {
@@ -264,7 +270,7 @@ export default {
 }
 
 .card-shown-leave-active {
-	opacity: 0;
+	// opacity: 0;
 }
 
 .dropdown {
