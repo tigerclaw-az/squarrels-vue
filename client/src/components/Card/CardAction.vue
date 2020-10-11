@@ -78,18 +78,6 @@ export default {
 	},
 	mounted: function() {
 		this.$store.dispatch('sound/play', this.$sounds.actionCard);
-
-		// this.showCard();
-		// this.$nextTick(() => {
-		// 	this.$el
-		// 		.querySelector('.card')
-		// 		.addEventListener('animationend', this.onAnimationEnd.bind(this));
-		// });
-
-		// if (!this.hoardCards.length) {
-		// 	this.instantAction = true;
-		// }
-
 		this.instantAction = true;
 	},
 	methods: {
@@ -113,17 +101,11 @@ export default {
 			}
 		},
 		showCard() {
-			const animationend = () => {
-				setTimeout(this.onAnimationEnd.bind(this), 1500);
-			};
-
-			this.$refs.card.addEventListener('animationend', animationend.bind(this));
+			setTimeout(this.onAnimationEnd.bind(this), 500);
 		},
 		async onAnimationEnd() {
 			const cardName = this.card.name;
 			const sound = this.$sounds[`actionCard${cardName}`];
-
-			this.isCardVisible = true;
 
 			if (sound) {
 				this.$store.dispatch('sound/play', sound);
@@ -191,8 +173,6 @@ export default {
 		position: relative;
 	}
 
-	@include flip-card(2s) {}
-
 	left: 0;
 	opacity: 1;
 	transform: scale(2);
@@ -202,9 +182,6 @@ export default {
 
 	&.shown {
 		transform: scale(1);
-	}
-
-	@include media-breakpoint-up(lg) {
 	}
 }
 </style>
