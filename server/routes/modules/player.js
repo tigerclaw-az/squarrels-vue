@@ -51,14 +51,13 @@ class Player {
 			return Promise.reject("ERROR: Missing 'id' for player update!");
 		}
 
+		const pl = (await this.findPlayersWithCards(playerQuery))[0];
+
+    logger.debug('pl -> ', pl);
+
 		if (!isEmpty(data.cardsInHand)) {
 			if (data.addCards) {
-				// Get existing cards from player and merge them with the given cards
-				// prettier-ignore
-				const pl = await this.findPlayersWithCards(playerQuery);
-
-				logger.debug('pl -> ', pl);
-				cardsToAdd = union(data.cardsInHand, pl[0].cardsInHand);
+				cardsToAdd = union(data.cardsInHand, pl.cardsInHand);
 			} else {
 				cardsToAdd = data.cardsInHand;
 			}
@@ -70,12 +69,13 @@ class Player {
 
 		if (!isEmpty(cardsToAdd)) {
 			plUpdates.cardsInHand = cardsToAdd;
-			plUpdates.totalCards = cardsToAdd.length;
 		}
 
+		plUpdates.totalCards = plUpdates.cardsInHand ? plUpdates.cardsInHand.length : pl.cardsInHand.length;
 		logger.debug('plUpdates -> ', plUpdates);
 
 		try {
+			// Should not need .populate() here, it will populate ALL players cards
 			const doc = await this.model.findByIdAndUpdate(playerQuery._id, plUpdates, options).select('+sessionId +cardsInHand')
 				.populate({
 					path: 'cardsInHand',
