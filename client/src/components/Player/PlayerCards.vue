@@ -124,7 +124,7 @@ export default {
 			}
 
 			if (this.isMyTurn) {
-				if (card.cardType === 'special' && this.player.totalCards > 1) {
+				if (card.cardType === 'special' && this.player.cardsInHand.length > 1) {
 					this.$toasted.error(
 						'You cannot discard this card unless it is your ONLY card.',
 					);

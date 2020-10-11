@@ -36,7 +36,7 @@
 			></PlayerCards>
 			<transition-group v-else tag="div" class="cards-group hand" name="cards">
 				<Card
-					v-for="n in player.totalCards"
+					v-for="n in player.cardsInHand.length"
 					:key="n"
 					:card-style="cardStyle(n)"
 					card-type="hand"
@@ -103,7 +103,7 @@ export default {
 	},
 	methods: {
 		cardStyle(index) {
-			const cardsCount = this.player.totalCards;
+			const cardsCount = this.player.cardsInHand.length;
 
 			const styles = {
 				'z-index': index + 1,
