@@ -108,7 +108,9 @@ const actions = {
 
 		// All players have selected a card
 		if (newCards.length === state.quarrelCount) {
-			commit(mutationTypes.game.UPDATE, { showQuarrel: true });
+			setTimeout(() => {
+				commit(mutationTypes.game.UPDATE, { showQuarrel: true });
+			}, 1000);
 		}
 	},
 	async addPlayer({ commit, dispatch, state }, { gameId, playerId }) {
