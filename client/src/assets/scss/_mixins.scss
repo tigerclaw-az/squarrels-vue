@@ -55,37 +55,18 @@
 	font-size: rem-calc($size);
 }
 
-@mixin flip-card($flip-speed: 3s, $flip-delay: 2.5s) {
+@mixin flip-card($flip-speed: 0.5s, $flip-delay: 0.5s) {
 	.card {
 		animation-fill-mode: forwards;
 		backface-visibility: hidden;
-
-		&.blank-- {
-			animation-duration: $flip-speed;
-			animation-name: spin;
-			animation-timing-function: linear;
-		}
+		transform: rotateY(180deg);
 	}
 
 	.btn-card {
 		.card {
-			animation-delay: $flip-delay;
-			animation-duration: 0.5s;
-			animation-name: spin-reverse;
-			animation-timing-function: ease-out;
-			transform: rotateY(-90deg);
+			animation: spin $flip-speed forwards ease-out;
 
 			@content;
-		}
-	}
-
-	&.instant {
-		.card {
-			animation-delay: 0.2s;
-
-			&.blank-- {
-				animation-duration: 0.25s;
-			}
 		}
 	}
 }

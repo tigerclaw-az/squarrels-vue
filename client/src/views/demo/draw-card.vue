@@ -7,26 +7,27 @@
 			class="deck"
 		>
 			<div class="cards-group" @click="onClick">
-				<transition
-
-					name="cardDrawn"
-					@enter="onTransition.enter"
-					@after-enter="onTransition.afterEnter"
-					@leave="onTransition.leave"
-				>
+				<transition name="cardDrawn" @enter="onTransition.enter">
 					<div
 						v-show="isDrawingCard"
 						ref="card"
-						:class="{ 'flip-card': cardDrawn }"
 						class="card-drawn"
+						:class="{ 'flip-card': cardDrawn }"
 					>
-						<span ref="cardFlip" class="btn-card card blank--"></span>
-						<Card
-							v-if="cardDrawn"
-							:id="cardDrawn.id"
-							:card-data="cardDrawn"
-							card-type="deck"
-						></Card>
+						<transition-group
+							name="card-shown"
+							@after-enter="onTransition.afterEnter"
+						>
+							<div v-if="isDrawingCard" key="blank" class="btn-card card blank--"></div>
+
+							<Card
+								v-if="cardDrawn"
+								:id="cardDrawn.id"
+								key="card"
+								:card-data="cardDrawn"
+								card-type="deck"
+							></Card>
+						</transition-group>
 					</div>
 				</transition>
 				<Card
@@ -66,15 +67,18 @@ export default {
 			onTransition: {
 				enter: (el, done) => {
 					this.$log.debug('enter', el);
+					this.$log.debug(el.classList, el.childNodes);
 					// el.style.transform = 'translate3d(200px, 200px, 0)';
+					// el.style.border = '2px solid yellow';
 					// done();
 				},
 				afterEnter: el => {
-					this.$log.debug('after-enter', el);
+					this.$log.debug('@afterEnter', el);
+					setTimeout(() => {
+						this.onCardDrawnAnimationEnd();
+					}, 500);
 				},
-				leave: el => {
-					// el.style.transform = 'translate3d(0, 0, 0)';
-				},
+
 			},
 		};
 	},
@@ -114,21 +118,21 @@ export default {
 		}
 
 		// this.$cardDrawnEl = this.$el.querySelector('.card-drawn');
-		this.$nextTick(() => {
-			this.$cardFlipEl = this.$refs.cardFlip;
-			this.$cardFlipEl.addEventListener(
-				'animationend',
-				this.onCardDrawnAnimationEnd,
-			);
-		});
+		// this.$nextTick(() => {
+		// 	this.$cardFlipEl = this.$refs.cardFlip;
+		// 	this.$cardFlipEl.addEventListener(
+		// 		'animationend',
+		// 		this.onCardDrawnAnimationEnd,
+		// 	);
+		// });
 	},
 	methods: {
 		onCardDrawn: function(cardDrawn) {
 			this.$log.debug(cardDrawn);
 			setTimeout(() => {
-				this.isDrawingCard = false;
 				this.cardDrawn = null;
-			}, 1500);
+				this.isDrawingCard = false;
+			}, 2500);
 		},
 		// This will get triggered after the card flip animation is completed,
 		// it will NOT trigger for cards being dealt to players
@@ -148,46 +152,7 @@ export default {
 					amount: 1,
 					cardType: 'number',
 				};
-			}, 3000);
-		},
-
-		// moveCard: function() {
-		// 	const xPos = (this.cardDrawnPosition.left -= 20);
-		// 	const yPos = (this.cardDrawnPosition.top += 10);
-
-		// 	this.$cardDrawnEl.style.transform = `translate(${xPos}px, ${yPos}px)`;
-
-		// 	this.$log.debug('x: ', `${xPos} < ${(window.innerWidth / 2) * -1}`);
-		// 	this.$log.debug('y: ', `${yPos} < ${window.innerHeight / 2}`);
-
-		// 	if (
-		// 		xPos < (window.innerWidth / 2) * -1 ||
-		// 		yPos > window.innerHeight / 2
-		// 	) {
-		// 		this.$log.debug(
-		// 			'! STOP !',
-		// 			this.isDrawingCard &&
-		// 				(isEmpty(this.cardDrawn) ||
-		// 					xPos > (window.innerWidth / 2) * -1 ||
-		// 					yPos < window.innerHeight / 2),
-		// 		);
-		// 	}
-
-		// 	if (this.isDrawingCard) {
-		// 		if (this.myPlayer.isActive && isEmpty(this.cardDrawn)) {
-		// 			window.requestAnimationFrame(this.moveCard);
-		// 		} else if (
-		// 			xPos < (window.innerWidth / 2) * -1 ||
-		// 			yPos < window.innerHeight
-		// 		) {
-		// 			window.requestAnimationFrame(this.moveCard);
-		// 		}
-		// 	}
-		// },
-		moveCard() {
-			// const xPos = -200;
-			// const yPos = 300;
-			// this.$refs.card.style.transform = `translate(${xPos}px, ${yPos}px)`;
+			}, 1000);
 		},
 	},
 };
@@ -221,30 +186,37 @@ export default {
 }
 
 .card-drawn {
-	// left: 0;
-	// position: absolute;
-	// top: 0;
-	// transition: transform 1.75s ease-in-out;
+	transition: transform 1.75s ease-in-out;
+	position: relative;
 	z-index: 140;
 
 	&.flip-card {
-		@include flip-card($flip-speed: 1s, $flip-delay: 0.75s);
+		@include flip-card($flip-speed: 0.5s, $flip-delay: 0.5s);
 	}
 }
 
-.cardDrawn-enter-active,
-.cardDrawn-leave-active {
-	transition: transform 1.75s ease-in-out;
+.cardDrawn-enter-active {
+	opacity: 1;
+	// transition: opacity, transform 1.75s ease-in-out;
+	transform: translate3d(0, 0, 0);
 }
 
 .cardDrawn-enter-to {
-	transform: translate3d(200px, 200px, 0);
+	transform: translate3d(200px, 0, 0);
 }
 
 .cardDrawn-leave-to {
-	.card.btn-card {
-		opacity: 0;
-	}
+	transition: opacity 1s linear;
+	opacity: 0;
+	// border: 2px dashed red;
+}
+
+.card-shown-enter-active {
+	opacity: 1;
+}
+.card-shown-leave-active {
+	transition: opacity 0.55s;
+	opacity: 0;
 }
 
 .dropdown {

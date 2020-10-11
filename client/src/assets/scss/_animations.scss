@@ -160,13 +160,27 @@
 }
 
 @keyframes spin {
-	to {
-		transform: rotateY(120deg);
-	}
+  0% {
+    transform: rotateZ(0deg) rotateY(180deg);
+  }
+  50% {
+    transform: rotateZ(-10deg) rotateY(90deg);
+  }
+  100% {
+    transform: rotateZ(0deg) rotateY(0deg);
+  }
+
 }
 
 @keyframes spin-reverse {
-	to {
-		transform: rotateY(0deg);
-	}
+  0% {
+    transform: rotateZ(0deg) rotateY(0deg);
+  }
+  50% {
+    transform: rotateZ(-10deg) rotateY(90deg);
+  }
+  100% {
+    transform: rotateZ(0deg) rotateY(180deg);
+  }
+
 }

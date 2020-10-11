@@ -18,13 +18,17 @@
 					:class="{ 'flip-card': cardDrawn }"
 					class="card-drawn"
 				>
-					<span ref="cardFlip" class="btn-card card blank--"></span>
-					<Card
-						v-if="cardDrawn"
-						:id="cardDrawn.id"
-						:card-data="cardDrawn"
-						card-type="deck"
-					></Card>
+					<transition-group name="card-shown" @after-enter="afterCardShown">
+						<div key="blank" class="btn-card card blank--"></div>
+
+						<Card
+							v-if="cardDrawn"
+							:id="cardDrawn.id"
+							key="card"
+							:card-data="cardDrawn"
+							card-type="deck"
+						></Card>
+					</transition-group>
 				</div>
 			</transition>
 			<Card
@@ -142,21 +146,19 @@ export default {
 				zIndex: i,
 			});
 		}
-
-		this.$nextTick(() => {
-			this.$cardFlipEl = this.$refs.cardFlip;
-			this.$cardFlipEl.addEventListener(
-				'animationend',
-				this.onCardDrawnAnimationEnd,
-			);
-		});
 	},
 	methods: {
 		onTransitionEnter(el) {
 			this.$log.debug(el);
 			// el.style.transform = 'translate(-200px, 200px)';
 		},
-		onCardDrawn: function(cardDrawn) {
+		afterCardShown(el) {
+			this.$log.debug('@afterEnter', el);
+			setTimeout(() => {
+				this.onCardDrawnAnimationEnd();
+			}, 500);
+		},
+		async onCardDrawn(cardDrawn) {
 			this.$log.debug(cardDrawn);
 
 			const cardAction = cardDrawn.action;
@@ -171,17 +173,20 @@ export default {
 				dispatchAction = 'game/actionCard';
 			}
 
-			this.$store.dispatch(dispatchAction, cardData).then(() => {
+			try {
+				await this.$store.dispatch('game/update', { isDrawingCard: false });
+				await this.$store.dispatch(dispatchAction, cardData);
 				this.$store.commit(`decks/${mutationTypes.decks.CARD_DRAWN}`, false);
 				this.cardDrawn = null;
-			});
+			} catch (e) {
+				this.$log.error(e);
+				this.$toasted.error(e);
+			}
 		},
 		// This will get triggered after the card flip animation is completed,
 		// it will NOT trigger for cards being dealt to players
 		onCardDrawnAnimationEnd: function() {
 			this.$log.debug('animation ended -> ', this.cardDrawn);
-
-			this.$store.dispatch('game/update', { isDrawingCard: false });
 
 			this.onCardDrawn(this.cardDrawn);
 		},
@@ -237,17 +242,17 @@ export default {
 	left: 0;
 	position: absolute;
 	top: 0;
-	// transition: transform 0.5s ease-in-out;
 	z-index: 140;
 
 	&.flip-card {
-		@include flip-card($flip-speed: 1s, $flip-delay: 0.75s);
+		@include flip-card($flip-speed: 0.5s, $flip-delay: 0.5s);
 	}
 }
 
 .cardDrawn-enter-active,
 .cardDrawn-leave-active {
-	transition: transform 1.25s ease-in-out;
+	transition: opacity, transform 1.75s ease-in-out;
+	transform: translate3d(0, 0, 0);
 }
 
 .cardDrawn-enter-to {
@@ -255,9 +260,11 @@ export default {
 }
 
 .cardDrawn-leave-to {
-	.card.btn-card {
-		opacity: 0;
-	}
+	opacity: 0;
+}
+
+.card-shown-leave-active {
+	opacity: 0;
 }
 
 .dropdown {
