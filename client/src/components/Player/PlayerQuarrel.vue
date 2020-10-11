@@ -8,7 +8,7 @@
 		}"
 		class="sq-player-quarrel"
 	>
-		<span class="btn-card card blank-- disabled" disabled></span>
+		<span class="btn-card card blank--"></span>
 		<Card :card-data="quarrelCard(player.id)" card-type="hand" />
 	</div>
 </template>
@@ -86,43 +86,36 @@ export default {
 	position: absolute;
 	right: 0;
 	top: 0;
-	transform: scale(1.5);
-	z-index: 70;
-
-	.btn-card,
-	.card {
-		position: inherit;
-	}
 
 	.blank-- {
-		z-index: 1;
+		z-index: 100;
 	}
 
-	.btn-card {
-		.card {
-			box-shadow: none;
-			left: 0;
-			transform: rotateY(90deg);
+	.card {
+		// transition: opacity, transform 1.5s ease-in-out;
+		// transform: scale(1.25);
+	}
 
-			&::after {
-				content: '';
-				height: 100%;
-				left: 0;
-				// opacity: 0;
-				position: inherit;
-				// transition: opacity 0.5s linear;
-				width: 100%;
-			}
+	.card:not(.blank--) {
+		left: 0;
+		// transform: rotateY(180deg);
+
+		&::after {
+			box-shadow: none;
+			content: '';
+			height: 100%;
+			left: 0;
+			position: inherit;
+			width: 100%;
 		}
 	}
 
 	&.flip {
-		@include flip-card(1s, 0.75s);
+		@include flip-card($flip-speed: 0.5s, $flip-delay: 0.5s);
 	}
 
 	&.winner {
-		.btn-card,
-		.card {
+		.card:not(.blank--) {
 			&::after {
 				box-shadow: 0 0 20px 20px color('saffron');
 				opacity: 1;
