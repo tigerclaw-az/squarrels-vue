@@ -58,6 +58,18 @@
 	}
 }
 
+@keyframes draw-card {
+	0% {
+		transform: translate3d(0, 0, 0) scale(1);
+	}
+	75% {
+		transform: translate3d(-50vw, 0, 0) scale(1);
+	}
+	100% {
+		transform: translate3d(-40vw, 10vh, 0) scale(1.8);
+	}
+}
+
 @keyframes fade-out {
 	from {
 		opacity: 1;
@@ -160,27 +172,25 @@
 }
 
 @keyframes spin {
-  0% {
-    transform: rotateZ(0deg) rotateY(180deg);
-  }
-  50% {
-    transform: rotateZ(-10deg) rotateY(90deg);
-  }
-  100% {
-    transform: rotateZ(0deg) rotateY(0deg);
-  }
-
+	0% {
+		transform: rotateZ(0deg) rotateY(180deg);
+	}
+	50% {
+		transform: rotateZ(-10deg) rotateY(90deg);
+	}
+	100% {
+		transform: rotateZ(0deg) rotateY(0deg);
+	}
 }
 
 @keyframes spin-reverse {
-  0% {
-    transform: rotateZ(0deg) rotateY(0deg);
-  }
-  50% {
-    transform: rotateZ(-10deg) rotateY(90deg);
-  }
-  100% {
-    transform: rotateZ(0deg) rotateY(180deg);
-  }
-
+	0% {
+		transform: rotateZ(0deg) rotateY(0deg);
+	}
+	50% {
+		transform: rotateZ(-10deg) rotateY(90deg);
+	}
+	100% {
+		transform: rotateZ(0deg) rotateY(180deg);
+	}
 }

@@ -1,42 +1,47 @@
 <template>
-	<div class="deck-container">
-		<div
-			:class="{
-				'can-draw': true,
-			}"
-			class="deck"
-		>
-			<div class="cards-group" @click="onClick">
-				<transition name="cardDrawn" @enter="onTransition.enter">
-					<div
-						v-show="isDrawingCard"
-						ref="card"
-						class="card-drawn"
-						:class="{ 'flip-card': cardDrawn }"
+	<div class="container_decks">
+		<div class="deck-container">
+			<div
+				:class="{
+					'can-draw': true,
+				}"
+				class="deck"
+			>
+				<div class="cards-group" @click="onClick">
+					<transition
+						name="cardDrawn"
+						@enter="onTransition.enter"
+						@leave="onTransition.leave"
 					>
-						<transition-group
-							name="card-shown"
-							@after-enter="onTransition.afterEnter"
+						<div
+							v-show="isDrawingCard"
+							ref="card"
+							class="card-drawn"
+							:class="{ 'flip-card': cardDrawn }"
 						>
-							<div v-if="isDrawingCard" key="blank" class="btn-card card blank--"></div>
-
-							<Card
-								v-if="cardDrawn"
-								:id="cardDrawn.id"
-								key="card"
-								:card-data="cardDrawn"
-								card-type="deck"
-							></Card>
-						</transition-group>
-					</div>
-				</transition>
-				<Card
-					v-for="(n, index) in 120"
-					:key="index"
-					ref="deck"
-					:card-style="cardPositions[index]"
-					card-type="deck"
-				/>
+							<div class="btn-card card blank--"></div>
+							<transition
+								name="card-shown"
+								@after-enter="onTransition.afterEnter"
+							>
+								<Card
+									v-if="cardDrawn"
+									:id="cardDrawn.id"
+									key="card"
+									:card-data="cardDrawn"
+									card-type="deck"
+								></Card>
+							</transition>
+						</div>
+					</transition>
+					<Card
+						v-for="(n, index) in 120"
+						:key="index"
+						ref="deck"
+						:card-style="cardPositions[index]"
+						card-type="deck"
+					/>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -67,18 +72,17 @@ export default {
 			onTransition: {
 				enter: (el, done) => {
 					this.$log.debug('enter', el);
-					this.$log.debug(el.classList, el.childNodes);
-					// el.style.transform = 'translate3d(200px, 200px, 0)';
-					// el.style.border = '2px solid yellow';
-					// done();
 				},
 				afterEnter: el => {
-					this.$log.debug('@afterEnter', el);
+					this.$log.debug('@afterEnter2', el);
 					setTimeout(() => {
+						this.$log.debug(this.isDrawingCard, this.cardDrawn);
 						this.onCardDrawnAnimationEnd();
-					}, 500);
+					}, 2000);
 				},
-
+				leave: el => {
+					this.$log.debug('leave', el, this.cardDrawn, this.isDrawingCard);
+				},
 			},
 		};
 	},
@@ -130,9 +134,9 @@ export default {
 		onCardDrawn: function(cardDrawn) {
 			this.$log.debug(cardDrawn);
 			setTimeout(() => {
-				this.cardDrawn = null;
 				this.isDrawingCard = false;
-			}, 2500);
+				this.cardDrawn = null;
+			}, 800);
 		},
 		// This will get triggered after the card flip animation is completed,
 		// it will NOT trigger for cards being dealt to players
@@ -163,6 +167,23 @@ export default {
 // @import '~@/assets/scss/variables';
 @import '~@/components/Deck/deck';
 
+.container_decks {
+	display: flex;
+	flex: 0 1 100%;
+	flex-flow: row wrap;
+	place-content: center flex-end;
+	position: relative;
+	min-height: 0;
+	min-width: 425px;
+}
+
+.deck-container {
+	width: 18%;
+	.deck .cards-group {
+		justify-content: flex-end !important;
+	}
+}
+
 .count {
 	bottom: 0;
 	color: $black;
@@ -187,36 +208,39 @@ export default {
 
 .card-drawn {
 	transition: transform 1.75s ease-in-out;
-	position: relative;
+	border: 4px solid black;
+	width: rem-calc(map-get($card-width, 'small'));
+	height: rem-calc(map-get($card-height, 'small'));
+	left: 0;
+	position: absolute;
+	top: 0;
 	z-index: 140;
 
 	&.flip-card {
-		@include flip-card($flip-speed: 0.5s, $flip-delay: 0.5s);
+		@include flip-card($flip-speed: 0.5s, $flip-delay: 1.5s);
 	}
 }
 
 .cardDrawn-enter-active {
 	opacity: 1;
-	// transition: opacity, transform 1.75s ease-in-out;
-	transform: translate3d(0, 0, 0);
+	animation: draw-card 1s forwards cubic-bezier(0.68, 1.5, 1, 0.35);
+	animation-delay: 0.1s;
+	transform-style: preserve-3d;
 }
 
-.cardDrawn-enter-to {
-	transform: translate3d(200px, 0, 0);
+// .cardDrawn-enter {
+// 	transform: translate3d(0, 0, 0) scale(1);
+// }
+
+.cardDrawn-leave-active {
+	transition: opacity, transform 0.25s linear;
+	transform: translate3d(-40vw, 10vh, 0);
+	opacity: 1;
 }
 
 .cardDrawn-leave-to {
-	transition: opacity 1s linear;
 	opacity: 0;
-	// border: 2px dashed red;
-}
-
-.card-shown-enter-active {
-	opacity: 1;
-}
-.card-shown-leave-active {
-	transition: opacity 0.55s;
-	opacity: 0;
+	transform: translate3d(-75vw, 25vh, 0) scale(1);
 }
 
 .dropdown {

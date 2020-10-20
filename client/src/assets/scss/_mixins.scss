@@ -57,7 +57,6 @@
 
 @mixin flip-card($flip-speed: 0.5s, $flip-delay: 0.5s) {
 	.card {
-		animation-fill-mode: forwards;
 		backface-visibility: hidden;
 		transform: rotateY(180deg);
 	}

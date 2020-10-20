@@ -14,24 +14,19 @@
 			<transition name="cardDrawn" @enter="onTransitionEnter">
 				<div
 					v-show="isDrawingCard"
-					:class="{ 'flip-card': cardDrawn }"
+					ref="card"
 					class="card-drawn"
+					:class="{ 'flip-card': cardDrawn }"
 				>
-					<transition-group
-						name="card-shown"
-						mode="out-in"
-						@after-enter="afterCardShown"
-					>
-						<div key="blank" class="btn-card card blank--"></div>
-
+					<div class="btn-card card blank--"></div>
+					<transition name="card-shown" @after-enter="afterCardShown">
 						<Card
 							v-if="cardDrawn"
 							:id="cardDrawn.id"
-							key="card"
 							:card-data="cardDrawn"
 							card-type="deck"
 						></Card>
-					</transition-group>
+					</transition>
 				</div>
 			</transition>
 			<Card
@@ -60,7 +55,6 @@
 </template>
 
 <script>
-import { isEmpty } from 'lodash';
 import { mapGetters, mapState } from 'vuex';
 
 import Icon from 'vue-awesome/components/Icon';
@@ -112,6 +106,8 @@ export default {
 			this.$log.debug(val);
 
 			if (!val) {
+				this.cardDrawn = null;
+
 				return;
 			}
 
@@ -124,7 +120,9 @@ export default {
 				this.$store
 					.dispatch('decks/drawCard')
 					.then(card => {
-						this.cardDrawn = card;
+						setTimeout(() => {
+							this.cardDrawn = card;
+						}, 200);
 					})
 					.catch(err => {
 						this.$log.error(err);
@@ -151,9 +149,11 @@ export default {
 		}
 	},
 	methods: {
-		onTransitionEnter(el) {
+		// This is needed to keep the *-enter-active class applied to
+		// the element. Also, without "done" parameter the *-enter-active
+		// class will not stay.
+		onTransitionEnter(el, done) {
 			this.$log.debug(el);
-			// el.style.transform = 'translate(-200px, 200px)';
 		},
 		afterCardShown(el) {
 			this.$log.debug('@afterEnter', el);
@@ -178,7 +178,6 @@ export default {
 
 			try {
 				await this.$store.dispatch('game/update', { isDrawingCard: false });
-				this.cardDrawn = null;
 				await this.$store.dispatch(dispatchAction, cardData);
 				this.$store.commit(`decks/${mutationTypes.decks.CARD_DRAWN}`, false);
 			} catch (e) {
@@ -253,24 +252,25 @@ export default {
 }
 
 .cardDrawn-enter-active {
-	transform: translate3d(0, 0, 0);
+	opacity: 1;
+	animation: draw-card 1s forwards cubic-bezier(0.68, 1.5, 1, 0.35);
+	animation-delay: 0.1s;
+	transform-style: preserve-3d;
 }
 
-.cardDrawn-enter-active,
+.cardDrawn-enter {
+	transform: translate3d(0, 0, 0) scale(1);
+}
+
 .cardDrawn-leave-active {
-	transition: opacity, transform 1.75s ease-in-out;
-}
-
-.cardDrawn-enter-to {
-	transform: translate3d(-200px, 200px, 0);
+	transition: opacity, transform 0.25s linear;
+	transform: translate3d(-40vw, 10vh, 0);
+	opacity: 1;
 }
 
 .cardDrawn-leave-to {
 	opacity: 0;
-}
-
-.card-shown-leave-active {
-	// opacity: 0;
+	transform: translate3d(-75vw, 25vh, 0) scale(1);
 }
 
 .dropdown {
