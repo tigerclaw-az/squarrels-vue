@@ -10,7 +10,7 @@
 		"lint": "eslint ."
 	},
 	"dependencies": {
-		"acorn": "^6.4.1",
+		"acorn": "^6.4.2",
 		"body-parser": "^1.19.0",
 		"connect-mongodb-session": "^2.4.1",
 		"cors": "^2.8.5",
@@ -22,7 +22,7 @@
 		"fs-readdir-recursive": "^1.1.0",
 		"lodash": "^4.17.20",
 		"log4js": "^4.0.2",
-		"mongoose": "^5.10.7",
+		"mongoose": "^5.10.9",
 		"morgan": "^1.10.0",
 		"pug": "^2.0.4",
 		"q": "^1.5.1",
@@ -39,7 +39,7 @@
 		"eslint-config-prettier": "^4.1.0",
 		"eslint-plugin-babel": "^5.3.1",
 		"glob": "^7.1.6",
-		"nodemon": "^2.0.4",
+		"nodemon": "^2.0.6",
 		"prettier": "^1.16.4"
 	},
 	"optionalDependencies": {
