@@ -1,8 +1,6 @@
 <template>
 	<div v-if="deck" :type="deck.deckType" class="deck-container">
-		<keep-alive>
-			<component :is="deckComponent" :cards="deck.cards" />
-		</keep-alive>
+		<component :is="deckComponent" :cards="deck.cards" />
 		<span class="deck-label">{{ deck.deckType }} - {{ totalCards }}</span>
 	</div>
 </template>
