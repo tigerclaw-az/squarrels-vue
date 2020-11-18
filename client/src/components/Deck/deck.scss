@@ -1,13 +1,12 @@
 @import "~@/assets/scss/variables";
-@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
 $card-height: (
-	small: 158,
+	small: 128,
 	medium: 158,
 );
 
 $card-width: (
-	small: 120,
+	small: 90,
 	medium: 120,
 );
 
@@ -16,11 +15,11 @@ $card-width: (
 $deck-height: 8 !default;
 
 .deck-container {
-	$height: map-get($card-height, "small") + $deck-height;
+	$height: map-get($card-height, "small");
 
 	align-items: center;
 	display: flex;
-	flex: 0 0 30%;
+	flex: 0 1 50%;
 	flex-direction: column;
 	margin: 0.5rem;
 	position: relative;
@@ -60,6 +59,7 @@ $deck-height: 8 !default;
 
 	@include media-breakpoint-up(md) {
 		$height: map-get($card-height, "medium") + $deck-height;
+		flex: 0 0 30%;
 
 		.deck {
 			height: rem-calc($height);

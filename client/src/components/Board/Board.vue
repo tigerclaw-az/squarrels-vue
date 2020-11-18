@@ -114,11 +114,18 @@ export default {
 
 .container_decks {
 	display: flex;
-	flex: 0 1 100%;
+	flex: 1 1 50%;
 	flex-flow: row wrap;
 	place-content: center flex-end;
 	position: relative;
-	min-height: 0;
-	min-width: 425px;
+	min-height: 1px;
+	// min-width: 425px;
+}
+
+@include media-breakpoint-up(md) {
+	.container_decks {
+		flex: 0 1 100%;
+		min-width: 425px;
+	}
 }
 </style>
