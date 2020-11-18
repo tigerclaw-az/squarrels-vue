@@ -123,8 +123,6 @@ export default {
 <style lang="scss">
 // prettier-ignore
 @import "~@/assets/scss/variables";
-// prettier-ignore
-@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
 // prettier-ignore
 @import "~@/components/Card/card";

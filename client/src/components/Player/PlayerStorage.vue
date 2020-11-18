@@ -83,8 +83,6 @@ export default {
 <style lang="scss" scoped>
 // prettier-ignore
 @import "~@/assets/scss/variables";
-// prettier-ignore
-@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
 .sq-player-storage {
 	align-items: flex-end;

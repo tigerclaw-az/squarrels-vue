@@ -93,8 +93,6 @@ export default {
 <style lang="scss" scoped>
 // prettier-ignore
 @import "~@/assets/scss/variables";
-// prettier-ignore
-@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
 .card {
 	top: 0;

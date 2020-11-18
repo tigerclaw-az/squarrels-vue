@@ -1,5 +1,4 @@
 @import "~@/assets/scss/variables";
-@import "~@/../node_modules/bootstrap/scss/mixins/breakpoints";
 
 $card-height: (
 	small: 113,
@@ -70,7 +69,7 @@ $card-images: (
 		display: inline-flex;
 	}
 
-	@include media-breakpoint-up(lg) {
+	@include media-breakpoint-up(md) {
 		.btn-card {
 			height: map-get($card-height, "medium") * 1px;
 			width: map-get($card-width, "medium") * 1px;
