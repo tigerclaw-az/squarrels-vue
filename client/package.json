@@ -12,8 +12,8 @@
 	"dependencies": {
 		"axios": "^0.18.1",
 		"bootstrap": "^4.5.3",
-		"bootstrap-vue": "^2.19.0",
-		"core-js": "^3.7.0",
+		"bootstrap-vue": "^2.21.1",
+		"core-js": "^3.8.1",
 		"dotenv": "^6.2.0",
 		"howler": "^2.2.1",
 		"localforage": "^1.9.0",
@@ -25,8 +25,8 @@
 		"vue-native-websocket": "^2.0.14",
 		"vue-router": "^3.4.9",
 		"vue-toasted": "^1.1.28",
-		"vuejs-logger": "^1.5.4",
-		"vuex": "^3.5.1"
+		"vuejs-logger": "^1.5.5",
+		"vuex": "^3.6.0"
 	},
 	"devDependencies": {
 		"@vue/cli-plugin-babel": "^4.5.9",
@@ -37,7 +37,7 @@
 		"@vue/eslint-config-prettier": "^5.0.0",
 		"babel-eslint": "^10.1.0",
 		"eslint": "^6.7.2",
-		"eslint-plugin-prettier": "^3.1.4",
+		"eslint-plugin-prettier": "^3.3.0",
 		"eslint-plugin-vue": "^6.2.2",
 		"node-sass": "^4.14.1",
 		"prettier": "^1.19.1",
