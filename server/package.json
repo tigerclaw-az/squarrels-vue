@@ -22,7 +22,7 @@
 		"fs-readdir-recursive": "^1.1.0",
 		"lodash": "^4.17.20",
 		"log4js": "^4.0.2",
-		"mongoose": "^5.11.8",
+		"mongoose": "^5.11.9",
 		"morgan": "^1.10.0",
 		"pug": "^2.0.4",
 		"q": "^1.5.1",
