@@ -54,14 +54,14 @@ $sizes: map-merge(
 //
 // Settings for the `<body>` element.
 
-$body-bg: 					lighten(color("cioccolato"), 7);
+$body-bg: 					lighten(map-get($colors, "cioccolato"), 7);
 $body-color:                $gray-900;
 
 // Links
 //
 // Style anchor elements.
 
-$link-color:                theme-color("primary");
+$link-color:                $primary;
 $link-decoration:           none;
 $link-hover-color:          darken($link-color, 15%);
 $link-hover-decoration:     underline;
@@ -117,7 +117,7 @@ $line-height-lg:              1.5;
 $line-height-sm:              1.5;
 
 $border-width:                1px;
-$border-color:                color("desert");
+$border-color:                map-get($colors, "desert");
 
 $border-radius:               0.25rem;
 $border-radius-lg:            0.3rem;
@@ -128,7 +128,7 @@ $box-shadow:                  0 0.5rem 1rem rgba($black, 0.15);
 $box-shadow-lg:               0 1rem 3rem rgba($black, 0.175);
 
 $component-active-color:      $white;
-$component-active-bg:         theme-color("primary");
+$component-active-bg:         map-get($theme-colors, "primary");
 
 $caret-width:                 0.3em;
 
@@ -302,7 +302,7 @@ $dropdown-min-width:                10rem;
 $dropdown-padding-y:                0.5rem;
 $dropdown-spacer:                   0.125rem;
 $dropdown-bg:                       $white;
-$dropdown-border-color:             rgba(color("desert"), 0.25);
+$dropdown-border-color:             rgba(map-get($colors, "desert"), 0.25);
 $dropdown-border-radius:            $border-radius;
 $dropdown-border-width:             $border-width;
 $dropdown-divider-bg:               $gray-200;
