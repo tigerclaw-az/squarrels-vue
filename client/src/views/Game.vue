@@ -329,17 +329,17 @@ export default {
 
 .winter-enter {
 	opacity: 0;
-	transform: translateX(-100vw);
+	transform: translate3d(-100vw, 0, 0);
 }
 
 .winter-enter-to {
 	opacity: 1;
-	transform: translateX(0);
+	transform: translate3d(0, 0, 0);
 }
 
 .winter-leave-to {
 	opacity: 0;
-	transform: translateY(100vh);
+	transform: translate3d(-100vw, 100vh, 0);
 }
 
 .game-overlay {
