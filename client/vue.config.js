@@ -16,7 +16,7 @@ module.exports = {
 		// Remove moment locales from build since we only need 'en'
 		config
 			.plugin('moment')
-			.use(webpack.IgnorePlugin, [/^\.\/locale$/, /moment$/]);
+			.use(webpack.IgnorePlugin, [{ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ }]);
 
 		config.module
 			.rule('vue')
