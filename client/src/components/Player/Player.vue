@@ -47,7 +47,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="js">
 import { mapGetters, mapState } from 'vuex';
 
 import Card from '@/components/Card/Card.vue';
@@ -246,7 +246,7 @@ export default {
 	}
 
 	&.active {
-		color: color('gold-light');
+		color: map-get($colors, 'gold-light');
 	}
 
 	@include media-breakpoint-up(lg) {

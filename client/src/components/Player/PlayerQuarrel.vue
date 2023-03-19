@@ -65,6 +65,9 @@ export default {
 			}
 		},
 	},
+	mounted() {
+
+	},
 	methods: {
 		quarrelCard: function(id) {
 			return this.$store.getters['game/getQuarrelCardByPlayer'](id);

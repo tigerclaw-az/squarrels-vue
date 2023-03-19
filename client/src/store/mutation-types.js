@@ -4,6 +4,7 @@ export default Object.freeze({
 		SET_CONFIG: 'SET_CONFIG',
 	},
 	decks: {
+		CARD_DRAWN: 'CARD_DRAWN',
 		CARDS_SHUFFLED: 'CARDS_SHUFFLED',
 		INIT: 'INIT',
 		LOADED: 'LOADED',
@@ -11,9 +12,10 @@ export default Object.freeze({
 		UPDATE_CARDS: 'UPDATE_CARDS',
 	},
 	game: {
+		GAME_OVER: 'GAME_OVER',
 		LOADED: 'LOADED',
 		INIT: 'INIT',
-		TOGGLE_DRAW_CARD: 'TOGGLE_DRAW_CARD',
+		ROUND_END: 'ROUND_END',
 		UPDATE: 'UPDATE',
 	},
 	players: {

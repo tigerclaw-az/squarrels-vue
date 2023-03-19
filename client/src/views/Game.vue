@@ -37,7 +37,6 @@
 			class="game-overlay"
 			blur="2px"
 			opacity="0.75"
-			spinner-type="border"
 			variant="dark"
 		>
 			<div v-if="showOverlay" class="game-overlay--start-game">
