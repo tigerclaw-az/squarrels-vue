@@ -43,7 +43,7 @@
 		"node-sass": "^7.0.3",
 		"prettier": "^2.3.2",
 		"sass-resources-loader": "^2.2.4",
-		"stylelint": "^13.13.1",
+		"stylelint": "^15.10.1",
 		"stylelint-config-recommended-scss": "^4.3.0",
 		"stylelint-order": "^4.1.0",
 		"stylelint-scss": "^3.20.1",
