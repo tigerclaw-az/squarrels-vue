@@ -1,15 +1,12 @@
 <template>
 	<div
 		:card-type="cardType"
-		:class="{
-			disabled: isDisabled,
-		}"
+		:class="['btn-card', { disabled: isDisabled }]"
 		:style="cardStyle"
-		class="btn-card"
 		role="button"
 		@click="!isDisabled && onClick(details, matches, $event)"
 	>
-		<span :class="cardClass" class="card">
+		<span :class="['card', cardClass]">
 			<icon v-if="hasMatch" name="sun" class="icon" />
 		</span>
 	</div>
@@ -81,10 +78,12 @@ export default {
 	computed: {
 		cardClass: function() {
 			if (!isEmpty(this.details)) {
+				// return only the variant class (e.g. 'attack--squirrel')
 				return `${this.details.cardType}--${this.details.name}`;
 			}
 
-			return 'blank--';
+			// when there's no detail, don't return a duplicate base class — return empty
+			return '';
 		},
 		hasMatch: function() {
 			return this.matches.length;
